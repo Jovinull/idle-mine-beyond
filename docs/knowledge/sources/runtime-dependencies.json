@@ -1,0 +1,41 @@
+{
+  "capturedOn": "2026-09-29",
+  "referenceUrl": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "captureMethod": "Loaded the pinned local Remix index.html in Chromium through Playwright MCP. jsDelivr response headers reported resolved package versions; response bodies were saved without editing the upstream checkout. SHA-256 covers the decoded JavaScript response body.",
+  "dependencies": [
+    {
+      "name": "Vue.js",
+      "package": "vue",
+      "version": "2.7.16",
+      "originalRequestUrl": "https://cdn.jsdelivr.net/npm/vue@2",
+      "pinnedUrl": "https://cdn.jsdelivr.net/npm/vue@2.7.16",
+      "researchSnapshot": ".research/snapshots/dependencies/vue-2.7.16.js",
+      "sha256": "3c1d4b0c549e8de9d4a9bafb12ab70b6a1ac747d07293b98c5b25b6632999afd",
+      "npmDistIntegrity": "sha512-4gCtFXaAA3zYZdTp5s4Hl2sozuySsgz4jy1EnpBHNfpMa9dK1ZCG7viqBPCwXtmgc8nHqUsAu3G4gtmXkkY3Sw==",
+      "license": "MIT"
+    },
+    {
+      "name": "break_infinity.js",
+      "package": "break_infinity.js",
+      "version": "2.2.0",
+      "originalRequestUrl": "https://cdn.jsdelivr.net/npm/break_infinity.js",
+      "pinnedUrl": "https://cdn.jsdelivr.net/npm/break_infinity.js@2.2.0",
+      "researchSnapshot": ".research/snapshots/dependencies/break-infinity-2.2.0.js",
+      "sha256": "e5052a9b24a3cba27a2535a3bc9a0f13d5103556229f1c188e1191aa6d614afb",
+      "npmDistIntegrity": "sha512-Li+150FfqGDj4gcJrgEJatFAR0OmfZyZLBGFKSHgjWKqKgWRm7GA+OmSSHwDFqkdOOjoY+R8X/jyDX/9MQEjmA==",
+      "license": "MIT"
+    },
+    {
+      "name": "AD Notations",
+      "package": "@antimatter-dimensions/notations",
+      "version": "1.6.0",
+      "originalRequestUrl": "https://cdn.jsdelivr.net/npm/@antimatter-dimensions/notations@1.6.0",
+      "pinnedUrl": "https://cdn.jsdelivr.net/npm/@antimatter-dimensions/notations@1.6.0",
+      "researchSnapshot": ".research/snapshots/dependencies/notations-1.6.0.js",
+      "sha256": "94c0e9da0b3952e9f62676f5171025d05003e45058c8982f7fd65667da74e328",
+      "npmDistIntegrity": "sha512-lF9rXd/UNz2cw6DPY/QTNH0QW1DFac6kppfSKZAP/cGFXnZU3IEasafeFKOkMn9bkCIk8VQUPHX6Mt1CTnhPRw==",
+      "license": "MIT"
+    }
+  ]
+}

@@ -22,6 +22,8 @@
     "test:e2e": "playwright test",
     "research:setup": "node scripts/research.mjs setup",
     "research:check": "node scripts/research.mjs check",
+    "reference:capture": "node scripts/reference-probe.mjs capture",
+    "test:reference": "node scripts/reference-probe.mjs verify",
     "docs:check": "node scripts/check-docs.mjs",
     "skills:check": "node scripts/check-skills.mjs",
     "native:dev": "pnpm --dir apps/native dev",

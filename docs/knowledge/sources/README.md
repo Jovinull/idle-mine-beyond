@@ -1,6 +1,8 @@
 # Source register
 
-The machine-readable freeze lives in [reference-manifest.json](reference-manifest.json). The exact source repositories are cloned under the ignored .research/upstream directory and pinned to the listed commits.
+The machine-readable source freeze lives in [reference-manifest.json](reference-manifest.json). Runtime CDN dependencies observed while loading the pinned page are captured separately in [runtime-dependencies.json](runtime-dependencies.json). Reconstruct and verify both the exact source repositories and dependency snapshots with `pnpm research:setup` / `pnpm research:check`.
+
+The full MIT notice found in the Remix repository is preserved at [licenses/idle-mine-remix-MIT.txt](licenses/idle-mine-remix-MIT.txt) because compatibility fixtures now contain normalized data extracted from its implementation.
 
 ## Frozen repositories
 

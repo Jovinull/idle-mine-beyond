@@ -41,6 +41,8 @@ Use 1366×768, 1440×900, 1920×1080, and 2560×1440. Capture light and dark the
 
 Bootstrap tests prove the Vitest runner, a metadata-only parity fixture check, and a Playwright browser launch against the empty phase-status shell. They do not test game behavior or claim gameplay parity.
 
+`pnpm test:reference` is a separate read-only browser probe. It loads the pinned Remix checkout, substitutes the SHA-verified CDN response snapshots recorded in `sources/runtime-dependencies.json`, fixes the clock and RNG, suppresses the animation loop, and compares the result with the checked-in oracle corpus. It does not execute Beyond behavior and is not parity certification.
+
 ## Completion rule
 
 Code presence is not completion. Update the [parity matrix](PARITY_MATRIX.md) only when source understanding, fixture coverage, automated tests, UI/E2E, and visual evidence meet the row's criteria.

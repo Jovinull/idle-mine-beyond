@@ -1,6 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
-
-const installedChromium = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE;
+import { getChromiumLaunchOptions } from "./scripts/playwright-browser.mjs";
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -12,9 +11,7 @@ export default defineConfig({
     baseURL: "http://127.0.0.1:4173",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
-    ...(installedChromium
-      ? { launchOptions: { executablePath: installedChromium } }
-      : {}),
+    launchOptions: getChromiumLaunchOptions(),
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {

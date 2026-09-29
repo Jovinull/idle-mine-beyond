@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -10,6 +11,10 @@ const researchRoot = path.join(root, ".research");
 const manifestPath = path.join(
   root,
   "docs/knowledge/sources/reference-manifest.json",
+);
+const runtimeDependenciesPath = path.join(
+  root,
+  "docs/knowledge/sources/runtime-dependencies.json",
 );
 const immutableNotice = `# Local reference workspace\n\nCanonical upstream checkouts are reference-only. Do not edit, reformat, update dependencies, or modify these repositories. If instrumentation is needed, create a separate derived copy and retain the untouched checkout.\n`;
 
@@ -46,8 +51,70 @@ async function verifyCheckout(reference, checkout) {
   return { name: reference.name, revision, clean: true };
 }
 
+function sha256(contents) {
+  return createHash("sha256").update(contents).digest("hex");
+}
+
+async function verifyRuntimeDependencies(action) {
+  const manifest = JSON.parse(await readFile(runtimeDependenciesPath, "utf8"));
+  const snapshotsRoot = path.resolve(researchRoot, "snapshots");
+  const results = [];
+  for (const dependency of manifest.dependencies) {
+    const snapshotPath = path.resolve(root, dependency.researchSnapshot);
+    if (!snapshotPath.startsWith(`${snapshotsRoot}${path.sep}`)) {
+      throw new Error(
+        `Refusing runtime snapshot outside .research/snapshots: ${dependency.researchSnapshot}`,
+      );
+    }
+
+    let contents;
+    let snapshotMissing = false;
+    try {
+      contents = await readFile(snapshotPath);
+    } catch (error) {
+      if (error.code !== "ENOENT" || action !== "setup") {
+        throw new Error(
+          `${dependency.name}: runtime snapshot is missing or unreadable; run pnpm research:setup`,
+          { cause: error },
+        );
+      }
+      snapshotMissing = true;
+    }
+
+    if (snapshotMissing) {
+      const response = await fetch(dependency.pinnedUrl);
+      if (!response.ok) {
+        throw new Error(
+          `${dependency.name}: download failed with HTTP ${response.status}`,
+        );
+      }
+      contents = Buffer.from(await response.arrayBuffer());
+      const downloadedHash = sha256(contents);
+      if (downloadedHash !== dependency.sha256) {
+        throw new Error(
+          `${dependency.name}: pinned download SHA-256 ${downloadedHash} differs from manifest ${dependency.sha256}; snapshot not written`,
+        );
+      }
+      await mkdir(path.dirname(snapshotPath), { recursive: true });
+      await writeFile(snapshotPath, contents, { flag: "wx" });
+    }
+
+    const actualHash = sha256(contents);
+    if (actualHash !== dependency.sha256) {
+      throw new Error(
+        `${dependency.name}: snapshot SHA-256 ${actualHash} differs from manifest ${dependency.sha256}; existing snapshot was not changed`,
+      );
+    }
+    results.push(`${dependency.package}@${dependency.version} (verified)`);
+  }
+  return results;
+}
+
 async function main() {
   const action = process.argv[2] ?? "check";
+  if (action !== "check" && action !== "setup") {
+    throw new Error(`Unknown action ${action}; use check or setup.`);
+  }
   const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
   const references = manifest.references.filter(
     (reference) => reference.researchCheckout,
@@ -112,6 +179,9 @@ async function main() {
   }
   for (const result of results) {
     process.stdout.write(`${result.name}: ${result.revision} (clean)\n`);
+  }
+  for (const result of await verifyRuntimeDependencies(action)) {
+    process.stdout.write(`Runtime dependency: ${result}\n`);
   }
   process.stdout.write(
     action === "setup"

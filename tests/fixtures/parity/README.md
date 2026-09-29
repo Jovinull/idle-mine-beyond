@@ -1,3 +1,3 @@
 # Parity fixtures
 
-Store minimized, provenance-recorded reference inputs and expected outputs here. Every fixture should identify the pinned source revision, evidence path or runtime probe, and extraction method. No gameplay fixture has been extracted yet.
+Store minimized, provenance-recorded reference inputs and expected outputs here. Every fixture identifies the pinned source revision, evidence path or runtime probe, and extraction method. The initial [Remix reference corpus](remix-reference-corpus.json) captures normalized object records, default game state, initial rates, level 0→1 upgrade outputs, and notation samples from the pinned implementation. It is oracle evidence only; Beyond has not been compared or certified yet. The fixture records the MIT notice; see the preserved [upstream license](../../../docs/knowledge/sources/licenses/idle-mine-remix-MIT.txt).

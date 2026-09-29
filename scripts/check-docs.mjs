@@ -51,15 +51,20 @@ for (const file of files) {
   await checkMarkdownLinks(file, content, errors);
 }
 
-try {
-  JSON.parse(
-    await readFile(
-      path.join(root, "docs/knowledge/sources/reference-manifest.json"),
-      "utf8",
-    ),
-  );
-} catch (error) {
-  errors.push(`Reference manifest is not valid JSON: ${error.message}`);
+for (const manifestName of [
+  "reference-manifest.json",
+  "runtime-dependencies.json",
+]) {
+  try {
+    JSON.parse(
+      await readFile(
+        path.join(root, "docs/knowledge/sources", manifestName),
+        "utf8",
+      ),
+    );
+  } catch (error) {
+    errors.push(`${manifestName} is not valid JSON: ${error.message}`);
+  }
 }
 
 if (errors.length) {
@@ -67,6 +72,6 @@ if (errors.length) {
   process.exitCode = 1;
 } else {
   process.stdout.write(
-    `Checked ${files.length} Markdown files and the reference manifest.\n`,
+    `Checked ${files.length} Markdown files and source manifests.\n`,
   );
 }

@@ -34,3 +34,7 @@ Remix delegates many formats to AD Notations and community notation code, adds c
 ## Math evidence
 
 Initial sources: Scripts/Define/functions.js, Scripts/pickaxe.js, Scripts/upgrade.js, Scripts/Define/game.js, and Scripts/Define/functions.js procedural generation. The exact reference commit is in the manifest. Formula fixtures have not yet been extracted; the parity matrix remains pending.
+
+## Controlled initial-state baseline
+
+The pinned runtime corpus captures a fresh, pre-animation Mud state with Money 0, Gems 5, Toy Pickaxe damage 20, Mud HP 100/value 2, active damage 20, idle damage/DPS 15, MPC 0.4, MPS `0.2857142857142857`, GPS `0.0028571428571428567`, and PCPS 0. Every money, gem, Planet Coin, and Powers upgrade records level-0/current and next cost/effect outputs; notation outputs cover the source's registered formatters at 0, 999, 1,000, 1e6, 1e12, and 1e100. These are golden reference samples, not an extracted full formula specification. See [the corpus](../../tests/fixtures/parity/remix-reference-corpus.json).

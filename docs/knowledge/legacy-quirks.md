@@ -26,6 +26,10 @@ The bootstrap research records community criticism about long gem grinds, dud fr
 
 Some rate functions convert hit counts to Number and divide by idle damage. Whether this produces player-visible problems in reachable states has not been verified. Treat it as a hypothesis until a focused probe establishes the behavior.
 
+## Verified extreme-ID result
+
+Under the pinned runtime and break_infinity.js 2.2.0 snapshot, `functions.getMineObject(Number.MAX_SAFE_INTEGER)` returns an object whose HP, defense, and value stringify as `Infinity`; the fixture retains the finite mantissa/exponent representation returned by Decimal. This is an observed output at a pathological, impractical ID. Whether the game can reach or display that ID through ordinary progression is unverified, so do not generalize it into a player-visible defect.
+
 ## Exception policy
 
 No listed concern grants permission to change observable behavior. See [behavioral exceptions](BEHAVIORAL_EXCEPTIONS.md).

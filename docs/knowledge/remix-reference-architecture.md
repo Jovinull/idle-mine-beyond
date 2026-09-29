@@ -4,7 +4,7 @@ This document describes the pinned upstream implementation. It is distinct from 
 
 ## Verified source structure
 
-At commit `0e0f4bf5a9c66e5603cda2ce4bd54213023dae21`, Remix is a static HTML/CSS/JavaScript site. `index.html` contains Vue templates and loads Vue 2 from jsDelivr, `break_infinity.js`, AD Notations 1.6.0, and local notation/game scripts. There is no checked-in package/workspace manifest or automated test/build pipeline in this snapshot.
+At commit `0e0f4bf5a9c66e5603cda2ce4bd54213023dae21`, Remix is a static HTML/CSS/JavaScript site. `index.html` contains Vue templates and requests Vue 2 and `break_infinity.js` through unversioned jsDelivr aliases; it requests AD Notations 1.6.0 and loads local notation/game scripts. A Chromium probe resolved the aliases to Vue 2.7.16 and break_infinity.js 2.2.0 on 2026-09-29. Their exact response bodies and the Notations 1.6.0 body are SHA-256 pinned in [runtime-dependencies.json](sources/runtime-dependencies.json), separate from the upstream source commit. There is no checked-in package/workspace manifest or automated test/build pipeline in this snapshot.
 
 The page owns a large shared `game` object in Vue, while responsibilities are separated across classic scripts:
 
@@ -31,7 +31,7 @@ The mine renderer uses a 256×224 cache canvas and composites selected sprite-sh
 - Preserve the old Decimal semantics with a compatibility facade and fixtures before choosing a different number library.
 - The source directly calls `Math.random()`, `Date.now()`, browser storage, and browser rendering APIs. Beyond will inject RNG/time and put storage/rendering behind adapters.
 - The random pickaxe path and seeded object-generation path are different and must not be conflated.
-- CDN dependencies and the live deployment can change independently of this repository pin. Record runtime captures separately from source-derived facts.
+- CDN dependencies and the live deployment can change independently of this repository pin. The captured runtime dependencies are reproducible probes, not claims that the CDN package versions are pinned by the upstream source itself.
 
 ## Scope and provenance
 

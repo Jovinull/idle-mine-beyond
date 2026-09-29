@@ -6,7 +6,13 @@ The pinned Remix and Remux repositories each contain an MIT license with the not
 
 This establishes the license notice present in those repositories; it does not establish rights that an upstream author may not have held. Do not make legal conclusions from repository metadata alone.
 
-The original Idle Mine source/license was not identified during bootstrap. The attribution history of the old Android port is uncertain. No upstream source or artwork is copied into tracked product directories during bootstrap.
+The original Idle Mine source/license was not identified during bootstrap. The attribution history of the old Android port is uncertain. No upstream source code or artwork is copied into Beyond's product directories.
+
+## Reference material in tests
+
+The initial parity corpus contains normalized runtime outputs for mine objects and default formulas, extracted from the pinned Remix implementation at `0e0f4bf5a9c66e5603cda2ce4bd54213023dae21`. It is derived data, not copied JavaScript or artwork. The fixture identifies the source paths and copyright/license notice; the corresponding full upstream notice is preserved in [idle-mine-remix-MIT.txt](sources/licenses/idle-mine-remix-MIT.txt). The publisher's ability to license any inherited original-game material remains unverified.
+
+The runtime CDN JavaScript response snapshots live only in ignored `.research/`; the tracked manifest records their versions, hashes, and npm license metadata. They are not product dependencies or bundled assets.
 
 ## Provenance ledger for future derived work
 

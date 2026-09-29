@@ -19,9 +19,9 @@ pnpm check
 pnpm test:e2e
 ```
 
-For a first browser run, install Playwright's Chromium with `pnpm exec playwright install chromium`. An already installed Chrome can be selected locally with `PLAYWRIGHT_CHROMIUM_EXECUTABLE`; CI installs the pinned Playwright browser.
+For a first browser run, install Playwright's Chromium with `pnpm exec playwright install chromium`. If its browser binary is unavailable locally, the browser checks fall back to installed Chrome; set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to select a nonstandard Chrome path. CI installs and uses Playwright's pinned Chromium.
 
-Useful focused commands include `pnpm test:unit`, `pnpm test:parity`, `pnpm build`, `pnpm research:setup`, and `pnpm native:check`. See `pnpm run` and the canonical [project status](docs/knowledge/project-status.md) for scope.
+Useful focused commands include `pnpm test:unit`, `pnpm test:parity`, `pnpm test:reference`, `pnpm build`, `pnpm research:setup`, and `pnpm native:check`. `pnpm test:reference` launches the pinned Remix checkout read-only with hash-pinned runtime dependencies and checks the tracked oracle corpus. See `pnpm run` and the canonical [project status](docs/knowledge/project-status.md) for scope.
 
 ## Project memory and references
 
