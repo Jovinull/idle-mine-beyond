@@ -17,6 +17,8 @@ Every behavior implementation follows:
 - **Visual regression:** screenshot comparisons at fixed viewports, themes, and state fixtures.
 - **Native checks:** Tauri shell/config and platform builds when the required SDK/toolchain is available.
 
+The pinned `initialState` capture records the fresh Remix values and the constructor test compares the core simulation subset against it: starting object/progress, all resources and upgrade levels, pickaxe, Powers, timers, and Story page/notification progress. It also checks that two new states do not share mutable objects. This does not compare settings, notation instances, message history, or the complete Remix runtime object.
+
 The web Vite config serves dev-only compatibility harness routes for formatting, mine objects, mining rates, mining transitions/frame events, Story, offline progress, and save codecs. Playwright loads the shared packages in Chromium and compares their outputs with the frozen reference corpus; these routes are not emitted as product pages by the static build.
 
 ## Harness folders

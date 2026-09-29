@@ -8,6 +8,8 @@ This is a system map, not a complete extracted game specification. Items describ
 
 **Runtime corpus:** the controlled Chromium oracle capture records 72 base objects and 78 special anchors, with a normalized result for every ID from 0 through 214 plus nine post-Universe probes. Beyond materializes and generates these records in the platform-independent core; Playwright compares all 224 results against the oracle. Isolated damage/reward transitions now exist in the core, but the integrated mining loop and object UI remain unimplemented. See [the oracle corpus](../../tests/fixtures/parity/remix-reference-corpus.json) and [its probe](../../scripts/reference-probe.mjs).
 
+`createInitialRemixSimulationState()` seeds the fresh core subset using object ID 0 and captured Remix defaults, including five Gems, the Toy Pickaxe, level-zero upgrades, unit Powers, zero timers, and initial Story progress. It does not create settings, UI formatters, the message buffer, or a persisted save payload.
+
 Objects carry name, HP, defense, value, colors, skin, and optional drops. Previous/next navigation is bounded by the highest unlocked index. Verify exact navigation and damageability rules at runtime before implementation.
 
 ## Resources

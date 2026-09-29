@@ -130,4 +130,6 @@ export type {
   RemixPickaxeCraftInput,
   RemixPickaxeCraftMode,
 } from "./remix-pickaxe-crafting.js";
+export { createInitialRemixSimulationState } from "./remix-simulation-state.js";
+export type { RemixSimulationState } from "./remix-simulation-state.js";
 export { RemixRandom } from "./remix-random.js";

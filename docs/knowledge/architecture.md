@@ -6,6 +6,8 @@ The simulation core is platform-independent. Its conceptual interface is state +
 
 RNG, clock/time, persistence, and platform integrations are explicit interfaces with adapters. UI renders state and dispatches inputs; it does not define game rules.
 
+`packages/core/src/remix-simulation-state.ts` constructs the fresh simulation subset from the pinned mine-object catalog and source-observed defaults. It owns no clock, RNG, storage, notation registry, UI settings, or message buffer. Keep static presentation content in `packages/content` and execute elapsed-time or persistence behavior through injected services when the simulation loop is composed.
+
 ## Repository map
 
 | Path                 | Responsibility                                                                                  |
