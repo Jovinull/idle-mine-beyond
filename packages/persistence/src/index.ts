@@ -14,6 +14,25 @@ export type {
   DecodeRemixBeyondSaveResult,
   RemixBeyondSaveV1,
 } from "./remix-beyond-save.js";
+export {
+  loadRemixBeyondSaveFromStorage,
+  persistRemixBeyondSave,
+  REMIX_BEYOND_BACKUP_SAVE_KEY,
+  REMIX_BEYOND_PRIMARY_SAVE_KEY,
+  REMIX_SAVE_CONFIRMED_COLOR,
+  REMIX_SAVE_CONFIRMED_MESSAGE,
+} from "./remix-beyond-save-storage.js";
+export type {
+  LoadRemixBeyondSaveResult,
+  PersistRemixBeyondSaveResult,
+  RemixBeyondSaveConfirmationEffect,
+  RemixBeyondSaveStorageAdapter,
+} from "./remix-beyond-save-storage.js";
+export { importRemixLegacySaveToBeyond } from "./remix-legacy-save-import.js";
+export type {
+  ImportRemixLegacySaveToBeyondResult,
+  RemixLegacySaveImportEffect,
+} from "./remix-legacy-save-import.js";
 export type {
   RemixLegacySaveCodecError,
   RemixLegacySaveDecodeResult,

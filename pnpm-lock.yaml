@@ -243,6 +243,9 @@ importers:
       '@idle-mine-beyond/formatting':
         specifier: workspace:*
         version: link:../../packages/formatting
+      '@idle-mine-beyond/persistence':
+        specifier: workspace:*
+        version: link:../../packages/persistence
 
   packages/content: {}
 
