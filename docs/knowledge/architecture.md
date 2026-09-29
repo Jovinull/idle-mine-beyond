@@ -80,7 +80,7 @@ The AD Notations 1.6.0 ESM builds import the historical `break_infinity.js/break
 
 Potential adapters include browser persistence, native persistence, platform achievements/cloud saves/leaderboards, and distribution-specific APIs. The core depends only on project interfaces. Steam, store, and portal integrations are post-parity.
 
-`packages/persistence` is a separate platform-independent boundary; it may parse/serialize save payloads and produce explicit storage effects, but it must not access browser or native storage directly. The initial `remix-save-codec.ts` slice only reproduces Remix's JSON/Base64 wrapper. It does not define Beyond's versioned save schema, apply imported fields, or claim save compatibility.
+`packages/persistence` is a separate platform-independent boundary; it may parse/serialize save payloads and produce explicit storage effects, but it must not access browser or native storage directly. `remix-save-codec.ts` reproduces Remix's JSON/Base64 wrapper. `remix-beyond-save.ts` defines the strict Beyond v1 envelope and restores its JSON-safe state, deriving the current mine object from the object ID and content catalog. This schema is a Beyond project decision, not a legacy behavior claim; storage adapters, historical Beyond migrations, and complete legacy import remain separate work.
 
 ## References
 

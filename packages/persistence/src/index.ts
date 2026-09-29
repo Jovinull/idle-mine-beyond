@@ -2,6 +2,18 @@ export {
   decodeRemixLegacySave,
   encodeRemixLegacySave,
 } from "./remix-save-codec.js";
+export {
+  createRemixBeyondSave,
+  decodeRemixBeyondSave,
+  encodeRemixBeyondSave,
+  REMIX_BEYOND_SAVE_VERSION,
+  RemixBeyondSaveV1Schema,
+  restoreRemixBeyondSave,
+} from "./remix-beyond-save.js";
+export type {
+  DecodeRemixBeyondSaveResult,
+  RemixBeyondSaveV1,
+} from "./remix-beyond-save.js";
 export type {
   RemixLegacySaveCodecError,
   RemixLegacySaveDecodeResult,

@@ -7,6 +7,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@idle-mine-beyond/core": "workspace:*"
+    "@idle-mine-beyond/core": "workspace:*",
+    "zod": "4.6.5"
   }
 }
