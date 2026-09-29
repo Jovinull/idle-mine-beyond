@@ -275,8 +275,8 @@ it("composes Remix clicks, idle frames, saves, and Story notifications", () => {
         story: result.state.story,
         randomCalls,
         frameEvents: result.frameEvents,
-        savedSnapshots: result.effects.map(({ state: saved }) =>
-          stateSnapshot(saved),
+        savedSnapshots: result.effects.flatMap((effect) =>
+          effect.type === "save" ? [stateSnapshot(effect.state)] : [],
         ),
       },
       scenario.name,
@@ -505,7 +505,9 @@ it("composes source pickaxe crafts and each intermediate save snapshot", () => {
       `${scenario.name}: ordered source events`,
     ).toEqual(expectedEventTypes);
     expect(
-      result.effects.map(({ state: saved }) => completeStateSnapshot(saved)),
+      result.effects.flatMap((effect) =>
+        effect.type === "save" ? [completeStateSnapshot(effect.state)] : [],
+      ),
       `${scenario.name}: exact state captured at each save`,
     ).toEqual(expectedSaves);
     expect(

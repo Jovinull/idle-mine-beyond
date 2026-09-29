@@ -3,8 +3,12 @@ import { expect, it } from "vitest";
 import {
   calculateRemixOfflineCapSeconds,
   Decimal,
+  createInitialRemixSimulationState,
+  performRemixSimulationAction,
   processRemixOfflineProgress,
   type DecimalSource,
+  type RemixMineObjectCatalog,
+  type RemixSimulationState,
 } from "../../packages/core/src/index.js";
 import {
   createRemixFormatters,
@@ -19,6 +23,7 @@ const corpus = JSON.parse(
 ) as {
   metadata: { sourceCommit: string };
   data: {
+    mineObjectCatalog: RemixMineObjectCatalog;
     offlineProgressionSemantics: {
       sourcePaths: string[];
       thresholdSeconds: number;
@@ -201,4 +206,133 @@ it("uses the source default and upgrade-adjusted offline caps", () => {
   expect(calculateRemixOfflineCapSeconds(1)).toBe(7 * 3600);
   expect(calculateRemixOfflineCapSeconds(2)).toBe(8 * 3600);
   expect(calculateRemixOfflineCapSeconds(42)).toBe(48 * 3600);
+});
+
+function withoutOfflineFields(state: RemixSimulationState): unknown {
+  const offlineResourceFields = new Set([
+    "money",
+    "highestMoney",
+    "gems",
+    "planetCoins",
+    "maxPlanetCoins",
+  ]);
+  const omit = (value: unknown, parent?: string): unknown => {
+    if (Array.isArray(value)) return value.map((item) => omit(item));
+    if (value !== null && typeof value === "object") {
+      return Object.fromEntries(
+        Object.entries(value)
+          .filter(
+            ([key]) =>
+              key !== "lastActiveMs" &&
+              !(parent === "resources" && offlineResourceFields.has(key)),
+          )
+          .map(([key, nested]) => [key, omit(nested, key)]),
+      );
+    }
+    return value;
+  };
+  return omit(state);
+}
+
+it("composes source offline-load cases into the full simulation state", () => {
+  const semantics = corpus.data.offlineProgressionSemantics;
+  const formatter = createRemixFormatters().find(
+    (candidate) => candidate.name === "Standard",
+  );
+  expect(formatter).toBeDefined();
+
+  for (const scenario of semantics.scenarios) {
+    const { input } = scenario;
+    const state = createInitialRemixSimulationState(
+      corpus.data.mineObjectCatalog,
+    );
+    state.resources.money = new Decimal(input.initialState.money);
+    state.resources.highestMoney = new Decimal(input.initialState.highestMoney);
+    state.resources.gems = new Decimal(input.initialState.gems);
+    state.resources.planetCoins = new Decimal(input.initialState.planetCoins);
+    state.resources.maxPlanetCoins = new Decimal(
+      input.initialState.maxPlanetCoins,
+    );
+    state.upgrades.planetCoins.offlineTime = input.upgrades.offlineTime;
+    state.upgrades.gems.offlineGems = input.upgrades.offlineGems;
+    state.upgrades.planetCoins.offlinePC = input.upgrades.offlinePC;
+    if (!input.omitLastActive) {
+      state.lastActiveMs = input.nowMs - input.elapsedSeconds * 1000;
+    }
+    const before = withoutOfflineFields(state);
+    let clockReadCount = 0;
+    const result = performRemixSimulationAction({
+      state,
+      action: { type: "offlineLoad", noOffline: input.noOffline },
+      clock: {
+        now() {
+          const offset =
+            input.clockAdvancesMs[
+              Math.min(clockReadCount, input.clockAdvancesMs.length - 1)
+            ] ?? 0;
+          clockReadCount++;
+          return input.nowMs + offset;
+        },
+      },
+      rates: {
+        moneyPerSecond: input.rates.money,
+        gemsPerSecond: input.rates.gems,
+        planetCoinsPerSecond: input.rates.planetCoins,
+      },
+      formatNumber: (value, precision, limit, below1000) =>
+        formatNumber(value, formatter!, precision, limit, below1000),
+    });
+    if (result.type !== "offlineLoad") {
+      throw new Error(`${scenario.name}: expected an offline-load result.`);
+    }
+
+    const expectedElapsed =
+      (scenario.dateNowReads[1]! -
+        (input.omitLastActive
+          ? scenario.dateNowReads[0]!
+          : input.nowMs - input.elapsedSeconds * 1000)) /
+      1000;
+    const expectedApplied = expectedElapsed > 300 && !input.noOffline;
+    expect(clockReadCount, `${scenario.name}: source clock reads`).toBe(
+      scenario.clockReadCount,
+    );
+    expect(result.elapsedSeconds, scenario.name).toBe(expectedElapsed);
+    expect(result.processedSeconds, scenario.name).toBe(
+      expectedApplied
+        ? Math.min(
+            calculateRemixOfflineCapSeconds(input.upgrades.offlineTime),
+            expectedElapsed,
+          )
+        : 0,
+    );
+    expect(result.applied, scenario.name).toBe(expectedApplied);
+    expect(
+      {
+        money: snapshot(result.state.resources.money),
+        highestMoney: snapshot(result.state.resources.highestMoney),
+        gems: snapshot(result.state.resources.gems),
+        planetCoins: snapshot(result.state.resources.planetCoins),
+        maxPlanetCoins: snapshot(result.state.resources.maxPlanetCoins),
+        lastActive: result.state.lastActiveMs,
+      },
+      scenario.name,
+    ).toEqual(scenario.stateAfterLoad);
+    expect(
+      result.effects.filter(({ type }) => type === "logMessage"),
+      scenario.name,
+    ).toEqual(expectedApplied ? [scenario.events[0]] : []);
+    expect(
+      result.effects.map(({ type }) => type),
+      scenario.name,
+    ).toEqual(expectedApplied ? ["logMessage", "save"] : []);
+    if (expectedApplied) {
+      const saveEffect = result.effects.find(({ type }) => type === "save");
+      expect(saveEffect).toEqual({ type: "save", state: result.state });
+    }
+    expect(withoutOfflineFields(result.state), scenario.name).toEqual(before);
+    expect(
+      withoutOfflineFields(state),
+      `${scenario.name}: input unchanged`,
+    ).toEqual(before);
+  }
 });

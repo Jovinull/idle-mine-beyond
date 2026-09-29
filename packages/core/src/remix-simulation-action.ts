@@ -2,7 +2,7 @@ import {
   generateRemixMineObject,
   type RemixMineObjectCatalog,
 } from "./mine-objects.js";
-import { Decimal } from "./decimal.js";
+import { Decimal, type DecimalSource } from "./decimal.js";
 import {
   performRemixMiningAction,
   type RemixMiningActionResult,
@@ -16,6 +16,13 @@ import {
   attemptRemixPickaxeCraft,
   type RemixPickaxeCraftEvent,
 } from "./remix-pickaxe-crafting.js";
+import {
+  calculateRemixOfflineCapSeconds,
+  processRemixOfflineProgress,
+  type RemixOfflineClock,
+  type RemixOfflineNumberFormatter,
+  type RemixOfflineRewards,
+} from "./remix-offline-progression.js";
 import {
   executeRemixUpgradePurchase,
   type RemixUpgradePurchaseOperation,
@@ -45,10 +52,23 @@ export type RemixPickaxeCraftSimulationAction = {
   shiftHeld: boolean;
 };
 
+export type RemixOfflineLoadSimulationAction = {
+  type: "offlineLoad";
+  /** Mirrors `loadGame`'s third argument. Omitted means offline rewards apply. */
+  noOffline?: boolean;
+};
+
 export type RemixSimulationAction =
   | RemixMiningSimulationAction
   | RemixUpgradePurchaseSimulationAction
-  | RemixPickaxeCraftSimulationAction;
+  | RemixPickaxeCraftSimulationAction
+  | RemixOfflineLoadSimulationAction;
+
+export type RemixOfflineSimulationRates = {
+  moneyPerSecond: DecimalSource;
+  gemsPerSecond: DecimalSource;
+  planetCoinsPerSecond: DecimalSource;
+};
 
 export type RemixSimulationActionInput =
   | {
@@ -67,13 +87,22 @@ export type RemixSimulationActionInput =
       action: RemixPickaxeCraftSimulationAction;
       catalog: RemixMineObjectCatalog;
       random: RemixMiningRandom;
+    }
+  | {
+      state: RemixSimulationState;
+      action: RemixOfflineLoadSimulationAction;
+      clock: RemixOfflineClock;
+      rates: RemixOfflineSimulationRates;
+      formatNumber: RemixOfflineNumberFormatter;
     };
 
-export type RemixSimulationEffect = {
-  type: "save";
-  /** Core state at the source save call, before that frame's Story refresh. */
-  state: RemixSimulationState;
-};
+export type RemixSimulationEffect =
+  | {
+      type: "save";
+      /** Full core state at the source save call. */
+      state: RemixSimulationState;
+    }
+  | { type: "logMessage"; message: string; color: string };
 
 export type RemixSimulationActionResult =
   | RemixMiningSimulationActionResult
@@ -89,7 +118,30 @@ export type RemixSimulationActionResult =
       state: RemixSimulationState;
       events: RemixPickaxeCraftEvent[];
       effects: RemixSimulationEffect[];
+    }
+  | {
+      type: "offlineLoad";
+      state: RemixSimulationState;
+      elapsedSeconds: number;
+      processedSeconds: number;
+      applied: boolean;
+      rewards: RemixOfflineRewards;
+      effects: RemixSimulationEffect[];
     };
+
+function createUpgradeContext(
+  state: RemixSimulationState,
+): RemixUpgradeContext {
+  return {
+    levels: state.upgrades,
+    powers: {
+      craftsmanship: state.powers.craftsmanship,
+      expertise: state.powers.expertise,
+      exquisity: state.powers.exquisity,
+    },
+    highestMineObjectLevel: state.highestMineObjectLevel,
+  };
+}
 
 function performUpgradePurchase(
   state: RemixSimulationState,
@@ -143,15 +195,7 @@ function performPickaxeCraft(
   catalog: RemixMineObjectCatalog,
   random: RemixMiningRandom,
 ): RemixSimulationActionResult {
-  const context: Omit<RemixUpgradeContext, "random"> = {
-    levels: state.upgrades,
-    powers: {
-      craftsmanship: state.powers.craftsmanship,
-      expertise: state.powers.expertise,
-      exquisity: state.powers.exquisity,
-    },
-    highestMineObjectLevel: state.highestMineObjectLevel,
-  };
+  const context = createUpgradeContext(state);
   const craft = attemptRemixPickaxeCraft({
     state: {
       gems: state.resources.gems,
@@ -204,6 +248,77 @@ function performPickaxeCraft(
   };
 }
 
+function performOfflineLoad(
+  state: RemixSimulationState,
+  action: RemixOfflineLoadSimulationAction,
+  input: Extract<RemixSimulationActionInput, { clock: RemixOfflineClock }>,
+): RemixSimulationActionResult {
+  const context = createUpgradeContext(state);
+  const offline = processRemixOfflineProgress({
+    state: {
+      money: state.resources.money,
+      highestMoney: state.resources.highestMoney,
+      gems: state.resources.gems,
+      planetCoins: state.resources.planetCoins,
+      maxPlanetCoins: state.resources.maxPlanetCoins,
+      ...(state.lastActiveMs === undefined
+        ? {}
+        : { lastActiveMs: state.lastActiveMs }),
+    },
+    clock: input.clock,
+    noOffline: action.noOffline ?? false,
+    maxOfflineSeconds: calculateRemixOfflineCapSeconds(
+      calculateRemixUpgradeEffect(
+        "planetCoins",
+        "offlineTime",
+        state.upgrades.planetCoins.offlineTime,
+        context,
+      ),
+    ),
+    moneyPerSecond: input.rates.moneyPerSecond,
+    gemsPerSecond: input.rates.gemsPerSecond,
+    planetCoinsPerSecond: input.rates.planetCoinsPerSecond,
+    offlineGemsMultiplier: calculateRemixUpgradeEffect(
+      "gems",
+      "offlineGems",
+      state.upgrades.gems.offlineGems,
+      context,
+    ),
+    offlinePlanetCoinsMultiplier: calculateRemixUpgradeEffect(
+      "planetCoins",
+      "offlinePC",
+      state.upgrades.planetCoins.offlinePC,
+      context,
+    ),
+    formatNumber: input.formatNumber,
+  });
+  const nextState: RemixSimulationState = {
+    ...state,
+    lastActiveMs: offline.state.lastActiveMs,
+    resources: {
+      ...state.resources,
+      money: offline.state.money,
+      highestMoney: offline.state.highestMoney,
+      gems: offline.state.gems,
+      planetCoins: offline.state.planetCoins,
+      maxPlanetCoins: offline.state.maxPlanetCoins,
+    },
+  };
+  const effects: RemixSimulationEffect[] = offline.effects.map((effect) =>
+    effect.type === "logMessage" ? effect : { type: "save", state: nextState },
+  );
+
+  return {
+    type: "offlineLoad",
+    state: nextState,
+    elapsedSeconds: offline.elapsedSeconds,
+    processedSeconds: offline.processedSeconds,
+    applied: offline.applied,
+    rewards: offline.rewards,
+    effects,
+  };
+}
+
 export type RemixMiningSimulationActionResult = {
   type: "mining";
   state: RemixSimulationState;
@@ -211,8 +326,9 @@ export type RemixMiningSimulationActionResult = {
 } & Omit<RemixMiningActionResult, "state">;
 
 /**
- * Applies one player click, idle frame, or upgrade purchase without platform
- * dependencies. Time, RNG, content, and save behavior stay at explicit edges.
+ * Applies one player click, idle frame, upgrade purchase, pickaxe craft, or
+ * offline-load transition without platform dependencies. Time, RNG, content,
+ * rates, formatting, and save behavior stay at explicit edges.
  */
 export function performRemixSimulationAction(
   input: RemixSimulationActionInput,
@@ -265,6 +381,10 @@ export function performRemixSimulationAction(
       input.catalog,
       input.random,
     );
+  }
+
+  if ("clock" in input) {
+    return performOfflineLoad(input.state, input.action, input);
   }
 
   return performUpgradePurchase(input.state, input.action);

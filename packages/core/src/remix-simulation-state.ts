@@ -22,6 +22,8 @@ export type RemixSimulationState = Omit<
   pickaxe: RemixMiningActionState["pickaxe"] & { name: string };
   powersUnlocked: boolean;
   usedGemsLevel: number;
+  /** Last save/load timestamp supplied by the persistence boundary. */
+  lastActiveMs?: number;
   story: RemixStoryProgress & { page: number };
 };
 
