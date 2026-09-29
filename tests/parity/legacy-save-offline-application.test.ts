@@ -12,8 +12,12 @@ import {
 } from "../../packages/formatting/src/index.js";
 import {
   createInitialRemixLegacySaveApplicationState,
+  decodeRemixBeyondSave,
+  encodeRemixBeyondSave,
   encodeRemixLegacySave,
   loadRemixLegacySaveIntoState,
+  restoreRemixBeyondSave,
+  type RemixLegacySaveApplicationState,
 } from "../../packages/persistence/src/index.js";
 
 type DecimalSnapshot = {
@@ -124,6 +128,36 @@ function upgradeLevels(group: SavedUpgradeGroup) {
   return Object.fromEntries(
     Object.entries(group).map(([key, upgrade]) => [key, upgrade.level]),
   );
+}
+
+function summarizeApplicationState(state: RemixLegacySaveApplicationState) {
+  const { simulation } = state;
+  return {
+    simulation: {
+      ...simulation,
+      currentObject: simulation.currentObject.id,
+      resources: Object.fromEntries(
+        Object.entries(simulation.resources).map(([key, value]) => [
+          key,
+          value.toString(),
+        ]),
+      ),
+      powers: Object.fromEntries(
+        Object.entries(simulation.powers).map(([key, value]) => [
+          key,
+          value.toString(),
+        ]),
+      ),
+      pickaxe: {
+        ...simulation.pickaxe,
+        power: simulation.pickaxe.power.toString(),
+        quality: simulation.pickaxe.quality.toString(),
+      },
+    },
+    storyScrollY: state.storyScrollY,
+    settings: state.settings,
+    powerValueExtras: state.powerValueExtras.map((value) => value.toString()),
+  };
 }
 
 it("loads a Remix save before deriving and applying its offline rewards", () => {
@@ -281,6 +315,19 @@ it("loads a Remix save before deriving and applying its offline rewards", () => 
     settings: result.effects[2].state.settings,
   }).toMatchObject(expectedStoredSave);
   expect(result.effects).toHaveLength(3);
+
+  const versioned = decodeRemixBeyondSave(encodeRemixBeyondSave(result.state));
+  expect(versioned.status).toBe("valid");
+  if (versioned.status !== "valid") {
+    throw new Error(`Expected a valid Beyond save; got ${versioned.status}.`);
+  }
+  const restored = restoreRemixBeyondSave(
+    versioned.save,
+    corpus.data.mineObjectCatalog,
+  );
+  expect(summarizeApplicationState(restored)).toEqual(
+    summarizeApplicationState(result.state),
+  );
 });
 
 it("loads fields without offline rewards when Remix disables that branch", () => {
