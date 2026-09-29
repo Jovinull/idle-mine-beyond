@@ -24,6 +24,22 @@ export interface RemixOfflineRewards {
   readonly planetCoins: Decimal;
 }
 
+export interface RemixOfflineRates {
+  readonly moneyPerSecond: DecimalSource;
+  readonly gemsPerSecond: DecimalSource;
+  readonly planetCoinsPerSecond: DecimalSource;
+}
+
+type RemixOfflineProgressInput = {
+  readonly state: RemixOfflineState;
+  readonly clock: RemixOfflineClock;
+  readonly noOffline: boolean;
+  readonly maxOfflineSeconds: number;
+  readonly offlineGemsMultiplier: DecimalSource;
+  readonly offlinePlanetCoinsMultiplier: DecimalSource;
+  readonly formatNumber: RemixOfflineNumberFormatter;
+} & ({ readonly resolveRates: () => RemixOfflineRates } | RemixOfflineRates);
+
 export type RemixOfflineEffect =
   | {
       readonly type: "logMessage";
@@ -75,18 +91,9 @@ export function formatRemixOfflineRewardMessage(
   return message;
 }
 
-export function processRemixOfflineProgress(input: {
-  readonly state: RemixOfflineState;
-  readonly clock: RemixOfflineClock;
-  readonly noOffline: boolean;
-  readonly maxOfflineSeconds: number;
-  readonly moneyPerSecond: DecimalSource;
-  readonly gemsPerSecond: DecimalSource;
-  readonly planetCoinsPerSecond: DecimalSource;
-  readonly offlineGemsMultiplier: DecimalSource;
-  readonly offlinePlanetCoinsMultiplier: DecimalSource;
-  readonly formatNumber: RemixOfflineNumberFormatter;
-}): RemixOfflineResult {
+export function processRemixOfflineProgress(
+  input: RemixOfflineProgressInput,
+): RemixOfflineResult {
   // loadVal(loadObj.lastActive, Date.now()) evaluates the fallback even when
   // the save already has lastActive, then loadGame reads Date.now() again.
   const fallbackNowMs = input.clock.now();
@@ -111,7 +118,15 @@ export function processRemixOfflineProgress(input: {
   }
 
   const processedSeconds = Math.min(input.maxOfflineSeconds, elapsedSeconds);
-  const moneyReward = new Decimal(input.moneyPerSecond).mul(
+  const rates =
+    "resolveRates" in input
+      ? input.resolveRates()
+      : {
+          moneyPerSecond: input.moneyPerSecond,
+          gemsPerSecond: input.gemsPerSecond,
+          planetCoinsPerSecond: input.planetCoinsPerSecond,
+        };
+  const moneyReward = new Decimal(rates.moneyPerSecond).mul(
     REMIX_OFFLINE_MONEY_MULTIPLIER * processedSeconds,
   );
   const gemMultiplierSeconds =
@@ -120,10 +135,10 @@ export function processRemixOfflineProgress(input: {
     new Decimal(input.offlinePlanetCoinsMultiplier).toNumber() *
     processedSeconds;
   const gemsReward = Decimal.floor(
-    new Decimal(input.gemsPerSecond).mul(gemMultiplierSeconds),
+    new Decimal(rates.gemsPerSecond).mul(gemMultiplierSeconds),
   );
   const planetCoinsReward = Decimal.floor(
-    new Decimal(input.planetCoinsPerSecond).mul(planetCoinMultiplierSeconds),
+    new Decimal(rates.planetCoinsPerSecond).mul(planetCoinMultiplierSeconds),
   );
   const rewards: RemixOfflineRewards = {
     money: moneyReward,

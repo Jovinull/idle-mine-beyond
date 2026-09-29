@@ -2,12 +2,14 @@ import {
   generateRemixMineObject,
   type RemixMineObjectCatalog,
 } from "./mine-objects.js";
-import { Decimal, type DecimalSource } from "./decimal.js";
+import { Decimal } from "./decimal.js";
 import {
   performRemixMiningAction,
+  resolveRemixMiningInput,
   type RemixMiningActionResult,
   type RemixMiningRandom,
 } from "./remix-mining-transitions.js";
+import { calculateRemixMiningRates } from "./mining-rates.js";
 import {
   refreshRemixStoryNotifications,
   type RemixStoryMilestone,
@@ -64,12 +66,6 @@ export type RemixSimulationAction =
   | RemixPickaxeCraftSimulationAction
   | RemixOfflineLoadSimulationAction;
 
-export type RemixOfflineSimulationRates = {
-  moneyPerSecond: DecimalSource;
-  gemsPerSecond: DecimalSource;
-  planetCoinsPerSecond: DecimalSource;
-};
-
 export type RemixSimulationActionInput =
   | {
       state: RemixSimulationState;
@@ -91,8 +87,8 @@ export type RemixSimulationActionInput =
   | {
       state: RemixSimulationState;
       action: RemixOfflineLoadSimulationAction;
+      catalog: RemixMineObjectCatalog;
       clock: RemixOfflineClock;
-      rates: RemixOfflineSimulationRates;
       formatNumber: RemixOfflineNumberFormatter;
     };
 
@@ -275,9 +271,16 @@ function performOfflineLoad(
         context,
       ),
     ),
-    moneyPerSecond: input.rates.moneyPerSecond,
-    gemsPerSecond: input.rates.gemsPerSecond,
-    planetCoinsPerSecond: input.rates.planetCoinsPerSecond,
+    resolveRates: () => {
+      const rates = calculateRemixMiningRates(
+        resolveRemixMiningInput({ state, catalog: input.catalog }).mining,
+      );
+      return {
+        moneyPerSecond: rates.moneyPerSecond,
+        gemsPerSecond: rates.gemsPerSecond,
+        planetCoinsPerSecond: rates.planetCoinsPerSecond,
+      };
+    },
     offlineGemsMultiplier: calculateRemixUpgradeEffect(
       "gems",
       "offlineGems",
@@ -328,7 +331,7 @@ export type RemixMiningSimulationActionResult = {
 /**
  * Applies one player click, idle frame, upgrade purchase, pickaxe craft, or
  * offline-load transition without platform dependencies. Time, RNG, content,
- * rates, formatting, and save behavior stay at explicit edges.
+ * formatting, and save behavior stay at explicit edges.
  */
 export function performRemixSimulationAction(
   input: RemixSimulationActionInput,
@@ -374,6 +377,10 @@ export function performRemixSimulationAction(
     return { type: "mining", ...mining, state, effects };
   }
 
+  if ("clock" in input) {
+    return performOfflineLoad(input.state, input.action, input);
+  }
+
   if ("catalog" in input) {
     return performPickaxeCraft(
       input.state,
@@ -381,10 +388,6 @@ export function performRemixSimulationAction(
       input.catalog,
       input.random,
     );
-  }
-
-  if ("clock" in input) {
-    return performOfflineLoad(input.state, input.action, input);
   }
 
   return performUpgradePurchase(input.state, input.action);

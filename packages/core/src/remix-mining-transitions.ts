@@ -9,6 +9,7 @@ import {
 import {
   calculateRemixMiningFactors,
   calculateRemixMiningPowerGainMultiplier,
+  type RemixMiningUpgradeInput,
   type RemixMiningUpgradeLevels,
 } from "./remix-mining-upgrades.js";
 
@@ -72,6 +73,11 @@ export type RemixMiningActionResult = {
   objectBroken: boolean;
   highestDamageableMineObjectLevel: number;
   frameEvents: RemixMiningFrameEvent[];
+};
+
+export type RemixResolvedMiningInput = {
+  mining: RemixMiningInput;
+  highestDamageableMineObjectLevel: number;
 };
 
 /**
@@ -219,6 +225,57 @@ export function calculateRemixHighestDamageableMineObjectLevel(input: {
   return Number.MAX_SAFE_INTEGER;
 }
 
+/** Resolves the same mining factors and mine scan used by Remix rate helpers. */
+export function resolveRemixMiningInput(input: {
+  state: RemixMiningActionState;
+  catalog: RemixMineObjectCatalog;
+}): RemixResolvedMiningInput {
+  const { state } = input;
+  const upgradeInput = createRemixMiningUpgradeInput(state);
+  const baselineFactors = calculateRemixMiningFactors({
+    ...upgradeInput,
+    currentObjectIsHighestDamageable: false,
+  });
+  const highestDamageableMineObjectLevel =
+    calculateRemixHighestDamageableMineObjectLevel({
+      currentMineObjectLevel: state.mineObjectLevel,
+      mining: {
+        object: state.currentObject,
+        pickaxe: state.pickaxe,
+        factors: baselineFactors,
+      },
+      catalog: input.catalog,
+    });
+  const factors = calculateRemixMiningFactors({
+    ...upgradeInput,
+    currentObjectIsHighestDamageable:
+      state.mineObjectLevel === highestDamageableMineObjectLevel,
+  });
+
+  return {
+    mining: {
+      object: state.currentObject,
+      pickaxe: state.pickaxe,
+      factors,
+    },
+    highestDamageableMineObjectLevel,
+  };
+}
+
+function createRemixMiningUpgradeInput(
+  state: RemixMiningActionState,
+): RemixMiningUpgradeInput {
+  return {
+    levels: state.upgrades,
+    powers: {
+      mining: state.powers.mining,
+      exquisity: state.powers.exquisity,
+    },
+    highestMineObjectLevel: state.highestMineObjectLevel,
+    currentObjectIsHighestDamageable: false,
+  };
+}
+
 /**
  * Resolves one active click or one animation-frame idle update using only
  * explicit game state, elapsed time, content, and RNG services.
@@ -231,40 +288,9 @@ export function performRemixMiningAction(input: {
   random: RemixMiningRandom;
 }): RemixMiningActionResult {
   const { state } = input;
-  const upgradeInput = {
-    levels: state.upgrades,
-    powers: {
-      mining: state.powers.mining,
-      exquisity: state.powers.exquisity,
-    },
-    highestMineObjectLevel: state.highestMineObjectLevel,
-    currentObjectIsHighestDamageable: false,
-  };
-  const baselineFactors = calculateRemixMiningFactors({
-    ...upgradeInput,
-    currentObjectIsHighestDamageable: false,
-  });
-  const miningForScan: RemixMiningInput = {
-    object: state.currentObject,
-    pickaxe: state.pickaxe,
-    factors: baselineFactors,
-  };
-  const highestDamageableMineObjectLevel =
-    calculateRemixHighestDamageableMineObjectLevel({
-      currentMineObjectLevel: state.mineObjectLevel,
-      mining: miningForScan,
-      catalog: input.catalog,
-    });
-  const factors = calculateRemixMiningFactors({
-    ...upgradeInput,
-    currentObjectIsHighestDamageable:
-      state.mineObjectLevel === highestDamageableMineObjectLevel,
-  });
-  const mining: RemixMiningInput = {
-    object: state.currentObject,
-    pickaxe: state.pickaxe,
-    factors,
-  };
+  const { mining, highestDamageableMineObjectLevel } =
+    resolveRemixMiningInput(input);
+  const factors = mining.factors;
   const hitDamage =
     input.action === "activeClick"
       ? calculateRemixActiveDamage(mining)
@@ -317,7 +343,7 @@ export function performRemixMiningAction(input: {
       gemMultiplier: factors.gemMultiplier,
       lastObjectGemMultiplier: factors.lastObjectGemMultiplier,
       miningPowerGainMultiplier: calculateRemixMiningPowerGainMultiplier({
-        upgradeInput,
+        upgradeInput: createRemixMiningUpgradeInput(state),
         action: input.action,
       }),
     },

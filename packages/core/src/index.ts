@@ -25,6 +25,7 @@ export {
   applyRemixMiningHit,
   calculateRemixHighestDamageableMineObjectLevel,
   performRemixMiningAction,
+  resolveRemixMiningInput,
 } from "./remix-mining-transitions.js";
 export type {
   RemixMiningAction,
@@ -34,6 +35,7 @@ export type {
   RemixMiningHitEffects,
   RemixMiningHitResult,
   RemixMiningRandom,
+  RemixResolvedMiningInput,
   RemixMiningTransitionResources,
   RemixMiningTransitionState,
 } from "./remix-mining-transitions.js";
@@ -93,6 +95,7 @@ export type {
   RemixOfflineClock,
   RemixOfflineEffect,
   RemixOfflineNumberFormatter,
+  RemixOfflineRates,
   RemixOfflineResult,
   RemixOfflineRewards,
   RemixOfflineState,
@@ -142,7 +145,6 @@ export type {
   RemixSimulationEffect,
   RemixPickaxeCraftSimulationAction,
   RemixOfflineLoadSimulationAction,
-  RemixOfflineSimulationRates,
   RemixUpgradePurchaseSimulationAction,
 } from "./remix-simulation-action.js";
 export { RemixRandom } from "./remix-random.js";
