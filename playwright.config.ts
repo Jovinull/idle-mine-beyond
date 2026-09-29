@@ -15,8 +15,11 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
+    // Start Vite directly. On Linux, `pnpm exec` puts it in a separate process
+    // group that Playwright cannot stop, so the run never exits.
     command:
-      "pnpm --dir apps/web exec vite dev --host 127.0.0.1 --port 4173 --strictPort",
+      "node ../../node_modules/vite/bin/vite.js dev --host 127.0.0.1 --port 4173 --strictPort",
+    cwd: "apps/web",
     url: "http://127.0.0.1:4173",
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,

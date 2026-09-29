@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
 import { createServer } from "node:http";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { gzipSync } from "node:zlib";
+import { gunzipSync, gzipSync } from "node:zlib";
 import path from "node:path";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
@@ -672,6 +672,18 @@ async function main() {
         }
       }
     }
+    // gzip headers record the host OS, so checks reuse a saved baseline whose
+    // decompressed pixels match instead of comparing freshly compressed bytes.
+    for (const [level, image] of pixelBaselines) {
+      image.compressed = gzipSync(image.rgba);
+      if (mode !== "--check-pixel-goldens") continue;
+      const saved = await readFile(
+        path.join(visualGoldenDirectory, `level-${level}.rgba.gz`),
+      ).catch(() => undefined);
+      if (saved && gunzipSync(saved).equals(image.rgba)) {
+        image.compressed = saved;
+      }
+    }
     const previews = [...pixelBaselines.entries()]
       .sort(([left], [right]) => left - right)
       .map(([level, image]) => {
@@ -687,7 +699,7 @@ async function main() {
           height: image.height,
           pixelSha256: image.pixelSha256,
           rgbaSha256: sha256(image.rgba),
-          compressedSha256: sha256(gzipSync(image.rgba)),
+          compressedSha256: sha256(image.compressed),
           file: `level-${level}.rgba.gz`,
         };
       });
@@ -712,7 +724,7 @@ async function main() {
         const image = pixelBaselines.get(preview.level);
         await writeFile(
           path.join(visualGoldenDirectory, preview.file),
-          gzipSync(image.rgba),
+          image.compressed,
         );
       }
       await writeFile(
