@@ -12,7 +12,7 @@
       "Scripts/Components/mine-object.js"
     ],
     "captureMethod": "Read-only local server of the pinned clean checkout; Playwright Chromium; SHA-verified CDN snapshots.",
-    "browser": { "name": "Chromium", "version": "154.0.8037.58" },
+    "browser": { "name": "Chromium", "version": "153.0.8010.12" },
     "playwrightVersion": "1.63.0",
     "colorScheme": "light",
     "locale": "en-US",
@@ -231,7 +231,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "b8e80f5fc82ac6acbbca3952eb4dfd933866061dd639ad5e92b278c7d6abcff0"
+              "pixelSha256": "bf4542af7e9b0b7b88789bfdf03a09135b02c53975b8b3f47db59bb5088cacab"
             }
           ]
         },
@@ -248,7 +248,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "aedf71eb9bba34431f3ada547ce0699c7ae0164c06c48fe7ca72ddab7b7f7b39"
+              "pixelSha256": "41f3cbca28fdaea437cf5f9162f1433d4a1ff49275948f695a14ed57ef963670"
             }
           ]
         },
@@ -274,7 +274,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "afb33789b0f02045e34ccc00729e3f41803c1555b274323295b4a59b4d19bdb3"
+              "pixelSha256": "9e1884abef42cd5a3617b8944873834b86a11199b3ad66e05ef348ba2ea4190e"
             }
           ]
         },
@@ -291,7 +291,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "be5e2ad2301555c96088a0fe6b8bfb02e68eb09f0b17ff4e17fdcd386889ba81"
+              "pixelSha256": "9fa138e3b4ac65933bdd075e0de191877875451da7f3ca21e89585a25f6de4a9"
             }
           ]
         }
@@ -505,7 +505,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "b73f5a04c9694d0c93b004bf4d974a2b34f04b5b03c0bf3db17784116a526170"
+              "pixelSha256": "b1487f1a8ffbab05bac3832da1b9b5c5fd9b8af31cd7e3d2ef22e883c4f31646"
             }
           ]
         },
@@ -531,7 +531,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "bda4fcfa25b5feff10bd2a09eb3224945732c8af012366ffaebd4df6ff93a67f"
+              "pixelSha256": "59f34d7dc742cad1c8cf19b3df0c7edfd4e78b2d2fa5d04117bd55d65232ff49"
             }
           ]
         },
@@ -557,7 +557,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "672c5bf207f5fb06536d833571fac26d47c5f155af678ee4fd5d0033caebc8af"
+              "pixelSha256": "0efd6c1b1ef5553c828e024f81760d20fd8201133767e9550cd445edafd2b0d8"
             }
           ]
         },
@@ -781,7 +781,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "ba8bdd7a58fa557e1b5eb977bbff5dac39e47eaa0cf5c0ea2a38a889acf2de75"
+              "pixelSha256": "6ab5adff9bb26630d752ed43f583d0b8a0ca93e6d9220f09d47a545fc96ef217"
             }
           ]
         },
@@ -798,7 +798,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "79442fdba7d36fa1a57d71b99b5ce03f40cd179b6cd00af7cd013f6abfcc376c"
+              "pixelSha256": "c5fd2330e44a5479ef8cd29c6f197c995141f2ebea535e44d25111270ad4bb45"
             }
           ]
         },
@@ -815,7 +815,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "70bf8553a420086da4b7ca89ce5a5bcec8bec520829740878ad4c341b45d8ee5"
+              "pixelSha256": "d734410d6512f61781ab674f002fea9aed5442486f3f956d2e5dc9fef02187fb"
             }
           ]
         },
@@ -841,7 +841,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "dbfdc77d741a145ec0cd30b492308233d270d74188c5fd79b8052a98e702b41d"
+              "pixelSha256": "ad1738eeedca22aa30b948d02584f8a6c7691815f4b3b8fbbc8de51858005b11"
             }
           ]
         },
@@ -875,7 +875,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "59a6141ebf336cc627e4ee48a0b556e83b07b4f303d1a03c86600a27e6aa058c"
+              "pixelSha256": "7db03f97654b14db4b910a30131bb6a3dc24e5e3c5ef33cc44e8a6521898854b"
             }
           ]
         }
@@ -1108,7 +1108,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "13b19c9fd9548560a411bb9c87c6fdc66381a327b8cf68818374d17283f22996"
+              "pixelSha256": "054cc462f63bb42add323cc572cbc7767d213ea40bbc4f4afb5863a0070c683f"
             }
           ]
         },
@@ -1134,7 +1134,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "9367835833c5cb0095dafe54884c1468ddb02826a51eb90e6e176be5d03c2280"
+              "pixelSha256": "8b906f825b8ee5f7cb09a1cff777b7f249aa92551e85e67d78541a2de26e3fe6"
             }
           ]
         }
@@ -1347,7 +1347,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "b14b087a034ba8af09d5bd5511ef250627335b040b4b28a687a2e84a65fcf30c"
+              "pixelSha256": "5bea9de9c31f0c72c8c4161fe6f9c2936f02c104bba07f5413db9f807212f2af"
             }
           ]
         },
@@ -1373,7 +1373,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "235d80a44487d78d5947cee49a82771c19fa5e8de735dadbba4911b3a6d706e3"
+              "pixelSha256": "1a32dbb9005f2487bed481515bbdb148c288f59c62c5ebe3eb2c236abed705ad"
             }
           ]
         },
@@ -1390,7 +1390,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "3e14bd369a6321cfd83be2bb0135ddb3d7f1b49a40d0ce818d0355c60fedb88b"
+              "pixelSha256": "adb7c1ba7157f86f154108c08342dbbf65c96be6ff81b295eeb108b31892f662"
             }
           ]
         }
@@ -1603,7 +1603,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "20eba03a45eaee07d779844449a0f95592ff8e42bb2a6e8ece43d1eda73014a6"
+              "pixelSha256": "cc36664670cbafb79fad3c7c1a463867ef96aa6d986f81f42e795dfc617239a7"
             }
           ]
         },
@@ -1629,7 +1629,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "74df8f7c5e2c8fe289805d166601c1891a19907244eae8edff53a82c89025ade"
+              "pixelSha256": "a2e500dacd34ef6d849c8d3c17e581b08232d1e10144415287e10354f95f347a"
             }
           ]
         },
@@ -1646,7 +1646,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "39480f23b8ee03410b2c8491ae57c3e6c983aff705ff3e1f3311e15444eaf2b8"
+              "pixelSha256": "04cff5c0b43446de1c0829596c8f9fdcc3328075609f8dbde7c94e8cc5c7324b"
             }
           ]
         },
@@ -1663,7 +1663,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "89a2c2dabbbb7de7acb6752bc3591926f56f8596e5a5493f5302e76d318317ed"
+              "pixelSha256": "0e4b8b0bf1d573273af983690212324e08265476fd11802c8939f0f9a17e975f"
             }
           ]
         },
@@ -1680,7 +1680,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "b58e7a8a37d3569a9bca8b7658fec1a18605920589e0ebe53a957ac02a0e8afc"
+              "pixelSha256": "e0028ee1309ce72a963e9a4e75c686ab45ca8d7df3c2c27df4997b3a5909a128"
             }
           ]
         },
@@ -1697,7 +1697,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "fb176fb346921a6411c4fb2667cfe471f39821a4412b7608436ad10d4801c91c"
+              "pixelSha256": "dee285671cacefa4f3b9cd585cbc31b933d4f8d7ff4c15df5283814c78368bec"
             }
           ]
         },
@@ -1714,7 +1714,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "dc7f2421bfbca3a48cf07eca9e0a0bd68876c5f8124fc30e7ff6e01b789b30db"
+              "pixelSha256": "c9875cb0afa5a696b4dbd5b811bc0e18d4361955b0dc3a460944cfabd1cc9bdb"
             }
           ]
         },
@@ -1731,7 +1731,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "026acce8ae095546cdd38b5f9ecbca7f9178505119137fad0c309afee7a7c42a"
+              "pixelSha256": "d61e7c09b0351abbdcc4afcf266eda9a068bd7f1e10c82f0f190b4533dd6ec47"
             }
           ]
         }
@@ -1949,7 +1949,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "a8177ba53569fb86262c3d5ebf9a08558b041c1f26053eef2ea45011c33a2faf"
+              "pixelSha256": "fac170403cb21960892f7417b1e4ce3792e6cfd129400cebaee2194cfc9f74f6"
             }
           ]
         },
@@ -1966,7 +1966,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "1783ffe97e8ad4ae23f5ee54a0c4d86ba5df0c2246fb03dee13814238f6fe2d6"
+              "pixelSha256": "532d82db1937710ba9d5b2f43d6f1d42b41c6392d208dd8b0958e712d4aa044c"
             }
           ]
         },
@@ -1983,28 +1983,28 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "2e0865ad46286ea155e3fa7f3f874ff222d56623b851e4ada2b08bca6b3d2966"
+              "pixelSha256": "7ce32a3b9ef48d58bca329cce9b838d3fd6b08c896db6853d24cf1d6efa9d7a7"
             },
             {
               "level": 138,
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "f057064451ac25b1c72f0ef4f592de1d829e25d3ed6f1fe3ec3e52c86e53bc6a"
+              "pixelSha256": "b22a875c7ba2fbf84c53cafec2a535e3999e60bb7184f01febcbf5690a03b3fc"
             },
             {
               "level": 139,
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "da57e66b52e85cc2fb18a346bdf5489303dd8ad53127aaf8c62572b822486ed8"
+              "pixelSha256": "6d902d3bf89a294f2219b778b04f11d10df995200992a79860325413d915f1bd"
             },
             {
               "level": 140,
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "b7c48085eaeceaeeff495aa09608f77150647a9422b9bf8ecc75b5174594a50f"
+              "pixelSha256": "1f9edd8265a967bcd7284a11c6f61b46d233e249cd0e164b998c538fbe0478ee"
             }
           ]
         },
@@ -2021,7 +2021,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "b7c48085eaeceaeeff495aa09608f77150647a9422b9bf8ecc75b5174594a50f"
+              "pixelSha256": "1f9edd8265a967bcd7284a11c6f61b46d233e249cd0e164b998c538fbe0478ee"
             }
           ]
         },
@@ -2246,7 +2246,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "4cc2aed976c687fd0257a9ac0084fb91fc28310791f3774f6a77cfe5207b2817"
+              "pixelSha256": "e604a398258bf3d82db2d6fbb36bc0cf1bcca7e9c2a3969855def30a3e18a6c1"
             }
           ]
         },
@@ -2272,7 +2272,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "4e3021b885626721e93865d1e723fd32be05554fe2c933ae487f832868b49700"
+              "pixelSha256": "a66164b0b66ff3746eebbb89fc78091d471741d78ab438ef6000324cb8c22761"
             }
           ]
         },
@@ -2298,7 +2298,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "de9edc3f7154d49fddac9dcd466eadc28a5e6095dc1f64fd07fa90a0cd6204fa"
+              "pixelSha256": "f4cc18049c3a6bac3adb58fa5b4fd75af11c74b7203de93eb88ffdb5116e573e"
             }
           ]
         },
@@ -2315,7 +2315,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "8b162e42ba0bae7a1a9d7a674539974add09b3f7271db49fbc78c07790a01cdd"
+              "pixelSha256": "10d1c218c5a740d82c10da55e6a4301a14a7cdfbb17b5c25d6181bdd8b6a249c"
             }
           ]
         },
@@ -2332,7 +2332,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "41780b46a4278e0171efd0b881c75d4064e7ee8e99f876c34d2f6e3086555669"
+              "pixelSha256": "7110ff56abf6b9a6ce9fbc420cc3a81783ef73720eb254495a31ac1e8814142a"
             }
           ]
         },
@@ -2349,7 +2349,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "34ce52262b2954dc9a13f5d847a9479d47f90df0dda410085778654b494ed901"
+              "pixelSha256": "b66a6df42fce6bec878a1277bcd72df3565adbb53e41c1a9a706d5d29dae52a4"
             }
           ]
         }
@@ -2574,7 +2574,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "2ad1374ec153dd414be86eda81cd76c4bad483a3050b7e013d12f3e7620b9a75"
+              "pixelSha256": "aac11e6aeb576b015eead1135e8c645d81d6be1ff7b5cf15f529d8a9ada30924"
             }
           ]
         },
@@ -2591,7 +2591,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "f052103e667ec3b6edc8c53271d93b0ccc03d26fd62dc98c59240cc7f0421f6a"
+              "pixelSha256": "36dd7c3c7e042d6758dd60cd20bef8fddf23264bdba87bd11506e9ec916357c6"
             }
           ]
         },
@@ -2608,7 +2608,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "1a0f8bd77f7428d7bd66244d9650ac249f5c17b241dcb48179879cbf9e7ef5b9"
+              "pixelSha256": "783fac4a2825d36ff382447dfed23c848d13475e5339ec7264f56ed6aa537cd2"
             }
           ]
         },
@@ -2625,7 +2625,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "9488548788940cbfe9f45d6e2f6bda8c6f4588c9fbd928018574575c9ea8467c"
+              "pixelSha256": "2572d680836cec4f37bfdfa320386987a8ac244bfef78ec6057acaca62c3f6ff"
             }
           ]
         },
@@ -2642,7 +2642,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "fd14a3fff9423c8fff6c1402f78502537dc94dec77b334eef775fc338c6767be"
+              "pixelSha256": "58a1dd4065b951666cf60a2e30aa0f5eb98f96795906293d6960cc6e5dc42186"
             }
           ]
         },
@@ -2659,7 +2659,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "d820e476ae6e9ef3c859571822b7f11ca967d0c19c08c01422d899679b577a51"
+              "pixelSha256": "d1cbf452342915e8266fce04b53e1e96b7be5adaeaf1a0497c4727fa45eba561"
             }
           ]
         },
@@ -2676,7 +2676,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "9e7d907e09e8ae7d668b1ae90aa40608e8fbaf528bcea86938bdca7438c32a15"
+              "pixelSha256": "d736a8db55c4cf61d52b608811dbfb7354b092ad7d778b134a607cf15f712de3"
             }
           ]
         },
@@ -2693,7 +2693,7 @@
               "className": "mine-object nodmg",
               "width": 256,
               "height": 224,
-              "pixelSha256": "2fda2a29e2701208ab585c9044aa85493090a9f5299d9eb81ab2b0ce782fc771"
+              "pixelSha256": "ff6425f3cc28b8d3462af95847a40deca868d264fa8db992717e8b9674f5801a"
             }
           ]
         },

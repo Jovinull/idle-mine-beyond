@@ -45,6 +45,33 @@ function sha256(contents) {
   return createHash("sha256").update(contents).digest("hex");
 }
 
+function describeValue(value) {
+  const json = JSON.stringify(value);
+  return json && json.length > 160 ? `${json.slice(0, 160)}…` : json;
+}
+
+function findFirstDifference(actual, expected, location = "$") {
+  if (JSON.stringify(actual) === JSON.stringify(expected)) return undefined;
+  if (
+    typeof actual !== "object" ||
+    typeof expected !== "object" ||
+    actual === null ||
+    expected === null
+  ) {
+    return `${location}: expected ${describeValue(expected)}, captured ${describeValue(actual)}`;
+  }
+  const keys = new Set([...Object.keys(expected), ...Object.keys(actual)]);
+  for (const key of keys) {
+    const difference = findFirstDifference(
+      actual[key],
+      expected[key],
+      `${location}.${key}`,
+    );
+    if (difference) return difference;
+  }
+  return `${location}: key order differs`;
+}
+
 function mimeType(filePath) {
   const extension = path.extname(filePath).toLowerCase();
   return (
@@ -547,6 +574,15 @@ async function main() {
       "Use --check/--write for the Story runtime or --check-pixel-goldens/--write-pixel-goldens for source Canvas baselines.",
     );
   }
+  const launchOptions = getChromiumLaunchOptions();
+  if (
+    mode.startsWith("--write") &&
+    (launchOptions.executablePath || launchOptions.channel)
+  ) {
+    throw new Error(
+      "Capture Story runtime evidence with Playwright's pinned Chromium, not an installed Chrome or PLAYWRIGHT_CHROMIUM_EXECUTABLE. Run `pnpm exec playwright install chromium` first.",
+    );
+  }
   const references = JSON.parse(await readFile(manifestPath, "utf8"));
   const dependencies = JSON.parse(await readFile(dependenciesPath, "utf8"));
   const markup = JSON.parse(await readFile(markupPath, "utf8"));
@@ -571,6 +607,14 @@ async function main() {
 
   const expected = JSON.parse(await readFile(fixturePath, "utf8"));
   captured.source.capturedOn = expected.source.capturedOn;
+  if (
+    mode !== "--write" &&
+    captured.source.browser.version !== expected.source.browser.version
+  ) {
+    throw new Error(
+      `Story runtime was captured with Chromium ${expected.source.browser.version}, but this run used ${captured.source.browser.version}. Run \`pnpm exec playwright install chromium\` so checks use Playwright's pinned browser.`,
+    );
+  }
   const pixelBaselines = new Map();
   if (mode === "--write-pixel-goldens" || mode === "--check-pixel-goldens") {
     for (const storyPage of captured.allUnlocked) {
@@ -616,7 +660,7 @@ async function main() {
 
   if (JSON.stringify(captured) !== JSON.stringify(expected)) {
     throw new Error(
-      `Story runtime differs from tests/fixtures/parity/remix-story-runtime.json. Review the reference state before recapturing.`,
+      `Story runtime differs from tests/fixtures/parity/remix-story-runtime.json at ${findFirstDifference(captured, expected)}. Review the reference state before recapturing.`,
     );
   }
   if (mode === "--write-pixel-goldens" || mode === "--check-pixel-goldens") {

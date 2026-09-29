@@ -26,14 +26,19 @@ function findInstalledChrome() {
   return candidates.find((candidate) => existsSync(candidate));
 }
 
+// Linux Chromium hints glyphs to whole pixels by default, while Windows uses
+// subpixel text positioning. Disabling hinting keeps captured text widths and
+// line wrapping identical across capture platforms.
+const args = ["--font-render-hinting=none"];
+
 export function getChromiumLaunchOptions() {
   const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE;
-  if (executablePath) return { executablePath };
+  if (executablePath) return { args, executablePath };
 
-  if (process.env.CI || existsSync(chromium.executablePath())) return {};
+  if (process.env.CI || existsSync(chromium.executablePath())) return { args };
 
   const installedChrome = findInstalledChrome();
-  if (installedChrome) return { executablePath: installedChrome };
+  if (installedChrome) return { args, executablePath: installedChrome };
 
-  return { channel: "chrome" };
+  return { args, channel: "chrome" };
 }
