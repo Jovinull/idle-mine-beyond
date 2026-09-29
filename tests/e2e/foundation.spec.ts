@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { readFile } from "node:fs/promises";
 
 test.describe.configure({ mode: "serial" });
 
@@ -62,9 +63,54 @@ test("bundles the pinned formatter boundary in a browser", async ({ page }) => {
         "Precise Prime",
         "Tritetrated",
         "YesNo",
+        "Idle Mine Notation",
+        "SI Notation (Current)",
+        "SI Notation (2022)",
       ],
       grouped: "1,000",
       percent: "0.50%",
+      idleMineHalfBoundary: "1,000",
     }),
   );
+
+  const corpus = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as {
+    data: {
+      notationSemantics: {
+        formatterRegistry: { name: string }[];
+        directFormatterOutputs: unknown;
+        formatNumberScenarios: unknown;
+        formatThousands: unknown;
+        formatPercent: unknown;
+        exponentFormatterInputs: unknown;
+        exponentFormatterOutputs: unknown;
+      };
+    };
+  };
+  const reference = corpus.data.notationSemantics;
+  const observed = await page.evaluate((fixture) => {
+    const probe = (
+      window as Window & {
+        __idleMineFormattingProbe?: (value: typeof fixture) => unknown;
+      }
+    ).__idleMineFormattingProbe;
+    if (!probe) throw new Error("Browser formatting probe did not initialize.");
+    return probe(fixture);
+  }, reference);
+
+  expect(observed).toEqual({
+    formatterNames: reference.formatterRegistry.map(({ name }) => name),
+    directFormatterOutputs: reference.directFormatterOutputs,
+    formatNumberScenarios: reference.formatNumberScenarios,
+    formatThousands: reference.formatThousands,
+    formatPercent: reference.formatPercent,
+    exponentFormatterOutputs: reference.exponentFormatterOutputs,
+  });
 });

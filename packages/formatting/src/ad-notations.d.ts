@@ -8,8 +8,16 @@ declare module "@antimatter-dimensions/notations/dist/ad-notations.esm.js" {
       places?: number,
       placesUnder1000?: number,
     ): string;
+    formatDecimal(value: DecimalSource, places?: number): string;
     formatExponent(exponent: number): string;
   }
+
+  export interface BaseNotation extends NotationFormatter {
+    readonly infinite: string;
+    formatUnder1000(value: number, places?: number): string;
+  }
+
+  export const Notation: { new (): BaseNotation };
 
   export const StandardNotation: { new (): NotationFormatter };
   export const ScientificNotation: { new (): NotationFormatter };
@@ -43,6 +51,7 @@ declare module "@antimatter-dimensions/notations/dist/ad-notations.community.esm
       places?: number,
       placesUnder1000?: number,
     ): string;
+    formatDecimal(value: DecimalSource, places?: number): string;
     formatExponent(exponent: number): string;
   }
 

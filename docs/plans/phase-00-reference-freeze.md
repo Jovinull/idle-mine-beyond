@@ -15,12 +15,12 @@ Create a reproducible, read-only reference baseline and enough source/runtime fi
 - Verified the public deployment in browser tooling and created a deterministic local oracle probe using the pinned checkout and hash-verified runtime dependencies.
 - Captured initial state, object IDs 0–214, high-ID probes, base rates/upgrades, notation samples, and a Decimal arithmetic/rounding/serialization corpus.
 - Added the `break_infinity.js@2.2.0` core boundary and golden/property checks against the Decimal corpus.
-- Added all 37 registered AD/community formatters and the three display wrappers, with golden comparison to every captured output for this subset.
+- Implemented all 40 registered formatter classes, the three display wrappers, and exponent behavior. Chromium compares every captured output in the complete formatter corpus; Node tests cover stable outputs and leave one engine-sensitive rounding value to the browser check.
 
 ## Remaining work
 
-- Implement and certify the three remaining custom notation classes after source-specific threshold review; the current matrix probes 40 formatters at 67 values plus all three game wrapper paths.
-- Extract full boundary matrices for damage/earnings, upgrades, crafting RNG, saves, offline behavior, and representative story/settings states.
+- Expand deterministic mine-object and damage/earnings probes beyond the initial object/rate samples.
+- Extract full boundary matrices for upgrades/resources, crafting RNG, saves, offline behavior, and representative story/settings states.
 - Complete the asset/font provenance audit and extract save examples with no unsupported copying.
 
 ## Validation

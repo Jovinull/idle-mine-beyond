@@ -41,6 +41,11 @@ import {
 import { Decimal, type DecimalSource } from "@idle-mine-beyond/core";
 import { RemixHahaFunnyNotation } from "./haha-funny-notation.js";
 import { RemixNiceNotation } from "./nice-notation.js";
+import {
+  IdleMineNotation,
+  SINotationCurrent,
+  SINotationNew,
+} from "./remix-custom-notations.js";
 
 export type { NotationFormatter };
 
@@ -94,6 +99,18 @@ export function createCommunityNotationFormatters(): NotationFormatter[] {
     new PrecisePrimeNotation(),
     new TritetratedNotation(),
     new YesNoNotation(),
+  ];
+}
+
+export function createCustomFormatters(): NotationFormatter[] {
+  return [new IdleMineNotation(), new SINotationCurrent(), new SINotationNew()];
+}
+
+export function createRemixFormatters(): NotationFormatter[] {
+  return [
+    ...createADNotationFormatters(),
+    ...createCommunityNotationFormatters(),
+    ...createCustomFormatters(),
   ];
 }
 

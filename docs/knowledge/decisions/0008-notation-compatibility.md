@@ -12,13 +12,13 @@ Remix initializes Standard, Scientific, Engineering, Letters, Logarithm, and Can
 
 ## Decision
 
-Keep display formatting in `packages/formatting`, outside the simulation core. Depend on the MIT-licensed `@antimatter-dimensions/notations@1.6.0` package for the classes it exports, pin its transitive Decimal dependency to 2.2.0, and alias its legacy ESM import to a bridge that re-exports the core Decimal facade. Implement the two omitted community classes from canonical Remix source, reimplement the three display wrappers, and compare outputs to the pinned corpus. Add further formatters only after source-specific behavior is understood.
+Keep display formatting in `packages/formatting`, outside the simulation core. Depend on the MIT-licensed `@antimatter-dimensions/notations@1.6.0` package for the classes it exports, pin its transitive Decimal dependency to 2.2.0, and alias its legacy ESM import to a bridge that re-exports the core Decimal facade. Independently implement the two omitted community classes and all three Remix custom classes from canonical Remix source, reimplement the display wrappers, and compare outputs to the pinned corpus.
 
 ## Consequences
 
 - The simulation core stays independent of formatting and presentation choices.
 - Tests and the web build use the same Decimal implementation as the reference runtime.
-- The formatter package and its 37 registered AD/community classes and wrappers are golden-tested; the three custom notation classes remain incomplete.
+- All 40 registered classes and their number, thousands, percent, and exponent behavior are implemented. Chromium compares every captured formatter/wrapper corpus value; Node tests omit only the engine-sensitive Idle Mine `999.5` value, which is checked in Chromium.
 - Vite aliases in the test and web configurations are compatibility-critical and must be kept synchronized.
 - The npm package license remains in the dependency; no upstream source or artwork is copied into product code.
 
@@ -26,5 +26,6 @@ Keep display formatting in `packages/formatting`, outside the simulation core. D
 
 - Remix sources: `Scripts/Define/game.js`, `Scripts/Define/functions.js`, and `index.html` at `0e0f4bf5a9c66e5603cda2ce4bd54213023dae21`.
 - The pinned Remix `Scripts/adcommunitynotations.js` and the package archive's `dist/ad-notations.community.esm.js` export list establish that Remix has `Haha Funny` and `Nice` while the ESM entry does not.
+- Pinned Remix `Scripts/customnotations.js` defines `IdleMineNotation`, `SINotationNew`, and `SINotationCurrent`; Beyond's corresponding classes are independently implemented and compared against the full captured browser corpus.
 - CDN dependency version and SHA-256: `sources/runtime-dependencies.json`.
 - Golden outputs: `tests/fixtures/parity/remix-reference-corpus.json` and `packages/formatting/src/index.test.ts`.

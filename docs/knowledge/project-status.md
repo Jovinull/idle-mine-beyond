@@ -20,13 +20,13 @@ Idle Mine: Remix, repository default branch main, commit **0e0f4bf5a9c66e5603cda
 - Added six project-local Skills, registered the three requested MCP servers, and verified their protocol initialization; Playwright and Chrome DevTools navigated to the public Remix deployment.
 - Extracted a controlled oracle corpus for all IDs 0–214, nine extreme/post-Universe IDs, the initial game state, base formula outputs, upgrade level-0→1 values, 40 formatter outputs at 67 values plus wrapper boundaries, and Decimal arithmetic/rounding/serialization edges. `pnpm test:reference` replays it from the pinned runtime and hash-pinned CDN snapshots.
 - Added `break_infinity.js@2.2.0` as the core's only Decimal boundary. The parity suite matches its captured arithmetic/serialization corpus and property-checks safe-integer JSON round-trips; damage/progression simulation remains unimplemented.
-- Added `packages/formatting` with all 37 AD/community formatters used by Remix and exact display wrappers. Two community classes missing from the dependency's ESM exports are implemented from canonical source. Golden tests match captured direct, exponent, and wrapper outputs for this subset; Playwright exercises it through the web Vite alias. The three custom formatters remain unimplemented.
+- Added `packages/formatting` with the complete 40-formatter Remix registry, all three custom formatters, and the number/thousands/percent wrappers. The omitted community ESM exports and Remix custom classes are independently implemented from the pinned source. Vitest checks Node-stable golden values; Playwright compares every captured direct, wrapper, and exponent output in Chromium, including the `999.5` Idle Mine Notation boundary.
 - Research checkouts match the recorded SHAs and are clean; the reference setup/check script is reproducible.
 - Windows Rust/Tauri `cargo check` and native build were validated; the Windows icon is an unbranded transparent scaffold placeholder.
 
 ## Not complete
 
-- No complete system extraction, Beyond gameplay simulation, gameplay UI, save importer, PWA, or parity certification. The object/rate corpora and three of 40 notation implementations remain partial; no full gameplay matrix row is certified.
+- No complete system extraction, Beyond gameplay simulation, gameplay UI, save importer, PWA, or parity certification. Object/rate corpora remain partial; no full gameplay matrix row is certified.
 - No accepted behavioral exceptions.
 - No Android/iOS SDK or mobile build setup.
 - Upstream game code/assets have not been ported into product code.
@@ -42,4 +42,4 @@ Idle Mine: Remix, repository default branch main, commit **0e0f4bf5a9c66e5603cda
 
 ## Next phase
 
-Continue Phase 0 source archaeology by implementing and testing the three remaining custom notations, then capture formula boundary matrices for damage/earnings, upgrades/resources, crafting RNG, saves/import, offline time, and representative story/settings states. Add fixtures before implementing each respective domain; do not treat the partial corpora as complete specifications.
+Continue Phase 0 source archaeology by expanding deterministic mine-object and damage/earnings probes, then extract upgrade/resource, crafting RNG, save/import, offline-time, and representative story/settings boundaries. Add fixtures before implementing each respective domain; do not treat the partial corpora as complete specifications.

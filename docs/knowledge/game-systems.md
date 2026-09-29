@@ -36,7 +36,7 @@ Pickaxe crafting is stochastic and may return a dud. Its complete source-derived
 
 ## Notations
 
-The game combines built-in and additional community notation implementations, filters some entries, and adds Idle Mine-specific and SI formats. Preserve the selected name, formatting edge cases, and threshold behavior. Record exact outputs as fixtures; do not substitute a generic formatter.
+The game combines built-in and additional community notation implementations, filters some entries, and adds `Idle Mine Notation`, `SI Notation (Current)`, and `SI Notation (2022)`. Preserve the selected name, formatting edge cases, and threshold behavior. Record exact outputs as fixtures; do not substitute a generic formatter. The three custom implementations come from pinned `Scripts/customnotations.js`. The complete captured formatter/wrapper corpus passes in Chromium. Node and Chromium differ at the `999.5` Idle Mine Notation rounding boundary; see [testing and parity](testing-and-parity.md). Keep the source operation order and verify target browser behavior instead of introducing a guessed correction.
 
 ## Open extraction work
 
