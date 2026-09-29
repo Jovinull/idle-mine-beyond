@@ -21,11 +21,11 @@ Descriptions should be short, scoped, and non-overlapping. Skills should not rep
 
 The intended minimum set is:
 
-| Server              | Purpose                                               | Configuration and security                                                                                                                    |
-| ------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| GitHub MCP Server   | Repository/source archaeology, issues, PRs, Actions   | Official GitHub server; read-only tool filter and minimal read toolsets. OAuth consent may be required. No token is stored in the repository. |
-| Playwright MCP      | Browser interaction, flows, screenshots               | Official Microsoft/Playwright project; isolated headless profile for the Codex server.                                                        |
-| Chrome DevTools MCP | DOM/CSS, console, network, and performance inspection | Official Google/Chrome project; isolated headless browser.                                                                                    |
+| Server              | Purpose                                               | Configuration and security                                                                                                                                                                      |
+| ------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GitHub MCP Server   | Repository/source archaeology, issues, PRs, Actions   | Official GitHub server; selected-only App installation grants repository writes for `Jovinull/idle-mine-beyond`. Key is stored outside the repository; public repositories may remain readable. |
+| Playwright MCP      | Browser interaction, flows, screenshots               | Official Microsoft/Playwright project; isolated headless profile for the Codex server.                                                                                                          |
+| Chrome DevTools MCP | DOM/CSS, console, network, and performance inspection | Official Google/Chrome project; isolated headless browser.                                                                                                                                      |
 
 Codex CLI currently stores user-scoped server config in the user's Codex config (`~/.codex/config.toml`). This is intentional for local authentication and avoids committing machine paths or credentials. The project-local `.codex/config.toml` mechanism exists but requires project trust; it is not used for secrets. Repository Skills use `.agents/skills/` per current Codex documentation, rather than the older `.codex/skills/` path noted in the initial research.
 
@@ -36,10 +36,10 @@ At bootstrap, server registration and runtime capability must be reported separa
 These three servers were added to the user-scoped Codex configuration with `idle-mine-` names so existing unrelated MCP entries are not overwritten. GitHub MCP v1.12.2 is the official Windows x64 release binary, checksum-verified against the project's release checksum file, installed under the user's Codex bin directory. Its argument list is:
 
 ```toml
-args = ["stdio", "--toolsets=repos,issues,pull_requests,actions", "--read-only", "--oauth-scopes=public_repo,read:user"]
+args = ["stdio", "--toolsets=all", "--app-id", "<app-id>", "--app-installation-id", "<installation-id>", "--app-private-key-path", "<protected-user-path>"]
 ```
 
-`codex mcp get idle-mine-github` confirms the configured arguments. On this Windows Codex CLI version, adding comma-list flags through the CLI normalized commas to spaces, so the persisted `args` entry was corrected and inspected directly. Keep each comma-list as one argument.
+`codex mcp get idle-mine-github` confirms the live App authentication arguments in user-scoped configuration. Keep the machine-specific key path and all credentials out of this repository.
 
 Browser server registration uses the current CLI and official package entry points:
 
@@ -49,11 +49,15 @@ codex mcp add idle-mine-chrome-devtools -- npx --yes chrome-devtools-mcp@1.10.1 
 codex mcp list
 ```
 
-The GitHub server initializes and exposes 25 read-only tools. Its local stdio OAuth starts a browser authorization on first GitHub read; that step is pending. The requested grant is limited to `public_repo` and `read:user`. `--read-only` filters writes, and the explicit toolsets keep the surface small. Do not pass the existing broad-scope `gh` credential to this server.
+The GitHub App installation was verified as selected-only for `Jovinull/idle-mine-beyond`. Its repository permissions are write except Metadata and Codespaces metadata, which are read-only; the App declares no organization or account permissions. The MCP uses installation tokens and `--toolsets=all`; its private key stays under the user's protected Codex secrets directory and is not committed. This scopes write access to the selected repository; GitHub may still allow reading public repository data elsewhere. After changing global MCP configuration, restart Codex so the session reloads the tool list and credentials.
 
-Playwright MCP v0.0.83 initialized with 25 tools and navigated to the canonical Remix deployment. Chrome DevTools MCP v1.10.1 initialized with 30 tools and navigated to the same deployment. Both use isolated headless Chrome; DevTools usage statistics are disabled. Codex sessions should be restarted after changing global MCP configuration so their available tool list refreshes.
+Git transport is configured separately for this checkout. Its local credential-helper list resets inherited helpers and invokes `.git/codex-auth/idle-mine-beyond-git-credential.cjs`, which accepts only the exact `https://github.com/Jovinull/idle-mine-beyond` path. It mints a short-lived installation token restricted to that repository and `contents:write`, `workflows:write`, and `metadata:read`; it does not use the broader `gh` login or persist the token. To let sandboxed Git processes read the helper, a local key copy sits beside it under `.git/codex-auth`; both files have user/SYSTEM-only ACLs and are outside Git's tracked history. The original key remains in the protected Codex secrets directory for MCP authentication.
 
-Official references: [Codex Skills](https://learn.chatgpt.com/docs/build-skills), [Codex configuration](https://learn.chatgpt.com/docs/config-file/config-reference), [GitHub MCP Server](https://github.com/github/github-mcp-server), [GitHub local stdio OAuth](https://github.com/github/github-mcp-server/blob/main/docs/oauth-login.md), [Playwright MCP](https://playwright.dev/docs/getting-started-mcp), and [Chrome DevTools MCP](https://developer.chrome.com/docs/devtools/agents/get-started).
+Earlier bootstrap validation initialized Playwright MCP v0.0.83 with 25 tools and navigated to the canonical Remix deployment. Chrome DevTools MCP v1.10.1 initialized with 30 tools and navigated to the same deployment. Both use isolated headless Chrome; DevTools usage statistics are disabled. Codex sessions should be restarted after changing global MCP configuration so their available tool list refreshes.
+
+Current session validation on 2026-09-29: the GitHub tools are available without a restart. Reading the project README and branch list succeeded, and repository metadata reports `push` and `admin` permission. GitHub write tools are present, but this check did not mutate the repository. Git transport is configured with the repo-local helper at `.git/codex-auth/idle-mine-beyond-git-credential.cjs`. The latest requested `git -c credential.interactive=never push --dry-run origin main` failed with Windows Schannel `SEC_E_NO_CREDENTIALS`; no token was printed and no push was performed. Local commits can be created and validated in this session; the user will publish them manually from an environment where Git transport authentication works. Playwright and Chrome DevTools tools appear in the tool catalog, but browser actions are denied by the host approval policy in this session; local Playwright CLI execution remains available.
+
+Official references: [Codex Skills](https://learn.chatgpt.com/docs/build-skills), [Codex configuration](https://learn.chatgpt.com/docs/config-file/config-reference), [GitHub MCP Server](https://github.com/github/github-mcp-server), [GitHub App authentication for local MCP](https://github.com/github/github-mcp-server/blob/v1.12.2/docs/github-app-auth.md), [Playwright MCP](https://playwright.dev/docs/getting-started-mcp), and [Chrome DevTools MCP](https://developer.chrome.com/docs/devtools/agents/get-started).
 
 Current CI uses `pnpm/setup@v3`; its current setup action supersedes older examples using `pnpm/action-setup`. It pins pnpm 12.6.0 and installs a Node 24 runtime. See the [official action](https://github.com/pnpm/setup) for its current inputs.
 

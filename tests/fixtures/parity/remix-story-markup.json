@@ -1,0 +1,824 @@
+{
+  "source": {
+    "repository": "https://github.com/veprogames/idle-mine-remix",
+    "commit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+    "path": "index.html",
+    "license": "MIT",
+    "copyrightNotice": "Copyright (c) 2023 veprogames",
+    "capturedOn": "2026-09-29"
+  },
+  "template": "<article v-if=\"settings.tab === 'story'\" class=\"story\">\r\n            <div class=\"chapter-control\">\r\n                <button @click=\"decreaseStoryPage\"><img v-if=\"story.page > 0\" class=\"left\" src=\"Images/btn_left.png\"/></button>\r\n                <h3>Chapter {{story.page + 1}}: {{story.chapters[story.page]}}</h3>\r\n                <button @click=\"increaseStoryPage\"><img v-if=\"story.page < getMaxStoryPage()\" class=\"right\" src=\"Images/btn_right.png\"/></button>\r\n            </div>\r\n            <div class=\"story-milestones\" ref=\"storymilestones\">\r\n                <div v-if=\"storyDisplayed('gameStart')\">\r\n                    <h3>Welcome to Idle Mine: Remix!</h3>\r\n                    <p>So you have decided to start with mining. You have heard that many treasures lie down below the surface, so you\r\n                    can't wait to find out what you can find. Maybe you can become rich?<br/>\r\n                    There's you, and your Auto-Mining-Device. Let's get started!</p>\r\n                    <p>This also acts as s sort of guide. If something is unclear, look into here as a reference.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('firstMud')\">\r\n                    <p>You mined your first piece of <b>Mud</b>! Well, it's not worth a lot, but you've got to start somewhere.</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"0\" :nodamage=\"true\"></mine-object><span>Just some ordinary Mud</span></div>\r\n                    <p>Even 2 $ can be a good start. Maybe you should try to mine something more precious?</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('firstPaper')\">\r\n                    <p>You take your Pickaxe and proceed to hit some old homework with it (You didn't need it anymore, anyways).</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"1\" :nodamage=\"true\"></mine-object><span>Paper (Your old Homework)</span></div>\r\n                    <p>For some reason it was worth a whopping 10 $! It seems like you've got the hang of it. Unfortunately, you also find out\r\n                    that it was kind of resistent to your pickaxe, so you need to craft a better one to keep growing. Luckily you have this rusty\r\n                    Blacksmith at home (for whatever reason). It doesnt look good enough though. You should try to Upgrade it.</p>\r\n                    <h4>How do I get Gems?</h4>\r\n                    <p>Every time you mine something, there is a chance that you will be awarded a Gem, used to craft Pickaxes.</p>\r\n                    <h4>Stats, Stats, Stats...</h4>\r\n                    <p>Some general Tips: Every Mineral has defense, which is an absolute reduction to click and idle damage.\r\n                    To find out what's the most efficient to mine, look at where Money/s and Money per Click are the highest.\r\n                    More gems/s mean that you can get gems faster to craft new Pickaxes. The base Damage of a pickaxe is calculated\r\n                    by multiplying its power with the quality (for example: 1,000 * 150% = 1,500). After that, Active and Idle Power\r\n                    Upgrades are applied.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('blacksmithUpgrade')\">\r\n                    <p>Just a little improvement to your Blacksmith makes it seem much stronger!</p>\r\n                    <div class=\"story-quote\"><img src=\"Images/upgrades/blacksmith.png\"/><span>Blacksmith Power!</span></div>\r\n                    <p>You should try to craft a new Pickaxe. You only need one Gem to do it! Luckily you have a few of them at home. You don't\r\n                    remember when you got them, they are just here for some reason. After crafting, you should try your luck with salt.</p>\r\n                    <h3>When should I craft?</h3>\r\n                    <p>The power and quality of a pickaxe is based on Blacksmith Upgrades. The resulting power and quality will be random,\r\n                        but will at least be as much as the minimum power and quality.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('firstSalt')\">\r\n                    <p>You take out all the salt from your kitchen drawer, and start to hammer on it with your newly crafted Pickaxe. It works\r\n                    surpisingly well, you think.</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"2\" :nodamage=\"true\"></mine-object><span>Salt (from your Kitchen Drawer)</span></div>\r\n                    <p>22 $! That is sure a lot. You could buy some Games from it, or you take it serious and invest the money into your blacksmith.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('firstClay')\">\r\n                    <p>You go to a nearby lake and dig out some clay.</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"3\" :nodamage=\"true\"></mine-object><span>Clay (fresh from the Lake)</span></div>\r\n                    <p>It's already worth 50 $! That's much more than salt. Of course it was tougher, but the reward speaks for itself.\r\n                    There's a Cave nearby. This is where the real adventure will start. Maybe you should improve your blacksmith a bit more and get a\r\n                    new Pickaxe before proceeding.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('firstStone')\">\r\n                    <p>Of course, the first thing you see when entering the cave is Stone and Rocks. And there is sure a lot of it. There is so much to be mined...</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"4\" :nodamage=\"true\"></mine-object><span>Rock (from the cave entrance)</span></div>\r\n                    <p>120 $! Not bad at all. You see a big growth coming. Venture deeper into the Cave and mine better and better stuff. Don't forget\r\n                    to buy Upgrades and craft new Pickaxes</p>\r\n                    <h4>Offline Income</h4>\r\n                    <p>For up to 6 hours, you can earn 50 % of your Money per second offline. You have to be offline for at least 5 minutes\r\n                    to be eligible of earning offline money.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('tenThousand')\">\r\n                    <div class=\"story-quote\"><img src=\"Images/money.png\"/><span>I Gotta be rich!</span></div>\r\n                    <p>Ten Thousand dollars! That's surely more than your average wage. I think you are far enough to pay your living with it.\r\n                    But also, improving your mining technology is very expensive, but it will pay off very fast.</p>\r\n                    <p>You have mined new Stuff along the way like Coal, Lead and Copper. You are starting to venture deeper into the cave.\r\n                    To be honest, this might be just the start. Great treasures await!</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('firstSpookyBone')\">\r\n                    <p>You have already went down a good bit into the mine. Stuff is getting precious down there. The first abnormal minerals are appearing</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"12\" :nodamage=\"true\"></mine-object><span>Ohhhh, Spooky!</span></div>\r\n                    <p>{{formatThousands(14000)}} $ for a bunch of Bones? Well, they are spooky! Even though you don't know why exactly they are...</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('millionaire')\">\r\n                    <p>There are multiple ways to earn a million: Winning at a quiz show, having a certain job, or, mining precious materials?\r\n                    Anyways, you've just reached <b>a Million</b>!</p>\r\n                    <div class=\"story-quote\"><img src=\"Images/money.png\"/><span>Rich. For real now.</span></div>\r\n                    <p>The journey doesn't end here! Why not get even richer? The cave is seemingly endless.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('preciousStones')\">\r\n                    <p>Precious stuff is appearing now. You are starting to see typical Gemstones: Sapphire, Ruby and Emerald. You don't know how deep\r\n                    you are, but this cave is the biggest you've ever seen. It just never ends and seems to get bigger the deeper you are.</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"18\" :nodamage=\"true\"></mine-object><span>Precious, and worth Millions</span></div>\r\n                    <p>Are we reaching the end? Definitely not!</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('gemWaster')\">\r\n                    <p>You earn Gems more easily now, so you got an Idea: if you invest multiple Gems into a Pickaxe, it should be even better.\r\n                    Now you can also use 3 Gems to craft a Pickaxe, but they turn out to be much better.</p>\r\n                    <div class=\"story-quote\"><img src=\"Images/upgrades/gemwaster.png\"/><span>Not a waste at all!</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('unrealStones')\">\r\n                    <p>You don't know what it is. It has never been discovered before. You are probably the first who has gone so far.</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"27\" :nodamage=\"true\"></mine-object><span>What is this?</span></div>\r\n                    <p>Just about 20 of these will make you the worlds richest person. Maybe the money could also be used to study and research on\r\n                        this mysterious material.</p>\r\n                    <p>Along the way, you discover more unknown and ultra precious things that have yet to be studied.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('fireEssence')\">\r\n                    <p>There it is. Another type of essence. This time it seems to be fiery and very hot. Sadly you don't have a thermometer with you.</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"33\" :nodamage=\"true\"></mine-object><span>HOT, HOT!</span></div>\r\n                    <p>Now, you need only <b>one</b> to become the richest person on the world. Alternatively, you could also give every person on the world\r\n                        about 25 $. That would be enough for some food.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('mysterium')\">\r\n                    <div class=\"story-quote\"><mine-object :level=\"35\" :nodamage=\"true\"></mine-object><span>I don't know either</span></div>\r\n                    <p>This thing is so precious that there isn't even a name for it, so let's just call it \"Mysterium\", because it\r\n                        is a mystery, after all. It will be forever mysterious and the mystery will never be solved. How mysterious is that?</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('fiftyTrillion')\">\r\n                    <p>That sure is a lot of Money. Maybe it is enough to buy the Moon?</p>\r\n                    <div class=\"story-quote\"><img src=\"Images/money.png\"/><span>Richer than Rich</span></div>\r\n                    <p>This is enough to pay off the US National debt.<br/>\r\n                    <button @click=\"payUSDebt()\">PAY ($ {{formatThousands(22e12, 1e100)}})</button></p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('lightEssence')\">\r\n                    <p>Yet another Essence found. This one glows a lot and is even bright, so bright that a few of them could light up\r\n                    an entire city.</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"47\" :nodamage=\"true\"></mine-object><span>Enlighten!</span></div>\r\n                    <p>You still have no idea where the end is, you look down into a colorful cluster of minerals, shining in many\r\n                    different colors. You feel like that will change soon.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('hellStone')\">\r\n                    <p>After passing several huge mineral clusters, and feeling like going down for many kilometers, you start to\r\n                        feel the heat of the air down here. It is still very bearable, though. A few dozen meters later, a <b>sudden change</b>\r\n                        happens.</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"50\" :nodamage=\"true\"></mine-object><span>Is this hell?</span></div>\r\n                    <p>These Minerals are completely different. They are very hot, dont glow at all and don't look beautiful either.\r\n                        On the other hand, they are worth a ton of money and you feel like you've hit the end. <i>But did you?</i></p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('hellStoneFinal')\">\r\n                    <h3>The End?</h3>\r\n                    <p>The Hellstone is getting darker and darker, harder and harder to break; an end seems to be near.\r\n                    Suddenly, the cave ends. The ground is filled with even more demonic Hellstone. They are nearly pitch black and seem unbreakable.\r\n                    You need a very good Pickaxe now.</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"54\" :nodamage=\"true\"></mine-object><span>Unbreakable? I doubt that!</span></div>\r\n                    <p>Let's get a good Pickaxe, mine this and find out more! Maybe we did it?</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('infinitum')\">\r\n                    <p>After breaking the last hellstone, a small hole opens up below it. You didn't reach the end of the wave.\r\n                    There was just that wall of Hellstone...</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"55\" :nodamage=\"true\"></mine-object><span>To Infinity. And beyond!</span></div>\r\n                    <p>By now you have probably accepted that this cave is endless and will never end, which in return means that\r\n                    you will become so rich that nobody can believe it.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('theGem')\">\r\n                    <p>It is really crazy down here. Those minerals don't even fit into the real world anymore. This just feels like\r\n                    another realm. You notice that progressing seems to get harder and harder...</p>\r\n                    <p>Suddenly you see light at the end of the Tunnel. A huge Gem. A really huge Gem. Breaking it would give you\r\n                    insights you couldn't think of before. Something to speed of progress a lot.</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"60\" :nodamage=\"true\"></mine-object><span>It's not just a Gem!</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('gemUpgrades')\">\r\n                    <p><b>You instantly feel a wave of wisdom streaming through your body...</b><br/>\r\n                    That's it! Why should only money be invested into Upgrades? What if we do that with gems?</p>\r\n                    <div class=\"story-quote\"><img src=\"Images/gem.png\"/><span>You are of much use now</span></div>\r\n                    <p>With gems, you can now improve your blacksmith, the Auto-Mining-Device, and find even more gems!\r\n                        <b>Infinite Growth awaits!</b></p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('fractalium')\">\r\n                    <p>You are in another realm. High amounts of energy and light, inverted minerals and Holograms.\r\n                    The values of these Objects are tremendous. Even one of them means infinite wealth. Now,\r\n                    you make an even crazier discovery.</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"68\" :nodamage=\"true\"></mine-object>\r\n                        <span>z<sub>n+1</sub> = z<sub>n</sub><sup>2</sup> + c</span>\r\n                    </div>\r\n                    <p>A fractal. Infinite amount of complexity, yet so simple to describe. {{numberFormatter.format(150e30)}} $ are\r\n                        enough to buy a white dwarf, an earth-sized ball of compressed carbon (a Diamond!).</p>\r\n                    <p>The cave is starting to get slimmer again, the end might be near?</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('reachPortal')\">\r\n                    <p>It all shrinks down to just a small Portal, about 2 meters in diameter, glowing in a mysterious reddish pink.\r\n                        Breaking it should reveal more...</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"71\" :nodamage=\"true\"></mine-object>\r\n                        <span>T́͝͞o̶͟ ͡͡o̕͝t̴́h̕e͘͜͡r͞ ̵̶̷D͏i̵͠͠ḿé̢ns̡͟i̡͞o̧͜ns̨̛,͏͢ ͢an̵̸͢d͏ ̨͘R̨҉̸ea̴͝l̡m̵̀ş͘<</span>\r\n                    </div>\r\n                    <p>It is very tough to break, nearly invincible. You need a very strong Pickaxe. Now, upgrade your Blacksmith, invest money\r\n                        and gems, and make a very powerful Pickaxe to break through!</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('breakPortal')\">\r\n                    <p>The Portal slows drags you in. The air seems to become colder. Everything around you seems to dim, until you just seem\r\n                    to be surrounded by darkness. You stay calm. You are prepared and think you know what will happen next.\r\n                    <br/>Suddenly, you hear something, very far in the background.</p>\r\n                    <div class=\"story-quote\"><span>„I waited for you“</span></div>\r\n                    <p>Were you chosen to be a miner? Does that explain why you had a blacksmith and leftover gems at home?\r\n                    You are starting to understand. You were allowed to find out about the infinite riches of the underground.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('proceduralRealm1')\">\r\n                    It's been a while, you still dig down (and the numbers grow, just as expected). There is no end in sight, but that is actually good.\r\n                    Those mineral names are weird, they make no sense. No wonder why this is the \"procedural realm\", but is it infinite?\r\n                    <div class=\"story-quote\"><mine-object :level=\"75\" :nodamage=\"true\"></mine-object><span>Just procedural, like all the other stuff</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('reachSpacePortal')\">\r\n                    Aren't procedural realms infinite? Well, this one isn't. It closes down yet again. This portal is blueish, and when you look through it,\r\n                    you just see stars and galaxies.\r\n                    <div class=\"story-quote\"><mine-object :level=\"89\" :nodamage=\"true\"></mine-object><span>SPAAAAACE!</span></div>\r\n                    It's a portal to space. There's a little spaceship standing besides the portal, it must have been the mining god\r\n                    you heard lately (He waited for you, after all). This portal is tough yet again, but not so resistant. Make a pickaxe and open this thing!\r\n                </div>\r\n                <div v-if=\"storyDisplayed('breakSpacePortal')\">\r\n                    You enter the spaceship, and fly straight through the portal. In the far distance you can see the sun, and you see many asteroids flying around you.\r\n                    You actually are in the asteroid belt, that's not so far away (astronomically speaking). Well, it's time to mine Asteroids.\r\n                    <div class=\"story-quote\"><mine-object :level=\"90\" :nodamage=\"true\"></mine-object><span>Welcome to the Asteroid Belt!</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('planetcoin')\">\r\n                    As this Object breaks, something pops out of it... what is this? It is a new type of Resource, a planet coin.\r\n                    <div class=\"story-quote\"><img src=\"Images/planetcoin.png\"/><span>New opportunities to Upgrade!</span></div>\r\n                    Check out the new Upgrades, it will surely be worth it!\r\n                </div>\r\n                <div v-if=\"storyDisplayed('pluto')\">\r\n                    You did it! You mined a planet! Mmh, it's just a dwarf planet, but it was a real planet until 2006.\r\n                    <div class=\"story-quote\"><mine-object :level=\"100\" :nodamage=\"true\"></mine-object><span>Almost a Planet</span></div>\r\n                    Why do Objects keep reappearing here after you mined them? It seems like to universe of Idle Mine: Remix says no to several laws of physics.\r\n                </div>\r\n                <div v-if=\"storyDisplayed('theMoon')\">\r\n                    You just mined the Moon! Luckily it is reappearing every time you mine it...<br/>\r\n                    Out Moon is one of the biggest moons in the solar system, you've gotten pretty far.\r\n                    <div class=\"story-quote\"><mine-object :level=\"101\" :nodamage=\"true\"></mine-object><span>Man in the Moon</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('mars')\">\r\n                    Mars is one of our nearest planets that might be colonized in the nearer future. If Mars is close to the earth, you can see it as a bright reddish\r\n                    dot in the sky.\r\n                    <div class=\"story-quote\"><mine-object :level=\"105\" :nodamage=\"true\"></mine-object><span>Is there life on Mars?</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('venus')\">\r\n                    Venus is the planet that can get the closest to Earth, although it is in the front of the sun at that point. Venus gets so big on the sky that you can\r\n                    almost see its phase with the naked eye. Also, with a maximum apparent magnitude of about -4.6, it really stands out in the sky and might even\r\n                    be visible during the day with a great eyesight!\r\n                    <div class=\"story-quote\"><mine-object :level=\"106\" :nodamage=\"true\"></mine-object><span>The evening star</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('saturn')\">\r\n                    Saturn is the second biggest planet in the solar system.\r\n                    <div class=\"story-quote\"><mine-object :level=\"109\" :nodamage=\"true\"></mine-object><span>Largest Ring System</span></div>\r\n                    It also has the biggest ring system that can easily be seen through a telescope. Sadly, it is going to disappear over the next hundreds of million years.\r\n                </div>\r\n                <div v-if=\"storyDisplayed('jupiter')\">\r\n                    Finally, Jupiter is the largest planet of the solar system. You already mined the moons before, but now you get to the real planet.\r\n                    <div class=\"story-quote\"><mine-object :level=\"110\" :nodamage=\"true\"></mine-object><span>Largest Planet of the Solar System</span></div>\r\n                    Jupiter has over 70 known moons, having diameters ranging from just a few kilometers to over 5000 kilometers (Ganymede).\r\n                    Now, it is time to exit our solar system. Time to mine Exoplanets!\r\n                </div>\r\n                <div v-if=\"storyDisplayed('wasp79b')\">\r\n                    WASP-79b is one of the largest exoplanets ever discovered. It is about twice as big as Jupiter, which translates to a diameter of over 250,000 kilometers.\r\n                    <div class=\"story-quote\"><mine-object :level=\"114\" :nodamage=\"true\"></mine-object><span>Largest Planet</span></div>\r\n                    In the Universe, planets cannot become much larger than that because the immense mass and pressure in the core would start a nuclear fusion, which\r\n                    means that it would become a star. But in this game, physics are... different. We can go further.<br/>There's an infinite amount of exoplanets to\r\n                    discover!\r\n                </div>\r\n                <div v-if=\"storyDisplayed('hyperSaturn')\">\r\n                    Ever seen a saturn-like planet with a diameter of millions of kilometers? Well, it's impossible in our universe, but here it isn't...\r\n                    If you replaced Saturn with this, you would probably clearly see the glowing rings in a clear night with your naked eye.\r\n                    <div class=\"story-quote\"><mine-object :level=\"124\" :nodamage=\"true\"></mine-object><span>Saturn, but around 100x larger</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('superEarth')\">\r\n                    This planet, similar to earth, has a diameter of about 120,000,000 kilometers. That means that, if replaced with the sun, would stretch out to around mercuries\r\n                    orbit.\r\n                    <div class=\"story-quote\"><mine-object :level=\"134\" :nodamage=\"true\"></mine-object><span>Much space for humans</span></div>\r\n                    Superearth would be big enough to house trillions of people. Game Servers can't be worldwide because of extreme lag :( (no information can travel faster than the speed\r\n                    of light). Also, imagine a YouTuber with over 100 billion subscribers :D\r\n                </div>\r\n                <div v-if=\"storyDisplayed('colossia')\">\r\n                    You feel like you're getting to very huge planets now. They are just immense... Now look at these diameters:\r\n                    <div class=\"story-quote\"><mine-object :level=\"137\" :nodamage=\"true\"></mine-object><span>400,000,000 km</span></div>\r\n                        <b>Colossia:</b> If you replaced Saturn with this planet, it would appear much larger than our moon on the sky. It would break our solar system\r\n                        due to its extreme gravitational force.\r\n                    <div v-if=\"storyDisplayed('giagantia')\">\r\n                        <div class=\"story-quote\"><mine-object :level=\"138\" :nodamage=\"true\"></mine-object><span>2,400,000,000 km</span></div>\r\n                        <b>Giagantia:</b> Replaced with our sun, this planet would stretch out to Saturns orbit. It is also nearly as big as the largest known Star, UY Scuti.\r\n                    </div>\r\n                    <div v-if=\"storyDisplayed('garagantula')\">\r\n                        <div class=\"story-quote\"><mine-object :level=\"139\" :nodamage=\"true\"></mine-object><span>20,000,000,000 km</span></div>\r\n                        <b>Garagantula:</b> Replaced with our sun, this planet would stretch out well beyond Plutos orbit.\r\n                    </div>\r\n                    <div v-if=\"storyDisplayed('planetOmega')\">\r\n                        <div class=\"story-quote\"><mine-object :level=\"140\" :nodamage=\"true\"></mine-object><span>150,000,000,000 km</span></div>\r\n                        <b>Giagarantula Omega:</b> It's diameter is about 100th of a light year. That means any signal would need over 10 days to get redirected to the other side of the planet.\r\n                    </div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('breakPlanetOmega')\">\r\n                    Phew, that was a big one. A million times bigger than Jupiter. Theoretically, a planet this big would have collapsed into a extremely massive black hole.\r\n                    But, in the end, you did it.\r\n                    <div class=\"story-quote\"><mine-object :level=\"140\" :nodamage=\"true\"></mine-object><span>The biggest Planet(?) broken!</span></div>\r\n                    <b>Wait!</b> This is not the end. Let's explore the infiniteness of the Universe. There are many more planets to mine...\r\n                </div>\r\n                <div v-if=\"storyDisplayed('planet160')\">\r\n                    ... in this Universe. And it seems to get boring. Those Planets are just getting bigger and bigger, with arbitrary names. Why aren't we just mining Stars? Are they too hot? Possibly.\r\n                    Get stronger and stronger, and soon Stars should be no Problem anymore.\r\n                </div>\r\n                <div v-if=\"storyDisplayed('reachWisdomEssence')\">\r\n                    Wait, what is this!? While chilling and moving through the vacuum, you see a rock flying by, a few meters in size. <i>What were the chances?</i>\r\n                    It is very blue (blue-er than blue!) and the closer you get, the smarter you feel.<br/>\r\n                    <div class=\"story-quote\"><mine-object :level=\"169\" :nodamage=\"true\"></mine-object><span>You have to Mine it.</span></div>\r\n                    <p>Who knows what will happen when you mine this? Remember what happened when you broke THE GEM. You will probably get even stronger after mining this stone.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('breakWisdomEssence')\">\r\n                    <i>Wisdom streams out of the Stone.</i> You cannot see it, but you feel getting smarter with every second.\r\n                    <p>You got an Idea: If you get smarter, you can find out how to do more Damage. With more Damage you can get smarter faster. Time to <b>Synergize</b>!</p>\r\n                    <p>You found out how to mine Stars, let's go!</p>\r\n                    <h4>How to get Wisdom?</h4>\r\n                    <p>Around every 5th Object drops wisdom instead of planet coins. The further you are, the more wisdom it drops.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('miningStars')\">\r\n                    <p>Congratulations, you mined your first Star! Even though they're not solid, it was really challenging. The extreme heat made mining it very tough.</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"170\" :nodamage=\"true\"></mine-object><span>Basically just a Ball 'o Hydrogen.</span></div>\r\n                    <p>What's next? Of course, mining bigger Stars!</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('wisdomUpgrade')\">\r\n                    Finally, the Wisdom is put to good use. Becoming smarter and doing more Damage with every click, how awesome is that?\r\n                    <div class=\"story-quote\"><img src=\"Images/wisdom.png\"/><span>Smarter → Stronger → Smarter → ...</span></div>\r\n                    <p>There are even more Upgrades regarding Wisdom. Numbers will only grow faster now!</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('mineSun')\">\r\n                    You mined our Sun... well, since were in the Idle Mine: Remix realm, the Sun reappeared the moment you mined it, so no worries!\r\n                    <div class=\"story-quote\"><mine-object :level=\"173\" :nodamage=\"true\"></mine-object><span>Giver of Life</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('minePolaris')\">\r\n                    Polaris was and is used to orient in the Night Sky. It always points towards north. Also, it is one of the brightest stars in the Night Sky.\r\n                    <div class=\"story-quote\"><mine-object :level=\"178\" :nodamage=\"true\"></mine-object><span>50x bigger than our Sun</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('mineBetelgeuse')\">\r\n                    Betelgeuse is around 500x as large as our Sun, and it is over 600 light years away. Early this year, it has gained attention because it quickly lost luminosity,\r\n                    which possibly meant that Betelgeuse would go Supernova, creating a Nebula as bright as the full Moon, lasting for several Months.\r\n                    <div class=\"story-quote\"><mine-object :level=\"186\" :nodamage=\"true\"></mine-object><span>Spoiler: It didn't explode</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('mineScuti')\">\r\n                    UY Scuti is the largest Star discovered in the Universe, even larger than VY Canis Majoris.\r\n                    <div class=\"story-quote\"><mine-object :level=\"190\" :nodamage=\"true\"></mine-object><span>← The Largest</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('mineStarGroup')\">\r\n                    Now we're taking! Since you mined the biggest star, the next option is to mine several Stars at once!\r\n                    Let's go mine even more stars at once, and let's see how far it can go.\r\n                </div>\r\n                <div v-if=\"storyDisplayed('mineSmallGalaxy')\">\r\n                    An entire Galaxy. Over 20,000 Ly in diameter and billions of stars. You just mined that. You are now stronger than the most massive black hole.\r\n                    <div class=\"story-quote\"><mine-object :level=\"197\" :nodamage=\"true\"></mine-object><span>More Stars than you can count!</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('mineMilkyWay')\">\r\n                    You mined our Galaxy. Don't worry, our Milky Way also reappears the moment you mine it. The Milky Way has a diameter of about 100,000 Ly and has over 100 billion stars.\r\n                    Our Sun is just one of them.\r\n                    <div class=\"story-quote\"><mine-object :level=\"199\" :nodamage=\"true\"></mine-object><span>Our true home</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('mineLocalGroup')\">\r\n                    After mining several Galaxies, you're doing the next step like you did before. Now you mine several Galaxies at once. First up: The Local Group.\r\n                    <div class=\"story-quote\"><mine-object :level=\"205\" :nodamage=\"true\"></mine-object><span>It contains the Milky Way and Andromeda</span></div>\r\n                    <p>At that point, one must think how it even is possible to mine something that is over 10 Million Light Years large. It seems like your Pickaxe acts like a black hole now, just... a bit different.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('mineGalaxyCluster')\">\r\n                    What comes after Galaxy Groups? Correct: Galaxy Clusters. They contain even more Galaxies, but they don't pose a problem to you.\r\n                    <div class=\"story-quote\"><mine-object :level=\"208\" :nodamage=\"true\"></mine-object><span>Like a Galaxy Group Group</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('mineGalaxySuperCluster')\">\r\n                    What comes after Galaxy Clusters? Correct: Galaxy Superclusters. (does that sentence seem familiar?)\r\n                    <div class=\"story-quote\"><mine-object :level=\"210\" :nodamage=\"true\"></mine-object><span>Like a Galaxy Group Group Group</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('mineFilament')\">\r\n                    Filaments are huge structures, around a Billion Light Years large, containing millions of galaxies (if not even billions!). Are we gonna mine the entire Universe soon?\r\n                    <div class=\"story-quote\"><mine-object :level=\"212\" :nodamage=\"true\"></mine-object><span>Almost there!</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('reachUniverse')\">\r\n                    <p>You are mining Filaments with ease now, and it becomes clear what is next: mining the ENTIRE Universe. It has really come this far...\r\n                    Increase your damage with wisdom, buy some Gem Upgrades, and finish it off! Don't worry, our Universe will reappear after mining it.</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"214\" :nodamage=\"true\"></mine-object><span>Everything we know, everything we have.</span></div>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('mineUniverse')\">\r\n                    <p>You mine the very fabric that our Universe has. You eat it up from the inside. You mine Trillions of planets and Billions of Galaxies at once, every second.\r\n                    The Universe shrinks, the heat this generates makes it glow. Suddenly, it's gone. For a short moment, you see colorful dots around you.</p>\r\n                    <div class=\"story-quote\"><mine-object :level=\"215\" :nodamage=\"true\"></mine-object><span>Our Universe is not the only one...</span></div>\r\n                    <p>The Universe pops back up as nothing has happened. You are now beyond anything humanity can describe. You just mined the entire Universe as if it was nothing.</p>\r\n                </div>\r\n                <div v-if=\"storyDisplayed('mineUniverse')\">\r\n                    <h3>Conclusion</h3>\r\n                    <p>Thanks for playing my Game! This marks the end of the story. Your task now is to further explore the Multiverse,\r\n                    filled with an infinite amount of new Universes to mine.</p>\r\n                    <p>I wonder how far the numbers can go! Through the Gem Upgrades, progress should always be possible, and a progress wall\r\n                    should be very far away. Can you reach {{numberFormatter.format(story.longGoal1)}} $?<br/>\r\n                    Nah, your wisdom should make it even faster... can you reach {{numberFormatter.format(story.longGoal2)}} $? That's ∞<sup>4</sup>!</p>\r\n                    <p>This doesn't mean it's the end forever. I could add new Content in the future to extend the story. Anyways, I hope you had\r\n                    fun playing :)</p>\r\n                </div>\r\n            </div>\r\n            <p v-if=\"getNextStoryText() !== null\" class=\"objective\"><b>What to do next?</b><br/>{{getNextStoryText()}}</p>\r\n        </article>",
+  "blocks": [
+    {
+      "sourceOrder": 0,
+      "key": "gameStart",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('gameStart')",
+      "templateOffsets": {
+        "start": 563,
+        "end": 1122
+      },
+      "embeddedMineObjectAttributes": [],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 1,
+      "key": "firstMud",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('firstMud')",
+      "templateOffsets": {
+        "start": 1140,
+        "end": 1591
+      },
+      "embeddedMineObjectAttributes": [":level=\"0\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 2,
+      "key": "firstPaper",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('firstPaper')",
+      "templateOffsets": {
+        "start": 1609,
+        "end": 3180
+      },
+      "embeddedMineObjectAttributes": [":level=\"1\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 3,
+      "key": "blacksmithUpgrade",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('blacksmithUpgrade')",
+      "templateOffsets": {
+        "start": 3198,
+        "end": 4067
+      },
+      "embeddedMineObjectAttributes": [],
+      "imageSources": ["Images/upgrades/blacksmith.png"]
+    },
+    {
+      "sourceOrder": 4,
+      "key": "firstSalt",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('firstSalt')",
+      "templateOffsets": {
+        "start": 4085,
+        "end": 4653
+      },
+      "embeddedMineObjectAttributes": [":level=\"2\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 5,
+      "key": "firstClay",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('firstClay')",
+      "templateOffsets": {
+        "start": 4671,
+        "end": 5301
+      },
+      "embeddedMineObjectAttributes": [":level=\"3\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 6,
+      "key": "firstStone",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('firstStone')",
+      "templateOffsets": {
+        "start": 5319,
+        "end": 6171
+      },
+      "embeddedMineObjectAttributes": [":level=\"4\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 7,
+      "key": "tenThousand",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('tenThousand')",
+      "templateOffsets": {
+        "start": 6189,
+        "end": 6861
+      },
+      "embeddedMineObjectAttributes": [],
+      "imageSources": ["Images/money.png"]
+    },
+    {
+      "sourceOrder": 8,
+      "key": "firstSpookyBone",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('firstSpookyBone')",
+      "templateOffsets": {
+        "start": 6879,
+        "end": 7399
+      },
+      "embeddedMineObjectAttributes": [":level=\"12\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 9,
+      "key": "millionaire",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('millionaire')",
+      "templateOffsets": {
+        "start": 7417,
+        "end": 7927
+      },
+      "embeddedMineObjectAttributes": [],
+      "imageSources": ["Images/money.png"]
+    },
+    {
+      "sourceOrder": 10,
+      "key": "preciousStones",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('preciousStones')",
+      "templateOffsets": {
+        "start": 7945,
+        "end": 8529
+      },
+      "embeddedMineObjectAttributes": [":level=\"18\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 11,
+      "key": "gemWaster",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('gemWaster')",
+      "templateOffsets": {
+        "start": 8547,
+        "end": 8993
+      },
+      "embeddedMineObjectAttributes": [],
+      "imageSources": ["Images/upgrades/gemwaster.png"]
+    },
+    {
+      "sourceOrder": 12,
+      "key": "unrealStones",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('unrealStones')",
+      "templateOffsets": {
+        "start": 9011,
+        "end": 9680
+      },
+      "embeddedMineObjectAttributes": [":level=\"27\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 13,
+      "key": "fireEssence",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('fireEssence')",
+      "templateOffsets": {
+        "start": 9698,
+        "end": 10286
+      },
+      "embeddedMineObjectAttributes": [":level=\"33\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 14,
+      "key": "mysterium",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('mysterium')",
+      "templateOffsets": {
+        "start": 10304,
+        "end": 10788
+      },
+      "embeddedMineObjectAttributes": [":level=\"35\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 15,
+      "key": "fiftyTrillion",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('fiftyTrillion')",
+      "templateOffsets": {
+        "start": 10806,
+        "end": 11260
+      },
+      "embeddedMineObjectAttributes": [],
+      "imageSources": ["Images/money.png"]
+    },
+    {
+      "sourceOrder": 16,
+      "key": "lightEssence",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('lightEssence')",
+      "templateOffsets": {
+        "start": 11278,
+        "end": 11866
+      },
+      "embeddedMineObjectAttributes": [":level=\"47\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 17,
+      "key": "hellStone",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('hellStone')",
+      "templateOffsets": {
+        "start": 11884,
+        "end": 12667
+      },
+      "embeddedMineObjectAttributes": [":level=\"50\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 18,
+      "key": "hellStoneFinal",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('hellStoneFinal')",
+      "templateOffsets": {
+        "start": 12685,
+        "end": 13372
+      },
+      "embeddedMineObjectAttributes": [":level=\"54\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 19,
+      "key": "infinitum",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('infinitum')",
+      "templateOffsets": {
+        "start": 13390,
+        "end": 14003
+      },
+      "embeddedMineObjectAttributes": [":level=\"55\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 20,
+      "key": "theGem",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('theGem')",
+      "templateOffsets": {
+        "start": 14021,
+        "end": 14693
+      },
+      "embeddedMineObjectAttributes": [":level=\"60\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 21,
+      "key": "gemUpgrades",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('gemUpgrades')",
+      "templateOffsets": {
+        "start": 14711,
+        "end": 15292
+      },
+      "embeddedMineObjectAttributes": [],
+      "imageSources": ["Images/gem.png"]
+    },
+    {
+      "sourceOrder": 22,
+      "key": "fractalium",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('fractalium')",
+      "templateOffsets": {
+        "start": 15310,
+        "end": 16221
+      },
+      "embeddedMineObjectAttributes": [":level=\"68\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 23,
+      "key": "reachPortal",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('reachPortal')",
+      "templateOffsets": {
+        "start": 16239,
+        "end": 16992
+      },
+      "embeddedMineObjectAttributes": [":level=\"71\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 24,
+      "key": "breakPortal",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('breakPortal')",
+      "templateOffsets": {
+        "start": 17010,
+        "end": 17773
+      },
+      "embeddedMineObjectAttributes": [],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 25,
+      "key": "proceduralRealm1",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('proceduralRealm1')",
+      "templateOffsets": {
+        "start": 17791,
+        "end": 18317
+      },
+      "embeddedMineObjectAttributes": [":level=\"75\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 26,
+      "key": "reachSpacePortal",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('reachSpacePortal')",
+      "templateOffsets": {
+        "start": 18335,
+        "end": 19044
+      },
+      "embeddedMineObjectAttributes": [":level=\"89\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 27,
+      "key": "breakSpacePortal",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('breakSpacePortal')",
+      "templateOffsets": {
+        "start": 19062,
+        "end": 19599
+      },
+      "embeddedMineObjectAttributes": [":level=\"90\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 28,
+      "key": "planetcoin",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('planetcoin')",
+      "templateOffsets": {
+        "start": 19617,
+        "end": 20019
+      },
+      "embeddedMineObjectAttributes": [],
+      "imageSources": ["Images/planetcoin.png"]
+    },
+    {
+      "sourceOrder": 29,
+      "key": "pluto",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('pluto')",
+      "templateOffsets": {
+        "start": 20037,
+        "end": 20518
+      },
+      "embeddedMineObjectAttributes": [":level=\"100\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 30,
+      "key": "theMoon",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('theMoon')",
+      "templateOffsets": {
+        "start": 20536,
+        "end": 20944
+      },
+      "embeddedMineObjectAttributes": [":level=\"101\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 31,
+      "key": "mars",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('mars')",
+      "templateOffsets": {
+        "start": 20962,
+        "end": 21371
+      },
+      "embeddedMineObjectAttributes": [":level=\"105\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 32,
+      "key": "venus",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('venus')",
+      "templateOffsets": {
+        "start": 21389,
+        "end": 21994
+      },
+      "embeddedMineObjectAttributes": [":level=\"106\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 33,
+      "key": "saturn",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('saturn')",
+      "templateOffsets": {
+        "start": 22012,
+        "end": 22468
+      },
+      "embeddedMineObjectAttributes": [":level=\"109\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 34,
+      "key": "jupiter",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('jupiter')",
+      "templateOffsets": {
+        "start": 22486,
+        "end": 23088
+      },
+      "embeddedMineObjectAttributes": [":level=\"110\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 35,
+      "key": "wasp79b",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('wasp79b')",
+      "templateOffsets": {
+        "start": 23106,
+        "end": 23847
+      },
+      "embeddedMineObjectAttributes": [":level=\"114\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 36,
+      "key": "hyperSaturn",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('hyperSaturn')",
+      "templateOffsets": {
+        "start": 23865,
+        "end": 24381
+      },
+      "embeddedMineObjectAttributes": [":level=\"124\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 37,
+      "key": "superEarth",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('superEarth')",
+      "templateOffsets": {
+        "start": 24399,
+        "end": 25100
+      },
+      "embeddedMineObjectAttributes": [":level=\"134\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 38,
+      "key": "colossia",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('colossia')",
+      "templateOffsets": {
+        "start": 25118,
+        "end": 26883
+      },
+      "embeddedMineObjectAttributes": [
+        ":level=\"137\" :nodamage=\"true\"",
+        ":level=\"138\" :nodamage=\"true\"",
+        ":level=\"139\" :nodamage=\"true\"",
+        ":level=\"140\" :nodamage=\"true\""
+      ],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 39,
+      "key": "giagantia",
+      "occurrence": 1,
+      "conditionalAncestors": ["colossia"],
+      "conditionExpression": "storyDisplayed('giagantia')",
+      "templateOffsets": {
+        "start": 25680,
+        "end": 26067
+      },
+      "embeddedMineObjectAttributes": [":level=\"138\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 40,
+      "key": "garagantula",
+      "occurrence": 1,
+      "conditionalAncestors": ["colossia"],
+      "conditionExpression": "storyDisplayed('garagantula')",
+      "templateOffsets": {
+        "start": 26089,
+        "end": 26427
+      },
+      "embeddedMineObjectAttributes": [":level=\"139\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 41,
+      "key": "planetOmega",
+      "occurrence": 1,
+      "conditionalAncestors": ["colossia"],
+      "conditionExpression": "storyDisplayed('planetOmega')",
+      "templateOffsets": {
+        "start": 26449,
+        "end": 26859
+      },
+      "embeddedMineObjectAttributes": [":level=\"140\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 42,
+      "key": "breakPlanetOmega",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('breakPlanetOmega')",
+      "templateOffsets": {
+        "start": 26901,
+        "end": 27491
+      },
+      "embeddedMineObjectAttributes": [":level=\"140\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 43,
+      "key": "planet160",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('planet160')",
+      "templateOffsets": {
+        "start": 27509,
+        "end": 27870
+      },
+      "embeddedMineObjectAttributes": [],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 44,
+      "key": "reachWisdomEssence",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('reachWisdomEssence')",
+      "templateOffsets": {
+        "start": 27888,
+        "end": 28562
+      },
+      "embeddedMineObjectAttributes": [":level=\"169\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 45,
+      "key": "breakWisdomEssence",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('breakWisdomEssence')",
+      "templateOffsets": {
+        "start": 28580,
+        "end": 29214
+      },
+      "embeddedMineObjectAttributes": [],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 46,
+      "key": "miningStars",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('miningStars')",
+      "templateOffsets": {
+        "start": 29232,
+        "end": 29702
+      },
+      "embeddedMineObjectAttributes": [":level=\"170\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 47,
+      "key": "wisdomUpgrade",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('wisdomUpgrade')",
+      "templateOffsets": {
+        "start": 29720,
+        "end": 30167
+      },
+      "embeddedMineObjectAttributes": [],
+      "imageSources": ["Images/wisdom.png"]
+    },
+    {
+      "sourceOrder": 48,
+      "key": "mineSun",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('mineSun')",
+      "templateOffsets": {
+        "start": 30185,
+        "end": 30532
+      },
+      "embeddedMineObjectAttributes": [":level=\"173\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 49,
+      "key": "minePolaris",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('minePolaris')",
+      "templateOffsets": {
+        "start": 30550,
+        "end": 30924
+      },
+      "embeddedMineObjectAttributes": [":level=\"178\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 50,
+      "key": "mineBetelgeuse",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('mineBetelgeuse')",
+      "templateOffsets": {
+        "start": 30942,
+        "end": 31494
+      },
+      "embeddedMineObjectAttributes": [":level=\"186\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 51,
+      "key": "mineScuti",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('mineScuti')",
+      "templateOffsets": {
+        "start": 31512,
+        "end": 31825
+      },
+      "embeddedMineObjectAttributes": [":level=\"190\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 52,
+      "key": "mineStarGroup",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('mineStarGroup')",
+      "templateOffsets": {
+        "start": 31843,
+        "end": 32127
+      },
+      "embeddedMineObjectAttributes": [],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 53,
+      "key": "mineSmallGalaxy",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('mineSmallGalaxy')",
+      "templateOffsets": {
+        "start": 32145,
+        "end": 32533
+      },
+      "embeddedMineObjectAttributes": [":level=\"197\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 54,
+      "key": "mineMilkyWay",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('mineMilkyWay')",
+      "templateOffsets": {
+        "start": 32551,
+        "end": 32994
+      },
+      "embeddedMineObjectAttributes": [":level=\"199\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 55,
+      "key": "mineLocalGroup",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('mineLocalGroup')",
+      "templateOffsets": {
+        "start": 33012,
+        "end": 33632
+      },
+      "embeddedMineObjectAttributes": [":level=\"205\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 56,
+      "key": "mineGalaxyCluster",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('mineGalaxyCluster')",
+      "templateOffsets": {
+        "start": 33650,
+        "end": 34020
+      },
+      "embeddedMineObjectAttributes": [":level=\"208\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 57,
+      "key": "mineGalaxySuperCluster",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('mineGalaxySuperCluster')",
+      "templateOffsets": {
+        "start": 34038,
+        "end": 34391
+      },
+      "embeddedMineObjectAttributes": [":level=\"210\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 58,
+      "key": "mineFilament",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('mineFilament')",
+      "templateOffsets": {
+        "start": 34409,
+        "end": 34801
+      },
+      "embeddedMineObjectAttributes": [":level=\"212\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 59,
+      "key": "reachUniverse",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('reachUniverse')",
+      "templateOffsets": {
+        "start": 34819,
+        "end": 35365
+      },
+      "embeddedMineObjectAttributes": [":level=\"214\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 60,
+      "key": "mineUniverse",
+      "occurrence": 1,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('mineUniverse')",
+      "templateOffsets": {
+        "start": 35383,
+        "end": 36137
+      },
+      "embeddedMineObjectAttributes": [":level=\"215\" :nodamage=\"true\""],
+      "imageSources": []
+    },
+    {
+      "sourceOrder": 61,
+      "key": "mineUniverse",
+      "occurrence": 2,
+      "conditionalAncestors": [],
+      "conditionExpression": "storyDisplayed('mineUniverse')",
+      "templateOffsets": {
+        "start": 36155,
+        "end": 37079
+      },
+      "embeddedMineObjectAttributes": [],
+      "imageSources": []
+    }
+  ]
+}

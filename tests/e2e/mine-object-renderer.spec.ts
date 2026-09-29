@@ -1,0 +1,134 @@
+import { expect, test } from "@playwright/test";
+import { createHash } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import { gunzipSync } from "node:zlib";
+
+type RuntimeFixture = {
+  source: { commit: string };
+  allUnlocked: {
+    visibleBlocks: {
+      mineObjectPreviews: {
+        level: number;
+        className: string;
+        width: number;
+        height: number;
+        pixelSha256: string;
+      }[];
+    }[];
+  }[];
+};
+
+type CanvasManifest = {
+  source: { commit: string };
+  previews: {
+    level: number;
+    width: number;
+    height: number;
+    pixelSha256: string;
+    rgbaSha256: string;
+    compressedSha256: string;
+    file: string;
+  }[];
+};
+
+test("renders Story mine-object previews against pinned Remix Canvas goldens", async ({
+  page,
+}) => {
+  await page.goto("/__test__/mine-object-renderer");
+  await expect(page.locator("#result")).toHaveAttribute("data-ready", "true");
+
+  const fixture = JSON.parse(
+    await readFile(
+      new URL("../fixtures/parity/remix-story-runtime.json", import.meta.url),
+      "utf8",
+    ),
+  ) as RuntimeFixture;
+  const manifest = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/visual/remix-story-mine-objects/manifest.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as CanvasManifest;
+  expect(manifest.source.commit).toBe(fixture.source.commit);
+
+  const references = await Promise.all(
+    manifest.previews.map(async (preview) => {
+      const compressed = await readFile(
+        new URL(
+          `../fixtures/visual/remix-story-mine-objects/${preview.file}`,
+          import.meta.url,
+        ),
+      );
+      const rgba = gunzipSync(compressed);
+      const sha256 = (value: Uint8Array) =>
+        createHash("sha256").update(value).digest("hex");
+      expect(sha256(compressed)).toBe(preview.compressedSha256);
+      expect(sha256(rgba)).toBe(preview.rgbaSha256);
+      expect(preview.rgbaSha256).toBe(preview.pixelSha256);
+      return { ...preview, rgbaBase64: rgba.toString("base64") };
+    }),
+  );
+  const referenceByLevel = new Map(
+    references.map((preview) => [preview.level, preview]),
+  );
+  const expected = fixture.allUnlocked.flatMap((storyPage) =>
+    storyPage.visibleBlocks.flatMap((block) => block.mineObjectPreviews),
+  );
+  const probeInputs = expected.map((preview) => {
+    const reference = referenceByLevel.get(preview.level);
+    if (!reference)
+      throw new Error(
+        `Story Canvas baseline is missing level ${preview.level}.`,
+      );
+    return reference;
+  });
+  const observed = await page.evaluate(async (inputs) => {
+    const probe = (
+      window as Window & {
+        __idleMineObjectRendererProbe?: (
+          values: typeof inputs,
+        ) => Promise<unknown>;
+      }
+    ).__idleMineObjectRendererProbe;
+    if (!probe)
+      throw new Error("Mine-object renderer probe did not initialize.");
+    return probe(inputs);
+  }, probeInputs);
+  const previews = observed as {
+    level: number;
+    className: string;
+    width: number;
+    height: number;
+    pixelSha256: string;
+    referencePixelSha256: string;
+    maxRgbDelta: number;
+    differentRgbPixels: number;
+    alphaMismatchPixels: number;
+  }[];
+  expect(previews).toHaveLength(expected.length);
+
+  for (const [index, preview] of previews.entries()) {
+    const source = expected[index]!;
+    const golden = referenceByLevel.get(source.level)!;
+    expect(preview).toMatchObject({
+      level: source.level,
+      className: source.className,
+      width: source.width,
+      height: source.height,
+      referencePixelSha256: source.pixelSha256,
+    });
+
+    const exactMatch = preview.pixelSha256 === source.pixelSha256;
+    const changedPixelLimit = Math.ceil(preview.width * preview.height * 0.02);
+    expect(
+      exactMatch ||
+        (preview.alphaMismatchPixels === 0 &&
+          preview.maxRgbDelta <= 1 &&
+          preview.differentRgbPixels <= changedPixelLimit),
+      `Level ${source.level} exceeds the one-unit RGB compositing tolerance for ${golden.file}.`,
+    ).toBe(true);
+  }
+});

@@ -19,7 +19,7 @@ The roadmap is ordered around evidence first and implementation second. Phase co
 
 ## Current recommended action
 
-Remain in Phase 0. Build the first reference probe and fixture corpus; do not begin approximating game mechanics or the final interface.
+Remain in Phase 0 while the reference corpus is expanded into complete system specifications. The oracle and tested slices now exist for mine objects, notations, upgrades, mining transitions, and story milestone state. Next extract full story markup/objective behavior and wire the tested mining/story operations through deterministic state and explicit persistence adapters; continue adding fixtures before each mechanic and UI slice.
 
 ## Platform targets
 

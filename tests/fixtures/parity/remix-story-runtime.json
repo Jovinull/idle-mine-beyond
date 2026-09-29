@@ -1,0 +1,2902 @@
+{
+  "source": {
+    "repository": "https://github.com/veprogames/idle-mine-remix",
+    "commit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+    "license": "MIT",
+    "copyrightNotice": "Copyright (c) 2023 veprogames",
+    "sourcePaths": [
+      "index.html",
+      "main.css",
+      "Themes/dark.css",
+      "Scripts/main.js",
+      "Scripts/Components/mine-object.js"
+    ],
+    "captureMethod": "Read-only local server of the pinned clean checkout; Playwright Chromium; SHA-verified CDN snapshots.",
+    "browser": { "name": "Chromium", "version": "154.0.8037.58" },
+    "playwrightVersion": "1.63.0",
+    "colorScheme": "light",
+    "locale": "en-US",
+    "timezone": "UTC",
+    "randomSeed": 7454,
+    "scenarios": {
+      "freshGame": "New browser context without a saved game in localStorage.",
+      "allUnlocked": {
+        "highestMineObjectLevel": 215,
+        "highestMoney": "5e13",
+        "maxPlanetCoins": "1",
+        "moneyUpgradeLevels": { "blacksmith": 1, "gemWaster": 1 },
+        "wisdomUpgradeLevels": { "firstUpgrade": 1, "remaining": 0 }
+      }
+    },
+    "viewport": { "width": 1440, "height": 900 },
+    "capturedOn": "2026-09-29"
+  },
+  "chapters": [
+    "Welcome to Idle Mine: Remix!",
+    "The real Adventure begins!",
+    "Mysterious Materials",
+    "It's NOT over",
+    "New Dimensions",
+    "Gone to Space",
+    "Hyperplanets",
+    "The Wisdom Era",
+    "Cosmic Superstructures"
+  ],
+  "freshGame": {
+    "name": "fresh-game-page-0",
+    "page": 0,
+    "chapterHeading": "Chapter 1: Welcome to Idle Mine: Remix!",
+    "nextObjective": "Mine your first piece of Mud",
+    "objectiveText": "What to do next?\nMine your first piece of Mud",
+    "objectiveHtml": "<b>What to do next?</b><br>Mine your first piece of Mud",
+    "visibleBlocks": [
+      {
+        "sourceOrder": 0,
+        "key": "gameStart",
+        "occurrence": 1,
+        "innerText": "Welcome to Idle Mine: Remix!\n\nSo you have decided to start with mining. You have heard that many treasures lie down below the surface, so you can't wait to find out what you can find. Maybe you can become rich?\nThere's you, and your Auto-Mining-Device. Let's get started!\n\nThis also acts as s sort of guide. If something is unclear, look into here as a reference.",
+        "outerHtml": "<div><h3>Welcome to Idle Mine: Remix!</h3> <p>So you have decided to start with mining. You have heard that many treasures lie down below the surface, so you\n                    can't wait to find out what you can find. Maybe you can become rich?<br>\n                    There's you, and your Auto-Mining-Device. Let's get started!</p> <p>This also acts as s sort of guide. If something is unclear, look into here as a reference.</p></div>",
+        "imageSources": [],
+        "mineObjectPreviews": []
+      }
+    ],
+    "quoteText": [],
+    "computed": {
+      "article": {
+        "properties": {
+          "alignItems": "normal",
+          "borderBottom": "0px none rgb(0, 0, 0)",
+          "borderTop": "0px none rgb(0, 0, 0)",
+          "color": "rgb(0, 0, 0)",
+          "display": "block",
+          "fontFamily": "\"Work Sans\", sans-serif",
+          "fontSize": "18px",
+          "fontStyle": "normal",
+          "height": "674px",
+          "margin": "0px",
+          "marginLeft": "0px",
+          "overflowY": "visible",
+          "overscrollBehaviorY": "auto",
+          "padding": "16px",
+          "paddingTop": "16px",
+          "width": "1408px",
+          "zIndex": "-1"
+        },
+        "rect": { "height": 706, "width": 1440, "x": 0, "y": 72 }
+      },
+      "scroller": {
+        "properties": {
+          "alignItems": "normal",
+          "borderBottom": "0px none rgb(0, 0, 0)",
+          "borderTop": "0px none rgb(0, 0, 0)",
+          "color": "rgb(0, 0, 0)",
+          "display": "block",
+          "fontFamily": "\"Work Sans\", sans-serif",
+          "fontSize": "18px",
+          "fontStyle": "normal",
+          "height": "558px",
+          "margin": "0px",
+          "marginLeft": "0px",
+          "overflowY": "scroll",
+          "overscrollBehaviorY": "contain",
+          "padding": "0px",
+          "paddingTop": "0px",
+          "width": "1408px",
+          "zIndex": "auto"
+        },
+        "rect": { "height": 558, "width": 1408, "x": 16, "y": 153 }
+      },
+      "objective": {
+        "properties": {
+          "alignItems": "normal",
+          "borderBottom": "0px none rgb(0, 0, 0)",
+          "borderTop": "1px solid rgba(0, 0, 0, 0.4)",
+          "color": "rgb(0, 0, 0)",
+          "display": "block",
+          "fontFamily": "\"Work Sans\", sans-serif",
+          "fontSize": "18px",
+          "fontStyle": "normal",
+          "height": "42px",
+          "margin": "0px",
+          "marginLeft": "0px",
+          "overflowY": "visible",
+          "overscrollBehaviorY": "auto",
+          "padding": "8px 0px 0px",
+          "paddingTop": "8px",
+          "width": "1408px",
+          "zIndex": "auto"
+        },
+        "rect": { "height": 51, "width": 1408, "x": 16, "y": 711 }
+      },
+      "milestone": {
+        "properties": {
+          "alignItems": "normal",
+          "borderBottom": "0px none rgb(0, 0, 0)",
+          "borderTop": "0px none rgb(0, 0, 0)",
+          "color": "rgb(0, 0, 0)",
+          "display": "block",
+          "fontFamily": "\"Work Sans\", sans-serif",
+          "fontSize": "18px",
+          "fontStyle": "normal",
+          "height": "163px",
+          "margin": "0px",
+          "marginLeft": "0px",
+          "overflowY": "visible",
+          "overscrollBehaviorY": "auto",
+          "padding": "16px 0px",
+          "paddingTop": "16px",
+          "width": "1408px",
+          "zIndex": "auto"
+        },
+        "rect": { "height": 195, "width": 1408, "x": 16, "y": 153 }
+      },
+      "chapterControl": {
+        "properties": {
+          "alignItems": "center",
+          "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+          "borderTop": "0px none rgb(0, 0, 0)",
+          "color": "rgb(0, 0, 0)",
+          "display": "flex",
+          "fontFamily": "\"Work Sans\", sans-serif",
+          "fontSize": "18px",
+          "fontStyle": "normal",
+          "height": "64px",
+          "margin": "0px",
+          "marginLeft": "0px",
+          "overflowY": "visible",
+          "overscrollBehaviorY": "auto",
+          "padding": "0px",
+          "paddingTop": "0px",
+          "width": "1408px",
+          "zIndex": "auto"
+        },
+        "rect": { "height": 65, "width": 1408, "x": 16, "y": 88 }
+      },
+      "chapterHeading": {
+        "properties": {
+          "alignItems": "normal",
+          "borderBottom": "0px none rgb(0, 0, 0)",
+          "borderTop": "0px none rgb(0, 0, 0)",
+          "color": "rgb(0, 0, 0)",
+          "display": "block",
+          "fontFamily": "Montserrat, sans-serif",
+          "fontSize": "32px",
+          "fontStyle": "normal",
+          "height": "39px",
+          "margin": "0px",
+          "marginLeft": "0px",
+          "overflowY": "visible",
+          "overscrollBehaviorY": "auto",
+          "padding": "0px",
+          "paddingTop": "0px",
+          "width": "640.297px",
+          "zIndex": "auto"
+        },
+        "rect": { "height": 39, "width": 640.3, "x": 399.86, "y": 100.5 }
+      },
+      "quote": null,
+      "quoteText": null,
+      "mineObjectCanvas": null
+    },
+    "viewport": { "width": 1440, "height": 900 }
+  },
+  "allUnlocked": [
+    {
+      "name": "all-unlocked-page-0",
+      "page": 0,
+      "chapterHeading": "Chapter 1: Welcome to Idle Mine: Remix!",
+      "nextObjective": null,
+      "objectiveText": null,
+      "objectiveHtml": null,
+      "visibleBlocks": [
+        {
+          "sourceOrder": 0,
+          "key": "gameStart",
+          "occurrence": 1,
+          "innerText": "Welcome to Idle Mine: Remix!\n\nSo you have decided to start with mining. You have heard that many treasures lie down below the surface, so you can't wait to find out what you can find. Maybe you can become rich?\nThere's you, and your Auto-Mining-Device. Let's get started!\n\nThis also acts as s sort of guide. If something is unclear, look into here as a reference.",
+          "outerHtml": "<div><h3>Welcome to Idle Mine: Remix!</h3> <p>So you have decided to start with mining. You have heard that many treasures lie down below the surface, so you\n                    can't wait to find out what you can find. Maybe you can become rich?<br>\n                    There's you, and your Auto-Mining-Device. Let's get started!</p> <p>This also acts as s sort of guide. If something is unclear, look into here as a reference.</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": []
+        },
+        {
+          "sourceOrder": 1,
+          "key": "firstMud",
+          "occurrence": 1,
+          "innerText": "You mined your first piece of Mud! Well, it's not worth a lot, but you've got to start somewhere.\n\nJust some ordinary Mud\n\nEven 2 $ can be a good start. Maybe you should try to mine something more precious?",
+          "outerHtml": "<div><p>You mined your first piece of <b>Mud</b>! Well, it's not worth a lot, but you've got to start somewhere.</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Just some ordinary Mud</span></div> <p>Even 2 $ can be a good start. Maybe you should try to mine something more precious?</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 0,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "b8e80f5fc82ac6acbbca3952eb4dfd933866061dd639ad5e92b278c7d6abcff0"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 2,
+          "key": "firstPaper",
+          "occurrence": 1,
+          "innerText": "You take your Pickaxe and proceed to hit some old homework with it (You didn't need it anymore, anyways).\n\nPaper (Your old Homework)\n\nFor some reason it was worth a whopping 10 $! It seems like you've got the hang of it. Unfortunately, you also find out that it was kind of resistent to your pickaxe, so you need to craft a better one to keep growing. Luckily you have this rusty Blacksmith at home (for whatever reason). It doesnt look good enough though. You should try to Upgrade it.\n\nHow do I get Gems?\n\nEvery time you mine something, there is a chance that you will be awarded a Gem, used to craft Pickaxes.\n\nStats, Stats, Stats...\n\nSome general Tips: Every Mineral has defense, which is an absolute reduction to click and idle damage. To find out what's the most efficient to mine, look at where Money/s and Money per Click are the highest. More gems/s mean that you can get gems faster to craft new Pickaxes. The base Damage of a pickaxe is calculated by multiplying its power with the quality (for example: 1,000 * 150% = 1,500). After that, Active and Idle Power Upgrades are applied.",
+          "outerHtml": "<div><p>You take your Pickaxe and proceed to hit some old homework with it (You didn't need it anymore, anyways).</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Paper (Your old Homework)</span></div> <p>For some reason it was worth a whopping 10 $! It seems like you've got the hang of it. Unfortunately, you also find out\n                    that it was kind of resistent to your pickaxe, so you need to craft a better one to keep growing. Luckily you have this rusty\n                    Blacksmith at home (for whatever reason). It doesnt look good enough though. You should try to Upgrade it.</p> <h4>How do I get Gems?</h4> <p>Every time you mine something, there is a chance that you will be awarded a Gem, used to craft Pickaxes.</p> <h4>Stats, Stats, Stats...</h4> <p>Some general Tips: Every Mineral has defense, which is an absolute reduction to click and idle damage.\n                    To find out what's the most efficient to mine, look at where Money/s and Money per Click are the highest.\n                    More gems/s mean that you can get gems faster to craft new Pickaxes. The base Damage of a pickaxe is calculated\n                    by multiplying its power with the quality (for example: 1,000 * 150% = 1,500). After that, Active and Idle Power\n                    Upgrades are applied.</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 1,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "aedf71eb9bba34431f3ada547ce0699c7ae0164c06c48fe7ca72ddab7b7f7b39"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 3,
+          "key": "blacksmithUpgrade",
+          "occurrence": 1,
+          "innerText": "Just a little improvement to your Blacksmith makes it seem much stronger!\n\nBlacksmith Power!\n\nYou should try to craft a new Pickaxe. You only need one Gem to do it! Luckily you have a few of them at home. You don't remember when you got them, they are just here for some reason. After crafting, you should try your luck with salt.\n\nWhen should I craft?\n\nThe power and quality of a pickaxe is based on Blacksmith Upgrades. The resulting power and quality will be random, but will at least be as much as the minimum power and quality.",
+          "outerHtml": "<div><p>Just a little improvement to your Blacksmith makes it seem much stronger!</p> <div class=\"story-quote\"><img src=\"Images/upgrades/blacksmith.png\"><span>Blacksmith Power!</span></div> <p>You should try to craft a new Pickaxe. You only need one Gem to do it! Luckily you have a few of them at home. You don't\n                    remember when you got them, they are just here for some reason. After crafting, you should try your luck with salt.</p> <h3>When should I craft?</h3> <p>The power and quality of a pickaxe is based on Blacksmith Upgrades. The resulting power and quality will be random,\n                        but will at least be as much as the minimum power and quality.</p></div>",
+          "imageSources": ["Images/upgrades/blacksmith.png"],
+          "mineObjectPreviews": []
+        },
+        {
+          "sourceOrder": 4,
+          "key": "firstSalt",
+          "occurrence": 1,
+          "innerText": "You take out all the salt from your kitchen drawer, and start to hammer on it with your newly crafted Pickaxe. It works surpisingly well, you think.\n\nSalt (from your Kitchen Drawer)\n\n22 $! That is sure a lot. You could buy some Games from it, or you take it serious and invest the money into your blacksmith.",
+          "outerHtml": "<div><p>You take out all the salt from your kitchen drawer, and start to hammer on it with your newly crafted Pickaxe. It works\n                    surpisingly well, you think.</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Salt (from your Kitchen Drawer)</span></div> <p>22 $! That is sure a lot. You could buy some Games from it, or you take it serious and invest the money into your blacksmith.</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 2,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "afb33789b0f02045e34ccc00729e3f41803c1555b274323295b4a59b4d19bdb3"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 5,
+          "key": "firstClay",
+          "occurrence": 1,
+          "innerText": "You go to a nearby lake and dig out some clay.\n\nClay (fresh from the Lake)\n\nIt's already worth 50 $! That's much more than salt. Of course it was tougher, but the reward speaks for itself. There's a Cave nearby. This is where the real adventure will start. Maybe you should improve your blacksmith a bit more and get a new Pickaxe before proceeding.",
+          "outerHtml": "<div><p>You go to a nearby lake and dig out some clay.</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Clay (fresh from the Lake)</span></div> <p>It's already worth 50 $! That's much more than salt. Of course it was tougher, but the reward speaks for itself.\n                    There's a Cave nearby. This is where the real adventure will start. Maybe you should improve your blacksmith a bit more and get a\n                    new Pickaxe before proceeding.</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 3,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "be5e2ad2301555c96088a0fe6b8bfb02e68eb09f0b17ff4e17fdcd386889ba81"
+            }
+          ]
+        }
+      ],
+      "quoteText": [
+        "Just some ordinary Mud",
+        "Paper (Your old Homework)",
+        "Blacksmith Power!",
+        "Salt (from your Kitchen Drawer)",
+        "Clay (fresh from the Lake)"
+      ],
+      "computed": {
+        "article": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "623px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "-1"
+          },
+          "rect": { "height": 655, "width": 1440, "x": 0, "y": 72 }
+        },
+        "scroller": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "558px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "scroll",
+            "overscrollBehaviorY": "contain",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 558, "width": 1408, "x": 16, "y": 153 }
+        },
+        "objective": null,
+        "milestone": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "163px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px 0px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 196, "width": 1408, "x": 16, "y": 153 }
+        },
+        "chapterControl": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "64px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 65, "width": 1408, "x": 16, "y": 88 }
+        },
+        "chapterHeading": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "Montserrat, sans-serif",
+            "fontSize": "32px",
+            "fontStyle": "normal",
+            "height": "39px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "640.297px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 39, "width": 640.3, "x": 399.86, "y": 100.5 }
+        },
+        "quote": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "8px 0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 1408, "x": 16, "y": 422 }
+        },
+        "quoteText": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(64, 64, 64)",
+            "borderTop": "0px none rgb(64, 64, 64)",
+            "color": "rgb(64, 64, 64)",
+            "display": "block",
+            "fontFamily": "\"Times new Roman\", serif",
+            "fontSize": "48px",
+            "fontStyle": "italic",
+            "height": "55px",
+            "margin": "0px 0px 0px 32px",
+            "marginLeft": "32px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "466.172px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 55, "width": 466.17, "x": 171.42, "y": 448.5 }
+        },
+        "mineObjectCanvas": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "clip",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "123.422px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 123.42, "x": 16, "y": 422 }
+        }
+      },
+      "viewport": { "width": 1440, "height": 900 }
+    },
+    {
+      "name": "all-unlocked-page-1",
+      "page": 1,
+      "chapterHeading": "Chapter 2: The real Adventure begins!",
+      "nextObjective": null,
+      "objectiveText": null,
+      "objectiveHtml": null,
+      "visibleBlocks": [
+        {
+          "sourceOrder": 6,
+          "key": "firstStone",
+          "occurrence": 1,
+          "innerText": "Of course, the first thing you see when entering the cave is Stone and Rocks. And there is sure a lot of it. There is so much to be mined...\n\nRock (from the cave entrance)\n\n120 $! Not bad at all. You see a big growth coming. Venture deeper into the Cave and mine better and better stuff. Don't forget to buy Upgrades and craft new Pickaxes\n\nOffline Income\n\nFor up to 6 hours, you can earn 50 % of your Money per second offline. You have to be offline for at least 5 minutes to be eligible of earning offline money.",
+          "outerHtml": "<div><p>Of course, the first thing you see when entering the cave is Stone and Rocks. And there is sure a lot of it. There is so much to be mined...</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Rock (from the cave entrance)</span></div> <p>120 $! Not bad at all. You see a big growth coming. Venture deeper into the Cave and mine better and better stuff. Don't forget\n                    to buy Upgrades and craft new Pickaxes</p> <h4>Offline Income</h4> <p>For up to 6 hours, you can earn 50 % of your Money per second offline. You have to be offline for at least 5 minutes\n                    to be eligible of earning offline money.</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 4,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "b73f5a04c9694d0c93b004bf4d974a2b34f04b5b03c0bf3db17784116a526170"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 7,
+          "key": "tenThousand",
+          "occurrence": 1,
+          "innerText": "I Gotta be rich!\n\nTen Thousand dollars! That's surely more than your average wage. I think you are far enough to pay your living with it. But also, improving your mining technology is very expensive, but it will pay off very fast.\n\nYou have mined new Stuff along the way like Coal, Lead and Copper. You are starting to venture deeper into the cave. To be honest, this might be just the start. Great treasures await!",
+          "outerHtml": "<div><div class=\"story-quote\"><img src=\"Images/money.png\"><span>I Gotta be rich!</span></div> <p>Ten Thousand dollars! That's surely more than your average wage. I think you are far enough to pay your living with it.\n                    But also, improving your mining technology is very expensive, but it will pay off very fast.</p> <p>You have mined new Stuff along the way like Coal, Lead and Copper. You are starting to venture deeper into the cave.\n                    To be honest, this might be just the start. Great treasures await!</p></div>",
+          "imageSources": ["Images/money.png"],
+          "mineObjectPreviews": []
+        },
+        {
+          "sourceOrder": 8,
+          "key": "firstSpookyBone",
+          "occurrence": 1,
+          "innerText": "You have already went down a good bit into the mine. Stuff is getting precious down there. The first abnormal minerals are appearing\n\nOhhhh, Spooky!\n\n14,000 $ for a bunch of Bones? Well, they are spooky! Even though you don't know why exactly they are...",
+          "outerHtml": "<div><p>You have already went down a good bit into the mine. Stuff is getting precious down there. The first abnormal minerals are appearing</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Ohhhh, Spooky!</span></div> <p>14,000 $ for a bunch of Bones? Well, they are spooky! Even though you don't know why exactly they are...</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 12,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "bda4fcfa25b5feff10bd2a09eb3224945732c8af012366ffaebd4df6ff93a67f"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 9,
+          "key": "millionaire",
+          "occurrence": 1,
+          "innerText": "There are multiple ways to earn a million: Winning at a quiz show, having a certain job, or, mining precious materials? Anyways, you've just reached a Million!\n\nRich. For real now.\n\nThe journey doesn't end here! Why not get even richer? The cave is seemingly endless.",
+          "outerHtml": "<div><p>There are multiple ways to earn a million: Winning at a quiz show, having a certain job, or, mining precious materials?\n                    Anyways, you've just reached <b>a Million</b>!</p> <div class=\"story-quote\"><img src=\"Images/money.png\"><span>Rich. For real now.</span></div> <p>The journey doesn't end here! Why not get even richer? The cave is seemingly endless.</p></div>",
+          "imageSources": ["Images/money.png"],
+          "mineObjectPreviews": []
+        },
+        {
+          "sourceOrder": 10,
+          "key": "preciousStones",
+          "occurrence": 1,
+          "innerText": "Precious stuff is appearing now. You are starting to see typical Gemstones: Sapphire, Ruby and Emerald. You don't know how deep you are, but this cave is the biggest you've ever seen. It just never ends and seems to get bigger the deeper you are.\n\nPrecious, and worth Millions\n\nAre we reaching the end? Definitely not!",
+          "outerHtml": "<div><p>Precious stuff is appearing now. You are starting to see typical Gemstones: Sapphire, Ruby and Emerald. You don't know how deep\n                    you are, but this cave is the biggest you've ever seen. It just never ends and seems to get bigger the deeper you are.</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Precious, and worth Millions</span></div> <p>Are we reaching the end? Definitely not!</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 18,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "672c5bf207f5fb06536d833571fac26d47c5f155af678ee4fd5d0033caebc8af"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 11,
+          "key": "gemWaster",
+          "occurrence": 1,
+          "innerText": "You earn Gems more easily now, so you got an Idea: if you invest multiple Gems into a Pickaxe, it should be even better. Now you can also use 3 Gems to craft a Pickaxe, but they turn out to be much better.\n\nNot a waste at all!",
+          "outerHtml": "<div><p>You earn Gems more easily now, so you got an Idea: if you invest multiple Gems into a Pickaxe, it should be even better.\n                    Now you can also use 3 Gems to craft a Pickaxe, but they turn out to be much better.</p> <div class=\"story-quote\"><img src=\"Images/upgrades/gemwaster.png\"><span>Not a waste at all!</span></div></div>",
+          "imageSources": ["Images/upgrades/gemwaster.png"],
+          "mineObjectPreviews": []
+        }
+      ],
+      "quoteText": [
+        "Rock (from the cave entrance)",
+        "I Gotta be rich!",
+        "Ohhhh, Spooky!",
+        "Rich. For real now.",
+        "Precious, and worth Millions",
+        "Not a waste at all!"
+      ],
+      "computed": {
+        "article": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "623px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "-1"
+          },
+          "rect": { "height": 655, "width": 1440, "x": 0, "y": 72 }
+        },
+        "scroller": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "558px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "scroll",
+            "overscrollBehaviorY": "contain",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 558, "width": 1408, "x": 16, "y": 153 }
+        },
+        "objective": null,
+        "milestone": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "322px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px 0px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 355, "width": 1408, "x": 16, "y": 153 }
+        },
+        "chapterControl": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "64px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 65, "width": 1408, "x": 16, "y": 88 }
+        },
+        "chapterHeading": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "Montserrat, sans-serif",
+            "fontSize": "32px",
+            "fontStyle": "normal",
+            "height": "39px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "600.391px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 39, "width": 600.39, "x": 419.81, "y": 100.5 }
+        },
+        "quote": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "8px 0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 1408, "x": 16, "y": 226 }
+        },
+        "quoteText": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(64, 64, 64)",
+            "borderTop": "0px none rgb(64, 64, 64)",
+            "color": "rgb(64, 64, 64)",
+            "display": "block",
+            "fontFamily": "\"Times new Roman\", serif",
+            "fontSize": "48px",
+            "fontStyle": "italic",
+            "height": "55px",
+            "margin": "0px 0px 0px 32px",
+            "marginLeft": "32px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "579.281px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 55, "width": 579.28, "x": 171.42, "y": 252.5 }
+        },
+        "mineObjectCanvas": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "clip",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "123.422px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 123.42, "x": 16, "y": 226 }
+        }
+      },
+      "viewport": { "width": 1440, "height": 900 }
+    },
+    {
+      "name": "all-unlocked-page-2",
+      "page": 2,
+      "chapterHeading": "Chapter 3: Mysterious Materials",
+      "nextObjective": null,
+      "objectiveText": null,
+      "objectiveHtml": null,
+      "visibleBlocks": [
+        {
+          "sourceOrder": 12,
+          "key": "unrealStones",
+          "occurrence": 1,
+          "innerText": "You don't know what it is. It has never been discovered before. You are probably the first who has gone so far.\n\nWhat is this?\n\nJust about 20 of these will make you the worlds richest person. Maybe the money could also be used to study and research on this mysterious material.\n\nAlong the way, you discover more unknown and ultra precious things that have yet to be studied.",
+          "outerHtml": "<div><p>You don't know what it is. It has never been discovered before. You are probably the first who has gone so far.</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>What is this?</span></div> <p>Just about 20 of these will make you the worlds richest person. Maybe the money could also be used to study and research on\n                        this mysterious material.</p> <p>Along the way, you discover more unknown and ultra precious things that have yet to be studied.</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 27,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "ba8bdd7a58fa557e1b5eb977bbff5dac39e47eaa0cf5c0ea2a38a889acf2de75"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 13,
+          "key": "fireEssence",
+          "occurrence": 1,
+          "innerText": "There it is. Another type of essence. This time it seems to be fiery and very hot. Sadly you don't have a thermometer with you.\n\nHOT, HOT!\n\nNow, you need only one to become the richest person on the world. Alternatively, you could also give every person on the world about 25 $. That would be enough for some food.",
+          "outerHtml": "<div><p>There it is. Another type of essence. This time it seems to be fiery and very hot. Sadly you don't have a thermometer with you.</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>HOT, HOT!</span></div> <p>Now, you need only <b>one</b> to become the richest person on the world. Alternatively, you could also give every person on the world\n                        about 25 $. That would be enough for some food.</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 33,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "79442fdba7d36fa1a57d71b99b5ce03f40cd179b6cd00af7cd013f6abfcc376c"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 14,
+          "key": "mysterium",
+          "occurrence": 1,
+          "innerText": "I don't know either\n\nThis thing is so precious that there isn't even a name for it, so let's just call it \"Mysterium\", because it is a mystery, after all. It will be forever mysterious and the mystery will never be solved. How mysterious is that?",
+          "outerHtml": "<div><div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>I don't know either</span></div> <p>This thing is so precious that there isn't even a name for it, so let's just call it \"Mysterium\", because it\n                        is a mystery, after all. It will be forever mysterious and the mystery will never be solved. How mysterious is that?</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 35,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "70bf8553a420086da4b7ca89ce5a5bcec8bec520829740878ad4c341b45d8ee5"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 15,
+          "key": "fiftyTrillion",
+          "occurrence": 1,
+          "innerText": "That sure is a lot of Money. Maybe it is enough to buy the Moon?\n\nRicher than Rich\n\nThis is enough to pay off the US National debt.\nPAY ($ 22,000,000,000,000)",
+          "outerHtml": "<div><p>That sure is a lot of Money. Maybe it is enough to buy the Moon?</p> <div class=\"story-quote\"><img src=\"Images/money.png\"><span>Richer than Rich</span></div> <p>This is enough to pay off the US National debt.<br> <button>PAY ($ 22,000,000,000,000)</button></p></div>",
+          "imageSources": ["Images/money.png"],
+          "mineObjectPreviews": []
+        },
+        {
+          "sourceOrder": 16,
+          "key": "lightEssence",
+          "occurrence": 1,
+          "innerText": "Yet another Essence found. This one glows a lot and is even bright, so bright that a few of them could light up an entire city.\n\nEnlighten!\n\nYou still have no idea where the end is, you look down into a colorful cluster of minerals, shining in many different colors. You feel like that will change soon.",
+          "outerHtml": "<div><p>Yet another Essence found. This one glows a lot and is even bright, so bright that a few of them could light up\n                    an entire city.</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Enlighten!</span></div> <p>You still have no idea where the end is, you look down into a colorful cluster of minerals, shining in many\n                    different colors. You feel like that will change soon.</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 47,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "dbfdc77d741a145ec0cd30b492308233d270d74188c5fd79b8052a98e702b41d"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 17,
+          "key": "hellStone",
+          "occurrence": 1,
+          "innerText": "After passing several huge mineral clusters, and feeling like going down for many kilometers, you start to feel the heat of the air down here. It is still very bearable, though. A few dozen meters later, a sudden change happens.\n\nIs this hell?\n\nThese Minerals are completely different. They are very hot, dont glow at all and don't look beautiful either. On the other hand, they are worth a ton of money and you feel like you've hit the end. But did you?",
+          "outerHtml": "<div><p>After passing several huge mineral clusters, and feeling like going down for many kilometers, you start to\n                        feel the heat of the air down here. It is still very bearable, though. A few dozen meters later, a <b>sudden change</b>\n                        happens.</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Is this hell?</span></div> <p>These Minerals are completely different. They are very hot, dont glow at all and don't look beautiful either.\n                        On the other hand, they are worth a ton of money and you feel like you've hit the end. <i>But did you?</i></p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 50,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "d6b2a8820c5076a65dfb9b49d7b18d8a274d1af6f04f026f0727fe15a7b98624"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 18,
+          "key": "hellStoneFinal",
+          "occurrence": 1,
+          "innerText": "The End?\n\nThe Hellstone is getting darker and darker, harder and harder to break; an end seems to be near. Suddenly, the cave ends. The ground is filled with even more demonic Hellstone. They are nearly pitch black and seem unbreakable. You need a very good Pickaxe now.\n\nUnbreakable? I doubt that!\n\nLet's get a good Pickaxe, mine this and find out more! Maybe we did it?",
+          "outerHtml": "<div><h3>The End?</h3> <p>The Hellstone is getting darker and darker, harder and harder to break; an end seems to be near.\n                    Suddenly, the cave ends. The ground is filled with even more demonic Hellstone. They are nearly pitch black and seem unbreakable.\n                    You need a very good Pickaxe now.</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Unbreakable? I doubt that!</span></div> <p>Let's get a good Pickaxe, mine this and find out more! Maybe we did it?</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 54,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "59a6141ebf336cc627e4ee48a0b556e83b07b4f303d1a03c86600a27e6aa058c"
+            }
+          ]
+        }
+      ],
+      "quoteText": [
+        "What is this?",
+        "HOT, HOT!",
+        "I don't know either",
+        "Richer than Rich",
+        "Enlighten!",
+        "Is this hell?",
+        "Unbreakable? I doubt that!"
+      ],
+      "computed": {
+        "article": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "623px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "-1"
+          },
+          "rect": { "height": 655, "width": 1440, "x": 0, "y": 72 }
+        },
+        "scroller": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "558px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "scroll",
+            "overscrollBehaviorY": "contain",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 558, "width": 1408, "x": 16, "y": 153 }
+        },
+        "objective": null,
+        "milestone": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "261px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px 0px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 294, "width": 1408, "x": 16, "y": 153 }
+        },
+        "chapterControl": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "64px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 65, "width": 1408, "x": 16, "y": 88 }
+        },
+        "chapterHeading": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "Montserrat, sans-serif",
+            "fontSize": "32px",
+            "fontStyle": "normal",
+            "height": "39px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "498.594px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 39, "width": 498.59, "x": 470.7, "y": 100.5 }
+        },
+        "quote": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "8px 0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 1408, "x": 16, "y": 226 }
+        },
+        "quoteText": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(64, 64, 64)",
+            "borderTop": "0px none rgb(64, 64, 64)",
+            "color": "rgb(64, 64, 64)",
+            "display": "block",
+            "fontFamily": "\"Times new Roman\", serif",
+            "fontSize": "48px",
+            "fontStyle": "italic",
+            "height": "55px",
+            "margin": "0px 0px 0px 32px",
+            "marginLeft": "32px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "250.688px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 55, "width": 250.69, "x": 171.42, "y": 252.5 }
+        },
+        "mineObjectCanvas": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "clip",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "123.422px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 123.42, "x": 16, "y": 226 }
+        }
+      },
+      "viewport": { "width": 1440, "height": 900 }
+    },
+    {
+      "name": "all-unlocked-page-3",
+      "page": 3,
+      "chapterHeading": "Chapter 4: It's NOT over",
+      "nextObjective": null,
+      "objectiveText": null,
+      "objectiveHtml": null,
+      "visibleBlocks": [
+        {
+          "sourceOrder": 19,
+          "key": "infinitum",
+          "occurrence": 1,
+          "innerText": "After breaking the last hellstone, a small hole opens up below it. You didn't reach the end of the wave. There was just that wall of Hellstone...\n\nTo Infinity. And beyond!\n\nBy now you have probably accepted that this cave is endless and will never end, which in return means that you will become so rich that nobody can believe it.",
+          "outerHtml": "<div><p>After breaking the last hellstone, a small hole opens up below it. You didn't reach the end of the wave.\n                    There was just that wall of Hellstone...</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>To Infinity. And beyond!</span></div> <p>By now you have probably accepted that this cave is endless and will never end, which in return means that\n                    you will become so rich that nobody can believe it.</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 55,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "fad46880e1587f8b8af67c962485661d500e0116a16980fd931e1fec7e0ad610"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 20,
+          "key": "theGem",
+          "occurrence": 1,
+          "innerText": "It is really crazy down here. Those minerals don't even fit into the real world anymore. This just feels like another realm. You notice that progressing seems to get harder and harder...\n\nSuddenly you see light at the end of the Tunnel. A huge Gem. A really huge Gem. Breaking it would give you insights you couldn't think of before. Something to speed of progress a lot.\n\nIt's not just a Gem!",
+          "outerHtml": "<div><p>It is really crazy down here. Those minerals don't even fit into the real world anymore. This just feels like\n                    another realm. You notice that progressing seems to get harder and harder...</p> <p>Suddenly you see light at the end of the Tunnel. A huge Gem. A really huge Gem. Breaking it would give you\n                    insights you couldn't think of before. Something to speed of progress a lot.</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>It's not just a Gem!</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 60,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "13b19c9fd9548560a411bb9c87c6fdc66381a327b8cf68818374d17283f22996"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 21,
+          "key": "gemUpgrades",
+          "occurrence": 1,
+          "innerText": "You instantly feel a wave of wisdom streaming through your body...\nThat's it! Why should only money be invested into Upgrades? What if we do that with gems?\n\nYou are of much use now\n\nWith gems, you can now improve your blacksmith, the Auto-Mining-Device, and find even more gems! Infinite Growth awaits!",
+          "outerHtml": "<div><p><b>You instantly feel a wave of wisdom streaming through your body...</b><br>\n                    That's it! Why should only money be invested into Upgrades? What if we do that with gems?</p> <div class=\"story-quote\"><img src=\"Images/gem.png\"><span>You are of much use now</span></div> <p>With gems, you can now improve your blacksmith, the Auto-Mining-Device, and find even more gems!\n                        <b>Infinite Growth awaits!</b></p></div>",
+          "imageSources": ["Images/gem.png"],
+          "mineObjectPreviews": []
+        },
+        {
+          "sourceOrder": 22,
+          "key": "fractalium",
+          "occurrence": 1,
+          "innerText": "You are in another realm. High amounts of energy and light, inverted minerals and Holograms. The values of these Objects are tremendous. Even one of them means infinite wealth. Now, you make an even crazier discovery.\n\nzn+1 = zn2 + c\n\nA fractal. Infinite amount of complexity, yet so simple to describe. 150 No $ are enough to buy a white dwarf, an earth-sized ball of compressed carbon (a Diamond!).\n\nThe cave is starting to get slimmer again, the end might be near?",
+          "outerHtml": "<div><p>You are in another realm. High amounts of energy and light, inverted minerals and Holograms.\n                    The values of these Objects are tremendous. Even one of them means infinite wealth. Now,\n                    you make an even crazier discovery.</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas> <span>z<sub>n+1</sub> = z<sub>n</sub><sup>2</sup> + c</span></div> <p>A fractal. Infinite amount of complexity, yet so simple to describe. 150 No $ are\n                        enough to buy a white dwarf, an earth-sized ball of compressed carbon (a Diamond!).</p> <p>The cave is starting to get slimmer again, the end might be near?</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 68,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "9367835833c5cb0095dafe54884c1468ddb02826a51eb90e6e176be5d03c2280"
+            }
+          ]
+        }
+      ],
+      "quoteText": [
+        "To Infinity. And beyond!",
+        "It's not just a Gem!",
+        "You are of much use now",
+        "zn+1 = zn2 + c"
+      ],
+      "computed": {
+        "article": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "623px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "-1"
+          },
+          "rect": { "height": 655, "width": 1440, "x": 0, "y": 72 }
+        },
+        "scroller": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "558px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "scroll",
+            "overscrollBehaviorY": "contain",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 558, "width": 1408, "x": 16, "y": 153 }
+        },
+        "objective": null,
+        "milestone": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "243px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px 0px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 276, "width": 1408, "x": 16, "y": 153 }
+        },
+        "chapterControl": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "64px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 65, "width": 1408, "x": 16, "y": 88 }
+        },
+        "chapterHeading": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "Montserrat, sans-serif",
+            "fontSize": "32px",
+            "fontStyle": "normal",
+            "height": "39px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "375.688px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 39, "width": 375.69, "x": 532.16, "y": 100.5 }
+        },
+        "quote": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "8px 0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 1408, "x": 16, "y": 226 }
+        },
+        "quoteText": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(64, 64, 64)",
+            "borderTop": "0px none rgb(64, 64, 64)",
+            "color": "rgb(64, 64, 64)",
+            "display": "block",
+            "fontFamily": "\"Times new Roman\", serif",
+            "fontSize": "48px",
+            "fontStyle": "italic",
+            "height": "55px",
+            "margin": "0px 0px 0px 32px",
+            "marginLeft": "32px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "461.328px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 55, "width": 461.33, "x": 171.42, "y": 252.5 }
+        },
+        "mineObjectCanvas": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "clip",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "123.422px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 123.42, "x": 16, "y": 226 }
+        }
+      },
+      "viewport": { "width": 1440, "height": 900 }
+    },
+    {
+      "name": "all-unlocked-page-4",
+      "page": 4,
+      "chapterHeading": "Chapter 5: New Dimensions",
+      "nextObjective": null,
+      "objectiveText": null,
+      "objectiveHtml": null,
+      "visibleBlocks": [
+        {
+          "sourceOrder": 23,
+          "key": "reachPortal",
+          "occurrence": 1,
+          "innerText": "It all shrinks down to just a small Portal, about 2 meters in diameter, glowing in a mysterious reddish pink. Breaking it should reveal more...\n\nT́͝͞o̶͟ ͡͡o̕͝t̴́h̕e͘͜͡r͞ ̵̶̷D͏i̵͠͠ḿé̢ns̡͟i̡͞o̧͜ns̨̛,͏͢ ͢an̵̸͢d͏ ̨͘R̨҉̸ea̴͝l̡m̵̀ş͘<\n\nIt is very tough to break, nearly invincible. You need a very strong Pickaxe. Now, upgrade your Blacksmith, invest money and gems, and make a very powerful Pickaxe to break through!",
+          "outerHtml": "<div><p>It all shrinks down to just a small Portal, about 2 meters in diameter, glowing in a mysterious reddish pink.\n                        Breaking it should reveal more...</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas> <span>T́͝͞o̶͟ ͡͡o̕͝t̴́h̕e͘͜͡r͞ ̵̶̷D͏i̵͠͠ḿé̢ns̡͟i̡͞o̧͜ns̨̛,͏͢ ͢an̵̸͢d͏ ̨͘R̨҉̸ea̴͝l̡m̵̀ş͘&lt;</span></div> <p>It is very tough to break, nearly invincible. You need a very strong Pickaxe. Now, upgrade your Blacksmith, invest money\n                        and gems, and make a very powerful Pickaxe to break through!</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 71,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "b14b087a034ba8af09d5bd5511ef250627335b040b4b28a687a2e84a65fcf30c"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 24,
+          "key": "breakPortal",
+          "occurrence": 1,
+          "innerText": "The Portal slows drags you in. The air seems to become colder. Everything around you seems to dim, until you just seem to be surrounded by darkness. You stay calm. You are prepared and think you know what will happen next.\nSuddenly, you hear something, very far in the background.\n\n„I waited for you“\n\nWere you chosen to be a miner? Does that explain why you had a blacksmith and leftover gems at home? You are starting to understand. You were allowed to find out about the infinite riches of the underground.",
+          "outerHtml": "<div><p>The Portal slows drags you in. The air seems to become colder. Everything around you seems to dim, until you just seem\n                    to be surrounded by darkness. You stay calm. You are prepared and think you know what will happen next.\n                    <br>Suddenly, you hear something, very far in the background.</p> <div class=\"story-quote\"><span>„I waited for you“</span></div> <p>Were you chosen to be a miner? Does that explain why you had a blacksmith and leftover gems at home?\n                    You are starting to understand. You were allowed to find out about the infinite riches of the underground.</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": []
+        },
+        {
+          "sourceOrder": 25,
+          "key": "proceduralRealm1",
+          "occurrence": 1,
+          "innerText": "It's been a while, you still dig down (and the numbers grow, just as expected). There is no end in sight, but that is actually good. Those mineral names are weird, they make no sense. No wonder why this is the \"procedural realm\", but is it infinite?\nJust procedural, like all the other stuff",
+          "outerHtml": "<div>\n                    It's been a while, you still dig down (and the numbers grow, just as expected). There is no end in sight, but that is actually good.\n                    Those mineral names are weird, they make no sense. No wonder why this is the \"procedural realm\", but is it infinite?\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Just procedural, like all the other stuff</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 75,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "235d80a44487d78d5947cee49a82771c19fa5e8de735dadbba4911b3a6d706e3"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 26,
+          "key": "reachSpacePortal",
+          "occurrence": 1,
+          "innerText": "Aren't procedural realms infinite? Well, this one isn't. It closes down yet again. This portal is blueish, and when you look through it, you just see stars and galaxies.\nSPAAAAACE!\nIt's a portal to space. There's a little spaceship standing besides the portal, it must have been the mining god you heard lately (He waited for you, after all). This portal is tough yet again, but not so resistant. Make a pickaxe and open this thing!",
+          "outerHtml": "<div>\n                    Aren't procedural realms infinite? Well, this one isn't. It closes down yet again. This portal is blueish, and when you look through it,\n                    you just see stars and galaxies.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>SPAAAAACE!</span></div>\n                    It's a portal to space. There's a little spaceship standing besides the portal, it must have been the mining god\n                    you heard lately (He waited for you, after all). This portal is tough yet again, but not so resistant. Make a pickaxe and open this thing!\n                </div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 89,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "3e14bd369a6321cfd83be2bb0135ddb3d7f1b49a40d0ce818d0355c60fedb88b"
+            }
+          ]
+        }
+      ],
+      "quoteText": [
+        "T́͝͞o̶͟ ͡͡o̕͝t̴́h̕e͘͜͡r͞ ̵̶̷D͏i̵͠͠ḿé̢ns̡͟i̡͞o̧͜ns̨̛,͏͢ ͢an̵̸͢d͏ ̨͘R̨҉̸ea̴͝l̡m̵̀ş͘<",
+        "„I waited for you“",
+        "Just procedural, like all the other stuff",
+        "SPAAAAACE!"
+      ],
+      "computed": {
+        "article": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "623px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "-1"
+          },
+          "rect": { "height": 655, "width": 1440, "x": 0, "y": 72 }
+        },
+        "scroller": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "558px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "scroll",
+            "overscrollBehaviorY": "contain",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 558, "width": 1408, "x": 16, "y": 153 }
+        },
+        "objective": null,
+        "milestone": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "243px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px 0px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 276, "width": 1408, "x": 16, "y": 153 }
+        },
+        "chapterControl": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "64px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 65, "width": 1408, "x": 16, "y": 88 }
+        },
+        "chapterHeading": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "Montserrat, sans-serif",
+            "fontSize": "32px",
+            "fontStyle": "normal",
+            "height": "39px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "444.453px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 39, "width": 444.45, "x": 497.78, "y": 100.5 }
+        },
+        "quote": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "8px 0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 1408, "x": 16, "y": 226 }
+        },
+        "quoteText": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(64, 64, 64)",
+            "borderTop": "0px none rgb(64, 64, 64)",
+            "color": "rgb(64, 64, 64)",
+            "display": "block",
+            "fontFamily": "\"Times new Roman\", serif",
+            "fontSize": "48px",
+            "fontStyle": "italic",
+            "height": "55px",
+            "margin": "0px 0px 0px 32px",
+            "marginLeft": "32px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "679.969px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 55, "width": 679.97, "x": 171.42, "y": 252.5 }
+        },
+        "mineObjectCanvas": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "clip",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "123.422px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 123.42, "x": 16, "y": 226 }
+        }
+      },
+      "viewport": { "width": 1440, "height": 900 }
+    },
+    {
+      "name": "all-unlocked-page-5",
+      "page": 5,
+      "chapterHeading": "Chapter 6: Gone to Space",
+      "nextObjective": null,
+      "objectiveText": null,
+      "objectiveHtml": null,
+      "visibleBlocks": [
+        {
+          "sourceOrder": 27,
+          "key": "breakSpacePortal",
+          "occurrence": 1,
+          "innerText": "You enter the spaceship, and fly straight through the portal. In the far distance you can see the sun, and you see many asteroids flying around you. You actually are in the asteroid belt, that's not so far away (astronomically speaking). Well, it's time to mine Asteroids.\nWelcome to the Asteroid Belt!",
+          "outerHtml": "<div>\n                    You enter the spaceship, and fly straight through the portal. In the far distance you can see the sun, and you see many asteroids flying around you.\n                    You actually are in the asteroid belt, that's not so far away (astronomically speaking). Well, it's time to mine Asteroids.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Welcome to the Asteroid Belt!</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 90,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "20eba03a45eaee07d779844449a0f95592ff8e42bb2a6e8ece43d1eda73014a6"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 28,
+          "key": "planetcoin",
+          "occurrence": 1,
+          "innerText": "As this Object breaks, something pops out of it... what is this? It is a new type of Resource, a planet coin.\nNew opportunities to Upgrade!\nCheck out the new Upgrades, it will surely be worth it!",
+          "outerHtml": "<div>\n                    As this Object breaks, something pops out of it... what is this? It is a new type of Resource, a planet coin.\n                    <div class=\"story-quote\"><img src=\"Images/planetcoin.png\"><span>New opportunities to Upgrade!</span></div>\n                    Check out the new Upgrades, it will surely be worth it!\n                </div>",
+          "imageSources": ["Images/planetcoin.png"],
+          "mineObjectPreviews": []
+        },
+        {
+          "sourceOrder": 29,
+          "key": "pluto",
+          "occurrence": 1,
+          "innerText": "You did it! You mined a planet! Mmh, it's just a dwarf planet, but it was a real planet until 2006.\nAlmost a Planet\nWhy do Objects keep reappearing here after you mined them? It seems like to universe of Idle Mine: Remix says no to several laws of physics.",
+          "outerHtml": "<div>\n                    You did it! You mined a planet! Mmh, it's just a dwarf planet, but it was a real planet until 2006.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Almost a Planet</span></div>\n                    Why do Objects keep reappearing here after you mined them? It seems like to universe of Idle Mine: Remix says no to several laws of physics.\n                </div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 100,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "74df8f7c5e2c8fe289805d166601c1891a19907244eae8edff53a82c89025ade"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 30,
+          "key": "theMoon",
+          "occurrence": 1,
+          "innerText": "You just mined the Moon! Luckily it is reappearing every time you mine it...\nOut Moon is one of the biggest moons in the solar system, you've gotten pretty far.\nMan in the Moon",
+          "outerHtml": "<div>\n                    You just mined the Moon! Luckily it is reappearing every time you mine it...<br>\n                    Out Moon is one of the biggest moons in the solar system, you've gotten pretty far.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Man in the Moon</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 101,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "39480f23b8ee03410b2c8491ae57c3e6c983aff705ff3e1f3311e15444eaf2b8"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 31,
+          "key": "mars",
+          "occurrence": 1,
+          "innerText": "Mars is one of our nearest planets that might be colonized in the nearer future. If Mars is close to the earth, you can see it as a bright reddish dot in the sky.\nIs there life on Mars?",
+          "outerHtml": "<div>\n                    Mars is one of our nearest planets that might be colonized in the nearer future. If Mars is close to the earth, you can see it as a bright reddish\n                    dot in the sky.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Is there life on Mars?</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 105,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "89a2c2dabbbb7de7acb6752bc3591926f56f8596e5a5493f5302e76d318317ed"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 32,
+          "key": "venus",
+          "occurrence": 1,
+          "innerText": "Venus is the planet that can get the closest to Earth, although it is in the front of the sun at that point. Venus gets so big on the sky that you can almost see its phase with the naked eye. Also, with a maximum apparent magnitude of about -4.6, it really stands out in the sky and might even be visible during the day with a great eyesight!\nThe evening star",
+          "outerHtml": "<div>\n                    Venus is the planet that can get the closest to Earth, although it is in the front of the sun at that point. Venus gets so big on the sky that you can\n                    almost see its phase with the naked eye. Also, with a maximum apparent magnitude of about -4.6, it really stands out in the sky and might even\n                    be visible during the day with a great eyesight!\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>The evening star</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 106,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "b58e7a8a37d3569a9bca8b7658fec1a18605920589e0ebe53a957ac02a0e8afc"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 33,
+          "key": "saturn",
+          "occurrence": 1,
+          "innerText": "Saturn is the second biggest planet in the solar system.\nLargest Ring System\nIt also has the biggest ring system that can easily be seen through a telescope. Sadly, it is going to disappear over the next hundreds of million years.",
+          "outerHtml": "<div>\n                    Saturn is the second biggest planet in the solar system.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Largest Ring System</span></div>\n                    It also has the biggest ring system that can easily be seen through a telescope. Sadly, it is going to disappear over the next hundreds of million years.\n                </div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 109,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "fb176fb346921a6411c4fb2667cfe471f39821a4412b7608436ad10d4801c91c"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 34,
+          "key": "jupiter",
+          "occurrence": 1,
+          "innerText": "Finally, Jupiter is the largest planet of the solar system. You already mined the moons before, but now you get to the real planet.\nLargest Planet of the Solar System\nJupiter has over 70 known moons, having diameters ranging from just a few kilometers to over 5000 kilometers (Ganymede). Now, it is time to exit our solar system. Time to mine Exoplanets!",
+          "outerHtml": "<div>\n                    Finally, Jupiter is the largest planet of the solar system. You already mined the moons before, but now you get to the real planet.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Largest Planet of the Solar System</span></div>\n                    Jupiter has over 70 known moons, having diameters ranging from just a few kilometers to over 5000 kilometers (Ganymede).\n                    Now, it is time to exit our solar system. Time to mine Exoplanets!\n                </div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 110,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "dc7f2421bfbca3a48cf07eca9e0a0bd68876c5f8124fc30e7ff6e01b789b30db"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 35,
+          "key": "wasp79b",
+          "occurrence": 1,
+          "innerText": "WASP-79b is one of the largest exoplanets ever discovered. It is about twice as big as Jupiter, which translates to a diameter of over 250,000 kilometers.\nLargest Planet\nIn the Universe, planets cannot become much larger than that because the immense mass and pressure in the core would start a nuclear fusion, which means that it would become a star. But in this game, physics are... different. We can go further.\nThere's an infinite amount of exoplanets to discover!",
+          "outerHtml": "<div>\n                    WASP-79b is one of the largest exoplanets ever discovered. It is about twice as big as Jupiter, which translates to a diameter of over 250,000 kilometers.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Largest Planet</span></div>\n                    In the Universe, planets cannot become much larger than that because the immense mass and pressure in the core would start a nuclear fusion, which\n                    means that it would become a star. But in this game, physics are... different. We can go further.<br>There's an infinite amount of exoplanets to\n                    discover!\n                </div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 114,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "026acce8ae095546cdd38b5f9ecbca7f9178505119137fad0c309afee7a7c42a"
+            }
+          ]
+        }
+      ],
+      "quoteText": [
+        "Welcome to the Asteroid Belt!",
+        "New opportunities to Upgrade!",
+        "Almost a Planet",
+        "Man in the Moon",
+        "Is there life on Mars?",
+        "The evening star",
+        "Largest Ring System",
+        "Largest Planet of the Solar System",
+        "Largest Planet"
+      ],
+      "computed": {
+        "article": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "623px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "-1"
+          },
+          "rect": { "height": 655, "width": 1440, "x": 0, "y": 72 }
+        },
+        "scroller": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "558px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "scroll",
+            "overscrollBehaviorY": "contain",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 558, "width": 1408, "x": 16, "y": 153 }
+        },
+        "objective": null,
+        "milestone": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "166px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px 0px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 199, "width": 1408, "x": 16, "y": 153 }
+        },
+        "chapterControl": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "64px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 65, "width": 1408, "x": 16, "y": 88 }
+        },
+        "chapterHeading": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "Montserrat, sans-serif",
+            "fontSize": "32px",
+            "fontStyle": "normal",
+            "height": "39px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "405px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 39, "width": 405, "x": 517.5, "y": 100.5 }
+        },
+        "quote": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "8px 0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 1408, "x": 16, "y": 219 }
+        },
+        "quoteText": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(64, 64, 64)",
+            "borderTop": "0px none rgb(64, 64, 64)",
+            "color": "rgb(64, 64, 64)",
+            "display": "block",
+            "fontFamily": "\"Times new Roman\", serif",
+            "fontSize": "48px",
+            "fontStyle": "italic",
+            "height": "55px",
+            "margin": "0px 0px 0px 32px",
+            "marginLeft": "32px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "568.766px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 55, "width": 568.77, "x": 171.42, "y": 245.5 }
+        },
+        "mineObjectCanvas": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "clip",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "123.422px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 123.42, "x": 16, "y": 219 }
+        }
+      },
+      "viewport": { "width": 1440, "height": 900 }
+    },
+    {
+      "name": "all-unlocked-page-6",
+      "page": 6,
+      "chapterHeading": "Chapter 7: Hyperplanets",
+      "nextObjective": null,
+      "objectiveText": null,
+      "objectiveHtml": null,
+      "visibleBlocks": [
+        {
+          "sourceOrder": 36,
+          "key": "hyperSaturn",
+          "occurrence": 1,
+          "innerText": "Ever seen a saturn-like planet with a diameter of millions of kilometers? Well, it's impossible in our universe, but here it isn't... If you replaced Saturn with this, you would probably clearly see the glowing rings in a clear night with your naked eye.\nSaturn, but around 100x larger",
+          "outerHtml": "<div>\n                    Ever seen a saturn-like planet with a diameter of millions of kilometers? Well, it's impossible in our universe, but here it isn't...\n                    If you replaced Saturn with this, you would probably clearly see the glowing rings in a clear night with your naked eye.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Saturn, but around 100x larger</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 124,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "a8177ba53569fb86262c3d5ebf9a08558b041c1f26053eef2ea45011c33a2faf"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 37,
+          "key": "superEarth",
+          "occurrence": 1,
+          "innerText": "This planet, similar to earth, has a diameter of about 120,000,000 kilometers. That means that, if replaced with the sun, would stretch out to around mercuries orbit.\nMuch space for humans\nSuperearth would be big enough to house trillions of people. Game Servers can't be worldwide because of extreme lag :( (no information can travel faster than the speed of light). Also, imagine a YouTuber with over 100 billion subscribers :D",
+          "outerHtml": "<div>\n                    This planet, similar to earth, has a diameter of about 120,000,000 kilometers. That means that, if replaced with the sun, would stretch out to around mercuries\n                    orbit.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Much space for humans</span></div>\n                    Superearth would be big enough to house trillions of people. Game Servers can't be worldwide because of extreme lag :( (no information can travel faster than the speed\n                    of light). Also, imagine a YouTuber with over 100 billion subscribers :D\n                </div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 134,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "1783ffe97e8ad4ae23f5ee54a0c4d86ba5df0c2246fb03dee13814238f6fe2d6"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 38,
+          "key": "colossia",
+          "occurrence": 1,
+          "innerText": "You feel like you're getting to very huge planets now. They are just immense... Now look at these diameters:\n400,000,000 km\nColossia: If you replaced Saturn with this planet, it would appear much larger than our moon on the sky. It would break our solar system due to its extreme gravitational force.\n2,400,000,000 km\nGiagantia: Replaced with our sun, this planet would stretch out to Saturns orbit. It is also nearly as big as the largest known Star, UY Scuti.\n20,000,000,000 km\nGaragantula: Replaced with our sun, this planet would stretch out well beyond Plutos orbit.\n150,000,000,000 km\nGiagarantula Omega: It's diameter is about 100th of a light year. That means any signal would need over 10 days to get redirected to the other side of the planet.",
+          "outerHtml": "<div>\n                    You feel like you're getting to very huge planets now. They are just immense... Now look at these diameters:\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>400,000,000 km</span></div> <b>Colossia:</b> If you replaced Saturn with this planet, it would appear much larger than our moon on the sky. It would break our solar system\n                        due to its extreme gravitational force.\n                    <div><div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>2,400,000,000 km</span></div> <b>Giagantia:</b> Replaced with our sun, this planet would stretch out to Saturns orbit. It is also nearly as big as the largest known Star, UY Scuti.\n                    </div> <div><div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>20,000,000,000 km</span></div> <b>Garagantula:</b> Replaced with our sun, this planet would stretch out well beyond Plutos orbit.\n                    </div> <div><div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>150,000,000,000 km</span></div> <b>Giagarantula Omega:</b> It's diameter is about 100th of a light year. That means any signal would need over 10 days to get redirected to the other side of the planet.\n                    </div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 137,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "2e0865ad46286ea155e3fa7f3f874ff222d56623b851e4ada2b08bca6b3d2966"
+            },
+            {
+              "level": 138,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "f057064451ac25b1c72f0ef4f592de1d829e25d3ed6f1fe3ec3e52c86e53bc6a"
+            },
+            {
+              "level": 139,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "da57e66b52e85cc2fb18a346bdf5489303dd8ad53127aaf8c62572b822486ed8"
+            },
+            {
+              "level": 140,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "b7c48085eaeceaeeff495aa09608f77150647a9422b9bf8ecc75b5174594a50f"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 42,
+          "key": "breakPlanetOmega",
+          "occurrence": 1,
+          "innerText": "Phew, that was a big one. A million times bigger than Jupiter. Theoretically, a planet this big would have collapsed into a extremely massive black hole. But, in the end, you did it.\nThe biggest Planet(?) broken!\nWait! This is not the end. Let's explore the infiniteness of the Universe. There are many more planets to mine...",
+          "outerHtml": "<div>\n                    Phew, that was a big one. A million times bigger than Jupiter. Theoretically, a planet this big would have collapsed into a extremely massive black hole.\n                    But, in the end, you did it.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>The biggest Planet(?) broken!</span></div> <b>Wait!</b> This is not the end. Let's explore the infiniteness of the Universe. There are many more planets to mine...\n                </div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 140,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "b7c48085eaeceaeeff495aa09608f77150647a9422b9bf8ecc75b5174594a50f"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 43,
+          "key": "planet160",
+          "occurrence": 1,
+          "innerText": "... in this Universe. And it seems to get boring. Those Planets are just getting bigger and bigger, with arbitrary names. Why aren't we just mining Stars? Are they too hot? Possibly. Get stronger and stronger, and soon Stars should be no Problem anymore.",
+          "outerHtml": "<div>\n                    ... in this Universe. And it seems to get boring. Those Planets are just getting bigger and bigger, with arbitrary names. Why aren't we just mining Stars? Are they too hot? Possibly.\n                    Get stronger and stronger, and soon Stars should be no Problem anymore.\n                </div>",
+          "imageSources": [],
+          "mineObjectPreviews": []
+        }
+      ],
+      "quoteText": [
+        "Saturn, but around 100x larger",
+        "Much space for humans",
+        "400,000,000 km",
+        "2,400,000,000 km",
+        "20,000,000,000 km",
+        "150,000,000,000 km",
+        "The biggest Planet(?) broken!"
+      ],
+      "computed": {
+        "article": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "623px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "-1"
+          },
+          "rect": { "height": 655, "width": 1440, "x": 0, "y": 72 }
+        },
+        "scroller": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "558px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "scroll",
+            "overscrollBehaviorY": "contain",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 558, "width": 1408, "x": 16, "y": 153 }
+        },
+        "objective": null,
+        "milestone": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "166px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px 0px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 199, "width": 1408, "x": 16, "y": 153 }
+        },
+        "chapterControl": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "64px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 65, "width": 1408, "x": 16, "y": 88 }
+        },
+        "chapterHeading": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "Montserrat, sans-serif",
+            "fontSize": "32px",
+            "fontStyle": "normal",
+            "height": "39px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "387.234px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 39, "width": 387.23, "x": 526.39, "y": 100.5 }
+        },
+        "quote": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "8px 0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 1408, "x": 16, "y": 219 }
+        },
+        "quoteText": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(64, 64, 64)",
+            "borderTop": "0px none rgb(64, 64, 64)",
+            "color": "rgb(64, 64, 64)",
+            "display": "block",
+            "fontFamily": "\"Times new Roman\", serif",
+            "fontSize": "48px",
+            "fontStyle": "italic",
+            "height": "55px",
+            "margin": "0px 0px 0px 32px",
+            "marginLeft": "32px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "597.781px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 55, "width": 597.78, "x": 171.42, "y": 245.5 }
+        },
+        "mineObjectCanvas": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "clip",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "123.422px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 123.42, "x": 16, "y": 219 }
+        }
+      },
+      "viewport": { "width": 1440, "height": 900 }
+    },
+    {
+      "name": "all-unlocked-page-7",
+      "page": 7,
+      "chapterHeading": "Chapter 8: The Wisdom Era",
+      "nextObjective": null,
+      "objectiveText": null,
+      "objectiveHtml": null,
+      "visibleBlocks": [
+        {
+          "sourceOrder": 44,
+          "key": "reachWisdomEssence",
+          "occurrence": 1,
+          "innerText": "Wait, what is this!? While chilling and moving through the vacuum, you see a rock flying by, a few meters in size. What were the chances? It is very blue (blue-er than blue!) and the closer you get, the smarter you feel.\n\nYou have to Mine it.\n\nWho knows what will happen when you mine this? Remember what happened when you broke THE GEM. You will probably get even stronger after mining this stone.",
+          "outerHtml": "<div>\n                    Wait, what is this!? While chilling and moving through the vacuum, you see a rock flying by, a few meters in size. <i>What were the chances?</i>\n                    It is very blue (blue-er than blue!) and the closer you get, the smarter you feel.<br> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>You have to Mine it.</span></div> <p>Who knows what will happen when you mine this? Remember what happened when you broke THE GEM. You will probably get even stronger after mining this stone.</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 169,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "4cc2aed976c687fd0257a9ac0084fb91fc28310791f3774f6a77cfe5207b2817"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 45,
+          "key": "breakWisdomEssence",
+          "occurrence": 1,
+          "innerText": "Wisdom streams out of the Stone. You cannot see it, but you feel getting smarter with every second.\n\nYou got an Idea: If you get smarter, you can find out how to do more Damage. With more Damage you can get smarter faster. Time to Synergize!\n\nYou found out how to mine Stars, let's go!\n\nHow to get Wisdom?\n\nAround every 5th Object drops wisdom instead of planet coins. The further you are, the more wisdom it drops.",
+          "outerHtml": "<div><i>Wisdom streams out of the Stone.</i> You cannot see it, but you feel getting smarter with every second.\n                    <p>You got an Idea: If you get smarter, you can find out how to do more Damage. With more Damage you can get smarter faster. Time to <b>Synergize</b>!</p> <p>You found out how to mine Stars, let's go!</p> <h4>How to get Wisdom?</h4> <p>Around every 5th Object drops wisdom instead of planet coins. The further you are, the more wisdom it drops.</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": []
+        },
+        {
+          "sourceOrder": 46,
+          "key": "miningStars",
+          "occurrence": 1,
+          "innerText": "Congratulations, you mined your first Star! Even though they're not solid, it was really challenging. The extreme heat made mining it very tough.\n\nBasically just a Ball 'o Hydrogen.\n\nWhat's next? Of course, mining bigger Stars!",
+          "outerHtml": "<div><p>Congratulations, you mined your first Star! Even though they're not solid, it was really challenging. The extreme heat made mining it very tough.</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Basically just a Ball 'o Hydrogen.</span></div> <p>What's next? Of course, mining bigger Stars!</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 170,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "4e3021b885626721e93865d1e723fd32be05554fe2c933ae487f832868b49700"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 47,
+          "key": "wisdomUpgrade",
+          "occurrence": 1,
+          "innerText": "Finally, the Wisdom is put to good use. Becoming smarter and doing more Damage with every click, how awesome is that?\nSmarter → Stronger → Smarter → ...\n\nThere are even more Upgrades regarding Wisdom. Numbers will only grow faster now!",
+          "outerHtml": "<div>\n                    Finally, the Wisdom is put to good use. Becoming smarter and doing more Damage with every click, how awesome is that?\n                    <div class=\"story-quote\"><img src=\"Images/wisdom.png\"><span>Smarter → Stronger → Smarter → ...</span></div> <p>There are even more Upgrades regarding Wisdom. Numbers will only grow faster now!</p></div>",
+          "imageSources": ["Images/wisdom.png"],
+          "mineObjectPreviews": []
+        },
+        {
+          "sourceOrder": 48,
+          "key": "mineSun",
+          "occurrence": 1,
+          "innerText": "You mined our Sun... well, since were in the Idle Mine: Remix realm, the Sun reappeared the moment you mined it, so no worries!\nGiver of Life",
+          "outerHtml": "<div>\n                    You mined our Sun... well, since were in the Idle Mine: Remix realm, the Sun reappeared the moment you mined it, so no worries!\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Giver of Life</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 173,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "de9edc3f7154d49fddac9dcd466eadc28a5e6095dc1f64fd07fa90a0cd6204fa"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 49,
+          "key": "minePolaris",
+          "occurrence": 1,
+          "innerText": "Polaris was and is used to orient in the Night Sky. It always points towards north. Also, it is one of the brightest stars in the Night Sky.\n50x bigger than our Sun",
+          "outerHtml": "<div>\n                    Polaris was and is used to orient in the Night Sky. It always points towards north. Also, it is one of the brightest stars in the Night Sky.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>50x bigger than our Sun</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 178,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "8b162e42ba0bae7a1a9d7a674539974add09b3f7271db49fbc78c07790a01cdd"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 50,
+          "key": "mineBetelgeuse",
+          "occurrence": 1,
+          "innerText": "Betelgeuse is around 500x as large as our Sun, and it is over 600 light years away. Early this year, it has gained attention because it quickly lost luminosity, which possibly meant that Betelgeuse would go Supernova, creating a Nebula as bright as the full Moon, lasting for several Months.\nSpoiler: It didn't explode",
+          "outerHtml": "<div>\n                    Betelgeuse is around 500x as large as our Sun, and it is over 600 light years away. Early this year, it has gained attention because it quickly lost luminosity,\n                    which possibly meant that Betelgeuse would go Supernova, creating a Nebula as bright as the full Moon, lasting for several Months.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Spoiler: It didn't explode</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 186,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "41780b46a4278e0171efd0b881c75d4064e7ee8e99f876c34d2f6e3086555669"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 51,
+          "key": "mineScuti",
+          "occurrence": 1,
+          "innerText": "UY Scuti is the largest Star discovered in the Universe, even larger than VY Canis Majoris.\n← The Largest",
+          "outerHtml": "<div>\n                    UY Scuti is the largest Star discovered in the Universe, even larger than VY Canis Majoris.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>← The Largest</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 190,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "34ce52262b2954dc9a13f5d847a9479d47f90df0dda410085778654b494ed901"
+            }
+          ]
+        }
+      ],
+      "quoteText": [
+        "You have to Mine it.",
+        "Basically just a Ball 'o Hydrogen.",
+        "Smarter → Stronger → Smarter → ...",
+        "Giver of Life",
+        "50x bigger than our Sun",
+        "Spoiler: It didn't explode",
+        "← The Largest"
+      ],
+      "computed": {
+        "article": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "623px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "-1"
+          },
+          "rect": { "height": 655, "width": 1440, "x": 0, "y": 72 }
+        },
+        "scroller": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "558px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "scroll",
+            "overscrollBehaviorY": "contain",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 558, "width": 1408, "x": 16, "y": 153 }
+        },
+        "objective": null,
+        "milestone": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "236px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px 0px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 269, "width": 1408, "x": 16, "y": 153 }
+        },
+        "chapterControl": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "64px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 65, "width": 1408, "x": 16, "y": 88 }
+        },
+        "chapterHeading": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "Montserrat, sans-serif",
+            "fontSize": "32px",
+            "fontStyle": "normal",
+            "height": "39px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "436.359px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 39, "width": 436.36, "x": 501.83, "y": 100.5 }
+        },
+        "quote": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "8px 0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 1408, "x": 16, "y": 219 }
+        },
+        "quoteText": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(64, 64, 64)",
+            "borderTop": "0px none rgb(64, 64, 64)",
+            "color": "rgb(64, 64, 64)",
+            "display": "block",
+            "fontFamily": "\"Times new Roman\", serif",
+            "fontSize": "48px",
+            "fontStyle": "italic",
+            "height": "55px",
+            "margin": "0px 0px 0px 32px",
+            "marginLeft": "32px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "383.531px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 55, "width": 383.53, "x": 171.42, "y": 245.5 }
+        },
+        "mineObjectCanvas": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "clip",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "123.422px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 123.42, "x": 16, "y": 219 }
+        }
+      },
+      "viewport": { "width": 1440, "height": 900 }
+    },
+    {
+      "name": "all-unlocked-page-8",
+      "page": 8,
+      "chapterHeading": "Chapter 9: Cosmic Superstructures",
+      "nextObjective": null,
+      "objectiveText": null,
+      "objectiveHtml": null,
+      "visibleBlocks": [
+        {
+          "sourceOrder": 52,
+          "key": "mineStarGroup",
+          "occurrence": 1,
+          "innerText": "Now we're taking! Since you mined the biggest star, the next option is to mine several Stars at once! Let's go mine even more stars at once, and let's see how far it can go.",
+          "outerHtml": "<div>\n                    Now we're taking! Since you mined the biggest star, the next option is to mine several Stars at once!\n                    Let's go mine even more stars at once, and let's see how far it can go.\n                </div>",
+          "imageSources": [],
+          "mineObjectPreviews": []
+        },
+        {
+          "sourceOrder": 53,
+          "key": "mineSmallGalaxy",
+          "occurrence": 1,
+          "innerText": "An entire Galaxy. Over 20,000 Ly in diameter and billions of stars. You just mined that. You are now stronger than the most massive black hole.\nMore Stars than you can count!",
+          "outerHtml": "<div>\n                    An entire Galaxy. Over 20,000 Ly in diameter and billions of stars. You just mined that. You are now stronger than the most massive black hole.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>More Stars than you can count!</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 197,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "2ad1374ec153dd414be86eda81cd76c4bad483a3050b7e013d12f3e7620b9a75"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 54,
+          "key": "mineMilkyWay",
+          "occurrence": 1,
+          "innerText": "You mined our Galaxy. Don't worry, our Milky Way also reappears the moment you mine it. The Milky Way has a diameter of about 100,000 Ly and has over 100 billion stars. Our Sun is just one of them.\nOur true home",
+          "outerHtml": "<div>\n                    You mined our Galaxy. Don't worry, our Milky Way also reappears the moment you mine it. The Milky Way has a diameter of about 100,000 Ly and has over 100 billion stars.\n                    Our Sun is just one of them.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Our true home</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 199,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "f052103e667ec3b6edc8c53271d93b0ccc03d26fd62dc98c59240cc7f0421f6a"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 55,
+          "key": "mineLocalGroup",
+          "occurrence": 1,
+          "innerText": "After mining several Galaxies, you're doing the next step like you did before. Now you mine several Galaxies at once. First up: The Local Group.\nIt contains the Milky Way and Andromeda\n\nAt that point, one must think how it even is possible to mine something that is over 10 Million Light Years large. It seems like your Pickaxe acts like a black hole now, just... a bit different.",
+          "outerHtml": "<div>\n                    After mining several Galaxies, you're doing the next step like you did before. Now you mine several Galaxies at once. First up: The Local Group.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>It contains the Milky Way and Andromeda</span></div> <p>At that point, one must think how it even is possible to mine something that is over 10 Million Light Years large. It seems like your Pickaxe acts like a black hole now, just... a bit different.</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 205,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "1a0f8bd77f7428d7bd66244d9650ac249f5c17b241dcb48179879cbf9e7ef5b9"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 56,
+          "key": "mineGalaxyCluster",
+          "occurrence": 1,
+          "innerText": "What comes after Galaxy Groups? Correct: Galaxy Clusters. They contain even more Galaxies, but they don't pose a problem to you.\nLike a Galaxy Group Group",
+          "outerHtml": "<div>\n                    What comes after Galaxy Groups? Correct: Galaxy Clusters. They contain even more Galaxies, but they don't pose a problem to you.\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Like a Galaxy Group Group</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 208,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "9488548788940cbfe9f45d6e2f6bda8c6f4588c9fbd928018574575c9ea8467c"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 57,
+          "key": "mineGalaxySuperCluster",
+          "occurrence": 1,
+          "innerText": "What comes after Galaxy Clusters? Correct: Galaxy Superclusters. (does that sentence seem familiar?)\nLike a Galaxy Group Group Group",
+          "outerHtml": "<div>\n                    What comes after Galaxy Clusters? Correct: Galaxy Superclusters. (does that sentence seem familiar?)\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Like a Galaxy Group Group Group</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 210,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "fd14a3fff9423c8fff6c1402f78502537dc94dec77b334eef775fc338c6767be"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 58,
+          "key": "mineFilament",
+          "occurrence": 1,
+          "innerText": "Filaments are huge structures, around a Billion Light Years large, containing millions of galaxies (if not even billions!). Are we gonna mine the entire Universe soon?\nAlmost there!",
+          "outerHtml": "<div>\n                    Filaments are huge structures, around a Billion Light Years large, containing millions of galaxies (if not even billions!). Are we gonna mine the entire Universe soon?\n                    <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Almost there!</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 212,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "d820e476ae6e9ef3c859571822b7f11ca967d0c19c08c01422d899679b577a51"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 59,
+          "key": "reachUniverse",
+          "occurrence": 1,
+          "innerText": "You are mining Filaments with ease now, and it becomes clear what is next: mining the ENTIRE Universe. It has really come this far... Increase your damage with wisdom, buy some Gem Upgrades, and finish it off! Don't worry, our Universe will reappear after mining it.\n\nEverything we know, everything we have.",
+          "outerHtml": "<div><p>You are mining Filaments with ease now, and it becomes clear what is next: mining the ENTIRE Universe. It has really come this far...\n                    Increase your damage with wisdom, buy some Gem Upgrades, and finish it off! Don't worry, our Universe will reappear after mining it.</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Everything we know, everything we have.</span></div></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 214,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "9e7d907e09e8ae7d668b1ae90aa40608e8fbaf528bcea86938bdca7438c32a15"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 60,
+          "key": "mineUniverse",
+          "occurrence": 1,
+          "innerText": "You mine the very fabric that our Universe has. You eat it up from the inside. You mine Trillions of planets and Billions of Galaxies at once, every second. The Universe shrinks, the heat this generates makes it glow. Suddenly, it's gone. For a short moment, you see colorful dots around you.\n\nOur Universe is not the only one...\n\nThe Universe pops back up as nothing has happened. You are now beyond anything humanity can describe. You just mined the entire Universe as if it was nothing.",
+          "outerHtml": "<div><p>You mine the very fabric that our Universe has. You eat it up from the inside. You mine Trillions of planets and Billions of Galaxies at once, every second.\n                    The Universe shrinks, the heat this generates makes it glow. Suddenly, it's gone. For a short moment, you see colorful dots around you.</p> <div class=\"story-quote\"><canvas width=\"256\" height=\"224\" class=\"mine-object nodmg\"></canvas><span>Our Universe is not the only one...</span></div> <p>The Universe pops back up as nothing has happened. You are now beyond anything humanity can describe. You just mined the entire Universe as if it was nothing.</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": [
+            {
+              "level": 215,
+              "className": "mine-object nodmg",
+              "width": 256,
+              "height": 224,
+              "pixelSha256": "2fda2a29e2701208ab585c9044aa85493090a9f5299d9eb81ab2b0ce782fc771"
+            }
+          ]
+        },
+        {
+          "sourceOrder": 61,
+          "key": "mineUniverse",
+          "occurrence": 2,
+          "innerText": "Conclusion\n\nThanks for playing my Game! This marks the end of the story. Your task now is to further explore the Multiverse, filled with an infinite amount of new Universes to mine.\n\nI wonder how far the numbers can go! Through the Gem Upgrades, progress should always be possible, and a progress wall should be very far away. Can you reach 180 UCe $?\nNah, your wisdom should make it even faster... can you reach 1 DcQe $? That's ∞4!\n\nThis doesn't mean it's the end forever. I could add new Content in the future to extend the story. Anyways, I hope you had fun playing :)",
+          "outerHtml": "<div><h3>Conclusion</h3> <p>Thanks for playing my Game! This marks the end of the story. Your task now is to further explore the Multiverse,\n                    filled with an infinite amount of new Universes to mine.</p> <p>I wonder how far the numbers can go! Through the Gem Upgrades, progress should always be possible, and a progress wall\n                    should be very far away. Can you reach 180 UCe $?<br>\n                    Nah, your wisdom should make it even faster... can you reach 1 DcQe $? That's ∞<sup>4</sup>!</p> <p>This doesn't mean it's the end forever. I could add new Content in the future to extend the story. Anyways, I hope you had\n                    fun playing :)</p></div>",
+          "imageSources": [],
+          "mineObjectPreviews": []
+        }
+      ],
+      "quoteText": [
+        "More Stars than you can count!",
+        "Our true home",
+        "It contains the Milky Way and Andromeda",
+        "Like a Galaxy Group Group",
+        "Like a Galaxy Group Group Group",
+        "Almost there!",
+        "Everything we know, everything we have.",
+        "Our Universe is not the only one..."
+      ],
+      "computed": {
+        "article": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "623px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "-1"
+          },
+          "rect": { "height": 655, "width": 1440, "x": 0, "y": 72 }
+        },
+        "scroller": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "558px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "scroll",
+            "overscrollBehaviorY": "contain",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 558, "width": 1408, "x": 16, "y": 153 }
+        },
+        "objective": null,
+        "milestone": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "42px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "16px 0px",
+            "paddingTop": "16px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 75, "width": 1408, "x": 16, "y": 153 }
+        },
+        "chapterControl": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "1px solid rgba(0, 0, 0, 0.4)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "64px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 65, "width": 1408, "x": 16, "y": 88 }
+        },
+        "chapterHeading": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "Montserrat, sans-serif",
+            "fontSize": "32px",
+            "fontStyle": "normal",
+            "height": "39px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "557.703px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 39, "width": 557.7, "x": 441.16, "y": 100.5 }
+        },
+        "quote": {
+          "properties": {
+            "alignItems": "center",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "flex",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "8px 0px",
+            "marginLeft": "0px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "1408px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 1408, "x": 16, "y": 273 }
+        },
+        "quoteText": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(64, 64, 64)",
+            "borderTop": "0px none rgb(64, 64, 64)",
+            "color": "rgb(64, 64, 64)",
+            "display": "block",
+            "fontFamily": "\"Times new Roman\", serif",
+            "fontSize": "48px",
+            "fontStyle": "italic",
+            "height": "55px",
+            "margin": "0px 0px 0px 32px",
+            "marginLeft": "32px",
+            "overflowY": "visible",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "607.453px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 55, "width": 607.45, "x": 171.42, "y": 299.5 }
+        },
+        "mineObjectCanvas": {
+          "properties": {
+            "alignItems": "normal",
+            "borderBottom": "0px none rgb(0, 0, 0)",
+            "borderTop": "0px none rgb(0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "display": "block",
+            "fontFamily": "\"Work Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontStyle": "normal",
+            "height": "108px",
+            "margin": "0px",
+            "marginLeft": "0px",
+            "overflowY": "clip",
+            "overscrollBehaviorY": "auto",
+            "padding": "0px",
+            "paddingTop": "0px",
+            "width": "123.422px",
+            "zIndex": "auto"
+          },
+          "rect": { "height": 108, "width": 123.42, "x": 16, "y": 273 }
+        }
+      },
+      "viewport": { "width": 1440, "height": 900 }
+    }
+  ]
+}

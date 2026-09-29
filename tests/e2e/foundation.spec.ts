@@ -14,7 +14,9 @@ test("serves the foundation shell without implying gameplay exists", async ({
     page.getByText("Phase 0 — Foundation / reference archaeology"),
   ).toBeVisible();
   await expect(
-    page.getByText("Gameplay implementation has not started."),
+    page.getByText(
+      "Playable gameplay has not started; tested compatibility slices are not yet connected to a game loop.",
+    ),
   ).toBeVisible();
 });
 

@@ -19,11 +19,31 @@ function compatibilityBrowserHarness(): Plugin {
   const upgradesModule = fileURLToPath(
     new URL("./tests/upgrades-smoke.ts", import.meta.url),
   ).replaceAll("\\", "/");
+  const miningTransitionsModule = fileURLToPath(
+    new URL("./tests/mining-transitions-smoke.ts", import.meta.url),
+  ).replaceAll("\\", "/");
+  const storyModule = fileURLToPath(
+    new URL("./tests/story-smoke.ts", import.meta.url),
+  ).replaceAll("\\", "/");
+  const offlineProgressionModule = fileURLToPath(
+    new URL("./tests/offline-progression-smoke.ts", import.meta.url),
+  ).replaceAll("\\", "/");
+  const saveCodecModule = fileURLToPath(
+    new URL("./tests/save-codec-smoke.ts", import.meta.url),
+  ).replaceAll("\\", "/");
+  const mineObjectRendererModule = fileURLToPath(
+    new URL("./tests/mine-object-renderer-smoke.ts", import.meta.url),
+  ).replaceAll("\\", "/");
   const harnessModules = new Map([
     ["/__test__/formatting", smokeModule],
     ["/__test__/mine-objects", mineObjectModule],
     ["/__test__/mining-rates", miningRatesModule],
     ["/__test__/upgrades", upgradesModule],
+    ["/__test__/mining-transitions", miningTransitionsModule],
+    ["/__test__/story", storyModule],
+    ["/__test__/offline-progression", offlineProgressionModule],
+    ["/__test__/save-codec", saveCodecModule],
+    ["/__test__/mine-object-renderer", mineObjectRendererModule],
   ]);
 
   return {

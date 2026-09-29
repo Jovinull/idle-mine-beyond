@@ -234,6 +234,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@idle-mine-beyond/content':
+        specifier: workspace:*
+        version: link:../../packages/content
       '@idle-mine-beyond/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -257,6 +260,8 @@ importers:
       '@idle-mine-beyond/core':
         specifier: workspace:*
         version: link:../core
+
+  packages/persistence: {}
 
 packages:
 

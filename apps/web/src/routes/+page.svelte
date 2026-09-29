@@ -10,7 +10,10 @@
   <p class="eyebrow">IDLE MINE BEYOND</p>
   <h1>Foundation scaffold</h1>
   <p class="phase">Phase 0 — Foundation / reference archaeology</p>
-  <p>Gameplay implementation has not started.</p>
+  <p>
+    Playable gameplay has not started; tested compatibility slices are not yet
+    connected to a game loop.
+  </p>
   <p class="principle">IDENTICAL FIRST. BETTER SECOND.</p>
 </main>
 
