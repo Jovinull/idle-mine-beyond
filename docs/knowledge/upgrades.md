@@ -94,4 +94,6 @@ The Blacksmith Expertise effect consumes one `Math.random()` value for its chanc
 
 Vitest compares the 249 prices/effects and interaction/RNG outputs. Chromium compares those outputs exactly against the pinned runtime. Node's `Math.pow` differs from Chromium by one ULP for `gems.idlePower` at level 99; the Node check uses a narrow tolerance only for that sample, while the browser check remains exact. Do not add rounding to the game formula to hide the runtime difference.
 
+`purchaseSemantics` contains 14 controlled Remix outcomes: exact and insufficient affordability; Money, Gems, Planet Coins, and Wisdom resource selection; rounded affordability that leaves a negative balance; cap blocking; `buyN` affordability, alignment, and cap stopping; and `buy10`/`buy100` from zero and near an alignment boundary. Beyond's purchase mutations and bulk-buy methods remain unimplemented.
+
 The fixture source paths are `Scripts/Define/game.js`, `Scripts/upgrade.js`, `Scripts/utils.js`, and `Scripts/main.js` at the pinned Remix commit. `main.js` assigns the Power indices used by the controlled dependency captures. Recreate/verify it with `pnpm reference:preview`, `pnpm reference:extend` when a new top-level field is added, and `pnpm test:reference`. Do not edit the canonical checkout.

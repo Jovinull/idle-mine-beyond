@@ -42340,6 +42340,897 @@
             }
           ]
         }
+      ],
+      "purchaseSemantics": [
+        {
+          "name": "buy-exact-affordability",
+          "group": "money",
+          "key": "activePower",
+          "resourceId": 0,
+          "startingLevel": 0,
+          "startingResources": {
+            "money": {
+              "decimal": "1000",
+              "mantissa": 1,
+              "exponent": 3
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "1000",
+            "mantissa": 1,
+            "exponent": 3
+          },
+          "maxLevel": "Infinity",
+          "operation": {
+            "method": "buy"
+          },
+          "operationResult": true,
+          "endingLevel": 1,
+          "purchases": 1,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buy-below-exact-affordability",
+          "group": "money",
+          "key": "activePower",
+          "resourceId": 0,
+          "startingLevel": 0,
+          "startingResources": {
+            "money": {
+              "decimal": "999.99",
+              "mantissa": 9.9999,
+              "exponent": 2
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "1000",
+            "mantissa": 1,
+            "exponent": 3
+          },
+          "maxLevel": "Infinity",
+          "operation": {
+            "method": "buy"
+          },
+          "operationResult": false,
+          "endingLevel": 0,
+          "purchases": 0,
+          "endingResources": {
+            "money": {
+              "decimal": "999.99",
+              "mantissa": 9.9999,
+              "exponent": 2
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buy-uses-gem-resource",
+          "group": "gems",
+          "key": "offlineGems",
+          "resourceId": 1,
+          "startingLevel": 0,
+          "startingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "4444",
+              "mantissa": 4.444,
+              "exponent": 3
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "4444",
+            "mantissa": 4.444,
+            "exponent": 3
+          },
+          "maxLevel": 15,
+          "operation": {
+            "method": "buy"
+          },
+          "operationResult": true,
+          "endingLevel": 1,
+          "purchases": 1,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buy-uses-planet-coin-resource",
+          "group": "planetCoins",
+          "key": "activePower",
+          "resourceId": 2,
+          "startingLevel": 0,
+          "startingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "100",
+              "mantissa": 1,
+              "exponent": 2
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "100",
+            "mantissa": 1,
+            "exponent": 2
+          },
+          "maxLevel": 10,
+          "operation": {
+            "method": "buy"
+          },
+          "operationResult": true,
+          "endingLevel": 1,
+          "purchases": 1,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buy-uses-wisdom-resource",
+          "group": "wisdom",
+          "key": "gemBoostSimple",
+          "resourceId": 3,
+          "startingLevel": 0,
+          "startingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "10000000000",
+              "mantissa": 1,
+              "exponent": 10
+            }
+          },
+          "currentPrice": {
+            "decimal": "10000000000",
+            "mantissa": 1,
+            "exponent": 10
+          },
+          "maxLevel": 10,
+          "operation": {
+            "method": "buy"
+          },
+          "operationResult": true,
+          "endingLevel": 1,
+          "purchases": 1,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "rounded-buy-can-leave-negative-resource",
+          "group": "planetCoins",
+          "key": "activePower",
+          "resourceId": 2,
+          "startingLevel": 0,
+          "startingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "99.6",
+              "mantissa": 9.959999999999999,
+              "exponent": 1
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "100",
+            "mantissa": 1,
+            "exponent": 2
+          },
+          "maxLevel": 10,
+          "operation": {
+            "method": "buy",
+            "round": true
+          },
+          "operationResult": true,
+          "endingLevel": 1,
+          "purchases": 1,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "-0.4",
+              "mantissa": -4,
+              "exponent": -1
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buy-is-blocked-at-cap",
+          "group": "money",
+          "key": "idleSpeed",
+          "resourceId": 0,
+          "startingLevel": 60,
+          "startingResources": {
+            "money": {
+              "decimal": "3.2886017104178067e+32",
+              "mantissa": 3.2886017104178067,
+              "exponent": 32
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "3.2886017104178067e+32",
+            "mantissa": 3.2886017104178067,
+            "exponent": 32
+          },
+          "maxLevel": 60,
+          "operation": {
+            "method": "buy"
+          },
+          "operationResult": false,
+          "endingLevel": 60,
+          "purchases": 0,
+          "endingResources": {
+            "money": {
+              "decimal": "3.2886017104178067e+32",
+              "mantissa": 3.2886017104178067,
+              "exponent": 32
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buyN-without-alignment-stops-on-affordability",
+          "group": "money",
+          "key": "activePower",
+          "resourceId": 0,
+          "startingLevel": 2,
+          "startingResources": {
+            "money": {
+              "decimal": "28000",
+              "mantissa": 2.8,
+              "exponent": 4
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "4000",
+            "mantissa": 4,
+            "exponent": 3
+          },
+          "maxLevel": "Infinity",
+          "operation": {
+            "method": "buyN",
+            "count": 5,
+            "align": false
+          },
+          "operationResult": null,
+          "endingLevel": 5,
+          "purchases": 3,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buyN-with-alignment-stops-at-next-multiple",
+          "group": "money",
+          "key": "activePower",
+          "resourceId": 0,
+          "startingLevel": 3,
+          "startingResources": {
+            "money": {
+              "decimal": "2000000",
+              "mantissa": 2,
+              "exponent": 6
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "8000",
+            "mantissa": 8,
+            "exponent": 3
+          },
+          "maxLevel": "Infinity",
+          "operation": {
+            "method": "buyN",
+            "count": 10,
+            "align": true
+          },
+          "operationResult": null,
+          "endingLevel": 10,
+          "purchases": 7,
+          "endingResources": {
+            "money": {
+              "decimal": "984000",
+              "mantissa": 9.84,
+              "exponent": 5
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buyN-stops-at-level-cap",
+          "group": "money",
+          "key": "idleSpeed",
+          "resourceId": 0,
+          "startingLevel": 58,
+          "startingResources": {
+            "money": {
+              "decimal": "1e+100",
+              "mantissa": 1,
+              "exponent": 100
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "5.99280065812601e+29",
+            "mantissa": 5.99280065812601,
+            "exponent": 29
+          },
+          "maxLevel": 60,
+          "operation": {
+            "method": "buyN",
+            "count": 10,
+            "align": false
+          },
+          "operationResult": null,
+          "endingLevel": 60,
+          "purchases": 2,
+          "endingResources": {
+            "money": {
+              "decimal": "1e+100",
+              "mantissa": 1,
+              "exponent": 100
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buy10-from-zero-aligns-through-level-ten",
+          "group": "money",
+          "key": "activePower",
+          "resourceId": 0,
+          "startingLevel": 0,
+          "startingResources": {
+            "money": {
+              "decimal": "1022999.9999999999",
+              "mantissa": 1.023,
+              "exponent": 6
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "1000",
+            "mantissa": 1,
+            "exponent": 3
+          },
+          "maxLevel": "Infinity",
+          "operation": {
+            "method": "buy10"
+          },
+          "operationResult": null,
+          "endingLevel": 10,
+          "purchases": 10,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buy10-aligns-current-level",
+          "group": "money",
+          "key": "activePower",
+          "resourceId": 0,
+          "startingLevel": 9,
+          "startingResources": {
+            "money": {
+              "decimal": "512000",
+              "mantissa": 5.12,
+              "exponent": 5
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "512000",
+            "mantissa": 5.12,
+            "exponent": 5
+          },
+          "maxLevel": "Infinity",
+          "operation": {
+            "method": "buy10"
+          },
+          "operationResult": null,
+          "endingLevel": 10,
+          "purchases": 1,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buy100-aligns-current-level",
+          "group": "money",
+          "key": "activePower",
+          "resourceId": 0,
+          "startingLevel": 99,
+          "startingResources": {
+            "money": {
+              "decimal": "6.3382530011411475e+32",
+              "mantissa": 6.3382530011411475,
+              "exponent": 32
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "6.3382530011411475e+32",
+            "mantissa": 6.3382530011411475,
+            "exponent": 32
+          },
+          "maxLevel": "Infinity",
+          "operation": {
+            "method": "buy100"
+          },
+          "operationResult": null,
+          "endingLevel": 100,
+          "purchases": 1,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buy100-from-zero-aligns-through-level-one-hundred",
+          "group": "money",
+          "key": "activePower",
+          "resourceId": 0,
+          "startingLevel": 0,
+          "startingResources": {
+            "money": {
+              "decimal": "2e+33",
+              "mantissa": 2,
+              "exponent": 33
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "1000",
+            "mantissa": 1,
+            "exponent": 3
+          },
+          "maxLevel": "Infinity",
+          "operation": {
+            "method": "buy100"
+          },
+          "operationResult": null,
+          "endingLevel": 100,
+          "purchases": 100,
+          "endingResources": {
+            "money": {
+              "decimal": "7.3234939977178e+32",
+              "mantissa": 7.3234939977178,
+              "exponent": 32
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        }
       ]
     }
   }

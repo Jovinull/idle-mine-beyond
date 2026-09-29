@@ -8,7 +8,7 @@ Reproduce Money, Gems, Planet Coins, Wisdom, Powers, damage, rates, upgrade cost
 
 ## Current verified slice
 
-The core implements all 29 upgrade prices, effects, and caps, including the injected-RNG Blacksmith Expertise effect. Vitest compares 249 level samples and the captured interaction/RNG scenarios; Chromium compares them exactly. Nine controlled mining scenarios continue to compare factor/rate outputs. Source `buy`, cap enforcement, affordability, rounded purchases, and bulk-buy transitions still need their own controlled fixtures and implementation. Unlocks, payouts, reward application, and progression remain open. See [upgrade formulas and purchases](../knowledge/upgrades.md), [mathematics](../knowledge/mathematics.md), and the [parity matrix](../knowledge/PARITY_MATRIX.md).
+The core implements all 29 upgrade prices, effects, and caps, including the injected-RNG Blacksmith Expertise effect. Vitest compares 249 level samples and the captured interaction/RNG scenarios; Chromium compares them exactly. Nine controlled mining scenarios continue to compare factor/rate outputs. Fourteen source purchase cases now cover affordability, resource selection, rounding, caps, and `buyN`/`buy10`/`buy100` boundaries; Beyond purchase and bulk-buy mutation remain open. Unlocks, payouts, reward application, and progression remain open. See [upgrade formulas and purchases](../knowledge/upgrades.md), [mathematics](../knowledge/mathematics.md), and the [parity matrix](../knowledge/PARITY_MATRIX.md).
 
 ## Entry evidence
 

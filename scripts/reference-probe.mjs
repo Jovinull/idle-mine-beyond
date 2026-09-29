@@ -1049,6 +1049,12 @@ async function capture(reference, dependencies, dependencySnapshots) {
           );
           const previousHighestObjectLevel = game.highestMineObjectLevel;
           const previousPowers = [...game.powers.data.values];
+          const previousResources = {
+            money: game.money,
+            gems: game.gems,
+            planetCoins: game.planetCoins,
+            wisdom: game.wisdom,
+          };
           const extraLevels = {
             "money.idleSpeed": [49, 50, 51],
             "gems.blacksmith": [24, 25, 26],
@@ -1248,6 +1254,200 @@ async function capture(reference, dependencies, dependencySnapshots) {
             game.highestMineObjectLevel = 171;
             game.powers.data.values = previousPowers.map(() => new Decimal(1));
 
+            const purchaseDefinitions = [
+              {
+                name: "buy-exact-affordability",
+                group: "money",
+                key: "activePower",
+                level: 0,
+                balance: "1000",
+                operation: { method: "buy" },
+              },
+              {
+                name: "buy-below-exact-affordability",
+                group: "money",
+                key: "activePower",
+                level: 0,
+                balance: "999.99",
+                operation: { method: "buy" },
+              },
+              {
+                name: "buy-uses-gem-resource",
+                group: "gems",
+                key: "offlineGems",
+                level: 0,
+                balance: "4444",
+                operation: { method: "buy" },
+              },
+              {
+                name: "buy-uses-planet-coin-resource",
+                group: "planetCoins",
+                key: "activePower",
+                level: 0,
+                balance: "100",
+                operation: { method: "buy" },
+              },
+              {
+                name: "buy-uses-wisdom-resource",
+                group: "wisdom",
+                key: "gemBoostSimple",
+                level: 0,
+                balance: "1e10",
+                operation: { method: "buy" },
+              },
+              {
+                name: "rounded-buy-can-leave-negative-resource",
+                group: "planetCoins",
+                key: "activePower",
+                level: 0,
+                balance: "99.6",
+                operation: { method: "buy", round: true },
+              },
+              {
+                name: "buy-is-blocked-at-cap",
+                group: "money",
+                key: "idleSpeed",
+                level: 60,
+                balance: "currentPrice",
+                operation: { method: "buy" },
+              },
+              {
+                name: "buyN-without-alignment-stops-on-affordability",
+                group: "money",
+                key: "activePower",
+                level: 2,
+                balance: "28000",
+                operation: { method: "buyN", count: 5, align: false },
+              },
+              {
+                name: "buyN-with-alignment-stops-at-next-multiple",
+                group: "money",
+                key: "activePower",
+                level: 3,
+                balance: "2000000",
+                operation: { method: "buyN", count: 10, align: true },
+              },
+              {
+                name: "buyN-stops-at-level-cap",
+                group: "money",
+                key: "idleSpeed",
+                level: 58,
+                balance: "1e100",
+                operation: { method: "buyN", count: 10, align: false },
+              },
+              {
+                name: "buy10-from-zero-aligns-through-level-ten",
+                group: "money",
+                key: "activePower",
+                level: 0,
+                balance: "1023000",
+                operation: { method: "buy10" },
+              },
+              {
+                name: "buy10-aligns-current-level",
+                group: "money",
+                key: "activePower",
+                level: 9,
+                balance: "currentPrice",
+                operation: { method: "buy10" },
+              },
+              {
+                name: "buy100-aligns-current-level",
+                group: "money",
+                key: "activePower",
+                level: 99,
+                balance: "currentPrice",
+                operation: { method: "buy100" },
+              },
+              {
+                name: "buy100-from-zero-aligns-through-level-one-hundred",
+                group: "money",
+                key: "activePower",
+                level: 0,
+                balance: "2e33",
+                operation: { method: "buy100" },
+              },
+            ];
+            const purchaseSemantics = purchaseDefinitions.map((sample) => {
+              for (const upgrades of Object.values(upgradeGroups)) {
+                for (const upgrade of Object.values(upgrades)) {
+                  upgrade.level = 0;
+                }
+              }
+              game.money = new Decimal(0);
+              game.gems = new Decimal(0);
+              game.planetCoins = new Decimal(0);
+              game.wisdom = new Decimal(0);
+
+              const upgrade = upgradeGroups[sample.group][sample.key];
+              upgrade.level = sample.level;
+              const resourceKey = {
+                money: "money",
+                gems: "gems",
+                planetCoins: "planetCoins",
+                wisdom: "wisdom",
+              }[sample.group];
+              const balance =
+                sample.balance === "currentPrice"
+                  ? upgrade.currentPrice()
+                  : new Decimal(sample.balance);
+              game[resourceKey] = balance;
+              const startResources = {
+                money: normalizedDecimal(game.money),
+                gems: normalizedDecimal(game.gems),
+                planetCoins: normalizedDecimal(game.planetCoins),
+                wisdom: normalizedDecimal(game.wisdom),
+              };
+              const currentPrice = normalizedDecimal(upgrade.currentPrice());
+              const maximum = upgrade.getMaxLevel();
+              let operationResult = null;
+              switch (sample.operation.method) {
+                case "buy":
+                  operationResult =
+                    sample.operation.round === undefined
+                      ? upgrade.buy()
+                      : upgrade.buy(sample.operation.round);
+                  break;
+                case "buyN":
+                  upgrade.buyN(
+                    sample.operation.count,
+                    sample.operation.align,
+                    sample.operation.round,
+                  );
+                  break;
+                case "buy10":
+                  upgrade.buy10(sample.operation.round);
+                  break;
+                case "buy100":
+                  upgrade.buy100(sample.operation.round);
+                  break;
+                default:
+                  throw new Error(
+                    `Unknown controlled purchase operation: ${sample.operation.method}`,
+                  );
+              }
+              return {
+                name: sample.name,
+                group: sample.group,
+                key: sample.key,
+                resourceId: upgrade.resource,
+                startingLevel: sample.level,
+                startingResources: startResources,
+                currentPrice,
+                maxLevel: maximum === Infinity ? "Infinity" : maximum,
+                operation: sample.operation,
+                operationResult,
+                endingLevel: upgrade.level,
+                purchases: upgrade.level - sample.level,
+                endingResources: {
+                  money: normalizedDecimal(game.money),
+                  gems: normalizedDecimal(game.gems),
+                  planetCoins: normalizedDecimal(game.planetCoins),
+                  wisdom: normalizedDecimal(game.wisdom),
+                },
+              };
+            });
+
             return {
               sourcePaths: [
                 "Scripts/Define/game.js",
@@ -1328,10 +1528,15 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 },
               },
               effectInteractions,
+              purchaseSemantics,
             };
           } finally {
             game.highestMineObjectLevel = previousHighestObjectLevel;
             game.powers.data.values = previousPowers;
+            game.money = previousResources.money;
+            game.gems = previousResources.gems;
+            game.planetCoins = previousResources.planetCoins;
+            game.wisdom = previousResources.wisdom;
             for (const [group, levels] of Object.entries(previousLevels)) {
               for (const [key, level] of Object.entries(levels)) {
                 upgradeGroups[group][key].level = level;
@@ -1612,8 +1817,10 @@ async function main() {
     (sum, interaction) => sum + interaction.effects.length,
     0,
   );
+  const purchaseCaseCount =
+    expected.data.upgradeSemantics?.purchaseSemantics?.length ?? 0;
   process.stdout.write(
-    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases).\n`,
+    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases).\n`,
   );
 }
 
