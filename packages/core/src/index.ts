@@ -1,6 +1,6 @@
 export { Decimal } from "./decimal.js";
 export type { DecimalSource } from "./decimal.js";
-export { getRemixMineObject } from "./mine-objects.js";
+export { generateRemixMineObject, getRemixMineObject } from "./mine-objects.js";
 export type {
   MineObject,
   NormalizedDecimal,
@@ -117,4 +117,17 @@ export type {
   RemixUpgradePurchaseState,
   RemixUpgradeResources,
 } from "./remix-upgrade-purchases.js";
+export {
+  attemptRemixPickaxeCraft,
+  calculateRemixPickaxeCraft,
+} from "./remix-pickaxe-crafting.js";
+export type {
+  RemixEquippedPickaxe,
+  RemixPickaxe,
+  RemixPickaxeCraftAttemptInput,
+  RemixPickaxeCraftAttemptResult,
+  RemixPickaxeCraftEvent,
+  RemixPickaxeCraftInput,
+  RemixPickaxeCraftMode,
+} from "./remix-pickaxe-crafting.js";
 export { RemixRandom } from "./remix-random.js";

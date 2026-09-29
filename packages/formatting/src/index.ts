@@ -38,7 +38,11 @@ import {
   TritetratedNotation,
   YesNoNotation,
 } from "@antimatter-dimensions/notations/dist/ad-notations.community.esm.js";
-import { Decimal, type DecimalSource } from "@idle-mine-beyond/core";
+import {
+  Decimal,
+  type DecimalSource,
+  type RemixPickaxeCraftEvent,
+} from "@idle-mine-beyond/core";
 import { RemixHahaFunnyNotation } from "./haha-funny-notation.js";
 import { RemixNiceNotation } from "./nice-notation.js";
 import {
@@ -171,4 +175,27 @@ export function formatPercent(
     decimalLimit,
     precision,
   )}%`;
+}
+
+/** Formats the exact player log feedback emitted by Remix pickaxe crafting. */
+export function formatRemixPickaxeCraftFeedback(
+  event: RemixPickaxeCraftEvent,
+  formatter: NotationFormatter,
+): { message: string; color: string } | null {
+  switch (event.type) {
+    case "pickaxe-replaced":
+      return {
+        message: `Got a new Pickaxe! "${event.pickaxe.name}"`,
+        color: "#00b400",
+      };
+    case "dud":
+      return {
+        message: `Sorry, I crafted a dud! (P: ${formatter.format(event.pickaxe.power, 2)}, Q: ${formatPercent(event.pickaxe.quality, formatter, 0)}, Dmg: ${formatter.format(event.pickaxe.damage, 2)})`,
+        color: "#ff0900",
+      };
+    case "insufficient-gems":
+      return { message: "Not enough Gems!", color: "#ff0900" };
+    case "save":
+      return null;
+  }
 }

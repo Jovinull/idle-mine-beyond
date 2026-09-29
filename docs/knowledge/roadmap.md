@@ -19,7 +19,7 @@ The roadmap is ordered around evidence first and implementation second. Phase co
 
 ## Current recommended action
 
-Remain in Phase 0 while the reference corpus is expanded into complete system specifications. The oracle and tested slices now exist for mine objects, notations, upgrades, mining transitions, Story state, and standalone Story rendering. Next wire tested mining, purchase, Story, offline, and save operations through deterministic app state and explicit UI/persistence adapters; complete crafting and legacy save behavior before beginning full desktop UI parity. Continue adding fixtures before each mechanic and UI slice.
+Remain in Phase 0 while the reference corpus is expanded into complete system specifications. The oracle and tested slices now exist for mine objects, notations, upgrades, mining transitions, Story state, standalone Story rendering, and source-compatible pickaxe craft transactions. Next add justified craft-distribution checks and wire tested mining, purchase, Story, offline, save, and crafting operations through deterministic app state and explicit UI/persistence adapters; complete legacy save behavior before beginning full desktop UI parity. Continue adding fixtures before each mechanic and UI slice.
 
 ## Platform targets
 

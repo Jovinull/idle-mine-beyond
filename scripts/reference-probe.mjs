@@ -3293,6 +3293,367 @@ async function capture(reference, dependencies, dependencySnapshots) {
             }
           }
         })();
+        const pickaxeCraftingSemantics = (() => {
+          const upgradeGroups = {
+            money: game.upgrades,
+            gems: game.gemUpgrades,
+            planetCoins: game.planetCoinUpgrades,
+            wisdom: game.powers.upgrades,
+          };
+          const previousLevels = Object.fromEntries(
+            Object.entries(upgradeGroups).map(([group, upgrades]) => [
+              group,
+              Object.fromEntries(
+                Object.entries(upgrades).map(([key, upgrade]) => [
+                  key,
+                  upgrade.level,
+                ]),
+              ),
+            ]),
+          );
+          const previousHighestMineObjectLevel = game.highestMineObjectLevel;
+          const previousPowers = [...game.powers.data.values];
+          const previousGems = game.gems;
+          const previousPickaxe = game.pickaxe;
+          const previousMessageLog = game.messageLog;
+          const previousSaveGame = functions.saveGame;
+          const previousLogMessage = functions.logMessage;
+          const previousKeyPressed = functions.keyPressed;
+          const originalRandom = Math.random;
+          const resetUpgradeLevels = () => {
+            for (const upgrades of Object.values(upgradeGroups)) {
+              for (const upgrade of Object.values(upgrades)) {
+                upgrade.level = 0;
+              }
+            }
+          };
+          const setState = (scenario) => {
+            resetUpgradeLevels();
+            game.highestMineObjectLevel = scenario.highestMineObjectLevel;
+            game.powers.data.values = scenario.powers.map(
+              (value) => new Decimal(value),
+            );
+            for (const [group, levels] of Object.entries(
+              scenario.upgradeLevels,
+            )) {
+              for (const [key, level] of Object.entries(levels)) {
+                upgradeGroups[group][key].level = level;
+              }
+            }
+          };
+          const randomCases = [
+            {
+              name: "baseline-object-name",
+              gems: "1",
+              highestMineObjectLevel: 0,
+              powers: ["1", "1", "1", "1", "1"],
+              upgradeLevels: {},
+              randomValues: [
+                0.8, 0.9, 0.5, 0.2, 0.75, 0.2, 0.2, 0.5, 0.5, 0.75,
+              ],
+            },
+            {
+              name: "generated-word-name",
+              gems: "5",
+              highestMineObjectLevel: 0,
+              powers: ["1", "1", "1", "1", "1"],
+              upgradeLevels: {},
+              randomValues: [
+                0.2, 0.9, 0.7, 0.8, 0.6, 0.9, 0.4, 0.1, 0.2, 0.321, 0.75,
+              ],
+            },
+            {
+              name: "expertise-bonus-and-quality-streak",
+              gems: "25",
+              highestMineObjectLevel: 25,
+              powers: ["1", "2.5", "3.25", "1", "1"],
+              upgradeLevels: {
+                money: {
+                  blacksmith: 7,
+                  blacksmithSkill: 4,
+                  blacksmithBonus: 10,
+                },
+                gems: { blacksmith: 8, blacksmithSkill: 5 },
+              },
+              randomValues: [
+                0.4, 0.1, 0.75, 0.65, 0.55, 0.2, 0.3, 0.8, 0.25, 0.7, 0.5, 0.5,
+                0.1,
+              ],
+            },
+            {
+              name: "quality-roll-capped-at-fifteen",
+              gems: "100",
+              highestMineObjectLevel: 60,
+              powers: ["1", "1", "1", "1", "1"],
+              upgradeLevels: {},
+              randomValues: [
+                0.7,
+                0.8,
+                0.1,
+                0.9,
+                ...Array(15).fill(0.1),
+                0.6,
+                0.4,
+                0.1,
+                0.1,
+                0.5,
+                0.5,
+              ],
+            },
+            {
+              name: "post-universe-generated-object-name",
+              gems: "1e6",
+              highestMineObjectLevel: 215,
+              powers: ["1", "1", "1", "1", "1"],
+              upgradeLevels: {},
+              randomValues: [0.3, 0.8, 0.4, 0.4, 0.7, 0.6, 0.4, 0.8, 0.8, 0.9],
+            },
+          ];
+
+          try {
+            const crafts = randomCases.map((scenario) => {
+              setState(scenario);
+              let randomCalls = 0;
+              Math.random = () => {
+                const value = scenario.randomValues[randomCalls];
+                if (value === undefined) {
+                  throw new Error(
+                    `Pickaxe craft ${scenario.name} consumed an uncaptured RNG draw.`,
+                  );
+                }
+                randomCalls++;
+                return value;
+              };
+              try {
+                const pickaxe = Pickaxe.craft(
+                  new Decimal(scenario.gems),
+                  false,
+                );
+                return {
+                  name: scenario.name,
+                  input: scenario,
+                  randomCalls,
+                  result: {
+                    name: pickaxe.name,
+                    power: normalizedDecimal(pickaxe.pow),
+                    quality: normalizedDecimal(pickaxe.quality),
+                    damage: normalizedDecimal(pickaxe.getDamage()),
+                  },
+                };
+              } finally {
+                Math.random = originalRandom;
+              }
+            });
+
+            const deterministic = {
+              gems: "25",
+              highestMineObjectLevel: 25,
+              powers: ["1", "2.5", "3.25", "1", "1"],
+              upgradeLevels: {
+                money: { blacksmith: 7, blacksmithSkill: 4 },
+                gems: { blacksmith: 8, blacksmithSkill: 5 },
+              },
+            };
+            setState(deterministic);
+            let randomCalls = 0;
+            Math.random = () => {
+              randomCalls++;
+              throw new Error("Average pickaxe craft unexpectedly used RNG.");
+            };
+            const minimum = Pickaxe.craft(
+              new Decimal(deterministic.gems),
+              true,
+              0,
+            );
+            const average = Pickaxe.craft(
+              new Decimal(deterministic.gems),
+              true,
+            );
+            const baselineRandomValues = randomCases[0].randomValues;
+            const attemptScenarios = [
+              {
+                name: "better-craft-replaces-and-saves",
+                gems: "1",
+                craftGems: "1",
+                equippedPickaxe: {
+                  name: "Toy Pickaxe",
+                  power: "20",
+                  quality: "1",
+                },
+                highestMineObjectLevel: 0,
+                powers: ["1", "1", "1", "1", "1"],
+                upgradeLevels: {},
+                shiftHeld: false,
+                randomValues: [...baselineRandomValues],
+              },
+              {
+                name: "equal-damage-is-a-dud",
+                gems: "1",
+                craftGems: "1",
+                equippedPickaxe: {
+                  name: "Already Equipped",
+                  power: "31.5",
+                  quality: "0.9900000000000001",
+                },
+                highestMineObjectLevel: 0,
+                powers: ["1", "1", "1", "1", "1"],
+                upgradeLevels: {},
+                shiftHeld: false,
+                randomValues: [...baselineRandomValues],
+              },
+              {
+                name: "insufficient-gems-consumes-no-rng",
+                gems: "0.5",
+                craftGems: "1",
+                equippedPickaxe: {
+                  name: "Toy Pickaxe",
+                  power: "20",
+                  quality: "1",
+                },
+                highestMineObjectLevel: 0,
+                powers: ["1", "1", "1", "1", "1"],
+                upgradeLevels: {},
+                shiftHeld: false,
+                randomValues: [],
+              },
+              {
+                name: "bulk-success-dud-then-insufficient",
+                gems: "2",
+                craftGems: "1",
+                equippedPickaxe: {
+                  name: "Toy Pickaxe",
+                  power: "20",
+                  quality: "1",
+                },
+                highestMineObjectLevel: 0,
+                powers: ["1", "1", "1", "1", "1"],
+                upgradeLevels: { planetCoins: { bulkCraft: 2 } },
+                shiftHeld: true,
+                randomValues: [
+                  ...baselineRandomValues,
+                  ...baselineRandomValues,
+                ],
+              },
+              {
+                name: "fractional-gem-balance-rounds-after-spend",
+                gems: "2.6",
+                craftGems: "1",
+                equippedPickaxe: {
+                  name: "Toy Pickaxe",
+                  power: "20",
+                  quality: "1",
+                },
+                highestMineObjectLevel: 0,
+                powers: ["1", "1", "1", "1", "1"],
+                upgradeLevels: {},
+                shiftHeld: false,
+                randomValues: [...baselineRandomValues],
+              },
+            ];
+            const attempts = attemptScenarios.map((scenario) => {
+              setState(scenario);
+              game.gems = new Decimal(scenario.gems);
+              game.pickaxe = new Pickaxe(
+                scenario.equippedPickaxe.name,
+                scenario.equippedPickaxe.power,
+                scenario.equippedPickaxe.quality,
+              );
+              game.messageLog = [];
+              let saveCalls = 0;
+              const eventOrder = [];
+              functions.saveGame = () => {
+                saveCalls++;
+                eventOrder.push("save");
+              };
+              functions.logMessage = (message, color) => {
+                eventOrder.push(`log:${message}`);
+                previousLogMessage(message, color);
+              };
+              functions.keyPressed = (key) =>
+                key === "Shift" && scenario.shiftHeld;
+
+              let randomCalls = 0;
+              Math.random = () => {
+                const value = scenario.randomValues[randomCalls];
+                if (value === undefined) {
+                  throw new Error(
+                    `Pickaxe transaction ${scenario.name} consumed an uncaptured RNG draw.`,
+                  );
+                }
+                randomCalls++;
+                return value;
+              };
+              try {
+                functions.craftPick(new Decimal(scenario.craftGems));
+                return {
+                  name: scenario.name,
+                  input: scenario,
+                  randomCalls,
+                  saveCalls,
+                  eventOrder,
+                  messageLog: normalize(game.messageLog),
+                  result: {
+                    gems: normalizedDecimal(game.gems),
+                    pickaxe: {
+                      name: game.pickaxe.name,
+                      power: normalizedDecimal(game.pickaxe.pow),
+                      quality: normalizedDecimal(game.pickaxe.quality),
+                      damage: normalizedDecimal(game.pickaxe.getDamage()),
+                    },
+                  },
+                };
+              } finally {
+                Math.random = originalRandom;
+                functions.saveGame = previousSaveGame;
+                functions.logMessage = previousLogMessage;
+                functions.keyPressed = previousKeyPressed;
+              }
+            });
+            return {
+              sourcePaths: [
+                "Scripts/pickaxe.js",
+                "Scripts/utils.js",
+                "Scripts/Define/game.js",
+                "Scripts/Define/functions.js",
+                "Scripts/mineobject.js",
+              ],
+              randomSource: "Math.random",
+              crafts,
+              deterministic: {
+                input: deterministic,
+                randomCalls,
+                minimum: {
+                  name: minimum.name,
+                  power: normalizedDecimal(minimum.pow),
+                  quality: normalizedDecimal(minimum.quality),
+                  damage: normalizedDecimal(minimum.getDamage()),
+                },
+                average: {
+                  name: average.name,
+                  power: normalizedDecimal(average.pow),
+                  quality: normalizedDecimal(average.quality),
+                  damage: normalizedDecimal(average.getDamage()),
+                },
+              },
+              attempts,
+            };
+          } finally {
+            Math.random = originalRandom;
+            game.highestMineObjectLevel = previousHighestMineObjectLevel;
+            game.powers.data.values = previousPowers;
+            game.gems = previousGems;
+            game.pickaxe = previousPickaxe;
+            game.messageLog = previousMessageLog;
+            functions.saveGame = previousSaveGame;
+            functions.logMessage = previousLogMessage;
+            functions.keyPressed = previousKeyPressed;
+            for (const [group, levels] of Object.entries(previousLevels)) {
+              for (const [key, level] of Object.entries(levels)) {
+                upgradeGroups[group][key].level = level;
+              }
+            }
+          }
+        })();
         return {
           initialState,
           initialRates: rates,
@@ -3310,6 +3671,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           storyTabSemantics,
           storySemantics,
           upgradeSemantics,
+          pickaxeCraftingSemantics,
           objects: uniqueObjectIds.map(snapshotObject),
           probeRuntime: normalize(window.__idleMineProbe),
           currentObjectHpAfterCapture: normalizedDecimal(current.hp),

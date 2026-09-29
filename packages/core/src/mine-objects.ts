@@ -346,6 +346,18 @@ function generateMineObject(
   );
 }
 
+/**
+ * Uses the pinned generator directly, deliberately bypassing an exact special
+ * object anchor. Pickaxe naming calls `functions.generateMineObject(id)` when
+ * `game.mineObjects[id]` is absent instead of using `functions.getMineObject`.
+ */
+export function generateRemixMineObject(
+  id: number,
+  catalog: RemixMineObjectCatalog,
+): MineObject {
+  return generateMineObject(id, catalog);
+}
+
 /** Returns an independent copy of a fixed object or a generated mine object. */
 export function getRemixMineObject(
   id: number,

@@ -84,3 +84,7 @@ The `storyTabSemantics` corpus field captures four `changeTab()` state/timer cas
 ## Mining formula implementation
 
 `packages/core/src/mining-rates.ts` independently expresses the pinned active/idle damage and resource-rate equations. `packages/core/src/remix-mining-upgrades.ts` independently evaluates the mining-related effect subset from upgrade levels and injected Power values. The nine input/output cases, factor snapshots, and current-object argument probe are stored in `formulaSemantics` in the reference corpus. No Remix source function was copied.
+
+## Pickaxe crafting implementation provenance
+
+`packages/core/src/remix-pickaxe-crafting.ts` and `packages/formatting` independently implement the pinned `Scripts/pickaxe.js`, `Scripts/utils.js`, `Scripts/Define/game.js`, and `Scripts/Define/functions.js` behavior. The `pickaxeCraftingSemantics` field contains controlled numeric outputs and synthetic transaction scenarios from the pinned browser runtime; no upstream JavaScript, player save, or artwork was copied. Generated names and source text remain derived behavior/content and carry the upstream MIT and inherited-material rights caveats recorded above.

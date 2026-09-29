@@ -10,11 +10,19 @@ A pickaxe stores name, power, and quality. Damage is power × quality. Scripts/p
 
 Quality receives repeated 1.15 multipliers on successive 50% rolls, stopping on the first failure or at the loop limit of 15. Names depend on quality tier, a random name form, and sometimes a nearby mine object. A name may include a bonus suffix.
 
+`Pickaxe.generateName()` reads `game.mineObjects[id]` directly. If that entry is missing, it calls `functions.generateMineObject(id)` rather than `functions.getMineObject(id)`. Therefore an exact special-mine anchor can be bypassed during pickaxe naming: the controlled `pickaxeCraftingSemantics` case selects ID 210, where the pickaxe name uses the generated `HD 4943-b` fallback even though the mine-object catalog's ID 210 is `Galaxy Supercluster`. Preserve this source-observed distinction.
+
 The average and minimum-craft display paths use a separate deterministic average mode. Do not use that mode as the implementation for a real craft.
+
+## Implemented compatibility slice
+
+`packages/core/src/remix-pickaxe-crafting.ts` reproduces random candidate generation, minimum/average display calculations, and the source craft transaction. The fixtures control five candidate sequences covering the baseline object-name path, generated-word naming, Blacksmith Expertise bonus, a 15-roll quality streak, and the procedural fallback name at a special-anchor ID. Transaction scenarios cover strict replacement, equal-damage duds, insufficient Gems with no RNG use, Shift bulk crafting, save/log order, and fractional Gem rounding. Tests compare exact state, feedback, and draw counts.
+
+The caller supplies the source upgrade context, RNG, and a name resolver that preserves the source's direct base-array lookup versus generated fallback. The core transition returns ordered events; `packages/formatting` renders the source success, dud, and insufficient-Gem messages. Persistence remains an injected save effect for application wiring. Repeated-sample RNG distributions, full UI behavior, and E2E crafting coverage remain incomplete, so crafting parity is in progress.
 
 ## Craft flow
 
-Scripts/Define/functions.js computes gems used through Gem Waster, supports a bulk loop while Shift is held, subtracts gems per attempt, and replaces the current tool only when new damage is greater. A dud emits a message containing the crafted P, Q, and damage values.
+Scripts/Define/functions.js computes gems used through Gem Waster, supports a bulk loop while Shift is held, subtracts and rounds Gems per attempt, and replaces the current tool only when new damage is strictly greater. Each successful replacement logs before saving; a dud emits a message containing the crafted P, Q, and damage values. The captured `fractional-gem-balance-rounds-after-spend` case shows that subtracting one Gem from 2.6 rounds the balance to 2, an observable legacy quirk to preserve.
 
 ## RNG
 
