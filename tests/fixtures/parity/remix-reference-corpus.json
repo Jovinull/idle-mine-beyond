@@ -38624,7 +38624,8 @@
       "sourcePaths": [
         "Scripts/Define/game.js",
         "Scripts/upgrade.js",
-        "Scripts/utils.js"
+        "Scripts/utils.js",
+        "Scripts/main.js"
       ],
       "controlledState": {
         "highestMineObjectLevel": 171,
@@ -42145,7 +42146,201 @@
             }
           ]
         }
-      }
+      },
+      "effectInteractions": [
+        {
+          "name": "blacksmith-effects-use-gem-upgrades-and-powers",
+          "highestMineObjectLevel": 171,
+          "controlledLevels": {
+            "money": {
+              "blacksmith": 7,
+              "blacksmithSkill": 4
+            },
+            "gems": {
+              "blacksmith": 26,
+              "blacksmithSkill": 12
+            }
+          },
+          "otherUpgradeLevels": 0,
+          "controlledPowers": {
+            "craftsmanship": "2.5",
+            "expertise": "3.25"
+          },
+          "otherPowers": "1",
+          "effects": [
+            {
+              "group": "money",
+              "key": "blacksmith",
+              "level": 7,
+              "effect": {
+                "decimal": "1970.4029632235638",
+                "mantissa": 1.9704029632235638,
+                "exponent": 3
+              }
+            },
+            {
+              "group": "money",
+              "key": "blacksmithSkill",
+              "level": 4,
+              "effect": {
+                "decimal": "8.598579919347397",
+                "mantissa": 8.598579919347397,
+                "exponent": 0
+              }
+            }
+          ]
+        },
+        {
+          "name": "money-effects-use-gem-and-planet-coin-upgrades",
+          "highestMineObjectLevel": 171,
+          "controlledLevels": {
+            "money": {
+              "gemChance": 8,
+              "idlePower": 6
+            },
+            "gems": {
+              "gemChance": 36,
+              "idlePower": 12
+            },
+            "planetCoins": {
+              "gemChance": 13
+            }
+          },
+          "otherUpgradeLevels": 0,
+          "controlledPowers": {},
+          "otherPowers": "1",
+          "effects": [
+            {
+              "group": "money",
+              "key": "gemChance",
+              "level": 8,
+              "effect": {
+                "decimal": "0.36200000000000004",
+                "mantissa": 3.62,
+                "exponent": -1
+              }
+            },
+            {
+              "group": "money",
+              "key": "idlePower",
+              "level": 6,
+              "effect": {
+                "decimal": "9.748960033528364",
+                "mantissa": 9.748960033528364,
+                "exponent": 0
+              }
+            }
+          ]
+        },
+        {
+          "name": "gem-multiplication-uses-upgrades-and-exquisity",
+          "highestMineObjectLevel": 171,
+          "controlledLevels": {
+            "gems": {
+              "gemMultiply": 15
+            },
+            "planetCoins": {
+              "gemMultiply": 7
+            },
+            "wisdom": {
+              "gemBoostSimple": 4
+            }
+          },
+          "otherUpgradeLevels": 0,
+          "controlledPowers": {
+            "exquisity": "3.25"
+          },
+          "otherPowers": "1",
+          "effects": [
+            {
+              "group": "gems",
+              "key": "gemMultiply",
+              "level": 15,
+              "effect": {
+                "decimal": "283",
+                "mantissa": 2.83,
+                "exponent": 2
+              }
+            }
+          ]
+        },
+        {
+          "name": "wisdom-power-effects-use-power-power-power",
+          "highestMineObjectLevel": 171,
+          "controlledLevels": {
+            "wisdom": {
+              "powerPowerActive": 11,
+              "powerPowerIdle": 8,
+              "powerPowerPower": 14
+            }
+          },
+          "otherUpgradeLevels": 0,
+          "controlledPowers": {},
+          "otherPowers": "1",
+          "effects": [
+            {
+              "group": "wisdom",
+              "key": "powerPowerActive",
+              "level": 11,
+              "effect": {
+                "decimal": "1.0001579025864304",
+                "mantissa": 1.0001579025864304,
+                "exponent": 0
+              }
+            },
+            {
+              "group": "wisdom",
+              "key": "powerPowerIdle",
+              "level": 8,
+              "effect": {
+                "decimal": "1.0000568",
+                "mantissa": 1.0000568,
+                "exponent": 0
+              }
+            }
+          ]
+        },
+        {
+          "name": "wisdom-damage-effects-use-all-levels-and-highest-mine-level",
+          "highestMineObjectLevel": 188,
+          "controlledLevels": {
+            "wisdom": {
+              "powerPowerActive": 1,
+              "powerPowerIdle": 2,
+              "damageBoost": 3,
+              "gemBoostSimple": 5,
+              "damageBoostUpgrades": 4,
+              "powerPowerPower": 6,
+              "powerResetKeep": 7
+            }
+          },
+          "otherUpgradeLevels": 0,
+          "controlledPowers": {},
+          "otherPowers": "1",
+          "effects": [
+            {
+              "group": "wisdom",
+              "key": "damageBoost",
+              "level": 3,
+              "effect": {
+                "decimal": "31.725507552758586",
+                "mantissa": 3.1725507552758585,
+                "exponent": 1
+              }
+            },
+            {
+              "group": "wisdom",
+              "key": "damageBoostUpgrades",
+              "level": 4,
+              "effect": {
+                "decimal": "164.84466236095108",
+                "mantissa": 1.6484466236095108,
+                "exponent": 2
+              }
+            }
+          ]
+        }
+      ]
     }
   }
 }

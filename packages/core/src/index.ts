@@ -24,4 +24,17 @@ export type {
   RemixMiningUpgradeInput,
   RemixMiningUpgradeLevels,
 } from "./remix-mining-upgrades.js";
+export {
+  calculateRemixUpgradeEffect,
+  calculateRemixUpgradePrice,
+  getRemixUpgradeMaxLevel,
+  REMIX_UPGRADE_KEYS,
+} from "./remix-upgrades.js";
+export type {
+  RemixUpgradeContext,
+  RemixUpgradeGroup,
+  RemixUpgradeKey,
+  RemixUpgradeLevels,
+  RemixUpgradeRandom,
+} from "./remix-upgrades.js";
 export { RemixRandom } from "./remix-random.js";

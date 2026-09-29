@@ -22,9 +22,9 @@ The source displays resources, stats, object information, upgrades, crafting, st
 
 ## Upgrade families
 
-The source defines 8 Money, 7 Gem, 7 Planet Coin, and 7 Wisdom upgrades. The [upgrade reference](upgrades.md) records all 29 source keys, names, prices, effects, caps, dependencies, and generic purchase rules. `upgradeSemantics` in the oracle corpus captures 249 controlled level samples; the random Blacksmith Expertise effect is explicitly excluded from those static samples.
+The source defines 8 Money, 7 Gem, 7 Planet Coin, and 7 Wisdom upgrades. The [upgrade reference](upgrades.md) records all 29 source keys, names, prices, effects, caps, dependencies, and generic purchase rules. `upgradeSemantics` in the oracle corpus captures 249 controlled level samples, nine cross-upgrade effect outputs, and five Blacksmith Expertise RNG cases. The random effect is excluded only from the level-only samples.
 
-The core evaluates only the subset of effects that feed mining damage and rate equations: Money Active/Idle Power, Idle Speed and Gem Chance; Gem Idle Power II, Gem Chance II and Gem Multiplication; Planet Coin Active Power, Gem Chance III, Gem Multiplication and last-object Gem Bonus; Wisdom Increasing Damage Boost, Upgrade Damage Upgrade and Simple Gem Boost. Exact formulas and tests are in [mathematics](mathematics.md) and `formulaSemantics` in the reference corpus. Beyond has no general upgrade price evaluator, cap/purchase mutation, or complete effect evaluator yet. Its Wisdom input must include every purchased Wisdom level because one formula counts them all.
+The core implements all 29 upgrade prices, effects, and caps through `calculateRemixUpgradePrice`, `calculateRemixUpgradeEffect`, and `getRemixUpgradeMaxLevel`. Mining damage/rate factors delegate to the same effect definitions. Exact formulas and tests are in [mathematics](mathematics.md), [upgrade reference](upgrades.md), and `upgradeSemantics` in the reference corpus. Purchase and bulk-buy mutation remain open. The complete Wisdom level map matters because Upgrade Damage Upgrade counts every purchased Wisdom level.
 
 ## Active and idle play
 

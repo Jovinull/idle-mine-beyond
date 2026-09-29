@@ -29,7 +29,7 @@ Preserve the source's multiplication order. `getActiveDamage(obj)` uses `obj.def
 - The last-object Gem multiplier is `1 + Planet Coin Gem Bonus level` only when the current object ID equals `getHighestDamageableMineObjectLevel()`; otherwise it is `1`.
 - Power of Mining is passed in as the current state value. Power of Exquisity is separately injected into Gem Multiplication.
 
-The exact Decimal construction, `pow`, multiplication, addition, and rounding order follows the source expressions. The [upgrade reference](upgrades.md) documents all 29 cost/effect formulas, caps, dependencies, and generic purchase source behavior. Beyond currently evaluates only the mining-related effect subset; no general price evaluator or purchase mutation is implemented.
+The exact Decimal construction, `pow`, multiplication, addition, and rounding order follows the source expressions. The [upgrade reference](upgrades.md) documents all 29 cost/effect formulas, caps, dependencies, and generic purchase source behavior. Core evaluates all 29 prices, effects, and caps; source purchase behavior is documented, but Beyond purchase mutation is not implemented.
 
 The captured multi-upgrade scenario covers Money levels 3/4/5/6, Gem levels 2/3/4, Planet Coin levels 2/1/2/3, all seven Wisdom upgrades at levels 1/2/3/2/2/3/4, Power of Mining 2.5, and Power of Exquisity 2.5. The 17 total Wisdom levels exercise the source's all-upgrades exponent, producing an Upgrade Damage Upgrade factor of `5.054470284992945`; the gem factors include both Planet Coin Gem Multiplication and Simple Gem Boost. The fixture records every resulting factor and rate. Other controlled scenarios exercise defaults, the last-object condition, and the Number overflow case; no maximum level/cap boundary is certified. The unit parity suite and Chromium harness evaluate factors from captured levels and compare their exact Decimal snapshots.
 
@@ -97,7 +97,7 @@ The formatting package uses the MIT-licensed `@antimatter-dimensions/notations@1
 
 ## Math evidence
 
-Initial sources: `Scripts/Define/functions.js`, `Scripts/pickaxe.js`, `Scripts/upgrade.js`, `Scripts/Define/game.js`, `Scripts/random.js`, and `Scripts/utils.js`. The exact reference commit is in the manifest. Decimal, seeded RNG, procedural-object, and nine controlled mining-rate/factor scenarios are captured and tested. Wider object-ID, full upgrade costs/caps/purchase rules, crafting, and reachable-save coverage remains pending.
+Initial sources: `Scripts/Define/functions.js`, `Scripts/pickaxe.js`, `Scripts/upgrade.js`, `Scripts/Define/game.js`, `Scripts/random.js`, and `Scripts/utils.js`. The exact reference commit is in the manifest. Decimal, seeded RNG, procedural-object, nine controlled mining-rate/factor scenarios, and 249 upgrade price/effect samples are captured and tested. Wider object-ID, purchase/bulk-buy transitions, crafting, and reachable-save coverage remains pending.
 
 ## Controlled initial-state baseline
 

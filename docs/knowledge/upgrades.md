@@ -68,7 +68,7 @@ Remix defines 29 upgrades across four resource families. A missing explicit cap 
 - Wisdom Increasing Damage Boost reads `game.highestMineObjectLevel`, not the current object's ID.
 - Price and effect functions can be called beyond a cap; purchase logic enforces the cap. Do not mistake a probe at `cap + 1` for a reachable purchase.
 
-The formula evaluator currently implemented in core covers only the mining-related subset in [mathematics](mathematics.md). Remaining formula families and all purchase mutations still require Beyond tests and implementation.
+**Project implementation status:** `packages/core/src/remix-upgrades.ts` evaluates all 29 pinned price/effect definitions and caps. Its 249 level snapshots, nine cross-upgrade effect outputs, and five controlled Blacksmith Expertise outcomes are covered in Vitest and the Chromium parity harness. The existing mining-factor calculator now delegates to this evaluator. Purchase mutations, affordability, caps during purchases, and bulk-buy transitions remain unimplemented.
 
 ## Purchase behavior
 
@@ -90,6 +90,8 @@ The Blacksmith Expertise effect consumes one `Math.random()` value for its chanc
 
 ## Reference capture and open work
 
-`upgradeSemantics` in the oracle fixture records 29 upgrades and 249 price/effect level samples. Finite caps include `cap - 1`, `cap`, and `cap + 1`; additional samples straddle the source softcaps at Money Idle Speed 50, Gem Blacksmith 25, Gem Chance II 30, Gem Multiplication 250/1000/2500/10000, Wisdom Power Power 50, and Wisdom Power Power Power 10. Other levels use controlled state with all unrelated upgrade levels zero, all five Power values at 1, and highest mine-object level 171. `blacksmithBonus` prices and cap are recorded, while its `stochasticEffect: true` marks the absent level-only result. Five separate controlled RNG cases record effect values and exact draw counts; Beyond still needs to implement and compare this behavior.
+`upgradeSemantics` in the oracle fixture records 29 upgrades and 249 price/effect level samples. Finite caps include `cap - 1`, `cap`, and `cap + 1`; additional samples straddle the source softcaps at Money Idle Speed 50, Gem Blacksmith 25, Gem Chance II 30, Gem Multiplication 250/1000/2500/10000, Wisdom Power Power 50, and Wisdom Power Power Power 10. Other levels use controlled state with all unrelated upgrade levels zero, all five Power values at 1, and highest mine-object level 171. Five interaction scenarios add nine effect outputs for cross-family upgrades and Power dependencies, total Wisdom levels, and highest mine-object level. `blacksmithBonus` prices and cap are recorded, while its `stochasticEffect: true` marks the absent level-only result; five separate controlled RNG cases record effect values and exact draw counts.
 
-The fixture source paths are `Scripts/Define/game.js`, `Scripts/upgrade.js`, and `Scripts/utils.js` at the pinned Remix commit. Recreate/verify it with `pnpm reference:preview`, `pnpm reference:extend` when a new top-level field is added, and `pnpm test:reference`. Do not edit the canonical checkout.
+Vitest compares the 249 prices/effects and interaction/RNG outputs. Chromium compares those outputs exactly against the pinned runtime. Node's `Math.pow` differs from Chromium by one ULP for `gems.idlePower` at level 99; the Node check uses a narrow tolerance only for that sample, while the browser check remains exact. Do not add rounding to the game formula to hide the runtime difference.
+
+The fixture source paths are `Scripts/Define/game.js`, `Scripts/upgrade.js`, `Scripts/utils.js`, and `Scripts/main.js` at the pinned Remix commit. `main.js` assigns the Power indices used by the controlled dependency captures. Recreate/verify it with `pnpm reference:preview`, `pnpm reference:extend` when a new top-level field is added, and `pnpm test:reference`. Do not edit the canonical checkout.

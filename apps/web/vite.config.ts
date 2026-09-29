@@ -16,10 +16,14 @@ function compatibilityBrowserHarness(): Plugin {
   const miningRatesModule = fileURLToPath(
     new URL("./tests/mining-rates-smoke.ts", import.meta.url),
   ).replaceAll("\\", "/");
+  const upgradesModule = fileURLToPath(
+    new URL("./tests/upgrades-smoke.ts", import.meta.url),
+  ).replaceAll("\\", "/");
   const harnessModules = new Map([
     ["/__test__/formatting", smokeModule],
     ["/__test__/mine-objects", mineObjectModule],
     ["/__test__/mining-rates", miningRatesModule],
+    ["/__test__/upgrades", upgradesModule],
   ]);
 
   return {

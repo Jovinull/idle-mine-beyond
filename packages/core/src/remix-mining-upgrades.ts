@@ -1,5 +1,12 @@
 import { Decimal, type DecimalSource } from "./decimal.js";
 import type { RemixMiningFactors } from "./mining-rates.js";
+import {
+  calculateRemixUpgradeEffect,
+  type RemixUpgradeContext,
+  type RemixUpgradeGroup,
+  type RemixUpgradeKey,
+  type RemixUpgradeLevels,
+} from "./remix-upgrades.js";
 
 export type RemixMiningUpgradeLevels = {
   money: {
@@ -35,63 +42,84 @@ export type RemixMiningUpgradeInput = {
   currentObjectIsHighestDamageable: boolean;
 };
 
+function completeLevels(levels: RemixMiningUpgradeLevels): RemixUpgradeLevels {
+  return {
+    money: {
+      blacksmith: 0,
+      blacksmithSkill: 0,
+      blacksmithBonus: 0,
+      gemChance: levels.money.gemChance,
+      activePower: levels.money.activePower,
+      idlePower: levels.money.idlePower,
+      idleSpeed: levels.money.idleSpeed,
+      gemWaster: 0,
+    },
+    gems: {
+      blacksmith: 0,
+      blacksmithSkill: 0,
+      idlePower: levels.gems.idlePower,
+      gemWaster: 0,
+      gemChance: levels.gems.gemChance,
+      gemMultiply: levels.gems.gemMultiply,
+      offlineGems: 0,
+    },
+    planetCoins: {
+      activePower: levels.planetCoins.activePower,
+      gemMultiply: levels.planetCoins.gemMultiply,
+      lastObjGems: levels.planetCoins.lastObjGems,
+      gemChance: levels.planetCoins.gemChance,
+      offlinePC: 0,
+      offlineTime: 0,
+      bulkCraft: 0,
+    },
+    wisdom: {
+      powerPowerActive: 0,
+      powerPowerIdle: 0,
+      damageBoost: 0,
+      gemBoostSimple: 0,
+      damageBoostUpgrades: 0,
+      powerPowerPower: 0,
+      powerResetKeep: 0,
+      ...levels.wisdom,
+    },
+  };
+}
+
 /** Evaluates the pinned effect functions used by the mining-rate formulas. */
 export function calculateRemixMiningFactors(
   input: RemixMiningUpgradeInput,
 ): RemixMiningFactors {
-  const { levels, powers } = input;
-  const wisdomLevels = levels.wisdom;
-  const boughtWisdomUpgradeLevels = Object.keys(wisdomLevels).reduce(
-    (sum, key) => sum + wisdomLevels[key]!,
-    0,
-  );
-
-  const gemIdlePower = new Decimal(1 + 0.15 * levels.gems.idlePower).pow(
-    1.2518,
-  );
-  const gemChance = new Decimal(0.02 + 0.004 * levels.money.gemChance)
-    .add(0.005 * levels.gems.gemChance)
-    .add(0.01 * levels.planetCoins.gemChance);
-  const gemMultiplier = Decimal.round(
-    Decimal.pow(1.05, levels.gems.gemMultiply)
-      .add(levels.gems.gemMultiply)
-      .mul(1 + 0.1 * levels.planetCoins.gemMultiply)
-      .mul(1 + 0.5 * (wisdomLevels["gemBoostSimple"] ?? 0))
-      .mul(powers.exquisity),
-  );
-
-  const idleDamageBoostLevel = wisdomLevels["damageBoost"] ?? 0;
-  const idleDamageBoost =
-    idleDamageBoostLevel === 0
-      ? new Decimal(1)
-      : Decimal.pow(
-          1.05 + 0.03 * idleDamageBoostLevel,
-          Math.max(0, input.highestMineObjectLevel - 170),
-        ).mul(idleDamageBoostLevel);
-
-  const damageUpgradeLevel = wisdomLevels["damageBoostUpgrades"] ?? 0;
-  const damageUpgradeBoost = Decimal.pow(
-    1 + 0.05 * damageUpgradeLevel,
-    boughtWisdomUpgradeLevels,
-  );
+  const levels = completeLevels(input.levels);
+  const context: RemixUpgradeContext = {
+    levels,
+    powers: {
+      craftsmanship: 1,
+      expertise: 1,
+      exquisity: input.powers.exquisity,
+    },
+    highestMineObjectLevel: input.highestMineObjectLevel,
+  };
+  const effect = <Group extends RemixUpgradeGroup>(
+    group: Group,
+    key: RemixUpgradeKey<Group>,
+  ) => {
+    const level = (levels[group] as Record<string, number>)[key]!;
+    return calculateRemixUpgradeEffect(group, key, level, context);
+  };
 
   return {
-    activePower: new Decimal(1 + 0.15 * levels.money.activePower).mul(
-      Decimal.pow(1.03, levels.money.activePower),
-    ),
-    idlePower: new Decimal(0.75 + 0.25 * levels.money.idlePower)
-      .mul(Decimal.pow(1.03, levels.money.idlePower))
-      .mul(gemIdlePower),
-    idleSpeed: Decimal.pow(1.05, levels.money.idleSpeed),
-    miningPower: new Decimal(powers.mining),
-    idleDamageBoost,
-    damageUpgradeBoost,
-    planetCoinActivePower: new Decimal(0.01 * levels.planetCoins.activePower),
-    gemChance,
-    gemMultiplier,
+    activePower: effect("money", "activePower"),
+    idlePower: effect("money", "idlePower"),
+    idleSpeed: effect("money", "idleSpeed"),
+    miningPower: new Decimal(input.powers.mining),
+    idleDamageBoost: effect("wisdom", "damageBoost"),
+    damageUpgradeBoost: effect("wisdom", "damageBoostUpgrades"),
+    planetCoinActivePower: effect("planetCoins", "activePower"),
+    gemChance: effect("money", "gemChance"),
+    gemMultiplier: effect("gems", "gemMultiply"),
     lastObjectGemMultiplier: new Decimal(
       input.currentObjectIsHighestDamageable
-        ? 1 + levels.planetCoins.lastObjGems
+        ? effect("planetCoins", "lastObjGems")
         : 1,
     ),
   };

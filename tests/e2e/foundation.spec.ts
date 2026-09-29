@@ -265,3 +265,38 @@ test("calculates captured mining rates in Chromium", async ({ page }) => {
       probe.currentObjectArgumentQuirk.idleDpsWhenPassedTarget,
   });
 });
+
+test("calculates all captured upgrade formulas and interactions in Chromium", async ({
+  page,
+}) => {
+  await page.goto("/__test__/upgrades");
+  await expect(page.locator("#result")).toHaveAttribute("data-ready", "true");
+
+  const corpus = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as {
+    data: { upgradeSemantics: Record<string, unknown> };
+  };
+  const reference = corpus.data.upgradeSemantics;
+  const observed = await page.evaluate((input) => {
+    const probe = (
+      window as Window & {
+        __idleMineUpgradeProbe?: (value: typeof input) => unknown;
+      }
+    ).__idleMineUpgradeProbe;
+    if (!probe) throw new Error("Upgrade parity probe did not initialize.");
+    return probe(input);
+  }, reference);
+
+  expect(observed).toEqual({
+    groups: reference["groups"],
+    stochasticEffects: reference["stochasticEffects"],
+    effectInteractions: reference["effectInteractions"],
+  });
+});

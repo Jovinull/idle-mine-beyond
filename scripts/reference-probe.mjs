@@ -1124,11 +1124,136 @@ async function capture(reference, dependencies, dependencySnapshots) {
               }
             });
 
+            const effectInteractions = [
+              {
+                name: "blacksmith-effects-use-gem-upgrades-and-powers",
+                highestMineObjectLevel: 171,
+                levels: {
+                  money: { blacksmith: 7, blacksmithSkill: 4 },
+                  gems: { blacksmith: 26, blacksmithSkill: 12 },
+                },
+                powers: { craftsmanship: "2.5", expertise: "3.25" },
+                effects: [
+                  { group: "money", key: "blacksmith", level: 7 },
+                  { group: "money", key: "blacksmithSkill", level: 4 },
+                ],
+              },
+              {
+                name: "money-effects-use-gem-and-planet-coin-upgrades",
+                highestMineObjectLevel: 171,
+                levels: {
+                  money: { gemChance: 8, idlePower: 6 },
+                  gems: { gemChance: 36, idlePower: 12 },
+                  planetCoins: { gemChance: 13 },
+                },
+                powers: {},
+                effects: [
+                  { group: "money", key: "gemChance", level: 8 },
+                  { group: "money", key: "idlePower", level: 6 },
+                ],
+              },
+              {
+                name: "gem-multiplication-uses-upgrades-and-exquisity",
+                highestMineObjectLevel: 171,
+                levels: {
+                  gems: { gemMultiply: 15 },
+                  planetCoins: { gemMultiply: 7 },
+                  wisdom: { gemBoostSimple: 4 },
+                },
+                powers: { exquisity: "3.25" },
+                effects: [{ group: "gems", key: "gemMultiply", level: 15 }],
+              },
+              {
+                name: "wisdom-power-effects-use-power-power-power",
+                highestMineObjectLevel: 171,
+                levels: {
+                  wisdom: {
+                    powerPowerActive: 11,
+                    powerPowerIdle: 8,
+                    powerPowerPower: 14,
+                  },
+                },
+                powers: {},
+                effects: [
+                  { group: "wisdom", key: "powerPowerActive", level: 11 },
+                  { group: "wisdom", key: "powerPowerIdle", level: 8 },
+                ],
+              },
+              {
+                name: "wisdom-damage-effects-use-all-levels-and-highest-mine-level",
+                highestMineObjectLevel: 188,
+                levels: {
+                  wisdom: {
+                    powerPowerActive: 1,
+                    powerPowerIdle: 2,
+                    damageBoost: 3,
+                    gemBoostSimple: 5,
+                    damageBoostUpgrades: 4,
+                    powerPowerPower: 6,
+                    powerResetKeep: 7,
+                  },
+                },
+                powers: {},
+                effects: [
+                  { group: "wisdom", key: "damageBoost", level: 3 },
+                  { group: "wisdom", key: "damageBoostUpgrades", level: 4 },
+                ],
+              },
+            ].map((sample) => {
+              game.highestMineObjectLevel = sample.highestMineObjectLevel;
+              game.powers.data.values = previousPowers.map(
+                () => new Decimal(1),
+              );
+              // `main.js` assigns Craftsmanship, Expertise, and Exquisity to 1, 2, and 4.
+              for (const [index, power] of [
+                [1, sample.powers.craftsmanship],
+                [2, sample.powers.expertise],
+                [4, sample.powers.exquisity],
+              ]) {
+                if (power !== undefined) {
+                  game.powers.data.values[index] = new Decimal(power);
+                }
+              }
+              for (const upgrades of Object.values(upgradeGroups)) {
+                for (const upgrade of Object.values(upgrades)) {
+                  upgrade.level = 0;
+                }
+              }
+              for (const [group, levels] of Object.entries(sample.levels)) {
+                for (const [key, level] of Object.entries(levels)) {
+                  upgradeGroups[group][key].level = level;
+                }
+              }
+              const effects = sample.effects.map(({ group, key, level }) => {
+                const upgrade = upgradeGroups[group][key];
+                upgrade.level = level;
+                return {
+                  group,
+                  key,
+                  level,
+                  effect: normalizedDecimal(upgrade.getEffect(level)),
+                };
+              });
+              return {
+                name: sample.name,
+                highestMineObjectLevel: sample.highestMineObjectLevel,
+                controlledLevels: sample.levels,
+                otherUpgradeLevels: 0,
+                controlledPowers: sample.powers,
+                otherPowers: "1",
+                effects,
+              };
+            });
+
+            game.highestMineObjectLevel = 171;
+            game.powers.data.values = previousPowers.map(() => new Decimal(1));
+
             return {
               sourcePaths: [
                 "Scripts/Define/game.js",
                 "Scripts/upgrade.js",
                 "Scripts/utils.js",
+                "Scripts/main.js",
               ],
               controlledState: {
                 highestMineObjectLevel: 171,
@@ -1202,6 +1327,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
                   samples: blacksmithBonusSamples,
                 },
               },
+              effectInteractions,
             };
           } finally {
             game.highestMineObjectLevel = previousHighestObjectLevel;
@@ -1480,8 +1606,14 @@ async function main() {
   const stochasticSampleCount = Object.values(
     expected.data.upgradeSemantics?.stochasticEffects ?? {},
   ).reduce((sum, effect) => sum + (effect.samples?.length ?? 0), 0);
+  const effectInteractions =
+    expected.data.upgradeSemantics?.effectInteractions ?? [];
+  const interactionEffectCount = effectInteractions.reduce(
+    (sum, interaction) => sum + interaction.effects.length,
+    0,
+  );
   process.stdout.write(
-    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${stochasticSampleCount} stochastic RNG cases).\n`,
+    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases).\n`,
   );
 }
 
