@@ -1,0 +1,81 @@
+{
+  "remix": {
+    "repository": "https://github.com/veprogames/idle-mine-remix",
+    "commit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+    "license": "MIT",
+    "notice": "Copyright (c) 2023 veprogames",
+    "noticePath": "apps/web/static/Images/LICENSE.txt",
+    "fullLicensePath": "docs/knowledge/sources/licenses/idle-mine-remix-MIT.txt",
+    "productLicenseCopies": [
+      "apps/web/static/licenses/idle-mine-remix-MIT.txt",
+      "packages/content/LICENSE.idle-mine-remix.txt"
+    ]
+  },
+  "copiedImages": [
+    {
+      "source": "Images/btn_left.png",
+      "destination": "apps/web/static/Images/btn_left.png",
+      "sha256": "5526514712B214D3E09BE1AB5D8217215F97E957ABFBDBFC8276537F8CDA0481"
+    },
+    {
+      "source": "Images/btn_right.png",
+      "destination": "apps/web/static/Images/btn_right.png",
+      "sha256": "4796D51927A4D217D768D2FF6F4B5C7DAFD6B6480188D4665514941F7A65966F"
+    },
+    {
+      "source": "Images/gem.png",
+      "destination": "apps/web/static/Images/gem.png",
+      "sha256": "A016B6A8AB5C4922CBD78EAE72F27D019E445107CE70952B2D215D7F1E87B1FD"
+    },
+    {
+      "source": "Images/money.png",
+      "destination": "apps/web/static/Images/money.png",
+      "sha256": "67F5C9B873AB2766736FE77D9D447BD9D7A38A37EA5F79DC06D7C4CC071DD8FC"
+    },
+    {
+      "source": "Images/planetcoin.png",
+      "destination": "apps/web/static/Images/planetcoin.png",
+      "sha256": "8AC5F142EEC59844EE607241D982DEF2ADA9AD93CC443F7B38D3CD7B77492EFF"
+    },
+    {
+      "source": "Images/wisdom.png",
+      "destination": "apps/web/static/Images/wisdom.png",
+      "sha256": "FF1CBF7DC1E05FFAA7C2314C8CFED8229AC2A33033D5F87B452196A952B587E2"
+    },
+    {
+      "source": "Images/upgrades/blacksmith.png",
+      "destination": "apps/web/static/Images/upgrades/blacksmith.png",
+      "sha256": "7DD356A64D5522EE6F6310D515123C8FAEA387CDE64EECA2CD83F3F0849923B8"
+    },
+    {
+      "source": "Images/upgrades/gemwaster.png",
+      "destination": "apps/web/static/Images/upgrades/gemwaster.png",
+      "sha256": "A0F62B56162D3D45A87FA2FC3CA88DC2177776CF73A27B8681FA44BA3A7AE0BF"
+    }
+  ],
+  "copiedFonts": [
+    {
+      "family": "Work Sans",
+      "source": "fonts/worksans/WorkSans-Regular.woff2",
+      "destination": "apps/web/static/fonts/worksans/WorkSans-Regular.woff2",
+      "sha256": "FF35B06AC7E5D6C94018D6CD356E3D9D74BDD768A05042144CA390209ADD0131",
+      "license": "SIL Open Font License 1.1",
+      "notice": "Copyright 2019 The Work Sans Project Authors",
+      "licenseFile": "apps/web/static/fonts/worksans/OFL.txt",
+      "officialMetadata": "https://github.com/google/fonts/blob/b35c81086186162164947bd39574683073d9b268/ofl/worksans/METADATA.pb",
+      "googleFontsSourceCommit": "b35c81086186162164947bd39574683073d9b268"
+    },
+    {
+      "family": "Montserrat",
+      "source": "fonts/montserrat/Montserrat-Regular.woff2",
+      "destination": "apps/web/static/fonts/montserrat/Montserrat-Regular.woff2",
+      "sha256": "3437637C88E40AB5F57B1E37129D03EBB7594A6FC8EA56061284C93F8088BEB8",
+      "license": "SIL Open Font License 1.1",
+      "noticeInBundledLicenseFile": "Copyright 2024 The Montserrat.Git Project Authors",
+      "licenseFile": "apps/web/static/fonts/montserrat/OFL.txt",
+      "officialMetadata": "https://github.com/google/fonts/blob/cc8daf2e7085006b9c112542fc82b58afc13521d/ofl/montserrat/METADATA.pb",
+      "googleFontsSourceCommit": "cc8daf2e7085006b9c112542fc82b58afc13521d",
+      "provenanceNote": "The official Google Fonts METADATA.pb names the family as OFL and lists Copyright 2011 The Montserrat Project Authors; the bundled OFL.txt says Copyright 2024 The Montserrat.Git Project Authors. Preserve both records pending rights-holder clarification; do not infer a different license from this metadata discrepancy."
+    }
+  ]
+}

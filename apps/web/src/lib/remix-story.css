@@ -1,0 +1,138 @@
+@font-face {
+  font-family: "Work Sans";
+  font-style: normal;
+  font-weight: 400;
+  src: url("/fonts/worksans/WorkSans-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 400;
+  src: url("/fonts/montserrat/Montserrat-Regular.woff2") format("woff2");
+}
+
+.story-panel-host {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 84vh;
+  overflow: hidden;
+  background: #fafafa;
+  color: #000;
+  font:
+    18px "Work Sans",
+    sans-serif;
+  user-select: none;
+}
+
+.story-panel-host :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+  font-family: Montserrat, sans-serif;
+}
+
+.story-panel-host article.story {
+  padding: 1rem;
+  z-index: -1;
+}
+
+.story-panel-host .story-milestones {
+  height: 62vh;
+  overflow-y: scroll;
+  overscroll-behavior: contain;
+}
+
+.story-panel-host .story .objective {
+  margin: 0;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.story-panel-host article.story .story-milestones > div {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.story-panel-host article.story .story-milestones > div:last-child {
+  border-bottom: none;
+}
+
+.story-panel-host article.story div img {
+  height: 6em;
+}
+
+.story-panel-host canvas.mine-object {
+  height: 6em;
+  transition:
+    filter 200ms,
+    transform 200ms;
+}
+
+.story-panel-host canvas.mine-object:active:not(.nodmg) {
+  filter: brightness(0.75);
+  transform: scale(0.925);
+}
+
+.story-panel-host .story-quote {
+  display: flex;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+
+.story-panel-host .story-quote span {
+  margin-left: 2rem;
+  color: #404040;
+  font-family: "Times new Roman", serif;
+  font-size: 3rem;
+  font-style: italic;
+}
+
+.story-panel-host .chapter-control {
+  display: flex;
+  width: 100%;
+  height: 4rem;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.story-panel-host .chapter-control h3 {
+  font-size: 2rem;
+}
+
+.story-panel-host .chapter-control button,
+.story-panel-host .chapter-control button img {
+  width: 3rem !important;
+  height: 3rem !important;
+}
+
+.story-panel-host .chapter-control button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 110%;
+  outline: 0;
+}
+
+.story-panel-host .chapter-control img {
+  width: 100%;
+  transition:
+    transform 250ms,
+    filter 250ms;
+}
+
+.story-panel-host .chapter-control img.left {
+  transform-origin: left;
+}
+
+.story-panel-host .chapter-control img.right {
+  transform-origin: right;
+}
+
+.story-panel-host .chapter-control img:hover {
+  transform: scaleX(0.85);
+}
+
+.story-panel-host .chapter-control img:active {
+  transform: scaleX(0.7);
+  filter: brightness(0.9);
+}

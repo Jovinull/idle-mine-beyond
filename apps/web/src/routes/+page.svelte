@@ -24,7 +24,9 @@
     min-height: 100vh;
     background: #151718;
     color: #e7e9e9;
-    font: 16px/1.5 system-ui, sans-serif;
+    font:
+      16px/1.5 system-ui,
+      sans-serif;
   }
 
   main {

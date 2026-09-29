@@ -2898,5 +2898,11 @@
       },
       "viewport": { "width": 1440, "height": 900 }
     }
-  ]
+  ],
+  "storyNavigationScroll": {
+    "pageAfterNavigation": 1,
+    "beforeScrollTop": 100,
+    "afterScrollTop": 100,
+    "containerReused": true
+  }
 }

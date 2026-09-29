@@ -4,6 +4,8 @@ The machine-readable source freeze lives in [reference-manifest.json](reference-
 
 The full MIT notice found in the Remix repository is preserved at [licenses/idle-mine-remix-MIT.txt](licenses/idle-mine-remix-MIT.txt) because compatibility fixtures now contain normalized data extracted from its implementation.
 
+The [Story visual asset manifest](story-assets.json) records hashes and pinned origins for Story icons/fonts copied to the web static tree, their adjacent MIT/OFL notices, the full MIT notice copies shipped with the derived Story content, and a Montserrat copyright metadata discrepancy that remains open. Run `pnpm assets:check` to validate destination hashes and, when `.research/upstream/idle-mine-remix` exists, compare the bytes with the pinned checkout.
+
 ## Frozen repositories
 
 | Source           | URL                                                                         | Role             | Branch / commit                                 | License detected                   | Inspected  |

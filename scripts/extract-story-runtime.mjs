@@ -431,10 +431,33 @@ async function captureStory(
             await readRenderedState(`all-unlocked-page-${page}`),
           );
         }
+        game.story.page = 0;
+        await nextTick();
+        const scrollContainer = document.querySelector(".story-milestones");
+        if (!scrollContainer) {
+          throw new Error("Story scroll container was not rendered.");
+        }
+        scrollContainer.scrollTop = 100;
+        const beforeScrollTop = scrollContainer.scrollTop;
+        functions.increaseStoryPage();
+        await nextTick();
+        const afterContainer = document.querySelector(".story-milestones");
+        if (!afterContainer) {
+          throw new Error(
+            "Story scroll container disappeared after navigation.",
+          );
+        }
+        const storyNavigationScroll = {
+          pageAfterNavigation: game.story.page,
+          beforeScrollTop,
+          afterScrollTop: afterContainer.scrollTop,
+          containerReused: afterContainer === scrollContainer,
+        };
         return {
           chapters,
           freshGame,
           allUnlocked,
+          storyNavigationScroll,
         };
       },
       {

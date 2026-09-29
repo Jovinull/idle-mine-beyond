@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./remix-mine-content": "./src/remix-mine-content.json",
-    "./remix-story-milestones": "./src/remix-story-milestones.json"
+    "./remix-story-milestones": "./src/remix-story-milestones.json",
+    "./remix-story-template": "./src/remix-story-template.json"
   }
 }

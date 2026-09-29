@@ -1,6 +1,6 @@
 # Roadmap
 
-The roadmap is ordered around evidence first and implementation second. Phase completion requires documentation and parity-matrix updates. None of the gameplay phases has started.
+The roadmap is ordered around evidence first and implementation second. Phase completion requires documentation and parity-matrix updates. Full gameplay and UI phases remain ahead; source-backed standalone slices do not mean a phase is complete.
 
 | Phase                                   | Outcome                                                                                    | Gate                                                                |
 | --------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
@@ -19,7 +19,7 @@ The roadmap is ordered around evidence first and implementation second. Phase co
 
 ## Current recommended action
 
-Remain in Phase 0 while the reference corpus is expanded into complete system specifications. The oracle and tested slices now exist for mine objects, notations, upgrades, mining transitions, and story milestone state. Next extract full story markup/objective behavior and wire the tested mining/story operations through deterministic state and explicit persistence adapters; continue adding fixtures before each mechanic and UI slice.
+Remain in Phase 0 while the reference corpus is expanded into complete system specifications. The oracle and tested slices now exist for mine objects, notations, upgrades, mining transitions, Story state, and standalone Story rendering. Next wire tested mining, purchase, Story, offline, and save operations through deterministic app state and explicit UI/persistence adapters; complete crafting and legacy save behavior before beginning full desktop UI parity. Continue adding fixtures before each mechanic and UI slice.
 
 ## Platform targets
 

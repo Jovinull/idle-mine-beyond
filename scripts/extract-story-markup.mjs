@@ -24,7 +24,11 @@ function getGitOutput(repositoryPath, ...args) {
   }).trim();
 }
 
-function extractStoryArticle(source) {
+export function extractStoryArticle(source) {
+  // Git may materialize this pinned UTF-8 file with CRLF on Windows even
+  // though the committed blob uses LF. Normalize before computing offsets so
+  // the fixture is byte-for-byte reproducible across checkout settings.
+  source = source.replace(/\r\n?/g, "\n");
   const articleOpen = source.match(
     /<article\b(?=[^>]*\bv-if="settings\.tab === 'story'")(?=[^>]*\bclass="story")[^>]*>/,
   );
@@ -214,7 +218,12 @@ async function main() {
   );
 }
 
-main().catch((error) => {
-  process.stderr.write(`${error.stack ?? error.message}\n`);
-  process.exitCode = 1;
-});
+if (
+  process.argv[1] &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
+  main().catch((error) => {
+    process.stderr.write(`${error.stack ?? error.message}\n`);
+    process.exitCode = 1;
+  });
+}

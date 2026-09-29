@@ -34,6 +34,9 @@ function compatibilityBrowserHarness(): Plugin {
   const mineObjectRendererModule = fileURLToPath(
     new URL("./tests/mine-object-renderer-smoke.ts", import.meta.url),
   ).replaceAll("\\", "/");
+  const storyPanelModule = fileURLToPath(
+    new URL("./tests/story-panel-smoke.ts", import.meta.url),
+  ).replaceAll("\\", "/");
   const harnessModules = new Map([
     ["/__test__/formatting", smokeModule],
     ["/__test__/mine-objects", mineObjectModule],
@@ -44,6 +47,7 @@ function compatibilityBrowserHarness(): Plugin {
     ["/__test__/offline-progression", offlineProgressionModule],
     ["/__test__/save-codec", saveCodecModule],
     ["/__test__/mine-object-renderer", mineObjectRendererModule],
+    ["/__test__/story-panel", storyPanelModule],
   ]);
 
   return {
