@@ -1,10 +1,13 @@
 import {
+  Decimal,
   calculateRemixActiveDamage,
   calculateRemixIdleDamage,
   calculateRemixIdleDps,
+  calculateRemixMiningFactors,
   calculateRemixMiningRates,
   getRemixMineObject,
   type RemixMiningFactors,
+  type RemixMiningUpgradeLevels,
 } from "@idle-mine-beyond/core";
 import type { RemixMineObjectCatalog } from "../../../packages/core/src/mine-objects.js";
 
@@ -13,8 +16,12 @@ type Scenario = {
   input: {
     objectId: number;
     pickaxe: { power: string; quality: string };
+    miningPower: string;
+    exquisityPower: string;
+    upgrades: Record<string, Record<string, number>>;
   };
   effects: Record<string, DecimalSnapshot>;
+  result: { highestDamageableObjectLevel: number };
 };
 type ProbeInput = {
   catalog: RemixMineObjectCatalog;
@@ -49,6 +56,32 @@ function makeInput(scenario: Scenario, catalog: RemixMineObjectCatalog) {
   };
 }
 
+function levelsForScenario(scenario: Scenario): RemixMiningUpgradeLevels {
+  const levels = scenario.input.upgrades;
+  const get = (family: string, upgrade: string) =>
+    levels[family]?.[upgrade] ?? 0;
+  return {
+    money: {
+      activePower: get("money", "activePower"),
+      idlePower: get("money", "idlePower"),
+      idleSpeed: get("money", "idleSpeed"),
+      gemChance: get("money", "gemChance"),
+    },
+    gems: {
+      idlePower: get("gems", "idlePower"),
+      gemChance: get("gems", "gemChance"),
+      gemMultiply: get("gems", "gemMultiply"),
+    },
+    planetCoins: {
+      activePower: get("planetCoins", "activePower"),
+      gemChance: get("planetCoins", "gemChance"),
+      gemMultiply: get("planetCoins", "gemMultiply"),
+      lastObjGems: get("planetCoins", "lastObjGems"),
+    },
+    wisdom: levels["wisdom"] ?? {},
+  };
+}
+
 const output = document.querySelector<HTMLPreElement>("#result");
 if (!output) throw new Error("Mining-rate browser probe failed to initialize.");
 
@@ -63,6 +96,25 @@ browserWindow.__idleMineRatesProbe = ({ catalog, scenarios, quirk }) => {
       Object.entries(rates).map(([key, value]) => [key, snapshot(value)]),
     );
   });
+  const factorResults = scenarios.map((scenario) => {
+    const factors = calculateRemixMiningFactors({
+      levels: levelsForScenario(scenario),
+      powers: {
+        mining: scenario.input.miningPower,
+        exquisity: scenario.input.exquisityPower,
+      },
+      highestMineObjectLevel: scenario.input.objectId,
+      currentObjectIsHighestDamageable:
+        scenario.input.objectId ===
+        scenario.result.highestDamageableObjectLevel,
+    });
+    return Object.fromEntries(
+      Object.entries(factors).map(([key, value]) => [
+        key,
+        snapshot(new Decimal(value)),
+      ]),
+    );
+  });
 
   const scenario = scenarios.find(
     ({ input }) => input.objectId === quirk.currentObjectId,
@@ -73,6 +125,7 @@ browserWindow.__idleMineRatesProbe = ({ catalog, scenarios, quirk }) => {
 
   return {
     scenarios: scenarioResults,
+    factors: factorResults,
     currentObjectArgumentQuirk: {
       activeDamage: snapshot(calculateRemixActiveDamage(input, target)),
       idleDamageAtCurrentObject: snapshot(calculateRemixIdleDamage(input)),

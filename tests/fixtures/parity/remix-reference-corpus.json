@@ -37348,7 +37348,8 @@
               "quality": "1"
             },
             "miningPower": "1",
-            "upgrades": {}
+            "upgrades": {},
+            "exquisityPower": "1"
           },
           "effects": {
             "activePower": {
@@ -37486,7 +37487,8 @@
               "planetCoins": {
                 "lastObjGems": 3
               }
-            }
+            },
+            "exquisityPower": "1"
           },
           "effects": {
             "activePower": {
@@ -37620,6 +37622,7 @@
               "quality": "1.25"
             },
             "miningPower": "2.5",
+            "exquisityPower": "2.5",
             "upgrades": {
               "money": {
                 "activePower": 3,
@@ -37635,11 +37638,17 @@
               "planetCoins": {
                 "activePower": 2,
                 "gemChance": 1,
+                "gemMultiply": 2,
                 "lastObjGems": 3
               },
               "wisdom": {
+                "powerPowerActive": 1,
+                "powerPowerIdle": 2,
                 "damageBoost": 3,
-                "damageBoostUpgrades": 2
+                "damageBoostUpgrades": 2,
+                "gemBoostSimple": 2,
+                "powerPowerPower": 3,
+                "powerResetKeep": 4
               }
             }
           },
@@ -37670,8 +37679,8 @@
               "exponent": 0
             },
             "damageUpgradeBoost": {
-              "decimal": "1.6105100000000006",
-              "mantissa": 1.6105100000000006,
+              "decimal": "5.054470284992945",
+              "mantissa": 5.054470284992945,
               "exponent": 0
             },
             "planetCoinActivePower": {
@@ -37685,9 +37694,9 @@
               "exponent": -2
             },
             "gemMultiplier": {
-              "decimal": "5",
-              "mantissa": 5,
-              "exponent": 0
+              "decimal": "31",
+              "mantissa": 3.1,
+              "exponent": 1
             },
             "lastObjectGemMultiplier": {
               "decimal": "1",
@@ -37734,19 +37743,19 @@
               "exponent": 43
             },
             "activeDamage": {
-              "decimal": "9.02237987174346e+43",
-              "mantissa": 9.02237987174346,
-              "exponent": 43
+              "decimal": "2.83292510937016e+44",
+              "mantissa": 2.83292510937016,
+              "exponent": 44
             },
             "idleDamage": {
-              "decimal": "4.12945597870135e+44",
-              "mantissa": 4.12945597870135,
-              "exponent": 44
+              "decimal": "1.29612848810025e+45",
+              "mantissa": 1.29612848810025,
+              "exponent": 45
             },
             "idleDps": {
-              "decimal": "5.270348528771928e+44",
-              "mantissa": 5.270348528771928,
-              "exponent": 44
+              "decimal": "1.6542248919933502e+45",
+              "mantissa": 1.6542248919933502,
+              "exponent": 45
             },
             "moneyPerClick": {
               "decimal": "3e+61",
@@ -37759,9 +37768,9 @@
               "exponent": 61
             },
             "gemsPerSecond": {
-              "decimal": "0.44031713906250014",
-              "mantissa": 4.403171390625001,
-              "exponent": -1
+              "decimal": "2.7299662621875007",
+              "mantissa": 2.7299662621875007,
+              "exponent": 0
             },
             "planetCoinsPerSecond": {
               "decimal": "0.0012762815625000003",
@@ -37780,7 +37789,8 @@
               "quality": "0.5"
             },
             "miningPower": "1",
-            "upgrades": {}
+            "upgrades": {},
+            "exquisityPower": "1"
           },
           "effects": {
             "activePower": {
@@ -37919,7 +37929,8 @@
               "quality": "1"
             },
             "miningPower": "1",
-            "upgrades": {}
+            "upgrades": {},
+            "exquisityPower": "1"
           },
           "effects": {
             "activePower": {
@@ -38053,7 +38064,8 @@
               "quality": "1"
             },
             "miningPower": "1",
-            "upgrades": {}
+            "upgrades": {},
+            "exquisityPower": "1"
           },
           "effects": {
             "activePower": {
@@ -38187,7 +38199,8 @@
               "quality": "1"
             },
             "miningPower": "1",
-            "upgrades": {}
+            "upgrades": {},
+            "exquisityPower": "1"
           },
           "effects": {
             "activePower": {
@@ -38321,7 +38334,8 @@
               "quality": "1"
             },
             "miningPower": "1",
-            "upgrades": {}
+            "upgrades": {},
+            "exquisityPower": "1"
           },
           "effects": {
             "activePower": {
@@ -38459,7 +38473,8 @@
               "money": {
                 "idlePower": 1
               }
-            }
+            },
+            "exquisityPower": "1"
           },
           "effects": {
             "activePower": {

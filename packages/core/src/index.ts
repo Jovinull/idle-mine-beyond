@@ -19,4 +19,9 @@ export type {
   RemixMiningInput,
   RemixMiningRates,
 } from "./mining-rates.js";
+export { calculateRemixMiningFactors } from "./remix-mining-upgrades.js";
+export type {
+  RemixMiningUpgradeInput,
+  RemixMiningUpgradeLevels,
+} from "./remix-mining-upgrades.js";
 export { RemixRandom } from "./remix-random.js";

@@ -1,4 +1,4 @@
-/* global Random, SKIN_LAYER_AMOUNTS, DICTIONARY_ENGLISH, POWER_MINING, Pickaxe, applyUpgrade -- pinned classic-script bindings */
+/* global Random, SKIN_LAYER_AMOUNTS, DICTIONARY_ENGLISH, POWER_MINING, POWER_EXQUISITY, Pickaxe, applyUpgrade -- pinned classic-script bindings */
 
 import { createHash } from "node:crypto";
 import { createServer } from "node:http";
@@ -759,8 +759,21 @@ async function capture(reference, dependencies, dependencySnapshots) {
           const upgradeKeys = {
             money: ["activePower", "idlePower", "idleSpeed", "gemChance"],
             gems: ["idlePower", "gemChance", "gemMultiply"],
-            planetCoins: ["activePower", "gemChance", "lastObjGems"],
-            wisdom: ["damageBoost", "damageBoostUpgrades"],
+            planetCoins: [
+              "activePower",
+              "gemChance",
+              "gemMultiply",
+              "lastObjGems",
+            ],
+            wisdom: [
+              "powerPowerActive",
+              "powerPowerIdle",
+              "damageBoost",
+              "gemBoostSimple",
+              "damageBoostUpgrades",
+              "powerPowerPower",
+              "powerResetKeep",
+            ],
           };
           const previousLevels = Object.fromEntries(
             Object.entries(upgradeKeys).map(([group, keys]) => [
@@ -776,6 +789,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
             mineObjectLevel: game.mineObjectLevel,
             highestMineObjectLevel: game.highestMineObjectLevel,
             miningPower: game.powers.data.values[POWER_MINING],
+            exquisityPower: game.powers.data.values[POWER_EXQUISITY],
           };
           const scenarios = [
             {
@@ -797,6 +811,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
               objectId: 90,
               pickaxe: { power: "1e43", quality: "1.25" },
               miningPower: "2.5",
+              exquisityPower: "2.5",
               upgrades: {
                 money: {
                   activePower: 3,
@@ -805,8 +820,21 @@ async function capture(reference, dependencies, dependencySnapshots) {
                   gemChance: 6,
                 },
                 gems: { idlePower: 2, gemChance: 3, gemMultiply: 4 },
-                planetCoins: { activePower: 2, gemChance: 1, lastObjGems: 3 },
-                wisdom: { damageBoost: 3, damageBoostUpgrades: 2 },
+                planetCoins: {
+                  activePower: 2,
+                  gemChance: 1,
+                  gemMultiply: 2,
+                  lastObjGems: 3,
+                },
+                wisdom: {
+                  powerPowerActive: 1,
+                  powerPowerIdle: 2,
+                  damageBoost: 3,
+                  damageBoostUpgrades: 2,
+                  gemBoostSimple: 2,
+                  powerPowerPower: 3,
+                  powerResetKeep: 4,
+                },
               },
             },
             {
@@ -877,6 +905,9 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 game.powers.data.values[POWER_MINING] = new Decimal(
                   scenario.miningPower,
                 );
+                game.powers.data.values[POWER_EXQUISITY] = new Decimal(
+                  scenario.exquisityPower ?? "1",
+                );
                 game.mineObjectLevel = scenario.objectId;
                 game.highestMineObjectLevel = scenario.objectId;
                 game.currentMineObject = functions.getMineObject(
@@ -933,7 +964,11 @@ async function capture(reference, dependencies, dependencySnapshots) {
                   highestDamageableObjectLevel,
                 };
                 return {
-                  input: scenario,
+                  input: {
+                    ...scenario,
+                    exquisityPower:
+                      game.powers.data.values[POWER_EXQUISITY].toString(),
+                  },
                   effects,
                   object: snapshotObject(scenario.objectId),
                   result,
@@ -954,6 +989,9 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 );
                 game.powers.data.values[POWER_MINING] = new Decimal(
                   scenario.miningPower,
+                );
+                game.powers.data.values[POWER_EXQUISITY] = new Decimal(
+                  scenario.exquisityPower ?? "1",
                 );
                 game.mineObjectLevel = scenario.objectId;
                 game.highestMineObjectLevel = scenario.objectId;
@@ -982,6 +1020,8 @@ async function capture(reference, dependencies, dependencySnapshots) {
             game.mineObjectLevel = previousState.mineObjectLevel;
             game.highestMineObjectLevel = previousState.highestMineObjectLevel;
             game.powers.data.values[POWER_MINING] = previousState.miningPower;
+            game.powers.data.values[POWER_EXQUISITY] =
+              previousState.exquisityPower;
             for (const [group, levels] of Object.entries(previousLevels)) {
               for (const [key, level] of Object.entries(levels)) {
                 upgradeGroups[group][key].level = level;

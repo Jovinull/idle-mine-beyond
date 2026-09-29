@@ -176,8 +176,17 @@ test("calculates captured mining rates in Chromium", async ({ page }) => {
     data: {
       formulaSemantics: {
         scenarios: {
-          input: { objectId: number };
-          result: Record<string, unknown>;
+          input: {
+            objectId: number;
+            pickaxe: { power: string; quality: string };
+            miningPower: string;
+            exquisityPower: string;
+            upgrades: Record<string, Record<string, number>>;
+          };
+          effects: Record<string, unknown>;
+          result: Record<string, unknown> & {
+            highestDamageableObjectLevel: number;
+          };
         }[];
         currentObjectArgumentQuirk: {
           currentObjectId: number;
@@ -241,6 +250,9 @@ test("calculates captured mining rates in Chromium", async ({ page }) => {
   );
   expect((observed as { scenarios: unknown }).scenarios).toEqual(
     expectedScenarios,
+  );
+  expect((observed as { factors: unknown }).factors).toEqual(
+    probe.scenarios.map(({ effects }) => effects),
   );
   expect(
     (observed as { currentObjectArgumentQuirk: unknown })

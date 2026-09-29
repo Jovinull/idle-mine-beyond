@@ -5,6 +5,7 @@ import {
   calculateRemixActiveDamage,
   calculateRemixIdleDamage,
   calculateRemixIdleDps,
+  calculateRemixMiningFactors,
   calculateRemixMiningRates,
   getRemixMineObject,
   type RemixMiningFactors,
@@ -35,10 +36,11 @@ type FormulaScenario = {
     objectId: number;
     pickaxe: { power: string; quality: string };
     miningPower: string;
+    exquisityPower: string;
     upgrades: Record<string, Record<string, number>>;
   };
   effects: Record<string, DecimalSnapshot>;
-  result: FormulaResult;
+  result: FormulaResult & { highestDamageableObjectLevel: number };
 };
 
 const corpus = JSON.parse(
@@ -89,6 +91,32 @@ function hydrateFactors(
   ) as RemixMiningFactors;
 }
 
+function levelsForScenario(scenario: FormulaScenario) {
+  const levels = scenario.input.upgrades;
+  const get = (family: string, upgrade: string) =>
+    levels[family]?.[upgrade] ?? 0;
+  return {
+    money: {
+      activePower: get("money", "activePower"),
+      idlePower: get("money", "idlePower"),
+      idleSpeed: get("money", "idleSpeed"),
+      gemChance: get("money", "gemChance"),
+    },
+    gems: {
+      idlePower: get("gems", "idlePower"),
+      gemChance: get("gems", "gemChance"),
+      gemMultiply: get("gems", "gemMultiply"),
+    },
+    planetCoins: {
+      activePower: get("planetCoins", "activePower"),
+      gemChance: get("planetCoins", "gemChance"),
+      gemMultiply: get("planetCoins", "gemMultiply"),
+      lastObjGems: get("planetCoins", "lastObjGems"),
+    },
+    wisdom: levels["wisdom"] ?? {},
+  };
+}
+
 it("matches captured Remix damage and income formula scenarios", () => {
   expect(corpus.metadata.sourceCommit).toBe(
     "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
@@ -121,6 +149,31 @@ it("matches captured Remix damage and income formula scenarios", () => {
       gemsPerSecond: scenario.result.gemsPerSecond,
       planetCoinsPerSecond: scenario.result.planetCoinsPerSecond,
     });
+  }
+});
+
+it("calculates captured mining upgrade effects from their levels", () => {
+  for (const scenario of corpus.data.formulaSemantics.scenarios) {
+    const factors = calculateRemixMiningFactors({
+      levels: levelsForScenario(scenario),
+      powers: {
+        mining: scenario.input.miningPower,
+        exquisity: scenario.input.exquisityPower,
+      },
+      highestMineObjectLevel: scenario.input.objectId,
+      currentObjectIsHighestDamageable:
+        scenario.input.objectId ===
+        scenario.result.highestDamageableObjectLevel,
+    });
+
+    expect(
+      Object.fromEntries(
+        Object.entries(factors).map(([key, value]) => [
+          key,
+          snapshotDecimal(new Decimal(value)),
+        ]),
+      ),
+    ).toEqual(scenario.effects);
   }
 });
 

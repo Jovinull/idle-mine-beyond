@@ -11,7 +11,27 @@ In `Scripts/Define/functions.js`:
 - Idle damage is `max(0, pickaxeDamage × Idle Power × Mining Power × Increasing Damage Boost × Upgrade Damage Upgrade − target.defense)`.
 - Idle DPS is current-object idle damage multiplied by Idle Speed.
 
-Preserve the source's multiplication order. `getActiveDamage(obj)` uses `obj.def` for its direct hit but calls `getIdleDPS(obj)`, whose implementation ignores the argument and calculates from `game.currentMineObject`. This is verified in the controlled `currentObjectArgumentQuirk` fixture and reproduced by the core API. Upgrade-effect calculation remains separate from the rate functions: the tested API receives evaluated effects explicitly.
+Preserve the source's multiplication order. `getActiveDamage(obj)` uses `obj.def` for its direct hit but calls `getIdleDPS(obj)`, whose implementation ignores the argument and calculates from `game.currentMineObject`. This is verified in the controlled `currentObjectArgumentQuirk` fixture and reproduced by the core API. `calculateRemixMiningRates` receives effect values; `calculateRemixMiningFactors` separately evaluates the captured mining-related upgrade effects from levels and injected Power values.
+
+## Mining-related upgrade factors
+
+**Verified legacy behavior (pinned source and controlled Chromium capture):** `Scripts/Define/game.js` defines the upgrade effects and `Scripts/Define/functions.js` composes them into damage/rate formulas. Let `L` be the corresponding upgrade level:
+
+- Active Power: `(1 + 0.15L) × 1.03^L`.
+- Idle Power: `(0.75 + 0.25L) × 1.03^L × Idle Power II`.
+- Idle Power II: `(1 + 0.15L) ^ 1.2518`.
+- Idle Speed: `1.05^L`.
+- Gem Chance: `0.02 + 0.004 × Money Gem Chance level + 0.005 × Gem Chance II level + 0.01 × Gem Chance III level`.
+- Gem Multiplication: `round((1.05^L + L) × (1 + 0.1 × Planet Coin Gem Multiplication level) × (1 + 0.5 × Simple Gem Boost level) × Power of Exquisity)`.
+- Planet Coin Active Power: `0.01L`.
+- Increasing Damage Boost: `1` at level zero; otherwise `(1.05 + 0.03L) ^ max(0, highestMineObjectLevel - 170) × L`.
+- Upgrade Damage Upgrade: `(1 + 0.05L) ^ totalBoughtWisdomUpgradeLevels`. Remix's `getBoughtUpgrades` counts all purchased Wisdom upgrade levels, including upgrades unrelated to mining; callers must provide the complete Wisdom-level map.
+- The last-object Gem multiplier is `1 + Planet Coin Gem Bonus level` only when the current object ID equals `getHighestDamageableMineObjectLevel()`; otherwise it is `1`.
+- Power of Mining is passed in as the current state value. Power of Exquisity is separately injected into Gem Multiplication.
+
+The exact Decimal construction, `pow`, multiplication, addition, and rounding order follows the source expressions. These formulas are not purchase, price, cap, unlock, or bulk-buy behavior. Those remain unextracted.
+
+The captured multi-upgrade scenario covers Money levels 3/4/5/6, Gem levels 2/3/4, Planet Coin levels 2/1/2/3, all seven Wisdom upgrades at levels 1/2/3/2/2/3/4, Power of Mining 2.5, and Power of Exquisity 2.5. The 17 total Wisdom levels exercise the source's all-upgrades exponent, producing an Upgrade Damage Upgrade factor of `5.054470284992945`; the gem factors include both Planet Coin Gem Multiplication and Simple Gem Boost. The fixture records every resulting factor and rate. Other controlled scenarios exercise defaults, the last-object condition, and the Number overflow case; no maximum level/cap boundary is certified. The unit parity suite and Chromium harness evaluate factors from captured levels and compare their exact Decimal snapshots.
 
 ## Earnings
 
@@ -24,7 +44,7 @@ Remix uses JavaScript Number conversion in its hit-count and time calculations. 
 
 ## Implemented compatibility slice
 
-`packages/core/src/mining-rates.ts` implements the captured damage and rate functions with all upgrade/power effects injected as values. Nine controlled configurations cover initial Mud, the last-damageable gem bonus, an upgraded Planet Coin object, zero damage, exact/below/above defense boundaries, and Number hit-count overflow. Exact Decimal output is asserted in Vitest and Chromium; a separate test preserves the explicit-target/current-object argument quirk. This does not implement upgrade effect progression, hit application, random rewards, object navigation, or the mining loop. Broader precision/threshold and reachable-save coverage remains open.
+`packages/core/src/mining-rates.ts` implements the captured damage and rate functions with upgrade/power effects supplied as values. `packages/core/src/remix-mining-upgrades.ts` evaluates the mining-related factor subset listed above. Nine controlled configurations cover initial Mud, the last-damageable Gem bonus, an upgraded Planet Coin object, zero damage, exact/below/above defense boundaries, and Number hit-count overflow. Exact Decimal output and factor snapshots are asserted in Vitest and Chromium; a separate test preserves the explicit-target/current-object argument quirk. Costs, caps, purchases, reward rolls, object navigation, and the mining loop remain unimplemented. Broader precision/threshold and reachable-save coverage remains open.
 
 ## Crafting math
 
@@ -77,7 +97,7 @@ The formatting package uses the MIT-licensed `@antimatter-dimensions/notations@1
 
 ## Math evidence
 
-Initial sources: `Scripts/Define/functions.js`, `Scripts/pickaxe.js`, `Scripts/upgrade.js`, `Scripts/Define/game.js`, `Scripts/random.js`, and `Scripts/utils.js`. The exact reference commit is in the manifest. Decimal, seeded RNG, procedural-object, and nine controlled mining-rate scenarios are captured and tested. Wider object-ID, full upgrade, crafting, and reachable-save coverage remains pending.
+Initial sources: `Scripts/Define/functions.js`, `Scripts/pickaxe.js`, `Scripts/upgrade.js`, `Scripts/Define/game.js`, `Scripts/random.js`, and `Scripts/utils.js`. The exact reference commit is in the manifest. Decimal, seeded RNG, procedural-object, and nine controlled mining-rate/factor scenarios are captured and tested. Wider object-ID, full upgrade costs/caps/purchase rules, crafting, and reachable-save coverage remains pending.
 
 ## Controlled initial-state baseline
 
