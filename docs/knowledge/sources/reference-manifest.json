@@ -1,0 +1,80 @@
+{
+  "inspectedOn": "2026-09-28",
+  "references": [
+    {
+      "name": "Idle Mine: Remix",
+      "canonicalUrl": "https://github.com/veprogames/idle-mine-remix",
+      "role": "Canonical behavioral and source reference",
+      "defaultBranch": "main",
+      "pinnedCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+      "commitDate": "2024-06-12",
+      "archived": true,
+      "archiveDate": "2026-02-09",
+      "licenseDetected": "MIT",
+      "copyrightNotice": "Copyright (c) 2023 veprogames",
+      "researchCheckout": ".research/upstream/idle-mine-remix",
+      "notes": "First-party VeproGames repository, archived read-only. Canonical source pin for initial parity research. The repository includes HTML, CSS, JavaScript, assets, fonts, and license. Do not edit this checkout."
+    },
+    {
+      "name": "idle-mine-remux",
+      "canonicalUrl": "https://github.com/veprogames/idle-mine-remux",
+      "role": "Prior art only; not a behavior specification",
+      "defaultBranch": "main",
+      "pinnedCommit": "79630238696b2e2b10d6706e17f3e6ca2cf20f0e",
+      "commitDate": "2023-09-16",
+      "archived": true,
+      "archiveDate": "2025-02-09",
+      "licenseDetected": "MIT",
+      "copyrightNotice": "Copyright (c) 2023 veprogames",
+      "researchCheckout": ".research/upstream/idle-mine-remux",
+      "notes": "First-party VeproGames repository, archived read-only. Examined only as an incomplete rewrite experiment. Its reduced systems and simplified crafting must never override Remix."
+    }
+  ],
+  "otherReferences": [
+    {
+      "name": "Idle Mine: Remix playable deployment",
+      "canonicalUrl": "https://veprogames.github.io/idle-mine-remix/",
+      "role": "Runtime behavior and visual reference",
+      "defaultBranch": null,
+      "pinnedCommit": null,
+      "licenseDetected": "See the repository and asset provenance notes; deployment itself is not a commit-pinned source",
+      "notes": "Record observed date, browser, viewport, and save/state for every future runtime probe."
+    },
+    {
+      "name": "Idle Mine original",
+      "canonicalUrl": "https://www.kongregate.com/games/crovie/idle-mine",
+      "role": "Historical lineage only",
+      "defaultBranch": null,
+      "pinnedCommit": null,
+      "licenseDetected": "Not established by bootstrap research",
+      "notes": "No first-party Crovie source repository was identified. Do not infer a license or use random forks as canonical source."
+    },
+    {
+      "name": "Idle Mine: Remix developer page",
+      "canonicalUrl": "https://veprogames.github.io/games/idle-mine-remix/",
+      "role": "First-party description and deployment links",
+      "defaultBranch": null,
+      "pinnedCommit": null,
+      "licenseDetected": "Not applicable to this descriptive page",
+      "notes": "Describes Remix as inspired by the original and links to its public deployments."
+    },
+    {
+      "name": "Idle Mine: Remix Wiki",
+      "canonicalUrl": "https://idle-mine-remix.fandom.com/wiki/Home",
+      "role": "Secondary reference when source/runtime does not answer a question",
+      "defaultBranch": null,
+      "pinnedCommit": null,
+      "licenseDetected": "Not assessed",
+      "notes": "Community-maintained; never overrides pinned source or observed behavior."
+    },
+    {
+      "name": "Original Idle Mine Wiki",
+      "canonicalUrl": "https://idle-mine.fandom.com/wiki/Idle_Mine_Wiki",
+      "role": "Historical lineage",
+      "defaultBranch": null,
+      "pinnedCommit": null,
+      "licenseDetected": "Not assessed",
+      "notes": "Community-maintained; historical context only."
+    }
+  ]
+}

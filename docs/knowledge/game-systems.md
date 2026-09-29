@@ -1,0 +1,46 @@
+# Gameplay systems inventory
+
+This is a system map, not a complete extracted game specification. Items described below as source-observed are initial findings from the frozen Remix code. Exact content tables and edge cases still need systematic extraction and fixtures.
+
+## Progression and mine objects
+
+**Verified legacy behavior (source):** the reference defines fixed mine objects and special indexed anchors, followed by procedural ranges. The static list begins with Mud, Paper, Salt, Clay, Rock, Coal, Bone, Lead, Iron, and Copper. Special objects continue through THE UNIVERSE at index 214 in the pinned source. Source: Scripts/Define/game.js and Scripts/Define/functions.js.
+
+Objects carry name, HP, defense, value, colors, skin, and optional drops. Previous/next navigation is bounded by the highest unlocked index. Verify exact navigation and damageability rules at runtime before implementation.
+
+## Resources
+
+- **Money** is earned when the current object breaks.
+- **Gems** are chance-based drops used in pickaxe crafting and gem upgrades.
+- **Planet Coins** are later object drops and upgrade currency.
+- **Wisdom** is a later resource associated with Wisdom-bearing objects.
+- **Powers** are late-game progression values and upgrades. Their complete effects and reset behavior remain to be extracted.
+
+The source displays resources, stats, object information, upgrades, crafting, story, and settings. Do not collapse currencies or reorder their unlocks.
+
+## Upgrade families
+
+The source defines money upgrades, gem upgrades, Planet Coin upgrades, and Wisdom upgrades. Names include Blacksmith, Blacksmith Skill, Blacksmith Expertise, Gem Chance, Active Power, Idle Power, Idle Speed, Gem Waster, Blacksmith+, Blacksmith Skill II, Gem Multiplication, Offline Gems, Gem Bonus, Offline Planet Coins, Offline Time, and Bulk Crafting.
+
+Names and caps in bootstrap notes are leads, not a complete verified table. Extract every cost, cap, effect, bulk-buy rule, and rounding boundary from the pinned source before implementation.
+
+## Active and idle play
+
+The reference has active clicks and an automatic mining loop. The current browser animation loop is tied to requestAnimationFrame. Its update advances at most one automatic hit when the interval threshold is crossed, then resets its timer; see [legacy quirks](legacy-quirks.md). Do not replace this with catch-up simulation during parity without evidence and an accepted exception.
+
+## Crafting
+
+Pickaxe crafting is stochastic and may return a dud. Its complete source-derived rules are in [pickaxe crafting](pickaxe-crafting.md). Never convert it into deterministic gear tiers.
+
+## Notations
+
+The game combines built-in and additional community notation implementations, filters some entries, and adds Idle Mine-specific and SI formats. Preserve the selected name, formatting edge cases, and threshold behavior. Record exact outputs as fixtures; do not substitute a generic formatter.
+
+## Open extraction work
+
+- Full fixed and special object tables and unlock order.
+- All upgrade formulas, caps, costs, and purchase semantics.
+- Drop rules and the exact relationship between active/idle damage and expected drops.
+- Wisdom/Powers value updates, upgrades, retention, and reset behavior.
+- Notifications, achievements or sound if discovered, and all controls.
+- Unlock conditions and every displayed stat across representative saves.
