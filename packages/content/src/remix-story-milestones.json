@@ -1,0 +1,951 @@
+{
+  "source": {
+    "name": "Idle Mine: Remix",
+    "url": "https://github.com/veprogames/idle-mine-remix",
+    "commit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+    "capturedOn": "2026-09-29",
+    "files": [
+      "Scripts/Define/game.js",
+      "Scripts/Define/functions.js",
+      "index.html"
+    ],
+    "licenseNotice": "MIT; Copyright (c) 2023 veprogames. See docs/knowledge/sources/licenses/idle-mine-remix-MIT.txt."
+  },
+  "chapters": [
+    "Welcome to Idle Mine: Remix!",
+    "The real Adventure begins!",
+    "Mysterious Materials",
+    "It's NOT over",
+    "New Dimensions",
+    "Gone to Space",
+    "Hyperplanets",
+    "The Wisdom Era",
+    "Cosmic Superstructures"
+  ],
+  "milestones": [
+    {
+      "index": 0,
+      "key": "gameStart",
+      "page": 0,
+      "sourceCondition": "true",
+      "condition": {
+        "kind": "always"
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": ""
+      }
+    },
+    {
+      "index": 1,
+      "key": "firstMud",
+      "page": 0,
+      "sourceCondition": "game.highestMineObjectLevel >= 1",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 1
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Mine your first piece of Mud"
+      }
+    },
+    {
+      "index": 2,
+      "key": "firstPaper",
+      "page": 0,
+      "sourceCondition": "game.highestMineObjectLevel >= 2",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 2
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Mine a piece of Paper"
+      }
+    },
+    {
+      "index": 3,
+      "key": "blacksmithUpgrade",
+      "page": 0,
+      "sourceCondition": "game.upgrades.blacksmith.level > 0",
+      "condition": {
+        "kind": "upgradeLevel",
+        "family": "money",
+        "key": "blacksmith",
+        "comparison": "greaterThan",
+        "level": 0
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Upgrade Your Blacksmith once"
+      }
+    },
+    {
+      "index": 4,
+      "key": "firstSalt",
+      "page": 0,
+      "sourceCondition": "game.highestMineObjectLevel >= 3",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 3
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Mine a piece of Salt"
+      }
+    },
+    {
+      "index": 5,
+      "key": "firstClay",
+      "page": 0,
+      "sourceCondition": "game.highestMineObjectLevel >= 4",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 4
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Mine a piece of Clay"
+      }
+    },
+    {
+      "index": 6,
+      "key": "firstStone",
+      "page": 1,
+      "sourceCondition": "game.highestMineObjectLevel >= 5",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 5
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Mine a piece of Stone"
+      }
+    },
+    {
+      "index": 7,
+      "key": "tenThousand",
+      "page": 1,
+      "sourceCondition": "game.highestMoney.gte(10e3)",
+      "condition": {
+        "kind": "highestMoneyAtLeast",
+        "amount": "10e3"
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Reach 10.000 $ on hand"
+      }
+    },
+    {
+      "index": 8,
+      "key": "firstSpookyBone",
+      "page": 1,
+      "sourceCondition": "game.highestMineObjectLevel >= 13",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 13
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Mine a Spooky Bone (",
+        "suffix": " / 14) (Reach Mineral number 13 and break it to reach mineral number 14)"
+      }
+    },
+    {
+      "index": 9,
+      "key": "millionaire",
+      "page": 1,
+      "sourceCondition": "game.highestMoney.gte(1e6)",
+      "condition": {
+        "kind": "highestMoneyAtLeast",
+        "amount": "1e6"
+      },
+      "objective": {
+        "kind": "formattedNumberTemplate",
+        "formatter": "formatThousands",
+        "amount": "1e6",
+        "prefix": "Have ",
+        "suffix": " $ on hand"
+      }
+    },
+    {
+      "index": 10,
+      "key": "preciousStones",
+      "page": 1,
+      "sourceCondition": "game.highestMineObjectLevel >= 18",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 18
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Reach Emerald"
+      }
+    },
+    {
+      "index": 11,
+      "key": "gemWaster",
+      "page": 1,
+      "sourceCondition": "game.upgrades.gemWaster.level >= 1",
+      "condition": {
+        "kind": "upgradeLevel",
+        "family": "money",
+        "key": "gemWaster",
+        "comparison": "atLeast",
+        "level": 1
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Upgrade Gem Waster to Level 1"
+      }
+    },
+    {
+      "index": 12,
+      "key": "unrealStones",
+      "page": 2,
+      "sourceCondition": "game.highestMineObjectLevel >= 27",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 27
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach Earth Essence (",
+        "suffix": " / 28)"
+      }
+    },
+    {
+      "index": 13,
+      "key": "fireEssence",
+      "page": 2,
+      "sourceCondition": "game.highestMineObjectLevel >= 33",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 33
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach Fire Essence (",
+        "suffix": " / 34)"
+      }
+    },
+    {
+      "index": 14,
+      "key": "mysterium",
+      "page": 2,
+      "sourceCondition": "game.highestMineObjectLevel >= 35",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 35
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach ??? (",
+        "suffix": " / 36)"
+      }
+    },
+    {
+      "index": 15,
+      "key": "fiftyTrillion",
+      "page": 2,
+      "sourceCondition": "game.highestMoney.gte(50e12)",
+      "condition": {
+        "kind": "highestMoneyAtLeast",
+        "amount": "50e12"
+      },
+      "objective": {
+        "kind": "formattedNumberTemplate",
+        "formatter": "selectedNotation",
+        "amount": "50e12",
+        "prefix": "Have ",
+        "suffix": " $ on hand"
+      }
+    },
+    {
+      "index": 16,
+      "key": "lightEssence",
+      "page": 2,
+      "sourceCondition": "game.highestMineObjectLevel >= 47",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 47
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach Light Essence (",
+        "suffix": " / 48)"
+      }
+    },
+    {
+      "index": 17,
+      "key": "hellStone",
+      "page": 2,
+      "sourceCondition": "game.highestMineObjectLevel >= 50",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 50
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach Hellstone (",
+        "suffix": " / 51)"
+      }
+    },
+    {
+      "index": 18,
+      "key": "hellStoneFinal",
+      "page": 2,
+      "sourceCondition": "game.highestMineObjectLevel >= 54",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 54
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach Hellstone Lv. ??? (",
+        "suffix": " / ??)"
+      }
+    },
+    {
+      "index": 19,
+      "key": "infinitum",
+      "page": 3,
+      "sourceCondition": "game.highestMineObjectLevel >= 55",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 55
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach ??? (",
+        "suffix": " / 56)"
+      }
+    },
+    {
+      "index": 20,
+      "key": "theGem",
+      "page": 3,
+      "sourceCondition": "game.highestMineObjectLevel >= 60",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 60
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach THE GEM (",
+        "suffix": " / 61)"
+      }
+    },
+    {
+      "index": 21,
+      "key": "gemUpgrades",
+      "page": 3,
+      "sourceCondition": "game.highestMineObjectLevel >= 61",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 61
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Break THE GEM"
+      }
+    },
+    {
+      "index": 22,
+      "key": "fractalium",
+      "page": 3,
+      "sourceCondition": "game.highestMineObjectLevel >= 68",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 68
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach Fractalium (",
+        "suffix": " / 69)"
+      }
+    },
+    {
+      "index": 23,
+      "key": "reachPortal",
+      "page": 4,
+      "sourceCondition": "game.highestMineObjectLevel >= 71",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 71
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach ??? (",
+        "suffix": " / ??)"
+      }
+    },
+    {
+      "index": 24,
+      "key": "breakPortal",
+      "page": 4,
+      "sourceCondition": "game.highestMineObjectLevel >= 72",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 72
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Break through THE PORTAL"
+      }
+    },
+    {
+      "index": 25,
+      "key": "proceduralRealm1",
+      "page": 4,
+      "sourceCondition": "game.highestMineObjectLevel >= 81",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 81
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Explore the procedural realm further"
+      }
+    },
+    {
+      "index": 26,
+      "key": "reachSpacePortal",
+      "page": 4,
+      "sourceCondition": "game.highestMineObjectLevel >= 89",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 89
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Reach yet ANOTHER portal..."
+      }
+    },
+    {
+      "index": 27,
+      "key": "breakSpacePortal",
+      "page": 5,
+      "sourceCondition": "game.highestMineObjectLevel >= 90",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 90
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Open the space portal"
+      }
+    },
+    {
+      "index": 28,
+      "key": "planetcoin",
+      "page": 5,
+      "sourceCondition": "game.maxPlanetCoins.gt(0)",
+      "condition": {
+        "kind": "maxPlanetCoinsGreaterThan",
+        "amount": "0"
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Earn a Planet Coin"
+      }
+    },
+    {
+      "index": 29,
+      "key": "pluto",
+      "page": 5,
+      "sourceCondition": "game.highestMineObjectLevel >= 101",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 101
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Mine Pluto (",
+        "suffix": " / 102)"
+      }
+    },
+    {
+      "index": 30,
+      "key": "theMoon",
+      "page": 5,
+      "sourceCondition": "game.highestMineObjectLevel >= 102",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 102
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Mine The Moon (",
+        "suffix": " / 103)"
+      }
+    },
+    {
+      "index": 31,
+      "key": "mars",
+      "page": 5,
+      "sourceCondition": "game.highestMineObjectLevel >= 105",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 105
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach Mars (",
+        "suffix": " / 106)"
+      }
+    },
+    {
+      "index": 32,
+      "key": "venus",
+      "page": 5,
+      "sourceCondition": "game.highestMineObjectLevel >= 106",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 106
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach Venus (",
+        "suffix": " / 107)"
+      }
+    },
+    {
+      "index": 33,
+      "key": "saturn",
+      "page": 5,
+      "sourceCondition": "game.highestMineObjectLevel >= 109",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 109
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach Saturn (",
+        "suffix": " / 110)"
+      }
+    },
+    {
+      "index": 34,
+      "key": "jupiter",
+      "page": 5,
+      "sourceCondition": "game.highestMineObjectLevel >= 110",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 110
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach Jupiter (",
+        "suffix": " / 111)"
+      }
+    },
+    {
+      "index": 35,
+      "key": "wasp79b",
+      "page": 5,
+      "sourceCondition": "game.highestMineObjectLevel >= 114",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 114
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach WASP-79b (",
+        "suffix": " / 115)"
+      }
+    },
+    {
+      "index": 36,
+      "key": "hyperSaturn",
+      "page": 6,
+      "sourceCondition": "game.highestMineObjectLevel >= 124",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 124
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach Hyper-Saturn (",
+        "suffix": " / 125)"
+      }
+    },
+    {
+      "index": 37,
+      "key": "superEarth",
+      "page": 6,
+      "sourceCondition": "game.highestMineObjectLevel >= 134",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 134
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach SUPEREARTH (",
+        "suffix": " / 135)"
+      }
+    },
+    {
+      "index": 38,
+      "key": "colossia",
+      "page": 6,
+      "sourceCondition": "game.highestMineObjectLevel >= 137",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 137
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Reach Colossia (",
+        "suffix": " / 138)"
+      }
+    },
+    {
+      "index": 39,
+      "key": "giagantia",
+      "page": 6,
+      "sourceCondition": "game.highestMineObjectLevel >= 138",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 138
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "function",
+        "text": "Reach the next Planet"
+      }
+    },
+    {
+      "index": 40,
+      "key": "garagantula",
+      "page": 6,
+      "sourceCondition": "game.highestMineObjectLevel >= 139",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 139
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "function",
+        "text": "Reach the next Planet"
+      }
+    },
+    {
+      "index": 41,
+      "key": "planetOmega",
+      "page": 6,
+      "sourceCondition": "game.highestMineObjectLevel >= 140",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 140
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "function",
+        "text": "Reach the next Planet"
+      }
+    },
+    {
+      "index": 42,
+      "key": "breakPlanetOmega",
+      "page": 6,
+      "sourceCondition": "game.highestMineObjectLevel >= 141",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 141
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "function",
+        "text": "Break Giagarantula Omega"
+      }
+    },
+    {
+      "index": 43,
+      "key": "planet160",
+      "page": 6,
+      "sourceCondition": "game.highestMineObjectLevel >= 159",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 159
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Reach Object #160"
+      }
+    },
+    {
+      "index": 44,
+      "key": "reachWisdomEssence",
+      "page": 7,
+      "sourceCondition": "game.highestMineObjectLevel >= 169",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 169
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Reach ???"
+      }
+    },
+    {
+      "index": 45,
+      "key": "breakWisdomEssence",
+      "page": 7,
+      "sourceCondition": "game.highestMineObjectLevel >= 170",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 170
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Break The Wisdom Essence"
+      }
+    },
+    {
+      "index": 46,
+      "key": "miningStars",
+      "page": 7,
+      "sourceCondition": "game.highestMineObjectLevel >= 171",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 171
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Mine a Tiny Star"
+      }
+    },
+    {
+      "index": 47,
+      "key": "wisdomUpgrade",
+      "page": 7,
+      "sourceCondition": "functions.getBoughtUpgrades(game.powers.upgrades) >= 1",
+      "condition": {
+        "kind": "totalWisdomUpgradeLevelsAtLeast",
+        "level": 1
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Buy a Wisdom Upgrade"
+      }
+    },
+    {
+      "index": 48,
+      "key": "mineSun",
+      "page": 7,
+      "sourceCondition": "game.highestMineObjectLevel >= 174",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 174
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Mine The Sun"
+      }
+    },
+    {
+      "index": 49,
+      "key": "minePolaris",
+      "page": 7,
+      "sourceCondition": "game.highestMineObjectLevel >= 179",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 179
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Mine Polaris (",
+        "suffix": " / 180)"
+      }
+    },
+    {
+      "index": 50,
+      "key": "mineBetelgeuse",
+      "page": 7,
+      "sourceCondition": "game.highestMineObjectLevel >= 187",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 187
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Mine Betelgeuse (",
+        "suffix": " / 188)"
+      }
+    },
+    {
+      "index": 51,
+      "key": "mineScuti",
+      "page": 7,
+      "sourceCondition": "game.highestMineObjectLevel >= 191",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 191
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Mine UY Scuti (",
+        "suffix": " / 192)"
+      }
+    },
+    {
+      "index": 52,
+      "key": "mineStarGroup",
+      "page": 8,
+      "sourceCondition": "game.highestMineObjectLevel >= 192",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 192
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Mine A Small Star Group (",
+        "suffix": " / 193)"
+      }
+    },
+    {
+      "index": 53,
+      "key": "mineSmallGalaxy",
+      "page": 8,
+      "sourceCondition": "game.highestMineObjectLevel >= 198",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 198
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Mine The Small Magellanic Cloud (",
+        "suffix": " / 199)"
+      }
+    },
+    {
+      "index": 54,
+      "key": "mineMilkyWay",
+      "page": 8,
+      "sourceCondition": "game.highestMineObjectLevel >= 200",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 200
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Mine The Milky Way (",
+        "suffix": " / 201)"
+      }
+    },
+    {
+      "index": 55,
+      "key": "mineLocalGroup",
+      "page": 8,
+      "sourceCondition": "game.highestMineObjectLevel >= 206",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 206
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Mine The Milky Way (",
+        "suffix": " / 207)"
+      }
+    },
+    {
+      "index": 56,
+      "key": "mineGalaxyCluster",
+      "page": 8,
+      "sourceCondition": "game.highestMineObjectLevel >= 209",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 209
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Mine A Small Galaxy Cluster (",
+        "suffix": " / 210)"
+      }
+    },
+    {
+      "index": 57,
+      "key": "mineGalaxySuperCluster",
+      "page": 8,
+      "sourceCondition": "game.highestMineObjectLevel >= 211",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 211
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Mine A Galaxy Supercluster (",
+        "suffix": " / 212)"
+      }
+    },
+    {
+      "index": 58,
+      "key": "mineFilament",
+      "page": 8,
+      "sourceCondition": "game.highestMineObjectLevel >= 213",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 213
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Mine A Filament (",
+        "suffix": " / 214)"
+      }
+    },
+    {
+      "index": 59,
+      "key": "reachUniverse",
+      "page": 8,
+      "sourceCondition": "game.highestMineObjectLevel >= 214",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 214
+      },
+      "objective": {
+        "kind": "literal",
+        "sourceKind": "literal",
+        "text": "Reach ???"
+      }
+    },
+    {
+      "index": 60,
+      "key": "mineUniverse",
+      "page": 8,
+      "sourceCondition": "game.highestMineObjectLevel >= 215",
+      "condition": {
+        "kind": "highestMineObjectLevelAtLeast",
+        "level": 215
+      },
+      "objective": {
+        "kind": "mineLevelTemplate",
+        "prefix": "Mine THE UNIVERSE (",
+        "suffix": " / 216)"
+      }
+    }
+  ]
+}

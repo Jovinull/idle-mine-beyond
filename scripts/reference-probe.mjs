@@ -1,4 +1,4 @@
-/* global Random, SKIN_LAYER_AMOUNTS, DICTIONARY_ENGLISH, POWER_MINING, POWER_EXQUISITY, Pickaxe, applyUpgrade -- pinned classic-script bindings */
+/* global Random, SKIN_LAYER_AMOUNTS, DICTIONARY_ENGLISH, POWER_MINING, POWER_EXQUISITY, POWER_WISDOM, Pickaxe, applyUpgrade -- pinned classic-script bindings */
 
 import { createHash } from "node:crypto";
 import { createServer } from "node:http";
@@ -227,6 +227,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
       ({ selectedPostUniverseIds }) => {
         const game = window.game;
         const functions = window.functions;
+        const app = window.app;
         const Decimal = window.Decimal;
         const safeNumber = (value) => {
           if (Number.isNaN(value)) return "NaN";
@@ -730,6 +731,1215 @@ async function capture(reference, dependencies, dependencySnapshots) {
           },
           messageLog: normalize(game.messageLog),
         };
+        const storySemantics = (() => {
+          const milestoneEntries = Object.entries(game.story.milestones);
+          const wisdomUpgradeEntries = Object.entries(game.powers.upgrades);
+          const originalState = {
+            highestMineObjectLevel: game.highestMineObjectLevel,
+            highestMoney: game.highestMoney,
+            maxPlanetCoins: game.maxPlanetCoins,
+            page: game.story.page,
+            highestUnlocked: game.story.highestUnlocked,
+            notifications: game.story.notifications,
+            blacksmithLevel: game.upgrades.blacksmith.level,
+            gemWasterLevel: game.upgrades.gemWaster.level,
+            wisdomUpgradeLevels: wisdomUpgradeEntries.map(
+              ([, upgrade]) => upgrade.level,
+            ),
+          };
+          const scenarioInputs = [
+            {
+              name: "fresh-state-refreshes-game-start",
+              highestMineObjectLevel: 0,
+              highestMoney: "0",
+              maxPlanetCoins: "0",
+              blacksmithLevel: 0,
+              gemWasterLevel: 0,
+              boughtWisdomUpgrades: 0,
+              page: 0,
+              highestUnlocked: -1,
+              notifications: 0,
+            },
+            {
+              name: "independent-early-milestones-skip-unsatisfied-gap",
+              highestMineObjectLevel: 1,
+              highestMoney: "0",
+              maxPlanetCoins: "0",
+              blacksmithLevel: 1,
+              gemWasterLevel: 0,
+              boughtWisdomUpgrades: 0,
+              page: 0,
+              highestUnlocked: -1,
+              notifications: 0,
+            },
+            {
+              name: "independent-resource-milestones-skip-progression-gap",
+              highestMineObjectLevel: 0,
+              highestMoney: "1000000",
+              maxPlanetCoins: "1",
+              blacksmithLevel: 0,
+              gemWasterLevel: 0,
+              boughtWisdomUpgrades: 0,
+              page: 0,
+              highestUnlocked: -1,
+              notifications: 0,
+            },
+            {
+              name: "saved-high-water-only-scans-later-indices",
+              highestMineObjectLevel: 0,
+              highestMoney: "1000000",
+              maxPlanetCoins: "0",
+              blacksmithLevel: 0,
+              gemWasterLevel: 0,
+              boughtWisdomUpgrades: 0,
+              page: 0,
+              highestUnlocked: 7,
+              notifications: 5,
+            },
+            {
+              name: "later-visible-condition-is-skipped-by-saved-high-water",
+              highestMineObjectLevel: 1,
+              highestMoney: "0",
+              maxPlanetCoins: "0",
+              blacksmithLevel: 0,
+              gemWasterLevel: 0,
+              boughtWisdomUpgrades: 0,
+              page: 0,
+              highestUnlocked: 28,
+              notifications: 4,
+            },
+            {
+              name: "all-current-milestone-requirements-satisfied",
+              highestMineObjectLevel: 215,
+              highestMoney: "50000000000000",
+              maxPlanetCoins: "1",
+              blacksmithLevel: 1,
+              gemWasterLevel: 1,
+              boughtWisdomUpgrades: 1,
+              page: 8,
+              highestUnlocked: -1,
+              notifications: 0,
+            },
+          ];
+
+          const setStoryInputs = (input) => {
+            game.highestMineObjectLevel = input.highestMineObjectLevel;
+            game.highestMoney = new Decimal(input.highestMoney);
+            game.maxPlanetCoins = new Decimal(input.maxPlanetCoins);
+            game.upgrades.blacksmith.level = input.blacksmithLevel;
+            game.upgrades.gemWaster.level = input.gemWasterLevel;
+            for (const [, upgrade] of wisdomUpgradeEntries) {
+              upgrade.level = 0;
+            }
+            if (wisdomUpgradeEntries[0]) {
+              wisdomUpgradeEntries[0][1].level = input.boughtWisdomUpgrades;
+            }
+          };
+          const boundaryInputsFor = (condition) => {
+            const match = condition.match(
+              /^game\.highestMineObjectLevel >= (\d+)$/,
+            );
+            if (match) {
+              const level = Number(match[1]);
+              return [
+                { name: "below", highestMineObjectLevel: level - 1 },
+                { name: "equal", highestMineObjectLevel: level },
+                { name: "above", highestMineObjectLevel: level + 1 },
+              ];
+            }
+            const moneyMatch = condition.match(
+              /^game\.highestMoney\.gte\(([^)]+)\)$/,
+            );
+            if (moneyMatch) {
+              const amount = Number(moneyMatch[1]);
+              return [
+                { name: "below", highestMoney: String(amount - 1) },
+                { name: "equal", highestMoney: String(amount) },
+                { name: "above", highestMoney: String(amount + 1) },
+              ];
+            }
+            if (condition === "game.maxPlanetCoins.gt(0)") {
+              return [
+                { name: "equal", maxPlanetCoins: "0" },
+                { name: "above", maxPlanetCoins: "1" },
+              ];
+            }
+            if (
+              condition === "game.upgrades.blacksmith.level > 0" ||
+              condition === "game.upgrades.gemWaster.level >= 1"
+            ) {
+              return [
+                {
+                  name: "zero",
+                  blacksmithLevel: 0,
+                  gemWasterLevel: 0,
+                },
+                {
+                  name: "one",
+                  blacksmithLevel: 1,
+                  gemWasterLevel: 1,
+                },
+              ];
+            }
+            if (
+              condition ===
+              "functions.getBoughtUpgrades(game.powers.upgrades) >= 1"
+            ) {
+              return [
+                { name: "zero", boughtWisdomUpgrades: 0 },
+                { name: "one", boughtWisdomUpgrades: 1 },
+              ];
+            }
+            if (condition === "true") return [{ name: "always" }];
+            throw new Error(`No story boundary probe for: ${condition}`);
+          };
+          try {
+            const conditionBoundaries = [
+              ...new Set(milestoneEntries.map(([, [condition]]) => condition)),
+            ].map((condition) => {
+              const key = milestoneEntries.find(
+                ([, [candidate]]) => candidate === condition,
+              )?.[0];
+              if (!key) throw new Error(`No milestone found for ${condition}`);
+
+              return {
+                condition,
+                key,
+                samples: boundaryInputsFor(condition).map((boundary) => {
+                  const input = {
+                    highestMineObjectLevel: 0,
+                    highestMoney: "0",
+                    maxPlanetCoins: "0",
+                    blacksmithLevel: 0,
+                    gemWasterLevel: 0,
+                    boughtWisdomUpgrades: 0,
+                    ...boundary,
+                  };
+                  setStoryInputs(input);
+                  return {
+                    name: boundary.name,
+                    input,
+                    unlocked: functions.storyUnlocked(key),
+                  };
+                }),
+              };
+            });
+            const objectiveSamples = (() => {
+              const originalLevel = game.highestMineObjectLevel;
+              const originalFormatter = game.numberFormatter;
+              const functionObjectives = milestoneEntries.filter(
+                ([, [, objective]]) => typeof objective === "function",
+              );
+              const objectiveForKey = (key) => game.story.milestones[key]?.[1];
+              try {
+                const mineLevels = [0, 12, 214, 215].map(
+                  (highestMineObjectLevel) => {
+                    game.highestMineObjectLevel = highestMineObjectLevel;
+                    return {
+                      highestMineObjectLevel,
+                      values: functionObjectives.map(([key]) => ({
+                        key,
+                        output: captureResult(() => objectiveForKey(key)()),
+                      })),
+                    };
+                  },
+                );
+                const notationFormats = game.numberFormatters.map(
+                  (formatter) => {
+                    game.numberFormatter = formatter;
+                    return {
+                      notation: formatter.name,
+                      values: ["millionaire", "fiftyTrillion"].map((key) => ({
+                        key,
+                        output: captureResult(() => objectiveForKey(key)()),
+                      })),
+                    };
+                  },
+                );
+                return {
+                  functionObjectiveCount: functionObjectives.length,
+                  mineLevels,
+                  notationFormats,
+                };
+              } finally {
+                game.highestMineObjectLevel = originalLevel;
+                game.numberFormatter = originalFormatter;
+              }
+            })();
+
+            const inspectScenario = (scenario) => {
+              setStoryInputs(scenario);
+              game.story.highestUnlocked = scenario.highestUnlocked;
+              game.story.notifications = scenario.notifications;
+
+              const conditionResults = milestoneEntries.map(([key]) => ({
+                key,
+                unlocked: functions.storyUnlocked(key),
+              }));
+              const visibleMilestonesByPage = Object.fromEntries(
+                game.story.chapters.map((_, page) => {
+                  game.story.page = page;
+                  return [
+                    page,
+                    milestoneEntries
+                      .filter(([key]) => functions.storyDisplayed(key))
+                      .map(([key]) => key),
+                  ];
+                }),
+              );
+              game.story.page = originalState.page;
+              game.story.page = scenario.page;
+              functions.increaseStoryPage();
+              const afterIncrease = game.story.page;
+              game.story.page = scenario.page;
+              functions.decreaseStoryPage();
+              const afterDecrease = game.story.page;
+              game.story.page = originalState.page;
+              const result = {
+                name: scenario.name,
+                input: { ...scenario },
+                conditionResults,
+                maxPage: functions.getMaxStoryPage(),
+                pageNavigation: {
+                  page: scenario.page,
+                  afterIncrease,
+                  afterDecrease,
+                },
+                visibleMilestonesByPage,
+                nextObjective: functions.getNextStoryText(),
+                before: {
+                  highestUnlocked: game.story.highestUnlocked,
+                  notifications: game.story.notifications,
+                },
+              };
+              functions.refreshStoryNotifications();
+              result.after = {
+                highestUnlocked: game.story.highestUnlocked,
+                notifications: game.story.notifications,
+              };
+              return result;
+            };
+            const notificationSequence = (() => {
+              const savedStory = {
+                page: game.story.page,
+                highestUnlocked: game.story.highestUnlocked,
+                notifications: game.story.notifications,
+              };
+              const captureStage = (name, input) => {
+                setStoryInputs(input);
+                game.story.page = input.page;
+                const before = {
+                  highestUnlocked: game.story.highestUnlocked,
+                  notifications: game.story.notifications,
+                };
+                const firstMudUnlocked = functions.storyUnlocked("firstMud");
+                const firstMudDisplayed = functions.storyDisplayed("firstMud");
+                functions.refreshStoryNotifications();
+                return {
+                  name,
+                  input,
+                  before,
+                  firstMudUnlocked,
+                  firstMudDisplayed,
+                  after: {
+                    highestUnlocked: game.story.highestUnlocked,
+                    notifications: game.story.notifications,
+                  },
+                };
+              };
+              try {
+                game.story.highestUnlocked = -1;
+                game.story.notifications = 0;
+                const first = captureStage(
+                  "planet-coin-unlocks-ahead-of-first-mud",
+                  {
+                    highestMineObjectLevel: 0,
+                    highestMoney: "0",
+                    maxPlanetCoins: "1",
+                    blacksmithLevel: 0,
+                    gemWasterLevel: 0,
+                    boughtWisdomUpgrades: 0,
+                    page: 0,
+                  },
+                );
+                const second = captureStage(
+                  "first-mud-becomes-visible-after-high-water-passes-it",
+                  {
+                    highestMineObjectLevel: 1,
+                    highestMoney: "0",
+                    maxPlanetCoins: "1",
+                    blacksmithLevel: 0,
+                    gemWasterLevel: 0,
+                    boughtWisdomUpgrades: 0,
+                    page: 0,
+                  },
+                );
+                return [first, second];
+              } finally {
+                game.story.page = savedStory.page;
+                game.story.highestUnlocked = savedStory.highestUnlocked;
+                game.story.notifications = savedStory.notifications;
+                game.highestMineObjectLevel =
+                  originalState.highestMineObjectLevel;
+                game.highestMoney = originalState.highestMoney;
+                game.maxPlanetCoins = originalState.maxPlanetCoins;
+                game.upgrades.blacksmith.level = originalState.blacksmithLevel;
+                game.upgrades.gemWaster.level = originalState.gemWasterLevel;
+                wisdomUpgradeEntries.forEach(([, upgrade], index) => {
+                  upgrade.level = originalState.wisdomUpgradeLevels[index];
+                });
+              }
+            })();
+
+            game.highestMineObjectLevel = originalState.highestMineObjectLevel;
+            game.highestMoney = originalState.highestMoney;
+            game.maxPlanetCoins = originalState.maxPlanetCoins;
+            game.upgrades.blacksmith.level = originalState.blacksmithLevel;
+            game.upgrades.gemWaster.level = originalState.gemWasterLevel;
+            wisdomUpgradeEntries.forEach(([, upgrade], index) => {
+              upgrade.level = originalState.wisdomUpgradeLevels[index];
+            });
+
+            return {
+              sourcePaths: [
+                "Scripts/Define/game.js",
+                "Scripts/Define/functions.js",
+                "index.html",
+              ],
+              chapters: [...game.story.chapters],
+              milestones: milestoneEntries.map(
+                ([key, [condition, objective, page]], index) => ({
+                  index,
+                  key,
+                  condition,
+                  objective:
+                    typeof objective === "function"
+                      ? {
+                          kind: "function",
+                          source: objective.toString(),
+                          initialOutput: captureResult(() => objective()),
+                        }
+                      : { kind: "literal", value: objective },
+                  page,
+                }),
+              ),
+              conditionBoundaries,
+              objectiveSamples,
+              initial: {
+                page: originalState.page,
+                highestUnlocked: originalState.highestUnlocked,
+                notifications: originalState.notifications,
+                nextObjective: functions.getNextStoryText(),
+                maxPage: functions.getMaxStoryPage(),
+                visibleMilestones: milestoneEntries
+                  .filter(([key]) => functions.storyDisplayed(key))
+                  .map(([key]) => key),
+              },
+              notificationScenarios: scenarioInputs.map(inspectScenario),
+              notificationSequence,
+            };
+          } finally {
+            game.highestMineObjectLevel = originalState.highestMineObjectLevel;
+            game.highestMoney = originalState.highestMoney;
+            game.maxPlanetCoins = originalState.maxPlanetCoins;
+            game.story.page = originalState.page;
+            game.story.highestUnlocked = originalState.highestUnlocked;
+            game.story.notifications = originalState.notifications;
+            game.upgrades.blacksmith.level = originalState.blacksmithLevel;
+            game.upgrades.gemWaster.level = originalState.gemWasterLevel;
+            wisdomUpgradeEntries.forEach(([, upgrade], index) => {
+              upgrade.level = originalState.wisdomUpgradeLevels[index];
+            });
+          }
+        })();
+        const payUSDebtSemantics = (() => {
+          const originalMoney = game.money;
+          const originalAlert = window.alert;
+          const originalLogMessage = functions.logMessage;
+          const scenarios = [
+            { name: "below-cost", money: "21999999999999" },
+            { name: "exact-cost", money: "22000000000000" },
+            { name: "above-cost", money: "22000000000001" },
+            { name: "very-large-balance", money: "1e300" },
+          ];
+          try {
+            return {
+              sourcePaths: ["Scripts/Define/functions.js", "index.html"],
+              cost: "22000000000000",
+              buttonLabel: captureResult(() =>
+                functions.formatThousands(22e12, 1e100),
+              ),
+              scenarios: scenarios.map((scenario) => {
+                const events = [];
+                game.money = new Decimal(scenario.money);
+                const moneyBefore = normalizedDecimal(game.money);
+                window.alert = (message) =>
+                  events.push({ type: "alert", message: String(message) });
+                functions.logMessage = (message, color) =>
+                  events.push({
+                    type: "logMessage",
+                    message: String(message),
+                    color: normalize(color),
+                  });
+                functions.payUSDebt();
+                return {
+                  name: scenario.name,
+                  money: scenario.money,
+                  moneyBefore,
+                  events,
+                  moneyAfter: normalizedDecimal(game.money),
+                };
+              }),
+            };
+          } finally {
+            game.money = originalMoney;
+            window.alert = originalAlert;
+            functions.logMessage = originalLogMessage;
+          }
+        })();
+        const storyTabSemantics = (() => {
+          const scenarios = [
+            {
+              name: "leaving-story-saves-scroll-and-refreshes-settings-select",
+              input: {
+                currentTab: "story",
+                targetTab: "settings",
+                scrollTop: 765,
+                savedScrollY: 12,
+                notifications: 3,
+              },
+            },
+            {
+              name: "entering-story-clears-notifications-and-restores-scroll",
+              input: {
+                currentTab: "settings",
+                targetTab: "story",
+                scrollTop: 14,
+                savedScrollY: 765,
+                notifications: 3,
+              },
+            },
+            {
+              name: "reselecting-story-saves-current-scroll-and-clears-notifications",
+              input: {
+                currentTab: "story",
+                targetTab: "story",
+                scrollTop: 321,
+                savedScrollY: 4,
+                notifications: 7,
+              },
+            },
+            {
+              name: "leaving-other-tab-keeps-saved-story-scroll",
+              input: {
+                currentTab: "mine",
+                targetTab: "upgrades",
+                scrollTop: 42,
+                savedScrollY: 765,
+                notifications: 2,
+              },
+            },
+          ];
+          const originalTab = game.settings.tab;
+          const originalScrollY = game.story.scrollY;
+          const originalNotifications = game.story.notifications;
+          const originalScrollRef = app.$refs.storymilestones;
+          const originalNumberFormatRef = app.$refs.numberformatselect;
+          const originalSetTimeout = window.setTimeout;
+          try {
+            return {
+              sourcePaths: ["Scripts/Define/functions.js"],
+              scenarios: scenarios.map(({ name, input }) => {
+                const timers = [];
+                const effects = [];
+                let activeTimerIndex = -1;
+                let scrollTop = input.scrollTop;
+                let selectedIndex = -1;
+                const storyScrollRef = {};
+                Object.defineProperty(storyScrollRef, "scrollTop", {
+                  configurable: true,
+                  get: () => scrollTop,
+                  set: (value) => {
+                    scrollTop = value;
+                    if (activeTimerIndex >= 0) {
+                      effects.push({
+                        timerIndex: activeTimerIndex,
+                        type: "restore-story-scroll",
+                        scrollY: value,
+                      });
+                    }
+                  },
+                });
+                const numberFormatRef = {};
+                Object.defineProperty(numberFormatRef, "selectedIndex", {
+                  configurable: true,
+                  get: () => selectedIndex,
+                  set: (value) => {
+                    selectedIndex = value;
+                    if (activeTimerIndex >= 0) {
+                      effects.push({
+                        timerIndex: activeTimerIndex,
+                        type: "refresh-number-select",
+                        selectedIndex: value,
+                      });
+                    }
+                  },
+                });
+                app.$refs.storymilestones = storyScrollRef;
+                app.$refs.numberformatselect = numberFormatRef;
+                game.settings.tab = input.currentTab;
+                game.story.scrollY = input.savedScrollY;
+                game.story.notifications = input.notifications;
+                window.setTimeout = (callback, delayMs) => {
+                  timers.push({ callback, delayMs });
+                  return timers.length;
+                };
+
+                functions.changeTab(input.targetTab);
+                const afterTransition = {
+                  tab: game.settings.tab,
+                  scrollY: game.story.scrollY,
+                  notifications: game.story.notifications,
+                  scrollTop: storyScrollRef.scrollTop,
+                  numberFormatSelectedIndex: numberFormatRef.selectedIndex,
+                };
+                timers.forEach(({ callback }, timerIndex) => {
+                  activeTimerIndex = timerIndex;
+                  callback();
+                });
+                activeTimerIndex = -1;
+
+                return {
+                  name,
+                  input: {
+                    ...input,
+                    selectedNumberFormatterIndex:
+                      game.numberFormatters.findIndex(
+                        (formatter) => formatter === game.numberFormatter,
+                      ),
+                  },
+                  afterTransition: {
+                    ...afterTransition,
+                    scheduledEffects: timers.map(({ delayMs }, timerIndex) => {
+                      const effect = effects.find(
+                        (item) => item.timerIndex === timerIndex,
+                      );
+                      return {
+                        delayMs,
+                        ...(effect
+                          ? {
+                              type: effect.type,
+                              ...(effect.type === "restore-story-scroll"
+                                ? { scrollY: effect.scrollY }
+                                : { selectedIndex: effect.selectedIndex }),
+                            }
+                          : {}),
+                      };
+                    }),
+                  },
+                  afterTimers: {
+                    tab: game.settings.tab,
+                    scrollY: game.story.scrollY,
+                    notifications: game.story.notifications,
+                    scrollTop: storyScrollRef.scrollTop,
+                    numberFormatSelectedIndex: numberFormatRef.selectedIndex,
+                  },
+                };
+              }),
+            };
+          } finally {
+            game.settings.tab = originalTab;
+            game.story.scrollY = originalScrollY;
+            game.story.notifications = originalNotifications;
+            app.$refs.storymilestones = originalScrollRef;
+            app.$refs.numberformatselect = originalNumberFormatRef;
+            window.setTimeout = originalSetTimeout;
+          }
+        })();
+        const offlineProgressionSemantics = (() => {
+          const nowMs = Date.now();
+          const scenarios = [
+            {
+              name: "exactly-five-minutes-does-not-earn-offline-rewards",
+              elapsedSeconds: 300,
+              noOffline: false,
+              rates: { money: "2", gems: "100", planetCoins: "100" },
+              upgrades: { offlineTime: 1, offlineGems: 2, offlinePC: 3 },
+            },
+            {
+              name: "missing-last-active-falls-back-to-current-clock",
+              elapsedSeconds: 0,
+              omitLastActive: true,
+              noOffline: false,
+              rates: { money: "2", gems: "100", planetCoins: "100" },
+              upgrades: { offlineTime: 1, offlineGems: 2, offlinePC: 3 },
+            },
+            {
+              name: "just-over-five-minutes-applies-resource-upgrades",
+              elapsedSeconds: 300.001,
+              noOffline: false,
+              rates: { money: "2", gems: "100", planetCoins: "100" },
+              upgrades: { offlineTime: 1, offlineGems: 2, offlinePC: 3 },
+            },
+            {
+              name: "exact-default-six-hour-cap",
+              elapsedSeconds: 21600,
+              noOffline: false,
+              rates: { money: "1", gems: "10", planetCoins: "10" },
+              upgrades: { offlineTime: 0, offlineGems: 1, offlinePC: 1 },
+            },
+            {
+              name: "one-second-over-default-cap-is-clamped",
+              elapsedSeconds: 21601,
+              noOffline: false,
+              rates: { money: "1", gems: "10", planetCoins: "10" },
+              upgrades: { offlineTime: 0, offlineGems: 1, offlinePC: 1 },
+            },
+            {
+              name: "offline-time-upgrade-adds-hours-to-cap",
+              elapsedSeconds: 28801,
+              noOffline: false,
+              rates: { money: "1", gems: "10", planetCoins: "10" },
+              upgrades: { offlineTime: 2, offlineGems: 1, offlinePC: 1 },
+            },
+            {
+              name: "explicit-nooffline-flag-suppresses-rewards-and-save",
+              elapsedSeconds: 3600,
+              noOffline: true,
+              rates: { money: "2", gems: "100", planetCoins: "100" },
+              upgrades: { offlineTime: 1, offlineGems: 2, offlinePC: 3 },
+            },
+            {
+              name: "negative-elapsed-time-does-not-earn-rewards",
+              elapsedSeconds: -120,
+              noOffline: false,
+              rates: { money: "2", gems: "100", planetCoins: "100" },
+              upgrades: { offlineTime: 1, offlineGems: 2, offlinePC: 3 },
+            },
+            {
+              name: "zero-rates-still-log-and-save-after-threshold",
+              elapsedSeconds: 600,
+              noOffline: false,
+              rates: { money: "0", gems: "0", planetCoins: "0" },
+              upgrades: { offlineTime: 0, offlineGems: 0, offlinePC: 0 },
+            },
+            {
+              name: "clock-advances-between-calculation-and-save",
+              elapsedSeconds: 600,
+              noOffline: false,
+              clockAdvancesMs: [0, 100, 200, 300],
+              rates: { money: "2", gems: "100", planetCoins: "100" },
+              upgrades: { offlineTime: 0, offlineGems: 2, offlinePC: 2 },
+            },
+          ];
+          const originalMethods = {
+            getMPS: functions.getMPS,
+            getGPS: functions.getGPS,
+            getPCPS: functions.getPCPS,
+            logMessage: functions.logMessage,
+            setItem: window.Storage.prototype.setItem,
+            dateNow: Date.now,
+          };
+          const state = {
+            money: "100",
+            highestMoney: "50",
+            gems: "7",
+            planetCoins: "13",
+            maxPlanetCoins: "10",
+          };
+          const snapshotDecimal = (value) =>
+            normalizedDecimal(new Decimal(value));
+          try {
+            return {
+              sourcePaths: [
+                "Scripts/Define/functions.js",
+                "Scripts/Define/game.js",
+                "Scripts/upgrade.js",
+              ],
+              thresholdSeconds: 300,
+              defaultOfflineHours: 6,
+              moneyMultiplier: 0.5,
+              scenarios: scenarios.map((scenario) => {
+                functions.loadGame(window.initialGame, false, true);
+                functions.getMPS = () => new Decimal(scenario.rates.money);
+                functions.getGPS = () => new Decimal(scenario.rates.gems);
+                functions.getPCPS = () =>
+                  new Decimal(scenario.rates.planetCoins);
+                const events = [];
+                const storageWrites = [];
+                functions.logMessage = (message, color) => {
+                  events.push({
+                    type: "logMessage",
+                    message: String(message),
+                    color: normalize(color),
+                  });
+                };
+                window.Storage.prototype.setItem = function (key, value) {
+                  const decoded = JSON.parse(
+                    unescape(decodeURIComponent(atob(String(value)))),
+                  );
+                  storageWrites.push({
+                    key: String(key),
+                    save: {
+                      lastActive: decoded.lastActive,
+                      money: snapshotDecimal(decoded.money),
+                      highestMoney: snapshotDecimal(decoded.highestMoney),
+                      gems: snapshotDecimal(decoded.gems),
+                      planetCoins: snapshotDecimal(decoded.planetCoins),
+                      maxPlanetCoins: snapshotDecimal(decoded.maxPlanetCoins),
+                    },
+                  });
+                };
+                const inputSave = {
+                  ...state,
+                  wisdom: "0",
+                  maxWisdom: "0",
+                  mineObjectLevel: 0,
+                  highestMineObjectLevel: 0,
+                  story: {
+                    page: 0,
+                    notifications: 0,
+                    highestUnlocked: -1,
+                    scrollY: 0,
+                  },
+                  lastActive: scenario.omitLastActive
+                    ? undefined
+                    : nowMs - scenario.elapsedSeconds * 1000,
+                  settings: { numberFormatterIndex: 0, theme: "light" },
+                  upgrades: {},
+                  gemUpgrades: {
+                    offlineGems: { level: scenario.upgrades.offlineGems },
+                  },
+                  planetCoinUpgrades: {
+                    offlineTime: { level: scenario.upgrades.offlineTime },
+                    offlinePC: { level: scenario.upgrades.offlinePC },
+                  },
+                };
+                const clockAdvancesMs = scenario.clockAdvancesMs ?? [0, 0, 0];
+                let clockReadCount = 0;
+                const dateNowReads = [];
+                Date.now = () => {
+                  const offset =
+                    clockAdvancesMs[
+                      Math.min(clockReadCount, clockAdvancesMs.length - 1)
+                    ] ?? 0;
+                  clockReadCount++;
+                  const value = nowMs + offset;
+                  dateNowReads.push(value);
+                  return value;
+                };
+                try {
+                  functions.loadGame(
+                    JSON.stringify(inputSave),
+                    false,
+                    scenario.noOffline,
+                  );
+                } finally {
+                  Date.now = originalMethods.dateNow;
+                }
+                return {
+                  name: scenario.name,
+                  input: {
+                    ...scenario,
+                    initialState: state,
+                    nowMs,
+                    clockAdvancesMs,
+                  },
+                  clockReadCount,
+                  dateNowReads,
+                  stateAfterLoad: {
+                    money: normalizedDecimal(game.money),
+                    highestMoney: normalizedDecimal(game.highestMoney),
+                    gems: normalizedDecimal(game.gems),
+                    planetCoins: normalizedDecimal(game.planetCoins),
+                    maxPlanetCoins: normalizedDecimal(game.maxPlanetCoins),
+                    lastActive: game.lastActive,
+                  },
+                  events,
+                  storageWrites,
+                };
+              }),
+            };
+          } finally {
+            functions.getMPS = originalMethods.getMPS;
+            functions.getGPS = originalMethods.getGPS;
+            functions.getPCPS = originalMethods.getPCPS;
+            functions.logMessage = originalMethods.logMessage;
+            window.Storage.prototype.setItem = originalMethods.setItem;
+            Date.now = originalMethods.dateNow;
+            functions.loadGame(window.initialGame, false, true);
+          }
+        })();
+        const saveSemantics = (() => {
+          const originalTab = game.settings.tab;
+          const originalFormatter = game.numberFormatter;
+          const originalStringify = JSON.stringify;
+          let serialized = "";
+          let saveString;
+          try {
+            JSON.stringify = function (value, replacer, space) {
+              const output = originalStringify.call(
+                this,
+                value,
+                replacer,
+                space,
+              );
+              if (value === game) serialized = output;
+              return output;
+            };
+            saveString = functions.getSaveString();
+          } finally {
+            JSON.stringify = originalStringify;
+          }
+          const decoded = unescape(decodeURIComponent(atob(saveString)));
+          const saveObject = JSON.parse(decoded);
+          const decimalFields = [
+            "money",
+            "highestMoney",
+            "gems",
+            "planetCoins",
+            "maxPlanetCoins",
+            "wisdom",
+            "maxWisdom",
+          ];
+          const powerUpgradeKey = Object.keys(game.powers.upgrades)[0];
+          try {
+            functions.loadGame(window.initialGame, false, true);
+            game.settings.tab = "settings";
+            game.settings.theme = "dark";
+            game.upgrades.idleSpeed.level = 7;
+            game.gemUpgrades.offlineGems.level = 8;
+            game.planetCoinUpgrades.offlinePC.level = 9;
+            game.powers.upgrades[powerUpgradeKey].level = 6;
+            game.powers.data.values[0] = new Decimal(9);
+            game.pickaxe.name = "Probe Pickaxe";
+            game.pickaxe.pow = new Decimal(123);
+            game.pickaxe.quality = new Decimal(4);
+            const minimalLegacySave = {
+              story: {},
+            };
+            const minimalLegacyJson = JSON.stringify(minimalLegacySave);
+            const minimalLegacyEncoded = btoa(
+              escape(encodeURIComponent(minimalLegacyJson)),
+            );
+            functions.loadGame(minimalLegacyEncoded, undefined, true);
+
+            const missingOptionalGroups = {
+              inputKeys: Object.keys(minimalLegacySave),
+              inputJson: minimalLegacyJson,
+              encoded: minimalLegacyEncoded,
+              resources: {
+                money: normalizedDecimal(game.money),
+                highestMoney: normalizedDecimal(game.highestMoney),
+                gems: normalizedDecimal(game.gems),
+                planetCoins: normalizedDecimal(game.planetCoins),
+                wisdom: normalizedDecimal(game.wisdom),
+              },
+              story: {
+                page: game.story.page,
+                notifications: game.story.notifications,
+                highestUnlocked: game.story.highestUnlocked,
+                scrollY: game.story.scrollY,
+              },
+              settings: {
+                tab: game.settings.tab,
+                theme: game.settings.theme,
+              },
+              upgradeLevels: {
+                moneyIdleSpeed: game.upgrades.idleSpeed.level,
+                gemOfflineGems: game.gemUpgrades.offlineGems.level,
+                planetOfflinePC: game.planetCoinUpgrades.offlinePC.level,
+              },
+              power: {
+                upgradeKey: powerUpgradeKey,
+                upgradeLevel: game.powers.upgrades[powerUpgradeKey].level,
+                firstValue: normalizedDecimal(game.powers.data.values[0]),
+              },
+              pickaxe: {
+                name: game.pickaxe.name,
+                power: normalizedDecimal(game.pickaxe.pow),
+                quality: normalizedDecimal(game.pickaxe.quality),
+              },
+            };
+
+            let firstDifference = -1;
+            const compareLength = Math.min(serialized.length, decoded.length);
+            for (let index = 0; index < compareLength; index++) {
+              if (serialized[index] !== decoded[index]) {
+                firstDifference = index;
+                break;
+              }
+            }
+            if (firstDifference < 0 && serialized.length !== decoded.length) {
+              firstDifference = compareLength;
+            }
+
+            functions.loadGame(window.initialGame, false, true);
+            const unicodePickaxeName = "Probe — Å Ω →";
+            game.pickaxe.name = unicodePickaxeName;
+            const unicodeSaveString = functions.getSaveString();
+            functions.loadGame(unicodeSaveString, undefined, true);
+            const unicodePickaxeRoundTrip = {
+              sourceName: unicodePickaxeName,
+              importedName: game.pickaxe.name,
+              preserved: game.pickaxe.name === unicodePickaxeName,
+            };
+
+            const encodeProbeSave = (value) =>
+              btoa(escape(encodeURIComponent(JSON.stringify(value))));
+            const codecVectors = [
+              {
+                name: "ascii-json",
+                value: { money: "123", story: { page: 3 } },
+              },
+              {
+                name: "unicode-json",
+                value: {
+                  pickaxe: { name: "Probe \u2014 \u00c5 \u03a9 \u2192" },
+                },
+              },
+            ].map(({ name, value }) => {
+              const json = JSON.stringify(value);
+              const encoded = encodeProbeSave(value);
+              return {
+                name,
+                json,
+                encoded,
+                decodedJson: unescape(decodeURIComponent(atob(encoded))),
+              };
+            });
+
+            functions.loadGame(window.initialGame, false, true);
+            game.settings.tab = "settings";
+            game.upgrades.idleSpeed.level = 7;
+            game.gemUpgrades.offlineGems.level = 8;
+            game.planetCoinUpgrades.offlinePC.level = 9;
+            game.powers.upgrades[powerUpgradeKey].level = 6;
+            game.powers.data.values[0] = new Decimal(9);
+            game.pickaxe.name = "Probe Pickaxe";
+            game.pickaxe.pow = new Decimal(123);
+            game.pickaxe.quality = new Decimal(4);
+            const partialWithEmptyGroups = {
+              story: {},
+              settings: { tab: "story", theme: "dark" },
+              upgrades: {},
+              gemUpgrades: {},
+              planetCoinUpgrades: {},
+              powers: { data: { values: [] } },
+              pickaxe: {},
+            };
+            const partialWithEmptyGroupsJson = JSON.stringify(
+              partialWithEmptyGroups,
+            );
+            const partialWithEmptyGroupsEncoded = encodeProbeSave(
+              partialWithEmptyGroups,
+            );
+            functions.loadGame(partialWithEmptyGroupsEncoded, undefined, true);
+            const emptyPresentGroups = {
+              inputGroups: Object.keys(partialWithEmptyGroups),
+              inputJson: partialWithEmptyGroupsJson,
+              encoded: partialWithEmptyGroupsEncoded,
+              savedTab: partialWithEmptyGroups.settings.tab,
+              tabAfterLoad: game.settings.tab,
+              settings: {
+                formatterIndex: game.settings.numberFormatterIndex,
+                formatterName: game.numberFormatter.name,
+                theme: game.settings.theme,
+              },
+              upgradeLevels: {
+                moneyIdleSpeed: game.upgrades.idleSpeed.level,
+                gemOfflineGems: game.gemUpgrades.offlineGems.level,
+                planetOfflinePC: game.planetCoinUpgrades.offlinePC.level,
+              },
+              power: {
+                upgradeLevel: game.powers.upgrades[powerUpgradeKey].level,
+                firstValue: normalizedDecimal(game.powers.data.values[0]),
+              },
+              pickaxe: {
+                name: game.pickaxe.name,
+                power: normalizedDecimal(game.pickaxe.pow),
+                quality: normalizedDecimal(game.pickaxe.quality),
+              },
+            };
+
+            const originalAlert = window.alert;
+            const loadErrorScenarios = [
+              { name: "empty-base64", encoded: "" },
+              { name: "invalid-base64", encoded: "%%%" },
+              {
+                name: "invalid-uri-escape",
+                encoded: btoa("%ZZ"),
+              },
+              { name: "valid-base64-invalid-json", encoded: btoa("not-json") },
+              {
+                name: "missing-story-after-resource-fields",
+                encoded: encodeProbeSave({ money: "123", mineObjectLevel: 0 }),
+              },
+            ];
+            let loadErrors;
+            try {
+              loadErrors = loadErrorScenarios.map((scenario) => {
+                functions.loadGame(window.initialGame, false, true);
+                game.money = new Decimal(77);
+                const alerts = [];
+                window.alert = (message) => alerts.push(String(message));
+                let thrownErrorName = null;
+                try {
+                  functions.loadGame(scenario.encoded, undefined, true);
+                } catch (error) {
+                  thrownErrorName = error.name;
+                }
+                return {
+                  name: scenario.name,
+                  encoded: scenario.encoded,
+                  alertCount: alerts.length,
+                  alertHasDecodeErrorPrefix: alerts.some((message) =>
+                    message.startsWith("Error loading Game: "),
+                  ),
+                  thrownErrorName,
+                  money: normalizedDecimal(game.money),
+                  mineObjectLevel: game.mineObjectLevel,
+                };
+              });
+            } finally {
+              window.alert = originalAlert;
+              functions.loadGame(window.initialGame, false, true);
+            }
+
+            const variantJson = JSON.stringify({
+              money: "5",
+              story: { page: 3 },
+            });
+            const variantEncoded = encodeProbeSave({
+              money: "5",
+              story: { page: 3 },
+            });
+            const base64Variants = [
+              {
+                name: "ascii-whitespace",
+                encoded: `${variantEncoded.slice(0, 4)} \n${variantEncoded.slice(4)}`,
+              },
+              {
+                name: "unpadded-base64",
+                encoded: variantEncoded.replace(/=+$/, ""),
+              },
+            ].map((variant) => {
+              functions.loadGame(window.initialGame, false, true);
+              game.money = new Decimal(77);
+              let alertCount = 0;
+              window.alert = () => {
+                alertCount += 1;
+              };
+              let thrownErrorName = null;
+              try {
+                functions.loadGame(variant.encoded, undefined, true);
+              } catch (error) {
+                thrownErrorName = error.name;
+              }
+              return {
+                name: variant.name,
+                encoded: variant.encoded,
+                expectedJson: variantJson,
+                alertCount,
+                thrownErrorName,
+                money: normalizedDecimal(game.money),
+                storyPage: game.story.page,
+              };
+            });
+            window.alert = originalAlert;
+            functions.loadGame(window.initialGame, false, true);
+
+            return {
+              sourcePaths: [
+                "Scripts/Define/functions.js",
+                "Scripts/Define/game.js",
+                "index.html",
+              ],
+              storageKey: "IdleMine",
+              encoding: {
+                encodeOrder: [
+                  "JSON.stringify(game)",
+                  "encodeURIComponent",
+                  "escape",
+                  "btoa",
+                ],
+                decodeOrder: [
+                  "atob",
+                  "decodeURIComponent",
+                  "unescape",
+                  "JSON.parse",
+                ],
+                jsonLength: serialized.length,
+                decodedJsonLength: decoded.length,
+                base64Length: saveString.length,
+                decodedMatchesJson: decoded === serialized,
+                firstDifference:
+                  firstDifference < 0
+                    ? null
+                    : {
+                        index: firstDifference,
+                        serializedCodeUnit:
+                          serialized.charCodeAt(firstDifference) ?? null,
+                        decodedCodeUnit:
+                          decoded.charCodeAt(firstDifference) ?? null,
+                      },
+                base64AlphabetOnly: /^[A-Za-z0-9+/]*={0,2}$/.test(saveString),
+              },
+              currentShape: {
+                versionFieldPresent: Object.hasOwn(saveObject, "version"),
+                topLevelKeys: Object.keys(saveObject),
+                decimalFields: Object.fromEntries(
+                  decimalFields.map((key) => [
+                    key,
+                    {
+                      type: typeof saveObject[key],
+                      value: saveObject[key],
+                    },
+                  ]),
+                ),
+                collectionLengths: {
+                  numberFormatters: saveObject.numberFormatters.length,
+                  mineObjects: saveObject.mineObjects.length,
+                  specialMineObjects: saveObject.specialMineObjects.length,
+                  powersValues: saveObject.powers.data.values.length,
+                  messageLog: saveObject.messageLog.length,
+                },
+                nestedKeys: {
+                  settings: Object.keys(saveObject.settings),
+                  story: Object.keys(saveObject.story),
+                  upgrades: Object.keys(saveObject.upgrades),
+                  gemUpgrades: Object.keys(saveObject.gemUpgrades),
+                  planetCoinUpgrades: Object.keys(
+                    saveObject.planetCoinUpgrades,
+                  ),
+                  powers: Object.keys(saveObject.powers),
+                  powersData: Object.keys(saveObject.powers.data),
+                  pickaxe: Object.keys(saveObject.pickaxe),
+                },
+                omittedUpgradeFunctions: {
+                  price: !Object.hasOwn(
+                    saveObject.upgrades.blacksmith,
+                    "getPrice",
+                  ),
+                  effect: !Object.hasOwn(
+                    saveObject.upgrades.blacksmith,
+                    "getEffect",
+                  ),
+                },
+              },
+              missingOptionalGroups,
+              emptyPresentGroups,
+              codecVectors,
+              base64Variants,
+              loadErrors,
+              unicodePickaxeRoundTrip,
+            };
+          } finally {
+            functions.loadGame(window.initialGame, false, true);
+            game.settings.tab = originalTab;
+            game.numberFormatter = originalFormatter;
+          }
+        })();
         const current = game.currentMineObject;
         const rates = {
           pickaxeDamage: normalizedDecimal(game.pickaxe.getDamage()),
@@ -1022,6 +2232,545 @@ async function capture(reference, dependencies, dependencySnapshots) {
             game.powers.data.values[POWER_MINING] = previousState.miningPower;
             game.powers.data.values[POWER_EXQUISITY] =
               previousState.exquisityPower;
+            for (const [group, levels] of Object.entries(previousLevels)) {
+              for (const [key, level] of Object.entries(levels)) {
+                upgradeGroups[group][key].level = level;
+              }
+            }
+          }
+        })();
+        const miningHitSemantics = (() => {
+          const upgradeGroups = {
+            money: game.upgrades,
+            gems: game.gemUpgrades,
+            planetCoins: game.planetCoinUpgrades,
+            wisdom: game.powers.upgrades,
+          };
+          const previousLevels = Object.fromEntries(
+            Object.entries(upgradeGroups).map(([group, upgrades]) => [
+              group,
+              Object.fromEntries(
+                Object.entries(upgrades).map(([key, upgrade]) => [
+                  key,
+                  upgrade.level,
+                ]),
+              ),
+            ]),
+          );
+          const previous = {
+            currentMineObject: game.currentMineObject,
+            mineObjectLevel: game.mineObjectLevel,
+            highestMineObjectLevel: game.highestMineObjectLevel,
+            pickaxe: game.pickaxe,
+            powers: game.powers.data.values,
+            money: game.money,
+            highestMoney: game.highestMoney,
+            gems: game.gems,
+            planetCoins: game.planetCoins,
+            maxPlanetCoins: game.maxPlanetCoins,
+            wisdom: game.wisdom,
+            maxWisdom: game.maxWisdom,
+            timer: { ...game.timer },
+            deltaTimeOld: window.deltaTimeOld,
+            random: Math.random,
+            saveGame: functions.saveGame,
+            refreshStoryNotifications: functions.refreshStoryNotifications,
+          };
+          const frameEvents = [];
+          functions.saveGame = () => frameEvents.push("save");
+          functions.refreshStoryNotifications = () =>
+            frameEvents.push("refreshStoryNotifications");
+          const resourceKeys = [
+            "money",
+            "highestMoney",
+            "gems",
+            "planetCoins",
+            "maxPlanetCoins",
+            "wisdom",
+            "maxWisdom",
+          ];
+          const scenarios = [
+            {
+              name: "active-click-single-nonbreaking-hit",
+              action: "activeClick",
+              objectId: 0,
+              currentHp: "100",
+              highestMineObjectLevel: 0,
+              pickaxe: { power: "20", quality: "1" },
+              powers: ["2", "1", "1", "3", "1"],
+              resources: {
+                money: "7",
+                highestMoney: "10",
+                gems: "5",
+                planetCoins: "4",
+                maxPlanetCoins: "8",
+                wisdom: "2",
+                maxWisdom: "3",
+              },
+              upgrades: {
+                wisdom: { powerPowerActive: 20, powerPowerPower: 3 },
+              },
+              autoPickaxeTimer: 0,
+              elapsedMilliseconds: 0,
+              randomValues: [],
+            },
+            {
+              name: "idle-timer-equal-to-threshold-does-not-hit",
+              action: "idleTick",
+              objectId: 0,
+              currentHp: "100",
+              highestMineObjectLevel: 0,
+              pickaxe: { power: "20", quality: "1" },
+              powers: ["2", "1", "1", "3", "1"],
+              resources: {
+                money: "7",
+                highestMoney: "10",
+                gems: "5",
+                planetCoins: "4",
+                maxPlanetCoins: "8",
+                wisdom: "2",
+                maxWisdom: "3",
+              },
+              upgrades: {},
+              autoPickaxeTimer: 0,
+              elapsedMilliseconds: 1000,
+              randomValues: [],
+            },
+            {
+              name: "idle-timer-over-threshold-processes-one-hit",
+              action: "idleTick",
+              objectId: 0,
+              currentHp: "100",
+              highestMineObjectLevel: 0,
+              pickaxe: { power: "20", quality: "1" },
+              powers: ["2", "1", "1", "3", "1"],
+              resources: {
+                money: "7",
+                highestMoney: "10",
+                gems: "5",
+                planetCoins: "4",
+                maxPlanetCoins: "8",
+                wisdom: "2",
+                maxWisdom: "3",
+              },
+              upgrades: { wisdom: { powerPowerIdle: 10, powerPowerPower: 4 } },
+              autoPickaxeTimer: 0,
+              elapsedMilliseconds: 2500,
+              randomValues: [],
+            },
+            {
+              name: "active-overkill-break-resets-object-and-pays-money",
+              action: "activeClick",
+              objectId: 0,
+              currentHp: "5",
+              highestMineObjectLevel: 0,
+              pickaxe: { power: "20", quality: "1" },
+              powers: ["2", "1", "1", "3", "1"],
+              resources: {
+                money: "7",
+                highestMoney: "6",
+                gems: "5",
+                planetCoins: "4",
+                maxPlanetCoins: "8",
+                wisdom: "2",
+                maxWisdom: "3",
+              },
+              upgrades: {},
+              autoPickaxeTimer: 0,
+              elapsedMilliseconds: 0,
+              randomValues: [0.9],
+            },
+            {
+              name: "gem-roll-equality-does-not-award-gems",
+              action: "activeClick",
+              objectId: 0,
+              currentHp: "5",
+              highestMineObjectLevel: 0,
+              pickaxe: { power: "20", quality: "1" },
+              powers: ["2", "1", "1", "3", "1"],
+              resources: {
+                money: "7",
+                highestMoney: "6",
+                gems: "5",
+                planetCoins: "4",
+                maxPlanetCoins: "8",
+                wisdom: "2",
+                maxWisdom: "3",
+              },
+              upgrades: {},
+              autoPickaxeTimer: 0,
+              elapsedMilliseconds: 0,
+              randomValues: [0.02],
+            },
+            {
+              name: "last-damageable-object-break-drops-rounded-gems",
+              action: "activeClick",
+              objectId: 2,
+              currentHp: "3",
+              highestMineObjectLevel: 2,
+              pickaxe: { power: "20", quality: "1" },
+              powers: ["2", "1", "1", "3", "1.3"],
+              resources: {
+                money: "7",
+                highestMoney: "10",
+                gems: "5.4",
+                planetCoins: "4",
+                maxPlanetCoins: "8",
+                wisdom: "2",
+                maxWisdom: "3",
+              },
+              upgrades: {
+                gems: { gemMultiply: 1 },
+                planetCoins: { lastObjGems: 3 },
+              },
+              autoPickaxeTimer: 0,
+              elapsedMilliseconds: 0,
+              randomValues: [0],
+            },
+            {
+              name: "planet-coin-drop-roll-follows-gem-roll",
+              action: "activeClick",
+              objectId: 90,
+              currentHp: "1",
+              highestMineObjectLevel: 90,
+              pickaxe: { power: "1e50", quality: "1" },
+              powers: ["2", "1", "1", "3", "1"],
+              resources: {
+                money: "7",
+                highestMoney: "6",
+                gems: "5",
+                planetCoins: "4",
+                maxPlanetCoins: "4",
+                wisdom: "2",
+                maxWisdom: "3",
+              },
+              upgrades: {},
+              autoPickaxeTimer: 0,
+              elapsedMilliseconds: 0,
+              randomValues: [0.9, 0],
+            },
+            {
+              name: "planet-coin-drop-failure-still-follows-gem-roll",
+              action: "activeClick",
+              objectId: 90,
+              currentHp: "1",
+              highestMineObjectLevel: 90,
+              pickaxe: { power: "1e50", quality: "1" },
+              powers: ["2", "1", "1", "3", "1"],
+              resources: {
+                money: "7",
+                highestMoney: "6",
+                gems: "5",
+                planetCoins: "4",
+                maxPlanetCoins: "4",
+                wisdom: "2",
+                maxWisdom: "3",
+              },
+              upgrades: {},
+              autoPickaxeTimer: 0,
+              elapsedMilliseconds: 0,
+              randomValues: [0.9, 1],
+            },
+            {
+              name: "wisdom-drop-scales-with-power-wisdom",
+              action: "activeClick",
+              objectId: 169,
+              currentHp: "1",
+              highestMineObjectLevel: 169,
+              pickaxe: { power: "1e110", quality: "1" },
+              powers: ["2", "1", "1", "3", "1"],
+              resources: {
+                money: "7",
+                highestMoney: "6",
+                gems: "5",
+                planetCoins: "4",
+                maxPlanetCoins: "8",
+                wisdom: "2",
+                maxWisdom: "4",
+              },
+              upgrades: {},
+              autoPickaxeTimer: 0,
+              elapsedMilliseconds: 0,
+              randomValues: [0.9, 0],
+            },
+            {
+              name: "wisdom-drop-failure-preserves-current-and-maximum",
+              action: "activeClick",
+              objectId: 169,
+              currentHp: "1",
+              highestMineObjectLevel: 169,
+              pickaxe: { power: "1e110", quality: "1" },
+              powers: ["2", "1", "1", "3", "1"],
+              resources: {
+                money: "7",
+                highestMoney: "6",
+                gems: "5",
+                planetCoins: "4",
+                maxPlanetCoins: "8",
+                wisdom: "2",
+                maxWisdom: "4",
+              },
+              upgrades: {},
+              autoPickaxeTimer: 0,
+              elapsedMilliseconds: 0,
+              randomValues: [0.9, 1],
+            },
+            {
+              name: "frame-save-equal-to-sixty-seconds-is-not-due",
+              action: "idleTick",
+              objectId: 0,
+              currentHp: "100",
+              highestMineObjectLevel: 0,
+              pickaxe: { power: "20", quality: "1" },
+              powers: ["2", "1", "1", "3", "1"],
+              resources: {
+                money: "7",
+                highestMoney: "10",
+                gems: "5",
+                planetCoins: "4",
+                maxPlanetCoins: "8",
+                wisdom: "2",
+                maxWisdom: "3",
+              },
+              upgrades: {},
+              autoPickaxeTimer: 0,
+              saveTimer: 0,
+              elapsedMilliseconds: 60000,
+              randomValues: [],
+            },
+            {
+              name: "frame-save-over-sixty-seconds-emits-save-before-story-refresh",
+              action: "idleTick",
+              objectId: 0,
+              currentHp: "100",
+              highestMineObjectLevel: 0,
+              pickaxe: { power: "20", quality: "1" },
+              powers: ["2", "1", "1", "3", "1"],
+              resources: {
+                money: "7",
+                highestMoney: "10",
+                gems: "5",
+                planetCoins: "4",
+                maxPlanetCoins: "8",
+                wisdom: "2",
+                maxWisdom: "3",
+              },
+              upgrades: {},
+              autoPickaxeTimer: 0,
+              saveTimer: 0,
+              elapsedMilliseconds: 60001,
+              randomValues: [],
+            },
+            {
+              name: "frame-save-long-delta-emits-only-one-save",
+              action: "idleTick",
+              objectId: 0,
+              currentHp: "100",
+              highestMineObjectLevel: 0,
+              pickaxe: { power: "20", quality: "1" },
+              powers: ["2", "1", "1", "3", "1"],
+              resources: {
+                money: "7",
+                highestMoney: "10",
+                gems: "5",
+                planetCoins: "4",
+                maxPlanetCoins: "8",
+                wisdom: "2",
+                maxWisdom: "3",
+              },
+              upgrades: {},
+              autoPickaxeTimer: 0,
+              saveTimer: 0,
+              elapsedMilliseconds: 120001,
+              randomValues: [],
+            },
+            {
+              name: "frame-clock-reversal-decreases-unsaved-timers",
+              action: "idleTick",
+              objectId: 0,
+              currentHp: "100",
+              highestMineObjectLevel: 0,
+              pickaxe: { power: "20", quality: "1" },
+              powers: ["2", "1", "1", "3", "1"],
+              resources: {
+                money: "7",
+                highestMoney: "10",
+                gems: "5",
+                planetCoins: "4",
+                maxPlanetCoins: "8",
+                wisdom: "2",
+                maxWisdom: "3",
+              },
+              upgrades: {},
+              autoPickaxeTimer: 0,
+              saveTimer: 10,
+              elapsedMilliseconds: -5000,
+              randomValues: [],
+            },
+          ];
+
+          try {
+            return {
+              sourcePaths: [
+                "Scripts/main.js",
+                "Scripts/Define/functions.js",
+                "Scripts/mineobject.js",
+              ],
+              randomSource: "Math.random",
+              cases: scenarios.map((scenario) => {
+                frameEvents.length = 0;
+                for (const upgrades of Object.values(upgradeGroups)) {
+                  for (const upgrade of Object.values(upgrades)) {
+                    upgrade.level = 0;
+                  }
+                }
+                for (const [group, levels] of Object.entries(
+                  scenario.upgrades,
+                )) {
+                  for (const [key, level] of Object.entries(levels)) {
+                    upgradeGroups[group][key].level = level;
+                  }
+                }
+
+                game.mineObjectLevel = scenario.objectId;
+                game.highestMineObjectLevel = scenario.highestMineObjectLevel;
+                game.currentMineObject = functions.getMineObject(
+                  scenario.objectId,
+                );
+                game.currentMineObject.hp = new Decimal(scenario.currentHp);
+                game.pickaxe = new Pickaxe(
+                  "Probe Pickaxe",
+                  scenario.pickaxe.power,
+                  scenario.pickaxe.quality,
+                );
+                game.powers.data.values = scenario.powers.map(
+                  (value) => new Decimal(value),
+                );
+                for (const key of resourceKeys) {
+                  game[key] = new Decimal(scenario.resources[key]);
+                }
+                game.timer.autoPickaxe = scenario.autoPickaxeTimer;
+                game.timer.save = scenario.saveTimer ?? 0;
+
+                const hitObject = game.currentMineObject;
+                const startingHp = new Decimal(hitObject.hp);
+                const hitDamage =
+                  scenario.action === "activeClick"
+                    ? functions.getActiveDamage()
+                    : functions.getIdleDamage();
+                const effects = {
+                  gemChance: normalizedDecimal(
+                    applyUpgrade(game.upgrades.gemChance),
+                  ),
+                  gemMultiplier: normalizedDecimal(
+                    applyUpgrade(game.gemUpgrades.gemMultiply),
+                  ),
+                  lastObjectGemMultiplier: normalizedDecimal(
+                    applyUpgrade(game.planetCoinUpgrades.lastObjGems),
+                  ),
+                  powerWisdom: normalizedDecimal(
+                    game.powers.data.values[POWER_WISDOM],
+                  ),
+                  miningPowerGainMultiplier: normalizedDecimal(
+                    applyUpgrade(
+                      scenario.action === "activeClick"
+                        ? game.powers.upgrades.powerPowerActive
+                        : game.powers.upgrades.powerPowerIdle,
+                    ),
+                  ),
+                };
+                const highestDamageableMineObjectLevel =
+                  functions.getHighestDamageableMineObjectLevel();
+                let randomCalls = 0;
+                Math.random = () => {
+                  const value = scenario.randomValues[randomCalls];
+                  if (value === undefined) {
+                    throw new Error(
+                      `Mining case ${scenario.name} consumed an uncaptured RNG draw.`,
+                    );
+                  }
+                  randomCalls++;
+                  return value;
+                };
+
+                if (scenario.action === "activeClick") {
+                  functions.clickMineObject();
+                } else {
+                  const frameCalls = window.__idleMineProbe.animationFrameCalls;
+                  window.deltaTimeOld =
+                    Date.now() - scenario.elapsedMilliseconds;
+                  window.update();
+                  window.__idleMineProbe.animationFrameCalls = frameCalls;
+                }
+
+                const hitOccurred =
+                  hitObject !== game.currentMineObject ||
+                  !hitObject.hp.eq(startingHp);
+                return {
+                  name: scenario.name,
+                  input: {
+                    action: scenario.action,
+                    objectId: scenario.objectId,
+                    currentHp: scenario.currentHp,
+                    highestMineObjectLevel: scenario.highestMineObjectLevel,
+                    pickaxe: scenario.pickaxe,
+                    powers: scenario.powers,
+                    resources: scenario.resources,
+                    upgrades: scenario.upgrades,
+                    autoPickaxeTimer: scenario.autoPickaxeTimer,
+                    saveTimer: scenario.saveTimer ?? 0,
+                    elapsedMilliseconds: scenario.elapsedMilliseconds,
+                    randomValues: scenario.randomValues,
+                  },
+                  effects,
+                  highestDamageableMineObjectLevel,
+                  result: {
+                    hitOccurred,
+                    hitDamage: normalizedDecimal(hitDamage),
+                    damagedObjectHp: normalizedDecimal(hitObject.hp),
+                    currentObjectHp: normalizedDecimal(
+                      game.currentMineObject.hp,
+                    ),
+                    currentObjectWasReplaced:
+                      game.currentMineObject !== hitObject,
+                    resources: Object.fromEntries(
+                      resourceKeys.map((key) => [
+                        key,
+                        normalizedDecimal(game[key]),
+                      ]),
+                    ),
+                    highestMineObjectLevel: game.highestMineObjectLevel,
+                    miningPower: normalizedDecimal(
+                      game.powers.data.values[POWER_MINING],
+                    ),
+                    autoPickaxeTimer: game.timer.autoPickaxe,
+                    saveTimer: game.timer.save,
+                    randomCalls,
+                    frameEvents: [...frameEvents],
+                  },
+                };
+              }),
+            };
+          } finally {
+            Math.random = previous.random;
+            game.currentMineObject = previous.currentMineObject;
+            game.mineObjectLevel = previous.mineObjectLevel;
+            game.highestMineObjectLevel = previous.highestMineObjectLevel;
+            game.pickaxe = previous.pickaxe;
+            game.powers.data.values = previous.powers;
+            game.money = previous.money;
+            game.highestMoney = previous.highestMoney;
+            game.gems = previous.gems;
+            game.planetCoins = previous.planetCoins;
+            game.maxPlanetCoins = previous.maxPlanetCoins;
+            game.wisdom = previous.wisdom;
+            game.maxWisdom = previous.maxWisdom;
+            game.timer.autoPickaxe = previous.timer.autoPickaxe;
+            game.timer.save = previous.timer.save;
+            window.deltaTimeOld = previous.deltaTimeOld;
+            functions.saveGame = previous.saveGame;
+            functions.refreshStoryNotifications =
+              previous.refreshStoryNotifications;
             for (const [group, levels] of Object.entries(previousLevels)) {
               for (const [key, level] of Object.entries(levels)) {
                 upgradeGroups[group][key].level = level;
@@ -1554,6 +3303,12 @@ async function capture(reference, dependencies, dependencySnapshots) {
           randomSequenceExhaustion,
           mineObjectCatalog,
           formulaSemantics,
+          miningHitSemantics,
+          payUSDebtSemantics,
+          offlineProgressionSemantics,
+          saveSemantics,
+          storyTabSemantics,
+          storySemantics,
           upgradeSemantics,
           objects: uniqueObjectIds.map(snapshotObject),
           probeRuntime: normalize(window.__idleMineProbe),
@@ -1605,6 +3360,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           "Scripts/random.js",
           "Scripts/upgrade.js",
           "Scripts/main.js",
+          "index.html",
         ],
         licenseNotice:
           "MIT; Copyright (c) 2023 veprogames. See docs/knowledge/sources/licenses/idle-mine-remix-MIT.txt.",
@@ -1819,8 +3575,38 @@ async function main() {
   );
   const purchaseCaseCount =
     expected.data.upgradeSemantics?.purchaseSemantics?.length ?? 0;
+  const miningCases = expected.data.miningHitSemantics?.cases ?? [];
+  const miningHitCaseCount = miningCases.filter(
+    (scenario) => !scenario.name.startsWith("frame-"),
+  ).length;
+  const updateFrameCaseCount = miningCases.length - miningHitCaseCount;
+  const storySemantics = expected.data.storySemantics;
+  const storyBoundarySampleCount = storySemantics.conditionBoundaries.reduce(
+    (total, boundary) => total + boundary.samples.length,
+    0,
+  );
+  const storyMineLevelObjectiveCount =
+    storySemantics.objectiveSamples.mineLevels.reduce(
+      (total, sample) => total + sample.values.length,
+      0,
+    );
+  const storyNotationObjectiveCount =
+    storySemantics.objectiveSamples.notationFormats.reduce(
+      (total, sample) => total + sample.values.length,
+      0,
+    );
+  const payUSDebtCaseCount =
+    expected.data.payUSDebtSemantics?.scenarios.length ?? 0;
+  const storyTabCaseCount =
+    expected.data.storyTabSemantics?.scenarios.length ?? 0;
+  const offlineScenarioCount =
+    expected.data.offlineProgressionSemantics?.scenarios.length ?? 0;
+  const saveCodecVectorCount =
+    expected.data.saveSemantics?.codecVectors.length ?? 0;
+  const saveLoadErrorCount =
+    expected.data.saveSemantics?.loadErrors.length ?? 0;
   process.stdout.write(
-    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases).\n`,
+    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases / ${miningHitCaseCount} mining-hit cases / ${updateFrameCaseCount} update-frame cases / ${storySemantics.chapters.length} story chapters / ${storySemantics.milestones.length} milestones / ${storyBoundarySampleCount} condition-boundary samples / ${storySemantics.notificationScenarios.length} notification scenarios / ${storySemantics.notificationSequence.length} sequenced notification stages / ${storyMineLevelObjectiveCount} mine-level objective outputs / ${storyNotationObjectiveCount} notation-dependent objective outputs / ${payUSDebtCaseCount} debt-interaction cases / ${storyTabCaseCount} story-tab cases / ${offlineScenarioCount} offline-progression cases / ${saveCodecVectorCount} save codec vectors / ${saveLoadErrorCount} load error branches).\n`,
   );
 }
 

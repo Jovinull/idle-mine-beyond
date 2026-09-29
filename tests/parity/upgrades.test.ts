@@ -5,11 +5,15 @@ import {
   REMIX_UPGRADE_KEYS,
   calculateRemixUpgradeEffect,
   calculateRemixUpgradePrice,
+  executeRemixUpgradePurchase,
   getRemixUpgradeMaxLevel,
   type RemixUpgradeContext,
   type RemixUpgradeGroup,
   type RemixUpgradeKey,
   type RemixUpgradeLevels,
+  type RemixUpgradePurchaseOperation,
+  type RemixUpgradePurchaseState,
+  type RemixUpgradeResources,
 } from "../../packages/core/src/index.js";
 
 type DecimalSnapshot = {
@@ -55,6 +59,22 @@ type StochasticSample = {
   effect: DecimalSnapshot;
 };
 
+type CapturedPurchase = {
+  name: string;
+  group: string;
+  key: string;
+  resourceId: number;
+  startingLevel: number;
+  startingResources: Record<string, DecimalSnapshot>;
+  currentPrice: DecimalSnapshot;
+  maxLevel: number | "Infinity";
+  operation: RemixUpgradePurchaseOperation;
+  operationResult: boolean | null;
+  endingLevel: number;
+  purchases: number;
+  endingResources: Record<string, DecimalSnapshot>;
+};
+
 type UpgradeSemanticsFixture = {
   controlledState: {
     highestMineObjectLevel: number;
@@ -65,6 +85,7 @@ type UpgradeSemanticsFixture = {
     blacksmithBonus: { samples: StochasticSample[] };
   };
   effectInteractions: CapturedInteraction[];
+  purchaseSemantics: CapturedPurchase[];
 };
 
 const corpus = JSON.parse(
@@ -91,6 +112,17 @@ function snapshotDecimal(value: Decimal): DecimalSnapshot {
     mantissa: safeNumber(value.mantissa),
     exponent: safeNumber(value.exponent),
   };
+}
+
+function snapshotResources(
+  resources: RemixUpgradeResources,
+): Record<string, DecimalSnapshot> {
+  return Object.fromEntries(
+    Object.entries(resources).map(([key, value]) => [
+      key,
+      snapshotDecimal(new Decimal(value)),
+    ]),
+  );
 }
 
 function expectReferenceEffect(
@@ -135,6 +167,14 @@ function levelsWith(
     Object.assign(mutableLevels[group]!, overrides);
   }
   return levels;
+}
+
+function upgradeLevel<Group extends RemixUpgradeGroup>(
+  levels: RemixUpgradeLevels,
+  group: Group,
+  key: RemixUpgradeKey<Group>,
+): number {
+  return levels[group][key];
 }
 
 function upgradeContext(input: {
@@ -280,4 +320,63 @@ it("preserves Blacksmith Expertise RNG draw order and outcomes", () => {
       }),
     }),
   ).toThrow("requires an injected Remix-compatible RNG");
+});
+
+it("matches captured Remix single and bulk purchase transitions", () => {
+  const scenarios = corpus.data.upgradeSemantics.purchaseSemantics;
+  expect(scenarios).toHaveLength(14);
+
+  for (const scenario of scenarios) {
+    const group = scenario.group as RemixUpgradeGroup;
+    const key = scenario.key as RemixUpgradeKey<typeof group>;
+    const initialState: RemixUpgradePurchaseState = {
+      levels: levelsWith({
+        [group]: { [key]: scenario.startingLevel },
+      }),
+      resources: Object.fromEntries(
+        Object.entries(scenario.startingResources).map(([resource, value]) => [
+          resource,
+          value.decimal,
+        ]),
+      ) as RemixUpgradeResources,
+    };
+
+    const result = executeRemixUpgradePurchase({
+      state: initialState,
+      group,
+      key,
+      operation: scenario.operation,
+    });
+    const cap = getRemixUpgradeMaxLevel(group, key);
+    const expectedMaxLevel = cap === Infinity ? "Infinity" : cap;
+
+    expect(
+      {
+        currentPrice: snapshotDecimal(
+          calculateRemixUpgradePrice(group, key, scenario.startingLevel),
+        ),
+        maxLevel: expectedMaxLevel,
+        operationResult: result.operationResult,
+        endingLevel: upgradeLevel(result.state.levels, group, key),
+        purchases: result.purchases,
+        endingResources: snapshotResources(result.state.resources),
+      },
+      scenario.name,
+    ).toEqual({
+      currentPrice: scenario.currentPrice,
+      maxLevel: scenario.maxLevel,
+      operationResult: scenario.operationResult,
+      endingLevel: scenario.endingLevel,
+      purchases: scenario.purchases,
+      endingResources: scenario.endingResources,
+    });
+
+    expect(upgradeLevel(initialState.levels, group, key), scenario.name).toBe(
+      scenario.startingLevel,
+    );
+    expect(
+      snapshotResources(initialState.resources),
+      `${scenario.name} leaves its input resources unchanged`,
+    ).toEqual(scenario.startingResources);
+  }
 });

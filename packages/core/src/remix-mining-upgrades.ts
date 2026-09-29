@@ -42,6 +42,8 @@ export type RemixMiningUpgradeInput = {
   currentObjectIsHighestDamageable: boolean;
 };
 
+export type RemixMiningPowerGainAction = "activeClick" | "idleTick";
+
 function completeLevels(levels: RemixMiningUpgradeLevels): RemixUpgradeLevels {
   return {
     money: {
@@ -85,13 +87,11 @@ function completeLevels(levels: RemixMiningUpgradeLevels): RemixUpgradeLevels {
   };
 }
 
-/** Evaluates the pinned effect functions used by the mining-rate formulas. */
-export function calculateRemixMiningFactors(
+function createUpgradeContext(
   input: RemixMiningUpgradeInput,
-): RemixMiningFactors {
-  const levels = completeLevels(input.levels);
-  const context: RemixUpgradeContext = {
-    levels,
+): RemixUpgradeContext {
+  return {
+    levels: completeLevels(input.levels),
     powers: {
       craftsmanship: 1,
       expertise: 1,
@@ -99,6 +99,14 @@ export function calculateRemixMiningFactors(
     },
     highestMineObjectLevel: input.highestMineObjectLevel,
   };
+}
+
+/** Evaluates the pinned effect functions used by the mining-rate formulas. */
+export function calculateRemixMiningFactors(
+  input: RemixMiningUpgradeInput,
+): RemixMiningFactors {
+  const context = createUpgradeContext(input);
+  const levels = context.levels;
   const effect = <Group extends RemixUpgradeGroup>(
     group: Group,
     key: RemixUpgradeKey<Group>,
@@ -123,4 +131,20 @@ export function calculateRemixMiningFactors(
         : 1,
     ),
   };
+}
+
+/** Evaluates the source Power of Mining growth upgrade for one action. */
+export function calculateRemixMiningPowerGainMultiplier(input: {
+  upgradeInput: RemixMiningUpgradeInput;
+  action: RemixMiningPowerGainAction;
+}): Decimal {
+  const context = createUpgradeContext(input.upgradeInput);
+  const key =
+    input.action === "activeClick" ? "powerPowerActive" : "powerPowerIdle";
+  return calculateRemixUpgradeEffect(
+    "wisdom",
+    key,
+    context.levels.wisdom[key],
+    context,
+  );
 }
