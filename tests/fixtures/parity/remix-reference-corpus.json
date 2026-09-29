@@ -54476,6 +54476,127 @@
           ]
         }
       ]
+    },
+    "saveApplicationSemantics": {
+      "inputJson": "{\"money\":\"123.5\",\"highestMoney\":\"987.25\",\"gems\":\"23\",\"planetCoins\":\"17\",\"maxPlanetCoins\":\"19\",\"wisdom\":\"101\",\"maxWisdom\":\"205\",\"mineObjectLevel\":3,\"highestMineObjectLevel\":8,\"lastActive\":1700000000000,\"story\":{\"page\":2,\"notifications\":4,\"highestUnlocked\":17,\"scrollY\":123},\"settings\":{\"tab\":\"story\",\"numberFormatterIndex\":3,\"theme\":\"dark\",\"showMineObjLevel\":true,\"showMinCraftDamage\":true},\"upgrades\":{\"idleSpeed\":{\"level\":4}},\"gemUpgrades\":{\"offlineGems\":{\"level\":5}},\"planetCoinUpgrades\":{\"offlinePC\":{\"level\":6}},\"powers\":{\"data\":{\"values\":[\"2\",\"3\",\"4\",\"5\",\"6\"]},\"upgrades\":{\"powerPowerActive\":{\"level\":7}}},\"pickaxe\":{\"name\":\"Probe Pickaxe\",\"pow\":\"123\",\"quality\":\"4\"}}",
+      "resources": {
+        "money": {
+          "decimal": "123.50000000000001",
+          "mantissa": 1.235,
+          "exponent": 2
+        },
+        "highestMoney": {
+          "decimal": "987.25",
+          "mantissa": 9.8725,
+          "exponent": 2
+        },
+        "gems": {
+          "decimal": "23",
+          "mantissa": 2.3,
+          "exponent": 1
+        },
+        "planetCoins": {
+          "decimal": "17",
+          "mantissa": 1.7,
+          "exponent": 1
+        },
+        "maxPlanetCoins": {
+          "decimal": "19",
+          "mantissa": 1.9,
+          "exponent": 1
+        },
+        "wisdom": {
+          "decimal": "101",
+          "mantissa": 1.01,
+          "exponent": 2
+        },
+        "maxWisdom": {
+          "decimal": "205",
+          "mantissa": 2.05,
+          "exponent": 2
+        }
+      },
+      "mineObjectLevel": 3,
+      "highestMineObjectLevel": 8,
+      "currentObject": {
+        "name": "Clay",
+        "hp": {
+          "decimal": "1400",
+          "mantissa": 1.4,
+          "exponent": 3
+        },
+        "totalHp": {
+          "decimal": "1400",
+          "mantissa": 1.4,
+          "exponent": 3
+        },
+        "defense": {
+          "decimal": "35",
+          "mantissa": 3.5,
+          "exponent": 1
+        }
+      },
+      "lastActive": 1700000000000,
+      "story": {
+        "page": 2,
+        "notifications": 4,
+        "highestUnlocked": 17,
+        "scrollY": 123
+      },
+      "settings": {
+        "tab": "settings",
+        "formatterIndex": 3,
+        "formatterName": "Letters",
+        "theme": "dark",
+        "showMineObjLevel": true,
+        "showMinCraftDamage": true
+      },
+      "upgradeLevels": {
+        "moneyIdleSpeed": 4,
+        "gemOfflineGems": 5,
+        "planetOfflinePC": 6,
+        "wisdomPowerPowerActive": 7
+      },
+      "powers": [
+        {
+          "decimal": "2",
+          "mantissa": 2,
+          "exponent": 0
+        },
+        {
+          "decimal": "3",
+          "mantissa": 3,
+          "exponent": 0
+        },
+        {
+          "decimal": "4",
+          "mantissa": 4,
+          "exponent": 0
+        },
+        {
+          "decimal": "5",
+          "mantissa": 5,
+          "exponent": 0
+        },
+        {
+          "decimal": "6",
+          "mantissa": 6,
+          "exponent": 0
+        }
+      ],
+      "pickaxe": {
+        "name": "Probe Pickaxe",
+        "power": {
+          "decimal": "123",
+          "mantissa": 1.23,
+          "exponent": 2
+        },
+        "quality": {
+          "decimal": "4",
+          "mantissa": 4,
+          "exponent": 0
+        }
+      }
     }
   }
 }

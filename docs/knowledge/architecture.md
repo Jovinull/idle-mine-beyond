@@ -12,24 +12,26 @@ RNG, clock/time, persistence, and platform integrations are explicit interfaces 
 
 ## Repository map
 
-| Path                 | Responsibility                                                                                  |
-| -------------------- | ----------------------------------------------------------------------------------------------- |
-| apps/web             | SvelteKit static SPA shell, UI, browser adapters                                                |
-| apps/native          | Tauri 2 shell and native/platform integration only                                              |
-| packages/core        | Platform-independent simulation, source-backed rate formulas, and compatibility math facade     |
-| packages/formatting  | Source-compatible number display and notation adapters                                          |
-| packages/content     | Extracted Remix content definitions, separate from engine behavior                              |
-| packages/persistence | Pure save codecs, versioned schemas, migrations, import/export services, persistence interfaces |
-| packages/ui          | Reusable UI components after source inspection                                                  |
-| tests/unit           | Unit and property tests                                                                         |
-| tests/parity         | Reference fixtures and compatibility assertions                                                 |
-| tests/fixtures       | Versioned test inputs and outputs                                                               |
-| tests/e2e            | Browser workflows                                                                               |
-| tests/visual         | Screenshot baselines and diffs                                                                  |
-| docs/knowledge       | Canonical project knowledge and evidence                                                        |
-| scripts              | Reproducible repository operations                                                              |
-| .agents/skills       | Project-local Codex Skills                                                                      |
-| .research            | Ignored, disposable, read-only upstream checkouts                                               |
+| Path                 | Responsibility                                                                                                            |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| apps/web             | SvelteKit static SPA shell, UI, browser adapters                                                                          |
+| apps/native          | Tauri 2 shell and native/platform integration only                                                                        |
+| packages/core        | Platform-independent simulation, source-backed rate formulas, and compatibility math facade                               |
+| packages/formatting  | Source-compatible number display and notation adapters                                                                    |
+| packages/content     | Extracted Remix content definitions, separate from engine behavior                                                        |
+| packages/persistence | Pure save codecs, legacy field application, versioned schemas, migrations, import/export services, persistence interfaces |
+| packages/ui          | Reusable UI components after source inspection                                                                            |
+| tests/unit           | Unit and property tests                                                                                                   |
+| tests/parity         | Reference fixtures and compatibility assertions                                                                           |
+| tests/fixtures       | Versioned test inputs and outputs                                                                                         |
+| tests/e2e            | Browser workflows                                                                                                         |
+| tests/visual         | Screenshot baselines and diffs                                                                                            |
+| docs/knowledge       | Canonical project knowledge and evidence                                                                                  |
+| scripts              | Reproducible repository operations                                                                                        |
+| .agents/skills       | Project-local Codex Skills                                                                                                |
+| .research            | Ignored, disposable, read-only upstream checkouts                                                                         |
+
+`packages/persistence` may depend on `packages/core` for immutable legacy-save field application; the dependency is one-way. `packages/core` does not import persistence, storage, or platform APIs.
 
 ## Selected stack
 

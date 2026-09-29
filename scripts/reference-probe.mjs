@@ -1570,6 +1570,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
             functions.loadGame(window.initialGame, false, true);
           }
         })();
+        let saveApplicationSemantics;
         const saveSemantics = (() => {
           const originalTab = game.settings.tab;
           const originalFormatter = game.numberFormatter;
@@ -1687,6 +1688,95 @@ async function capture(reference, dependencies, dependencySnapshots) {
 
             const encodeProbeSave = (value) =>
               btoa(escape(encodeURIComponent(JSON.stringify(value))));
+            functions.loadGame(window.initialGame, false, true);
+            game.settings.tab = "settings";
+            const fieldApplicationInput = {
+              money: "123.5",
+              highestMoney: "987.25",
+              gems: "23",
+              planetCoins: "17",
+              maxPlanetCoins: "19",
+              wisdom: "101",
+              maxWisdom: "205",
+              mineObjectLevel: 3,
+              highestMineObjectLevel: 8,
+              lastActive: 1700000000000,
+              story: {
+                page: 2,
+                notifications: 4,
+                highestUnlocked: 17,
+                scrollY: 123,
+              },
+              settings: {
+                tab: "story",
+                numberFormatterIndex: 3,
+                theme: "dark",
+                showMineObjLevel: true,
+                showMinCraftDamage: true,
+              },
+              upgrades: { idleSpeed: { level: 4 } },
+              gemUpgrades: { offlineGems: { level: 5 } },
+              planetCoinUpgrades: { offlinePC: { level: 6 } },
+              powers: {
+                data: { values: ["2", "3", "4", "5", "6"] },
+                upgrades: { powerPowerActive: { level: 7 } },
+              },
+              pickaxe: { name: "Probe Pickaxe", pow: "123", quality: "4" },
+            };
+            functions.loadGame(
+              encodeProbeSave(fieldApplicationInput),
+              undefined,
+              true,
+            );
+            const fieldApplication = {
+              inputJson: JSON.stringify(fieldApplicationInput),
+              resources: {
+                money: normalizedDecimal(game.money),
+                highestMoney: normalizedDecimal(game.highestMoney),
+                gems: normalizedDecimal(game.gems),
+                planetCoins: normalizedDecimal(game.planetCoins),
+                maxPlanetCoins: normalizedDecimal(game.maxPlanetCoins),
+                wisdom: normalizedDecimal(game.wisdom),
+                maxWisdom: normalizedDecimal(game.maxWisdom),
+              },
+              mineObjectLevel: game.mineObjectLevel,
+              highestMineObjectLevel: game.highestMineObjectLevel,
+              currentObject: {
+                name: game.currentMineObject.name,
+                hp: normalizedDecimal(game.currentMineObject.hp),
+                totalHp: normalizedDecimal(game.currentMineObject.totalHp),
+                defense: normalizedDecimal(game.currentMineObject.def),
+              },
+              lastActive: game.lastActive,
+              story: {
+                page: game.story.page,
+                notifications: game.story.notifications,
+                highestUnlocked: game.story.highestUnlocked,
+                scrollY: game.story.scrollY,
+              },
+              settings: {
+                tab: game.settings.tab,
+                formatterIndex: game.settings.numberFormatterIndex,
+                formatterName: game.numberFormatter.name,
+                theme: game.settings.theme,
+                showMineObjLevel: game.settings.showMineObjLevel,
+                showMinCraftDamage: game.settings.showMinCraftDamage,
+              },
+              upgradeLevels: {
+                moneyIdleSpeed: game.upgrades.idleSpeed.level,
+                gemOfflineGems: game.gemUpgrades.offlineGems.level,
+                planetOfflinePC: game.planetCoinUpgrades.offlinePC.level,
+                wisdomPowerPowerActive:
+                  game.powers.upgrades.powerPowerActive.level,
+              },
+              powers: game.powers.data.values.map(normalizedDecimal),
+              pickaxe: {
+                name: game.pickaxe.name,
+                power: normalizedDecimal(game.pickaxe.pow),
+                quality: normalizedDecimal(game.pickaxe.quality),
+              },
+            };
+            saveApplicationSemantics = fieldApplication;
             const codecVectors = [
               {
                 name: "ascii-json",
@@ -4204,6 +4294,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           payUSDebtSemantics,
           offlineProgressionSemantics,
           saveSemantics,
+          saveApplicationSemantics,
           storyTabSemantics,
           storySemantics,
           upgradeSemantics,
@@ -4507,8 +4598,9 @@ async function main() {
     expected.data.saveSemantics?.codecVectors.length ?? 0;
   const saveLoadErrorCount =
     expected.data.saveSemantics?.loadErrors.length ?? 0;
+  const saveApplicationCount = expected.data.saveApplicationSemantics ? 1 : 0;
   process.stdout.write(
-    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases / ${miningHitCaseCount} mining-hit cases / ${updateFrameCaseCount} update-frame cases / ${simulationFrameCaseCount} composed simulation-frame cases / ${storySemantics.chapters.length} story chapters / ${storySemantics.milestones.length} milestones / ${storyBoundarySampleCount} condition-boundary samples / ${storySemantics.notificationScenarios.length} notification scenarios / ${storySemantics.notificationSequence.length} sequenced notification stages / ${storyMineLevelObjectiveCount} mine-level objective outputs / ${storyNotationObjectiveCount} notation-dependent objective outputs / ${payUSDebtCaseCount} debt-interaction cases / ${storyTabCaseCount} story-tab cases / ${offlineScenarioCount} offline-progression cases / ${offlineRateCompositionScenarioCount} live-rate offline-load cases / ${saveCodecVectorCount} save codec vectors / ${saveLoadErrorCount} load error branches).\n`,
+    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases / ${miningHitCaseCount} mining-hit cases / ${updateFrameCaseCount} update-frame cases / ${simulationFrameCaseCount} composed simulation-frame cases / ${storySemantics.chapters.length} story chapters / ${storySemantics.milestones.length} milestones / ${storyBoundarySampleCount} condition-boundary samples / ${storySemantics.notificationScenarios.length} notification scenarios / ${storySemantics.notificationSequence.length} sequenced notification stages / ${storyMineLevelObjectiveCount} mine-level objective outputs / ${storyNotationObjectiveCount} notation-dependent objective outputs / ${payUSDebtCaseCount} debt-interaction cases / ${storyTabCaseCount} story-tab cases / ${offlineScenarioCount} offline-progression cases / ${offlineRateCompositionScenarioCount} live-rate offline-load cases / ${saveCodecVectorCount} save codec vectors / ${saveLoadErrorCount} load error branches / ${saveApplicationCount} complete save-application captures).\n`,
   );
 }
 
