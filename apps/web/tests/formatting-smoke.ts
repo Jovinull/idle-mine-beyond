@@ -1,10 +1,14 @@
 import {
   createADNotationFormatters,
+  createCommunityNotationFormatters,
   formatNumber,
   formatPercent,
 } from "@idle-mine-beyond/formatting";
 
-const formatters = createADNotationFormatters();
+const formatters = [
+  ...createADNotationFormatters(),
+  ...createCommunityNotationFormatters(),
+];
 const standard = formatters.find((formatter) => formatter.name === "Standard");
 const output = document.querySelector<HTMLPreElement>("#result");
 

@@ -38,7 +38,7 @@ Bootstrap versions are pinned by the package manifest and lockfile where applica
 - Tauri 2.12.0 for the native shell; Rust stable for integration only.
 - DOM/CSS for UI, Canvas 2D for mine-object compositing.
 - A compatibility facade around break_infinity.js behavior.
-- `@antimatter-dimensions/notations@1.6.0` for the initial Remix notation classes, behind a project formatting boundary.
+- `@antimatter-dimensions/notations@1.6.0` for Remix's notation classes, behind a project formatting boundary.
 - Zod 4.6.5 for external/save schema validation where appropriate.
 - Vitest 5.0.2, fast-check 4.10.2, and Playwright 1.63.0.
 - ESLint 10.11.0, typescript-eslint 8.71.0, eslint-plugin-svelte 3.23.0, Prettier 3.9.9, prettier-plugin-svelte 4.1.1, and svelte-check 4.7.6.
@@ -64,9 +64,9 @@ Use the narrow `packages/core/src/decimal.ts` facade for all game-domain numbers
 
 ## Number formatting
 
-`packages/formatting` owns player-facing number and percentage strings. It exposes the six initial AD notation instances and the other fourteen AD classes registered by Remix; direct results and the `formatNumber`, `formatThousands`, and `formatPercent` wrapper paths are compared against the pinned corpus. Formatting stays outside the simulation core.
+`packages/formatting` owns player-facing number and percentage strings. It exposes the 20 base AD classes and 15 community classes exported by the pinned package, plus source-derived implementations for two community classes missing from its ESM exports. Direct results and the three Remix wrapper paths are compared against the pinned corpus. Formatting stays outside the simulation core.
 
-The AD Notations 1.6.0 ESM build imports the historical `break_infinity.js/break_infinity` subpath. Its Remix browser UMD build instead receives the global Decimal from `break_infinity.js@2.2.0`. The workspace pins that transitive dependency to 2.2.0 and aliases the ESM subpath to the core Decimal bridge in both Vitest and the web Vite config. This keeps tests and browser output on the same Decimal implementation; the formatter golden tests verify the captured 20-class base slice.
+The AD Notations 1.6.0 ESM builds import the historical `break_infinity.js/break_infinity` subpath. Remix browser UMD builds instead receive the global Decimal from `break_infinity.js@2.2.0`. The workspace pins that transitive dependency to 2.2.0 and aliases the ESM subpath to the core Decimal bridge in both Vitest and the web Vite config. The canonical community UMD includes `Haha Funny` and `Nice`, but its ESM exports omit them; Beyond implements those two from the pinned Remix source. Golden tests cover all 37 registered package/community classes; three custom formatters remain.
 
 ## Platform adapters
 

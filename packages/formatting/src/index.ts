@@ -21,7 +21,26 @@ import {
   type NotationFormatter,
   ZalgoNotation,
 } from "@antimatter-dimensions/notations/dist/ad-notations.esm.js";
+import {
+  BinaryNotation,
+  ChineseNotation,
+  CoronavirusNotation,
+  ElementalNotation,
+  EvilNotation,
+  FlagsNotation,
+  GreekLettersNotation,
+  HexadecimalNotation,
+  JapaneseNotation,
+  MixedLogarithmSciNotation,
+  OmegaNotation,
+  OmegaShortNotation,
+  PrecisePrimeNotation,
+  TritetratedNotation,
+  YesNoNotation,
+} from "@antimatter-dimensions/notations/dist/ad-notations.community.esm.js";
 import { Decimal, type DecimalSource } from "@idle-mine-beyond/core";
+import { RemixHahaFunnyNotation } from "./haha-funny-notation.js";
+import { RemixNiceNotation } from "./nice-notation.js";
 
 export type { NotationFormatter };
 
@@ -54,6 +73,28 @@ export function createADNotationFormatters(): NotationFormatter[] {
 
 export function createInitialFormatters(): NotationFormatter[] {
   return createADNotationFormatters().slice(0, 6);
+}
+
+export function createCommunityNotationFormatters(): NotationFormatter[] {
+  return [
+    new BinaryNotation(),
+    new ChineseNotation(),
+    new CoronavirusNotation(),
+    new ElementalNotation(),
+    new EvilNotation(),
+    new FlagsNotation(),
+    new GreekLettersNotation(),
+    new RemixHahaFunnyNotation(),
+    new HexadecimalNotation(),
+    new JapaneseNotation(),
+    new MixedLogarithmSciNotation(),
+    new RemixNiceNotation(),
+    new OmegaNotation(),
+    new OmegaShortNotation(),
+    new PrecisePrimeNotation(),
+    new TritetratedNotation(),
+    new YesNoNotation(),
+  ];
 }
 
 /** Remix's formatThousands wrapper, with the selected formatter injected. */

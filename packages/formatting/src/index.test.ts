@@ -3,6 +3,7 @@ import { Decimal } from "@idle-mine-beyond/core";
 import { expect, it } from "vitest";
 import {
   createADNotationFormatters,
+  createCommunityNotationFormatters,
   createInitialFormatters,
   formatNumber,
   formatPercent,
@@ -25,6 +26,7 @@ const fixture = JSON.parse(
   data: {
     initialState: { numberFormatters: string[] };
     notationSemantics: {
+      formatterRegistry: { name: string }[];
       directFormatterOutputs: {
         notation: string;
         values: FormatterValue[];
@@ -51,19 +53,20 @@ const fixture = JSON.parse(
   };
 };
 
-const formatters = createADNotationFormatters();
+const formatters = [
+  ...createADNotationFormatters(),
+  ...createCommunityNotationFormatters(),
+];
 const formattersByName = new Map(
   formatters.map((formatter) => [formatter.name, formatter]),
 );
 
-function implementedBaseFormatters<T extends { notation: string }>(
-  rows: T[],
-): T[] {
+function implementedFormatters<T extends { notation: string }>(rows: T[]): T[] {
   return rows.filter(({ notation }) => formattersByName.has(notation));
 }
 
-it("matches the pinned Remix outputs for all 20 AD notation classes", () => {
-  const expected = implementedBaseFormatters(
+it("matches the pinned Remix outputs for all 37 AD and community classes", () => {
+  const expected = implementedFormatters(
     fixture.data.notationSemantics.directFormatterOutputs,
   );
   const observed = expected.map(({ notation, values }) => {
@@ -82,6 +85,11 @@ it("matches the pinned Remix outputs for all 20 AD notation classes", () => {
   expect(formatters.map(({ name }) => name)).toEqual(
     expected.map(({ notation }) => notation),
   );
+  expect(expected.map(({ notation }) => notation)).toEqual(
+    fixture.data.notationSemantics.formatterRegistry
+      .slice(0, 37)
+      .map(({ name }) => name),
+  );
   expect(createInitialFormatters().map(({ name }) => name)).toEqual(
     fixture.data.initialState.numberFormatters.slice(0, 6),
   );
@@ -92,7 +100,7 @@ it("matches the pinned Remix outputs for all 20 AD notation classes", () => {
 });
 
 it("matches Remix number, thousands, and percent wrapper outputs", () => {
-  const expectedNumber = implementedBaseFormatters(
+  const expectedNumber = implementedFormatters(
     fixture.data.notationSemantics.formatNumberScenarios,
   );
   const scenarioArguments: Record<string, unknown[]> = {
@@ -121,7 +129,7 @@ it("matches Remix number, thousands, and percent wrapper outputs", () => {
     };
   });
 
-  const expectedThousands = implementedBaseFormatters(
+  const expectedThousands = implementedFormatters(
     fixture.data.notationSemantics.formatThousands,
   );
   const observedThousands = expectedThousands.map(({ notation, values }) => {
@@ -138,7 +146,7 @@ it("matches Remix number, thousands, and percent wrapper outputs", () => {
     };
   });
 
-  const expectedPercent = implementedBaseFormatters(
+  const expectedPercent = implementedFormatters(
     fixture.data.notationSemantics.formatPercent,
   );
   const observedPercent = expectedPercent.map(({ notation, values }) => {
@@ -160,7 +168,7 @@ it("matches Remix number, thousands, and percent wrapper outputs", () => {
 });
 
 it("matches each base formatter's exponent outputs", () => {
-  const expected = implementedBaseFormatters(
+  const expected = implementedFormatters(
     fixture.data.notationSemantics.exponentFormatterOutputs,
   );
   const observed = expected.map(({ notation }) => {

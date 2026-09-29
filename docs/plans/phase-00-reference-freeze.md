@@ -15,11 +15,11 @@ Create a reproducible, read-only reference baseline and enough source/runtime fi
 - Verified the public deployment in browser tooling and created a deterministic local oracle probe using the pinned checkout and hash-verified runtime dependencies.
 - Captured initial state, object IDs 0–214, high-ID probes, base rates/upgrades, notation samples, and a Decimal arithmetic/rounding/serialization corpus.
 - Added the `break_infinity.js@2.2.0` core boundary and golden/property checks against the Decimal corpus.
-- Added all 20 AD Notations formatters used by Remix and the three display wrappers, with golden comparison to every captured output for this subset.
+- Added all 37 registered AD/community formatters and the three display wrappers, with golden comparison to every captured output for this subset.
 
 ## Remaining work
 
-- Implement and certify the remaining 20 community/custom notation classes after source-specific threshold review; the current matrix probes 40 formatters at 67 values plus all three game wrapper paths.
+- Implement and certify the three remaining custom notation classes after source-specific threshold review; the current matrix probes 40 formatters at 67 values plus all three game wrapper paths.
 - Extract full boundary matrices for damage/earnings, upgrades, crafting RNG, saves, offline behavior, and representative story/settings states.
 - Complete the asset/font provenance audit and extract save examples with no unsupported copying.
 
