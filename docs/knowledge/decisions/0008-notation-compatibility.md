@@ -18,7 +18,7 @@ Keep display formatting in `packages/formatting`, outside the simulation core. D
 
 - The simulation core stays independent of formatting and presentation choices.
 - Tests and the web build use the same Decimal implementation as the reference runtime.
-- The formatter package is pinned and its initial six classes and wrappers are golden-tested; all other notation classes remain incomplete.
+- The formatter package is pinned and its 20 AD classes and wrappers are golden-tested; all 20 community/custom notation classes remain incomplete.
 - Vite aliases in the test and web configurations are compatibility-critical and must be kept synchronized.
 - The npm package license remains in the dependency; no upstream source or artwork is copied into product code.
 

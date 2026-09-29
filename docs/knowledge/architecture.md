@@ -64,9 +64,9 @@ Use the narrow `packages/core/src/decimal.ts` facade for all game-domain numbers
 
 ## Number formatting
 
-`packages/formatting` owns player-facing number and percentage strings. The six initial AD notation instances and Remix's `formatNumber`, `formatThousands`, and `formatPercent` wrapper paths are compared against the pinned corpus. Formatting stays outside the simulation core.
+`packages/formatting` owns player-facing number and percentage strings. It exposes the six initial AD notation instances and the other fourteen AD classes registered by Remix; direct results and the `formatNumber`, `formatThousands`, and `formatPercent` wrapper paths are compared against the pinned corpus. Formatting stays outside the simulation core.
 
-The AD Notations 1.6.0 ESM build imports the historical `break_infinity.js/break_infinity` subpath. Its Remix browser UMD build instead receives the global Decimal from `break_infinity.js@2.2.0`. The workspace pins that transitive dependency to 2.2.0 and aliases the ESM subpath to the core Decimal bridge in both Vitest and the web Vite config. This keeps tests and browser output on the same Decimal implementation; the formatter golden tests verify the captured initial slice.
+The AD Notations 1.6.0 ESM build imports the historical `break_infinity.js/break_infinity` subpath. Its Remix browser UMD build instead receives the global Decimal from `break_infinity.js@2.2.0`. The workspace pins that transitive dependency to 2.2.0 and aliases the ESM subpath to the core Decimal bridge in both Vitest and the web Vite config. This keeps tests and browser output on the same Decimal implementation; the formatter golden tests verify the captured 20-class base slice.
 
 ## Platform adapters
 

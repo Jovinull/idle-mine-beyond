@@ -64,7 +64,7 @@ All 40 direct formatter outputs were captured for 67 values with no probe except
 
 ### Implemented compatibility slice
 
-`packages/formatting` currently creates the six formatters initialized by `Scripts/Define/game.js`: Standard, Scientific, Engineering, Letters, Logarithm, and Cancer. It reproduces the pinned wrappers for these six. Golden tests compare every captured direct value, wrapper scenario, thousands result, and percent result for this subset against the reference corpus. The remaining 34 registered formatters are not implemented or certified.
+`packages/formatting` creates the six formatters initialized by `Scripts/Define/game.js` and the other fourteen AD Notations classes added by the Remix registry. Golden tests compare every captured direct value, wrapper scenario, thousands result, and percent result for all 20 classes against the reference corpus. The remaining 20 community/custom formatters are not implemented or certified.
 
 The formatting package uses the MIT-licensed `@antimatter-dimensions/notations@1.6.0` dependency credited by Remix. Its ESM import is bridged to Beyond's `break_infinity.js@2.2.0` Decimal facade to match the canonical browser runtime; see [ADR 0008](decisions/0008-notation-compatibility.md). No upstream formatter source or assets have been copied into product code.
 

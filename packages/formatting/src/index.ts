@@ -1,11 +1,25 @@
 import {
+  AllNotation,
+  BlindNotation,
+  BracketsNotation,
   CancerNotation,
+  ClockNotation,
+  DotsNotation,
   EngineeringNotation,
+  HexNotation,
+  ImperialNotation,
+  InfinityNotation,
   LettersNotation,
   LogarithmNotation,
+  MixedEngineeringNotation,
+  MixedScientificNotation,
+  PrimeNotation,
+  RomanNotation,
   ScientificNotation,
+  ShiNotation,
   StandardNotation,
   type NotationFormatter,
+  ZalgoNotation,
 } from "@antimatter-dimensions/notations/dist/ad-notations.esm.js";
 import { Decimal, type DecimalSource } from "@idle-mine-beyond/core";
 
@@ -13,7 +27,7 @@ export type { NotationFormatter };
 
 const limitNotations = new Set(["Standard", "Scientific", "Engineering"]);
 
-export function createInitialFormatters(): NotationFormatter[] {
+export function createADNotationFormatters(): NotationFormatter[] {
   return [
     new StandardNotation(),
     new ScientificNotation(),
@@ -21,7 +35,25 @@ export function createInitialFormatters(): NotationFormatter[] {
     new LettersNotation(),
     new LogarithmNotation(),
     new CancerNotation(),
+    new AllNotation(),
+    new BlindNotation(),
+    new BracketsNotation(),
+    new ClockNotation(),
+    new DotsNotation(),
+    new HexNotation(),
+    new ImperialNotation(),
+    new InfinityNotation(),
+    new MixedEngineeringNotation(),
+    new MixedScientificNotation(),
+    new PrimeNotation(),
+    new RomanNotation(),
+    new ShiNotation(),
+    new ZalgoNotation(),
   ];
+}
+
+export function createInitialFormatters(): NotationFormatter[] {
+  return createADNotationFormatters().slice(0, 6);
 }
 
 /** Remix's formatThousands wrapper, with the selected formatter injected. */

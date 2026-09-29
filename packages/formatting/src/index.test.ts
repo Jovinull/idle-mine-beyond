@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { Decimal } from "@idle-mine-beyond/core";
 import { expect, it } from "vitest";
 import {
+  createADNotationFormatters,
   createInitialFormatters,
   formatNumber,
   formatPercent,
@@ -41,21 +42,28 @@ const fixture = JSON.parse(
         }[];
       }[];
       formatPercent: { notation: string; values: FormatterValue[] }[];
+      exponentFormatterInputs: number[];
+      exponentFormatterOutputs: {
+        notation: string;
+        values: { input: number; output: FormatterOutput }[];
+      }[];
     };
   };
 };
 
-const formatters = createInitialFormatters();
+const formatters = createADNotationFormatters();
 const formattersByName = new Map(
   formatters.map((formatter) => [formatter.name, formatter]),
 );
 
-function firstSix<T extends { notation: string }>(rows: T[]): T[] {
+function implementedBaseFormatters<T extends { notation: string }>(
+  rows: T[],
+): T[] {
   return rows.filter(({ notation }) => formattersByName.has(notation));
 }
 
-it("matches the pinned Remix direct outputs for its six initial formatters", () => {
-  const expected = firstSix(
+it("matches the pinned Remix outputs for all 20 AD notation classes", () => {
+  const expected = implementedBaseFormatters(
     fixture.data.notationSemantics.directFormatterOutputs,
   );
   const observed = expected.map(({ notation, values }) => {
@@ -71,7 +79,10 @@ it("matches the pinned Remix direct outputs for its six initial formatters", () 
     };
   });
 
-  expect(expected.map(({ notation }) => notation)).toEqual(
+  expect(formatters.map(({ name }) => name)).toEqual(
+    expected.map(({ notation }) => notation),
+  );
+  expect(createInitialFormatters().map(({ name }) => name)).toEqual(
     fixture.data.initialState.numberFormatters.slice(0, 6),
   );
   expect(fixture.metadata.sourceCommit).toBe(
@@ -81,7 +92,7 @@ it("matches the pinned Remix direct outputs for its six initial formatters", () 
 });
 
 it("matches Remix number, thousands, and percent wrapper outputs", () => {
-  const expectedNumber = firstSix(
+  const expectedNumber = implementedBaseFormatters(
     fixture.data.notationSemantics.formatNumberScenarios,
   );
   const scenarioArguments: Record<string, unknown[]> = {
@@ -110,7 +121,7 @@ it("matches Remix number, thousands, and percent wrapper outputs", () => {
     };
   });
 
-  const expectedThousands = firstSix(
+  const expectedThousands = implementedBaseFormatters(
     fixture.data.notationSemantics.formatThousands,
   );
   const observedThousands = expectedThousands.map(({ notation, values }) => {
@@ -127,7 +138,7 @@ it("matches Remix number, thousands, and percent wrapper outputs", () => {
     };
   });
 
-  const expectedPercent = firstSix(
+  const expectedPercent = implementedBaseFormatters(
     fixture.data.notationSemantics.formatPercent,
   );
   const observedPercent = expectedPercent.map(({ notation, values }) => {
@@ -146,4 +157,23 @@ it("matches Remix number, thousands, and percent wrapper outputs", () => {
   expect(observedNumber).toEqual(expectedNumber);
   expect(observedThousands).toEqual(expectedThousands);
   expect(observedPercent).toEqual(expectedPercent);
+});
+
+it("matches each base formatter's exponent outputs", () => {
+  const expected = implementedBaseFormatters(
+    fixture.data.notationSemantics.exponentFormatterOutputs,
+  );
+  const observed = expected.map(({ notation }) => {
+    const formatter = formattersByName.get(notation);
+    if (!formatter) throw new Error(`Missing formatter: ${notation}`);
+
+    return {
+      notation,
+      values: fixture.data.notationSemantics.exponentFormatterInputs.map(
+        (input) => ({ input, output: formatter.formatExponent(input) }),
+      ),
+    };
+  });
+
+  expect(observed).toEqual(expected);
 });

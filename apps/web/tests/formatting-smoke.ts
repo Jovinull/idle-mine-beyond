@@ -1,12 +1,11 @@
 import {
-  createInitialFormatters,
+  createADNotationFormatters,
   formatNumber,
   formatPercent,
 } from "@idle-mine-beyond/formatting";
 
-const standard = createInitialFormatters().find(
-  (formatter) => formatter.name === "Standard",
-);
+const formatters = createADNotationFormatters();
+const standard = formatters.find((formatter) => formatter.name === "Standard");
 const output = document.querySelector<HTMLPreElement>("#result");
 
 if (!standard || !output) {
@@ -14,7 +13,7 @@ if (!standard || !output) {
 }
 
 output.textContent = JSON.stringify({
-  names: createInitialFormatters().map(({ name }) => name),
+  names: formatters.map(({ name }) => name),
   grouped: formatNumber("1000", standard),
   percent: formatPercent("0.005", standard),
 });
