@@ -30,6 +30,12 @@ Some rate functions convert hit counts to Number and divide by idle damage. Whet
 
 Under the pinned runtime and break_infinity.js 2.2.0 snapshot, `functions.getMineObject(Number.MAX_SAFE_INTEGER)` returns an object whose HP, defense, and value stringify as `Infinity`; the fixture retains the finite mantissa/exponent representation returned by Decimal. This is an observed output at a pathological, impractical ID. Whether the game can reach or display that ID through ordinary progression is unverified, so do not generalize it into a player-visible defect.
 
+## Seeded RNG sequence exhaustion
+
+**Verified legacy behavior (source and controlled runtime):** `Scripts/random.js` warms a new `Random` instance through ten digits of its 50-character `SEQ`. It does not wrap the sequence. The first 40 draws after construction use remaining digits; draw 41 parses `undefined`, making the RNG state and result `NaN`. The pinned runtime output is in `randomSequenceExhaustion` in the reference corpus.
+
+The current object generator consumes four draws per post-Universe object, so this limit is not reached by one generation call. Preserve the behavior if matching the source class; do not add sequence cycling as cleanup. Beyond requires an explicit seed and excludes the source's seedless `Date.now()` path by project decision.
+
 ## Exception policy
 
 No listed concern grants permission to change observable behavior. See [behavioral exceptions](BEHAVIORAL_EXCEPTIONS.md).

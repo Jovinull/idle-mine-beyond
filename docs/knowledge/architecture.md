@@ -60,7 +60,7 @@ PWA installability and service-worker caching are deferred until the browser rel
 
 ## Big numbers
 
-Use the narrow `packages/core/src/decimal.ts` facade for all game-domain numbers. It pins `break_infinity.js@2.2.0`, the exact version resolved from the Remix runtime dependency snapshot. Preserve rounding, coercion, overflow, Decimal serialization, notation behavior, and operation order. A replacement library requires a full golden compatibility corpus.
+Use the narrow `packages/core/src/decimal.ts` facade for all game-domain numbers. It pins `break_infinity.js@2.2.0`, the exact version resolved from the Remix runtime dependency snapshot. Preserve rounding, coercion, overflow, Decimal serialization, notation behavior, and operation order. A replacement library requires a full golden compatibility corpus. `RemixRandom` in the same package implements the explicitly seeded source RNG path; callers supply seeds, and the core never falls back to `Date.now()` or `Math.random()`.
 
 ## Number formatting
 

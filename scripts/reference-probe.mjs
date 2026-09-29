@@ -1,3 +1,5 @@
+/* global Random -- injected by the pinned classic-script reference runtime */
+
 import { createHash } from "node:crypto";
 import { createServer } from "node:http";
 import { execFile } from "node:child_process";
@@ -620,6 +622,66 @@ async function capture(reference, dependencies, dependencySnapshots) {
           logarithms,
         };
 
+        const randomSemantics = [
+          -1,
+          0,
+          1,
+          2,
+          71,
+          89,
+          90,
+          114,
+          115,
+          169,
+          214,
+          215,
+          216,
+          1000000,
+          Number.MAX_SAFE_INTEGER,
+        ].map((seed) => {
+          const random = new Random(seed);
+          const afterWarmup = {
+            generation: random.generation,
+            value: random.n,
+          };
+          const draws = [];
+          const integerBounds = [undefined, 2, 6, 10000];
+          for (let index = 0; index < 16; index++) {
+            if (index % 2 === 0) {
+              draws.push({ type: "double", value: random.nextDouble() });
+            } else {
+              const bound =
+                integerBounds[Math.floor(index / 2) % integerBounds.length];
+              draws.push(
+                bound === undefined
+                  ? { type: "integer-default", value: random.nextInt() }
+                  : { type: "integer", bound, value: random.nextInt(bound) },
+              );
+            }
+          }
+          return {
+            seed,
+            afterWarmup,
+            draws,
+            finalState: { generation: random.generation, value: random.n },
+          };
+        });
+        const randomSequenceExhaustion = (() => {
+          const random = new Random(0);
+          const values = [];
+          for (let index = 0; index < 41; index++) {
+            const value = random.nextDouble();
+            values.push(Number.isNaN(value) ? "NaN" : value);
+          }
+          return {
+            seed: 0,
+            warmupDraws: 10,
+            sequenceLength: Random.SEQ.length,
+            values,
+            firstNaNIndex: values.findIndex((value) => value === "NaN"),
+          };
+        })();
+
         const initialState = {
           clock: normalize(game.lastActive),
           timer: normalize(game.timer),
@@ -681,6 +743,8 @@ async function capture(reference, dependencies, dependencySnapshots) {
           notationOutputs,
           notationSemantics,
           decimalSemantics,
+          randomSemantics,
+          randomSequenceExhaustion,
           objects: uniqueObjectIds.map(snapshotObject),
           probeRuntime: normalize(window.__idleMineProbe),
           currentObjectHpAfterCapture: normalizedDecimal(current.hp),

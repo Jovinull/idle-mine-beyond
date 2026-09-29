@@ -31088,6 +31088,1302 @@
           ]
         }
       ]
+    },
+    "randomSemantics": [
+      {
+        "seed": -1,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 7956
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.000014826655394782617
+          },
+          {
+            "type": "integer-default",
+            "value": 222929
+          },
+          {
+            "type": "double",
+            "value": 0.0008305050436549378
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.03986440600821022
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.07972881434472688
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 2654
+          },
+          {
+            "type": "double",
+            "value": 0.11620343668209548
+          },
+          {
+            "type": "integer-default",
+            "value": 748634949
+          },
+          {
+            "type": "double",
+            "value": 0.7430515828277224
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.7152579281084509
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 1
+          },
+          {
+            "type": "double",
+            "value": 0.29154757889525384
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 7320
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 1252187320
+        }
+      },
+      {
+        "seed": 0,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 517764
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.0012055248959015705
+          },
+          {
+            "type": "integer-default",
+            "value": 20710824
+          },
+          {
+            "type": "double",
+            "value": 0.08679809844437898
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.46828044507106786
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 2
+          },
+          {
+            "type": "double",
+            "value": 0.8096826806709555
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 3663
+          },
+          {
+            "type": "double",
+            "value": 0.43238439943286794
+          },
+          {
+            "type": "integer-default",
+            "value": 1566670077
+          },
+          {
+            "type": "double",
+            "value": 0.3772256478561208
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.5267078022131267
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 4
+          },
+          {
+            "type": "double",
+            "value": 0.3204936531002138
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 4646
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 2064764646
+        }
+      },
+      {
+        "seed": 1,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 15173248
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.04239358196146487
+          },
+          {
+            "type": "integer-default",
+            "value": 819355797
+          },
+          {
+            "type": "double",
+            "value": 0.8154228002836102
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.23382436727817374
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.8058924338807782
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 2367
+          },
+          {
+            "type": "double",
+            "value": 0.01212772448180603
+          },
+          {
+            "type": "integer-default",
+            "value": 130220475
+          },
+          {
+            "type": "double",
+            "value": 0.42447046117133946
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.9138797367521933
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 1
+          },
+          {
+            "type": "double",
+            "value": 0.27759478906057533
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 7449
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 237037449
+        }
+      },
+      {
+        "seed": 2,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 187800750
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.612160796118975
+          },
+          {
+            "type": "integer-default",
+            "value": 261151208
+          },
+          {
+            "type": "double",
+            "value": 0.33768814165968825
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.43112649555836174
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 4
+          },
+          {
+            "type": "double",
+            "value": 0.6225299651839444
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 3684
+          },
+          {
+            "type": "double",
+            "value": 0.12649842217867188
+          },
+          {
+            "type": "integer-default",
+            "value": 1629919794
+          },
+          {
+            "type": "double",
+            "value": 0.07192442848902401
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.30158180105573584
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 5
+          },
+          {
+            "type": "double",
+            "value": 0.04745412713263842
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 4835
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 509534835
+        }
+      },
+      {
+        "seed": 71,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 961848978
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.040086035635362394
+          },
+          {
+            "type": "integer-default",
+            "value": 358199674
+          },
+          {
+            "type": "double",
+            "value": 0.34398069109021717
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.43974202984931976
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 2
+          },
+          {
+            "type": "double",
+            "value": 0.48663387470256253
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 7496
+          },
+          {
+            "type": "double",
+            "value": 0.8618358643082138
+          },
+          {
+            "type": "integer-default",
+            "value": 1369434092
+          },
+          {
+            "type": "double",
+            "value": 0.10232083038535007
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.1455814331516537
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 2
+          },
+          {
+            "type": "double",
+            "value": 0.9771503731501989
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 1970
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 663851970
+        }
+      },
+      {
+        "seed": 89,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 934866491
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.9211306976718505
+          },
+          {
+            "type": "integer-default",
+            "value": 750936496
+          },
+          {
+            "type": "double",
+            "value": 0.2688459187135314
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 1
+          },
+          {
+            "type": "double",
+            "value": 0.3028282994883267
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 3
+          },
+          {
+            "type": "double",
+            "value": 0.2788858359115598
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 2313
+          },
+          {
+            "type": "double",
+            "value": 0.7775863678090211
+          },
+          {
+            "type": "integer-default",
+            "value": 677608902
+          },
+          {
+            "type": "double",
+            "value": 0.9759464082196105
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 1
+          },
+          {
+            "type": "double",
+            "value": 0.05706959453274943
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 1
+          },
+          {
+            "type": "double",
+            "value": 0.28782529397300693
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 3946
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 1030643946
+        }
+      },
+      {
+        "seed": 90,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 519670392
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.9890906661698086
+          },
+          {
+            "type": "integer-default",
+            "value": 1999070530
+          },
+          {
+            "type": "double",
+            "value": 0.15809049231842648
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 1
+          },
+          {
+            "type": "double",
+            "value": 0.14343605709422197
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 5
+          },
+          {
+            "type": "double",
+            "value": 0.23927896993201178
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 2190
+          },
+          {
+            "type": "double",
+            "value": 0.7889311280049994
+          },
+          {
+            "type": "integer-default",
+            "value": 342588382
+          },
+          {
+            "type": "double",
+            "value": 0.31489840863034985
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.18312768506963165
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 5
+          },
+          {
+            "type": "double",
+            "value": 0.9026095624559604
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 8523
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 2024418523
+        }
+      },
+      {
+        "seed": 114,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 575982184
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.9173066359559571
+          },
+          {
+            "type": "integer-default",
+            "value": 1957252067
+          },
+          {
+            "type": "double",
+            "value": 0.10423870110150366
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 1
+          },
+          {
+            "type": "double",
+            "value": 0.38543412153862144
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 3
+          },
+          {
+            "type": "double",
+            "value": 0.11264322284266502
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 5321
+          },
+          {
+            "type": "double",
+            "value": 0.8701474684617237
+          },
+          {
+            "type": "integer-default",
+            "value": 1454722092
+          },
+          {
+            "type": "double",
+            "value": 0.28893818766294893
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 1
+          },
+          {
+            "type": "double",
+            "value": 0.02033088636599988
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.6889821559605106
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 7750
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 1311937750
+        }
+      },
+      {
+        "seed": 115,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 1943227973
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.5863314888376424
+          },
+          {
+            "type": "integer-default",
+            "value": 255078477
+          },
+          {
+            "type": "double",
+            "value": 0.7287484904419391
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.5080299975853553
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 3
+          },
+          {
+            "type": "double",
+            "value": 0.8629116503814755
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 7221
+          },
+          {
+            "type": "double",
+            "value": 0.3004981974607791
+          },
+          {
+            "type": "integer-default",
+            "value": 1630567351
+          },
+          {
+            "type": "double",
+            "value": 0.8743499572735047
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.17312324567377718
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 4
+          },
+          {
+            "type": "double",
+            "value": 0.9974003541271204
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 9325
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 1488739325
+        }
+      },
+      {
+        "seed": 169,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 1649366844
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.64006824122745
+          },
+          {
+            "type": "integer-default",
+            "value": 627265555
+          },
+          {
+            "type": "double",
+            "value": 0.9926196550916041
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.7911369934636806
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 2
+          },
+          {
+            "type": "double",
+            "value": 0.9236210872994834
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 6490
+          },
+          {
+            "type": "double",
+            "value": 0.7228347080400376
+          },
+          {
+            "type": "integer-default",
+            "value": 108272749
+          },
+          {
+            "type": "double",
+            "value": 0.8232391089309189
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 1
+          },
+          {
+            "type": "double",
+            "value": 0.43273188892413483
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.37249772826791633
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 4336
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 149514336
+        }
+      },
+      {
+        "seed": 214,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 1251829815
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.6614040013688635
+          },
+          {
+            "type": "integer-default",
+            "value": 1786086316
+          },
+          {
+            "type": "double",
+            "value": 0.4716326959764737
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 1
+          },
+          {
+            "type": "double",
+            "value": 0.47925073536078017
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 3
+          },
+          {
+            "type": "double",
+            "value": 0.44522590164338516
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 6408
+          },
+          {
+            "type": "double",
+            "value": 0.3174766284960679
+          },
+          {
+            "type": "integer-default",
+            "value": 450815105
+          },
+          {
+            "type": "double",
+            "value": 0.1839938285686047
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 1
+          },
+          {
+            "type": "double",
+            "value": 0.3915358145681842
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 3
+          },
+          {
+            "type": "double",
+            "value": 0.9980681189326887
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 6525
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 1247266525
+        }
+      },
+      {
+        "seed": 215,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 1976894189
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.5239030749182697
+          },
+          {
+            "type": "integer-default",
+            "value": 1783289455
+          },
+          {
+            "type": "double",
+            "value": 0.01160882134531104
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.28863194644853096
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 2
+          },
+          {
+            "type": "double",
+            "value": 0.02768285061590506
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 1884
+          },
+          {
+            "type": "double",
+            "value": 0.7790580078861946
+          },
+          {
+            "type": "integer-default",
+            "value": 1317966679
+          },
+          {
+            "type": "double",
+            "value": 0.6334821487001526
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 1
+          },
+          {
+            "type": "double",
+            "value": 0.9082739394662315
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 3
+          },
+          {
+            "type": "double",
+            "value": 0.81930884757047
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 1094
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 1308571094
+        }
+      },
+      {
+        "seed": 216,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 1584676498
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.08089488282841392
+          },
+          {
+            "type": "integer-default",
+            "value": 258722642
+          },
+          {
+            "type": "double",
+            "value": 0.10737525583588298
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.5586954353184883
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 4
+          },
+          {
+            "type": "double",
+            "value": 0.24236382601892753
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 9977
+          },
+          {
+            "type": "double",
+            "value": 0.4048752716765158
+          },
+          {
+            "type": "integer-default",
+            "value": 155869317
+          },
+          {
+            "type": "double",
+            "value": 0.1132950680857967
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.03305090918813409
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 1
+          },
+          {
+            "type": "double",
+            "value": 0.39776284126460687
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 4815
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 236404815
+        }
+      },
+      {
+        "seed": 1000000,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 1080040842
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.38967504556741334
+          },
+          {
+            "type": "integer-default",
+            "value": 1786074847
+          },
+          {
+            "type": "double",
+            "value": 0.0678919679801408
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.3910346247214054
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 4
+          },
+          {
+            "type": "double",
+            "value": 0.36301099199941894
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 9897
+          },
+          {
+            "type": "double",
+            "value": 0.5210799842705391
+          },
+          {
+            "type": "integer-default",
+            "value": 1575401087
+          },
+          {
+            "type": "double",
+            "value": 0.36703531042068976
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 1
+          },
+          {
+            "type": "double",
+            "value": 0.3949414405016887
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 2
+          },
+          {
+            "type": "double",
+            "value": 0.9929785695825604
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 4520
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 456554520
+        }
+      },
+      {
+        "seed": 9007199254740991,
+        "afterWarmup": {
+          "generation": 10,
+          "value": 1183005112
+        },
+        "draws": [
+          {
+            "type": "double",
+            "value": 0.8760797515865787
+          },
+          {
+            "type": "integer-default",
+            "value": 1798844848
+          },
+          {
+            "type": "double",
+            "value": 0.8766398545711487
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.4649882453796399
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 2
+          },
+          {
+            "type": "double",
+            "value": 0.18372904564427633
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 7591
+          },
+          {
+            "type": "double",
+            "value": 0.14156793856135008
+          },
+          {
+            "type": "integer-default",
+            "value": 2114531186
+          },
+          {
+            "type": "double",
+            "value": 0.7402082196158395
+          },
+          {
+            "type": "integer",
+            "bound": 2,
+            "value": 0
+          },
+          {
+            "type": "double",
+            "value": 0.8013677298097721
+          },
+          {
+            "type": "integer",
+            "bound": 6,
+            "value": 5
+          },
+          {
+            "type": "double",
+            "value": 0.8103401310790052
+          },
+          {
+            "type": "integer",
+            "bound": 10000,
+            "value": 764
+          }
+        ],
+        "finalState": {
+          "generation": 26,
+          "value": 1848900764
+        }
+      }
+    ],
+    "randomSequenceExhaustion": {
+      "seed": 0,
+      "warmupDraws": 10,
+      "sequenceLength": 50,
+      "values": [
+        0.0012055248959015705,
+        0.009644228969534966,
+        0.08679809844437898,
+        0.6075867119280559,
+        0.46828044507106786,
+        0.4048413394041552,
+        0.8096826806709555,
+        0.4290480462038182,
+        0.43238439943286794,
+        0.7295376051820524,
+        0.3772256478561208,
+        0.7544512975748867,
+        0.5267078022131267,
+        0.10683121630308741,
+        0.3204936531002138,
+        0.961480963491593,
+        0.6918477377350665,
+        0.07554321739615091,
+        0.15108643665494698,
+        0.05760507940203188,
+        0.5184457523368512,
+        0.5922287733257883,
+        0,
+        1.8626451500983188e-9,
+        4.470348360235965e-8,
+        3.874301912204503e-7,
+        0.0000015571713454821945,
+        0.000001557637006769719,
+        0.000014056451625216963,
+        0.00009841797877960744,
+        0.00009841844444089497,
+        0.0005905274304517207,
+        0.0053147845926297755,
+        0.015944357968840916,
+        0.14349925943813252,
+        0.291493372661757,
+        0.8744801221762225,
+        0.121360878050961,
+        0.6068044018963372,
+        0.6068044023619985,
+        "NaN"
+      ],
+      "firstNaNIndex": 40
     }
   }
 }

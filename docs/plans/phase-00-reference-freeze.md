@@ -16,10 +16,12 @@ Create a reproducible, read-only reference baseline and enough source/runtime fi
 - Captured initial state, object IDs 0–214, high-ID probes, base rates/upgrades, notation samples, and a Decimal arithmetic/rounding/serialization corpus.
 - Added the `break_infinity.js@2.2.0` core boundary and golden/property checks against the Decimal corpus.
 - Implemented all 40 registered formatter classes, the three display wrappers, and exponent behavior. Chromium compares every captured output in the complete formatter corpus; Node tests cover stable outputs and leave one engine-sensitive rounding value to the browser check.
+- Implemented the explicit-seed `RemixRandom` boundary with source-captured mixed-draw and sequence-exhaustion fixtures plus repeatability properties.
 
 ## Remaining work
 
-- Expand deterministic mine-object and damage/earnings probes beyond the initial object/rate samples.
+- Extract fixed/special object anchors and generator inputs; then implement lookup and generated outputs against the existing and expanded oracle corpus.
+- Expand damage/earnings probes beyond the initial object/rate samples.
 - Extract full boundary matrices for upgrades/resources, crafting RNG, saves, offline behavior, and representative story/settings states.
 - Complete the asset/font provenance audit and extract save examples with no unsupported copying.
 
