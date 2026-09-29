@@ -1,4 +1,4 @@
-/* global Random, SKIN_LAYER_AMOUNTS, DICTIONARY_ENGLISH -- pinned classic-script bindings */
+/* global Random, SKIN_LAYER_AMOUNTS, DICTIONARY_ENGLISH, POWER_MINING, Pickaxe, applyUpgrade -- pinned classic-script bindings */
 
 import { createHash } from "node:crypto";
 import { createServer } from "node:http";
@@ -749,6 +749,211 @@ async function capture(reference, dependencies, dependencySnapshots) {
           skinLayerAmounts: [...SKIN_LAYER_AMOUNTS],
           dictionaryEnglish: [...DICTIONARY_ENGLISH],
         };
+        const formulaSemantics = (() => {
+          const upgradeGroups = {
+            money: game.upgrades,
+            gems: game.gemUpgrades,
+            planetCoins: game.planetCoinUpgrades,
+            wisdom: game.powers.upgrades,
+          };
+          const upgradeKeys = {
+            money: ["activePower", "idlePower", "idleSpeed", "gemChance"],
+            gems: ["idlePower", "gemChance", "gemMultiply"],
+            planetCoins: ["activePower", "gemChance", "lastObjGems"],
+            wisdom: ["damageBoost", "damageBoostUpgrades"],
+          };
+          const previousLevels = Object.fromEntries(
+            Object.entries(upgradeKeys).map(([group, keys]) => [
+              group,
+              Object.fromEntries(
+                keys.map((key) => [key, upgradeGroups[group][key].level]),
+              ),
+            ]),
+          );
+          const previousState = {
+            pickaxe: game.pickaxe,
+            currentMineObject: game.currentMineObject,
+            mineObjectLevel: game.mineObjectLevel,
+            highestMineObjectLevel: game.highestMineObjectLevel,
+            miningPower: game.powers.data.values[POWER_MINING],
+          };
+          const scenarios = [
+            {
+              name: "initial-mud",
+              objectId: 0,
+              pickaxe: { power: "20", quality: "1" },
+              miningPower: "1",
+              upgrades: {},
+            },
+            {
+              name: "last-damageable-object",
+              objectId: 1,
+              pickaxe: { power: "20", quality: "1" },
+              miningPower: "1",
+              upgrades: { planetCoins: { lastObjGems: 3 } },
+            },
+            {
+              name: "upgraded-planet-coin-asteroid",
+              objectId: 90,
+              pickaxe: { power: "1e43", quality: "1.25" },
+              miningPower: "2.5",
+              upgrades: {
+                money: {
+                  activePower: 3,
+                  idlePower: 4,
+                  idleSpeed: 5,
+                  gemChance: 6,
+                },
+                gems: { idlePower: 2, gemChance: 3, gemMultiply: 4 },
+                planetCoins: { activePower: 2, gemChance: 1, lastObjGems: 3 },
+                wisdom: { damageBoost: 3, damageBoostUpgrades: 2 },
+              },
+            },
+            {
+              name: "zero-damage-universe",
+              objectId: 214,
+              pickaxe: { power: "1", quality: "0.5" },
+              miningPower: "1",
+              upgrades: {},
+            },
+          ];
+
+          try {
+            return {
+              sourcePaths: [
+                "Scripts/Define/functions.js",
+                "Scripts/Define/game.js",
+                "Scripts/upgrade.js",
+                "Scripts/pickaxe.js",
+                "Scripts/main.js",
+              ],
+              scenarios: scenarios.map((scenario) => {
+                for (const [group, keys] of Object.entries(upgradeKeys)) {
+                  for (const key of keys) {
+                    upgradeGroups[group][key].level =
+                      scenario.upgrades[group]?.[key] ?? 0;
+                  }
+                }
+                game.pickaxe = new Pickaxe(
+                  "Reference formula probe",
+                  scenario.pickaxe.power,
+                  scenario.pickaxe.quality,
+                );
+                game.powers.data.values[POWER_MINING] = new Decimal(
+                  scenario.miningPower,
+                );
+                game.mineObjectLevel = scenario.objectId;
+                game.highestMineObjectLevel = scenario.objectId;
+                game.currentMineObject = functions.getMineObject(
+                  scenario.objectId,
+                );
+
+                const highestDamageableObjectLevel =
+                  functions.getHighestDamageableMineObjectLevel();
+                const isHighestDamageableObject =
+                  scenario.objectId === highestDamageableObjectLevel;
+                const effects = {
+                  activePower: normalizedDecimal(
+                    applyUpgrade(game.upgrades.activePower),
+                  ),
+                  idlePower: normalizedDecimal(
+                    applyUpgrade(game.upgrades.idlePower),
+                  ),
+                  idleSpeed: normalizedDecimal(
+                    applyUpgrade(game.upgrades.idleSpeed),
+                  ),
+                  miningPower: normalizedDecimal(
+                    game.powers.data.values[POWER_MINING],
+                  ),
+                  idleDamageBoost: normalizedDecimal(
+                    applyUpgrade(game.powers.upgrades.damageBoost),
+                  ),
+                  damageUpgradeBoost: normalizedDecimal(
+                    applyUpgrade(game.powers.upgrades.damageBoostUpgrades),
+                  ),
+                  planetCoinActivePower: normalizedDecimal(
+                    applyUpgrade(game.planetCoinUpgrades.activePower),
+                  ),
+                  gemChance: normalizedDecimal(
+                    applyUpgrade(game.upgrades.gemChance),
+                  ),
+                  gemMultiplier: normalizedDecimal(
+                    applyUpgrade(game.gemUpgrades.gemMultiply),
+                  ),
+                  lastObjectGemMultiplier: normalizedDecimal(
+                    isHighestDamageableObject
+                      ? applyUpgrade(game.planetCoinUpgrades.lastObjGems)
+                      : new Decimal(1),
+                  ),
+                };
+                const result = {
+                  pickaxeDamage: normalizedDecimal(game.pickaxe.getDamage()),
+                  activeDamage: normalizedDecimal(functions.getActiveDamage()),
+                  idleDamage: normalizedDecimal(functions.getIdleDamage()),
+                  idleDps: normalizedDecimal(functions.getIdleDPS()),
+                  moneyPerClick: normalizedDecimal(functions.getMPC()),
+                  moneyPerSecond: normalizedDecimal(functions.getMPS()),
+                  gemsPerSecond: normalizedDecimal(functions.getGPS()),
+                  planetCoinsPerSecond: normalizedDecimal(functions.getPCPS()),
+                  highestDamageableObjectLevel,
+                };
+                return {
+                  input: scenario,
+                  effects,
+                  object: snapshotObject(scenario.objectId),
+                  result,
+                };
+              }),
+              currentObjectArgumentQuirk: (() => {
+                const scenario = scenarios[1];
+                for (const [group, keys] of Object.entries(upgradeKeys)) {
+                  for (const key of keys) {
+                    upgradeGroups[group][key].level =
+                      scenario.upgrades[group]?.[key] ?? 0;
+                  }
+                }
+                game.pickaxe = new Pickaxe(
+                  "Reference formula probe",
+                  scenario.pickaxe.power,
+                  scenario.pickaxe.quality,
+                );
+                game.powers.data.values[POWER_MINING] = new Decimal(
+                  scenario.miningPower,
+                );
+                game.mineObjectLevel = scenario.objectId;
+                game.highestMineObjectLevel = scenario.objectId;
+                game.currentMineObject = functions.getMineObject(
+                  scenario.objectId,
+                );
+                const target = functions.getMineObject(118);
+                return {
+                  currentObjectId: scenario.objectId,
+                  explicitTargetId: 118,
+                  activeDamage: normalizedDecimal(
+                    functions.getActiveDamage(target),
+                  ),
+                  idleDamageAtCurrentObject: normalizedDecimal(
+                    functions.getIdleDamage(),
+                  ),
+                  idleDpsWhenPassedTarget: normalizedDecimal(
+                    functions.getIdleDPS(target),
+                  ),
+                };
+              })(),
+            };
+          } finally {
+            game.pickaxe = previousState.pickaxe;
+            game.currentMineObject = previousState.currentMineObject;
+            game.mineObjectLevel = previousState.mineObjectLevel;
+            game.highestMineObjectLevel = previousState.highestMineObjectLevel;
+            game.powers.data.values[POWER_MINING] = previousState.miningPower;
+            for (const [group, levels] of Object.entries(previousLevels)) {
+              for (const [key, level] of Object.entries(levels)) {
+                upgradeGroups[group][key].level = level;
+              }
+            }
+          }
+        })();
         return {
           initialState,
           initialRates: rates,
@@ -758,6 +963,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           randomSemantics,
           randomSequenceExhaustion,
           mineObjectCatalog,
+          formulaSemantics,
           objects: uniqueObjectIds.map(snapshotObject),
           probeRuntime: normalize(window.__idleMineProbe),
           currentObjectHpAfterCapture: normalizedDecimal(current.hp),

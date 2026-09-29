@@ -36,6 +36,14 @@ Under the pinned runtime and break_infinity.js 2.2.0 snapshot, `functions.getMin
 
 The current object generator consumes four draws per post-Universe object, so this limit is not reached by one generation call. Preserve the behavior if matching the source class; do not add sequence cycling as cleanup. Beyond requires an explicit seed and excludes the source's seedless `Date.now()` path by project decision.
 
+## Highest damageable object scan
+
+**Verified legacy behavior (source and controlled runtime):** `functions.getHighestDamageableMineObjectLevel()` scans only from `max(0, game.mineObjectLevel - 1)` through nine levels ahead, returning `i - 1` when either the baseline active or idle damage cannot pass the candidate object's defense. If all ten probes are damageable, it returns `Number.MAX_SAFE_INTEGER` instead of the last scanned index. In the captured upgraded scenario at current object 90, this returned `9007199254740991`. With zero damage at THE UNIVERSE (current index 214), it returned 212 because scanning starts at 213. `getGPS()` compares the current index against this result to decide whether to apply the last-object gem multiplier, so preserve this behavior pending any accepted exception.
+
+## Active damage object argument
+
+**Verified legacy behavior (source and controlled runtime):** `functions.getActiveDamage(obj)` subtracts the supplied object's defense from its direct-damage term, then adds `functions.getIdleDPS(obj)` multiplied by Planet Coin Active Power. `getIdleDPS` declares no parameter and reads `game.currentMineObject`, so its supplied `obj` is ignored. The `currentObjectArgumentQuirk` fixture captures a current object at index 90 and explicit target at 118; Beyond reproduces this split in `calculateRemixActiveDamage`.
+
 ## Exception policy
 
 No listed concern grants permission to change observable behavior. See [behavioral exceptions](BEHAVIORAL_EXCEPTIONS.md).

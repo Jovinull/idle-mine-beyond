@@ -4,7 +4,7 @@ Last updated: 2026-09-29
 
 ## Phase
 
-**Phase 0 — Foundation / Reference Archaeology.** Source-backed Decimal, RNG, formatter, and mine-object slices are implemented and tested. No playable mining loop, full progression, crafting, story, or final UI has been implemented.
+**Phase 0 — Foundation / Reference Archaeology.** Source-backed Decimal, RNG, formatter, mine-object, and mining-rate slices are implemented and tested. No playable mining loop, full progression, crafting, story, or final UI has been implemented.
 
 ## Compatibility target
 
@@ -22,13 +22,14 @@ Idle Mine: Remix, repository default branch main, commit **0e0f4bf5a9c66e5603cda
 - Added `break_infinity.js@2.2.0` as the core's only Decimal boundary. The parity suite matches its captured arithmetic/serialization corpus and property-checks safe-integer JSON round-trips; damage/progression simulation remains unimplemented.
 - Added `RemixRandom`, an explicit-seed port of the canonical `Random` stream. Fifteen seeds spanning object-region boundaries are golden-tested, including source sequence exhaustion; property tests cover repeatable finite streams for safe nonnegative seeds.
 - Added `packages/content` with 72 base objects, 78 special anchors, 25 skin-layer counts, and the 498-word source dictionary. `getRemixMineObject` reproduces source lookup and all three generation branches; Chromium matches all 224 captured object probes.
+- Added `calculateRemixMiningRates` with source-ordered active/idle damage and Money/Gem/Planet Coin rate formulas. Four controlled Chromium scenarios cover the initial state, last-damageable gem bonus, upgraded Planet Coin object, and zero-damage THE UNIVERSE; a separate assertion preserves the current-object argument quirk. Upgrade effect evaluation, damage application, and resource updates remain separate work.
 - Added `packages/formatting` with the complete 40-formatter Remix registry, all three custom formatters, and the number/thousands/percent wrappers. The omitted community ESM exports and Remix custom classes are independently implemented from the pinned source. Vitest checks Node-stable golden values; Playwright compares every captured direct, wrapper, and exponent output in Chromium, including the `999.5` Idle Mine Notation boundary.
 - Research checkouts match the recorded SHAs and are clean; the reference setup/check script is reproducible.
 - Windows Rust/Tauri `cargo check` and native build were validated; the Windows icon is an unbranded transparent scaffold placeholder.
 
 ## Not complete
 
-- No complete system extraction, playable Beyond simulation, gameplay UI, save importer, PWA, or parity certification. Object and rate corpora remain partial; drop rolls, damage, earnings, crafting, persistence, and full progression are not implemented. No full gameplay matrix row is certified.
+- No complete system extraction, playable Beyond simulation, gameplay UI, save importer, PWA, or parity certification. Object and rate corpora remain partial; upgrade effect evaluation, damage ticks, reward rolls, resource updates, crafting, persistence, and full progression are not implemented. No full gameplay matrix row is certified.
 - No accepted behavioral exceptions.
 - No Android/iOS SDK or mobile build setup.
 - Upstream game code and artwork have not been ported. The source-derived mine content data is deliberately extracted and provenance-recorded under `packages/content`.
@@ -36,7 +37,7 @@ Idle Mine: Remix, repository default branch main, commit **0e0f4bf5a9c66e5603cda
 ## Tooling status
 
 - Node.js 24.21.0 and pnpm 12.6.0 are pinned. The Node archive was installed user-locally after the system MSI installer failed; `.node-version` and CI use 24.21.0.
-- `pnpm check` passes formatting, lint, strict TypeScript and Svelte checks, unit tests, Decimal compatibility golden/property tests, and the static web build.
+- `pnpm check` passes formatting, lint, strict TypeScript and Svelte checks, unit/parity tests for Decimal, RNG, object generation and controlled damage/rate formulas, plus the static web build.
 - `pnpm test:e2e` and `pnpm test:reference` use the installed Playwright Chromium when present and otherwise fall back to installed Chrome; `PLAYWRIGHT_CHROMIUM_EXECUTABLE` selects a nonstandard path. CI installs the pinned Playwright Chromium browser.
 - `pnpm research:check`, `pnpm docs:check`, `pnpm skills:check`, and `pnpm test:reference` pass. Pinned source checkouts and CDN response snapshots are clean/hash-verified and ignored by Git.
 - On this Windows host, `pnpm native:check` and `pnpm native:build` pass. The build emits an unbranded transparent placeholder icon and is not a release package.
@@ -44,4 +45,4 @@ Idle Mine: Remix, repository default branch main, commit **0e0f4bf5a9c66e5603cda
 
 ## Next phase
 
-Continue Phase 0 by expanding object-generator probes beyond the captured IDs, then extract damage/earnings boundaries and implement the deterministic mining state. Follow with upgrade/resource boundaries, random drop and crafting behavior, save/import, offline-time, and representative story/settings states. Add fixtures before implementing each respective domain; do not treat partial corpora as complete specifications.
+Continue Phase 0 by expanding exact defense, hit-count conversion, and object-generator probes, then extract upgrade effect/purchase boundaries and connect the tested rate functions to deterministic mining state. Follow with resource payouts and random drops, crafting, save/import, offline-time, and representative story/settings states. Add fixtures before implementing each respective domain; do not treat partial corpora as complete specifications.

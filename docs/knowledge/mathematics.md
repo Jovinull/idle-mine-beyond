@@ -4,20 +4,27 @@ The formulas below are source observations from the pinned Remix revision. They 
 
 ## Damage
 
-In Scripts/Define/functions.js:
+In `Scripts/Define/functions.js`:
 
-- Pickaxe damage is power × quality.
-- Active damage is the maximum of zero and pickaxe damage multiplied by Active Power, Mining Power, and the applicable Wisdom upgrade effects, minus object defense; then an Idle DPS fraction from the Planet Coin Active Power upgrade is added.
-- Idle damage is the maximum of zero and pickaxe damage multiplied by Idle Power, Mining Power, and Wisdom damage effects, minus object defense.
-- Idle DPS is idle damage × Idle Speed.
+- Pickaxe damage is `power × quality` (`Scripts/pickaxe.js`).
+- Active damage is `max(0, pickaxeDamage × (Active Power × Mining Power × Upgrade Damage Upgrade) − target.defense) + currentIdleDps × Planet Coin Active Power`.
+- Idle damage is `max(0, pickaxeDamage × Idle Power × Mining Power × Increasing Damage Boost × Upgrade Damage Upgrade − target.defense)`.
+- Idle DPS is current-object idle damage multiplied by Idle Speed.
 
-The specific upgrade effects are nested and must be followed in source order. Test at zero damage, exact defense boundaries, and large Decimal magnitudes.
+Preserve the source's multiplication order. `getActiveDamage(obj)` uses `obj.def` for its direct hit but calls `getIdleDPS(obj)`, whose implementation ignores the argument and calculates from `game.currentMineObject`. This is verified in the controlled `currentObjectArgumentQuirk` fixture and reproduced by the core API. Upgrade-effect calculation remains separate from the rate functions: the tested API receives evaluated effects explicitly.
 
 ## Earnings
 
-- Hits to break for money-per-click use the ceiling of total HP divided by active damage. Money per click is object value divided by that hit count.
-- Money per second uses the ceiling of total HP divided by idle damage, then object value × idle speed ÷ hits.
-- Gem and Planet Coin rates use time-to-break, drop chance, and their applicable multipliers. Their source code has distinct guards and conversion paths; extract and test them individually.
+- Money per click returns zero when active damage is not positive. Otherwise it divides object value by `ceil(totalHp / activeDamage)`.
+- Money per second returns zero when idle damage is not positive. Otherwise it computes `Decimal(1 / ceil(totalHp / idleDamage)) × idleSpeed × object.value`.
+- Gems per second has no zero-damage guard. It computes `hits = ceil((totalHp / idleDamage).toNumber())`, `seconds = hits / idleSpeed`, then `1 / seconds × Gem Multiplication × Gem Chance × last-object multiplier`.
+- Planet Coins per second returns zero when the current object has no Planet Coin drop. Otherwise it uses the same hits/time path as gems and multiplies by the object's drop amount and chance.
+
+Remix uses JavaScript Number conversion in its hit-count and time calculations. Keep the conversion boundaries, `Math.ceil`, Decimal operation order, and the distinct MPS/GPS guards. Do not replace the rate equations with damage-per-second approximations.
+
+## Implemented compatibility slice
+
+`packages/core/src/mining-rates.ts` implements the captured damage and rate functions with all upgrade/power effects injected as values. The reference probe supplies four controlled configurations: initial Mud, a last-damageable object with a gem bonus, an upgraded Planet Coin object, and THE UNIVERSE with zero damage. Exact Decimal output is asserted in `tests/parity/mining-rates.test.ts`. A separate test preserves the explicit-target/current-object argument quirk. This does not implement upgrade effect progression, hit application, random rewards, object navigation, or the mining loop. Broader precision/threshold and reachable-save coverage remains open.
 
 ## Crafting math
 
@@ -70,8 +77,8 @@ The formatting package uses the MIT-licensed `@antimatter-dimensions/notations@1
 
 ## Math evidence
 
-Initial sources: `Scripts/Define/functions.js`, `Scripts/pickaxe.js`, `Scripts/upgrade.js`, `Scripts/Define/game.js`, `Scripts/random.js`, and `Scripts/utils.js`. The exact reference commit is in the manifest. Decimal and seeded RNG fixtures are extracted; captured procedural-object outputs are tested, while wider object-ID, damage, earnings, and crafting boundaries remain pending.
+Initial sources: `Scripts/Define/functions.js`, `Scripts/pickaxe.js`, `Scripts/upgrade.js`, `Scripts/Define/game.js`, `Scripts/random.js`, and `Scripts/utils.js`. The exact reference commit is in the manifest. Decimal, seeded RNG, procedural-object, and four controlled mining-rate scenarios are captured and tested. Wider object-ID, exact defense-boundary, full upgrade, crafting, and reachable-save coverage remains pending.
 
 ## Controlled initial-state baseline
 
-The pinned runtime corpus captures a fresh, pre-animation Mud state with Money 0, Gems 5, Toy Pickaxe damage 20, Mud HP 100/value 2, active damage 20, idle damage/DPS 15, MPC 0.4, MPS `0.2857142857142857`, GPS `0.0028571428571428567`, and PCPS 0. Every money, gem, Planet Coin, and Powers upgrade records level-0/current and next cost/effect outputs. The initial notation samples and expanded 40-formatter boundary matrix are recorded alongside Decimal edge arithmetic, rounding, and serialization probes. These remain partial corpora, not a full formula or all-value notation specification. See [the corpus](../../tests/fixtures/parity/remix-reference-corpus.json).
+The pinned runtime corpus captures a fresh, pre-animation Mud state with Money 0, Gems 5, Toy Pickaxe damage 20, Mud HP 100/value 2, active damage 20, idle damage/DPS 15, MPC 0.4, MPS `0.2857142857142857`, GPS `0.0028571428571428567`, and PCPS 0. It also captures four configured rate scenarios and the upgrade effects used in each. Every money, gem, Planet Coin, and Powers upgrade records level-0/current and next cost/effect outputs. The initial notation samples and expanded 40-formatter boundary matrix are recorded alongside Decimal edge arithmetic, rounding, and serialization probes. These remain partial corpora, not a full formula or all-value notation specification. See [the corpus](../../tests/fixtures/parity/remix-reference-corpus.json).

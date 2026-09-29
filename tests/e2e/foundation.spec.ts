@@ -159,3 +159,97 @@ test("generates the captured mine objects in Chromium", async ({ page }) => {
 
   expect(observed).toEqual(corpus.data.objects);
 });
+
+test("calculates captured mining rates in Chromium", async ({ page }) => {
+  await page.goto("/__test__/mining-rates");
+  await expect(page.locator("#result")).toHaveAttribute("data-ready", "true");
+
+  const corpus = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as {
+    data: {
+      formulaSemantics: {
+        scenarios: {
+          input: { objectId: number };
+          result: Record<string, unknown>;
+        }[];
+        currentObjectArgumentQuirk: {
+          currentObjectId: number;
+          explicitTargetId: number;
+          activeDamage: unknown;
+          idleDamageAtCurrentObject: unknown;
+          idleDpsWhenPassedTarget: unknown;
+        };
+      };
+    };
+  };
+  const content = JSON.parse(
+    await readFile(
+      new URL(
+        "../../packages/content/src/remix-mine-content.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as {
+    base: unknown[];
+    special: unknown[];
+    skinLayerAmounts: number[];
+    dictionaryEnglish: string[];
+  };
+  const probe = corpus.data.formulaSemantics;
+  const observed = await page.evaluate(
+    ({ catalog, scenarios, quirk }) => {
+      const run = (
+        window as Window & {
+          __idleMineRatesProbe?: (input: {
+            catalog: typeof catalog;
+            scenarios: typeof scenarios;
+            quirk: typeof quirk;
+          }) => unknown;
+        }
+      ).__idleMineRatesProbe;
+      if (!run)
+        throw new Error("Mining-rate browser probe did not initialize.");
+      return run({ catalog, scenarios, quirk });
+    },
+    {
+      catalog: content,
+      scenarios: probe.scenarios,
+      quirk: probe.currentObjectArgumentQuirk,
+    },
+  );
+
+  const rateKeys = [
+    "pickaxeDamage",
+    "activeDamage",
+    "idleDamage",
+    "idleDps",
+    "moneyPerClick",
+    "moneyPerSecond",
+    "gemsPerSecond",
+    "planetCoinsPerSecond",
+  ];
+  const expectedScenarios = probe.scenarios.map(({ result }) =>
+    Object.fromEntries(rateKeys.map((key) => [key, result[key]])),
+  );
+  expect((observed as { scenarios: unknown }).scenarios).toEqual(
+    expectedScenarios,
+  );
+  expect(
+    (observed as { currentObjectArgumentQuirk: unknown })
+      .currentObjectArgumentQuirk,
+  ).toEqual({
+    activeDamage: probe.currentObjectArgumentQuirk.activeDamage,
+    idleDamageAtCurrentObject:
+      probe.currentObjectArgumentQuirk.idleDamageAtCurrentObject,
+    idleDpsWhenPassedTarget:
+      probe.currentObjectArgumentQuirk.idleDpsWhenPassedTarget,
+  });
+});

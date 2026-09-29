@@ -37329,6 +37329,607 @@
         "Vetoer",
         "Voidances"
       ]
+    },
+    "formulaSemantics": {
+      "sourcePaths": [
+        "Scripts/Define/functions.js",
+        "Scripts/Define/game.js",
+        "Scripts/upgrade.js",
+        "Scripts/pickaxe.js",
+        "Scripts/main.js"
+      ],
+      "scenarios": [
+        {
+          "input": {
+            "name": "initial-mud",
+            "objectId": 0,
+            "pickaxe": {
+              "power": "20",
+              "quality": "1"
+            },
+            "miningPower": "1",
+            "upgrades": {}
+          },
+          "effects": {
+            "activePower": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "idlePower": {
+              "decimal": "0.75",
+              "mantissa": 7.5,
+              "exponent": -1
+            },
+            "idleSpeed": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "miningPower": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "idleDamageBoost": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "damageUpgradeBoost": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "planetCoinActivePower": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gemChance": {
+              "decimal": "0.02",
+              "mantissa": 2,
+              "exponent": -2
+            },
+            "gemMultiplier": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "lastObjectGemMultiplier": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          },
+          "object": {
+            "id": 0,
+            "name": "Mud",
+            "hp": {
+              "decimal": "100",
+              "mantissa": 1,
+              "exponent": 2
+            },
+            "totalHp": {
+              "decimal": "100",
+              "mantissa": 1,
+              "exponent": 2
+            },
+            "defense": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "value": {
+              "decimal": "2",
+              "mantissa": 2,
+              "exponent": 0
+            },
+            "colors": ["#000000", "#663300"],
+            "skin": 0,
+            "drops": {}
+          },
+          "result": {
+            "pickaxeDamage": {
+              "decimal": "20",
+              "mantissa": 2,
+              "exponent": 1
+            },
+            "activeDamage": {
+              "decimal": "20",
+              "mantissa": 2,
+              "exponent": 1
+            },
+            "idleDamage": {
+              "decimal": "15",
+              "mantissa": 1.5,
+              "exponent": 1
+            },
+            "idleDps": {
+              "decimal": "15",
+              "mantissa": 1.5,
+              "exponent": 1
+            },
+            "moneyPerClick": {
+              "decimal": "0.4",
+              "mantissa": 4,
+              "exponent": -1
+            },
+            "moneyPerSecond": {
+              "decimal": "0.2857142857142857",
+              "mantissa": 2.8571428571428568,
+              "exponent": -1
+            },
+            "gemsPerSecond": {
+              "decimal": "0.0028571428571428567",
+              "mantissa": 2.8571428571428568,
+              "exponent": -3
+            },
+            "planetCoinsPerSecond": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "highestDamageableObjectLevel": 1
+          }
+        },
+        {
+          "input": {
+            "name": "last-damageable-object",
+            "objectId": 1,
+            "pickaxe": {
+              "power": "20",
+              "quality": "1"
+            },
+            "miningPower": "1",
+            "upgrades": {
+              "planetCoins": {
+                "lastObjGems": 3
+              }
+            }
+          },
+          "effects": {
+            "activePower": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "idlePower": {
+              "decimal": "0.75",
+              "mantissa": 7.5,
+              "exponent": -1
+            },
+            "idleSpeed": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "miningPower": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "idleDamageBoost": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "damageUpgradeBoost": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "planetCoinActivePower": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gemChance": {
+              "decimal": "0.02",
+              "mantissa": 2,
+              "exponent": -2
+            },
+            "gemMultiplier": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "lastObjectGemMultiplier": {
+              "decimal": "4",
+              "mantissa": 4,
+              "exponent": 0
+            }
+          },
+          "object": {
+            "id": 1,
+            "name": "Paper",
+            "hp": {
+              "decimal": "400",
+              "mantissa": 4,
+              "exponent": 2
+            },
+            "totalHp": {
+              "decimal": "400",
+              "mantissa": 4,
+              "exponent": 2
+            },
+            "defense": {
+              "decimal": "3",
+              "mantissa": 3,
+              "exponent": 0
+            },
+            "value": {
+              "decimal": "10",
+              "mantissa": 1,
+              "exponent": 1
+            },
+            "colors": ["#000000", "#00ccff", "#cc0033", "#ffffff"],
+            "skin": 13,
+            "drops": {}
+          },
+          "result": {
+            "pickaxeDamage": {
+              "decimal": "20",
+              "mantissa": 2,
+              "exponent": 1
+            },
+            "activeDamage": {
+              "decimal": "17",
+              "mantissa": 1.7,
+              "exponent": 1
+            },
+            "idleDamage": {
+              "decimal": "12",
+              "mantissa": 1.2,
+              "exponent": 1
+            },
+            "idleDps": {
+              "decimal": "12",
+              "mantissa": 1.2,
+              "exponent": 1
+            },
+            "moneyPerClick": {
+              "decimal": "0.41666666666666674",
+              "mantissa": 4.166666666666667,
+              "exponent": -1
+            },
+            "moneyPerSecond": {
+              "decimal": "0.29411764705882354",
+              "mantissa": 2.941176470588235,
+              "exponent": -1
+            },
+            "gemsPerSecond": {
+              "decimal": "0.002352941176470588",
+              "mantissa": 2.352941176470588,
+              "exponent": -3
+            },
+            "planetCoinsPerSecond": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "highestDamageableObjectLevel": 1
+          }
+        },
+        {
+          "input": {
+            "name": "upgraded-planet-coin-asteroid",
+            "objectId": 90,
+            "pickaxe": {
+              "power": "1e43",
+              "quality": "1.25"
+            },
+            "miningPower": "2.5",
+            "upgrades": {
+              "money": {
+                "activePower": 3,
+                "idlePower": 4,
+                "idleSpeed": 5,
+                "gemChance": 6
+              },
+              "gems": {
+                "idlePower": 2,
+                "gemChance": 3,
+                "gemMultiply": 4
+              },
+              "planetCoins": {
+                "activePower": 2,
+                "gemChance": 1,
+                "lastObjGems": 3
+              },
+              "wisdom": {
+                "damageBoost": 3,
+                "damageBoostUpgrades": 2
+              }
+            }
+          },
+          "effects": {
+            "activePower": {
+              "decimal": "1.58445415",
+              "mantissa": 1.58445415,
+              "exponent": 0
+            },
+            "idlePower": {
+              "decimal": "2.7354024774438535",
+              "mantissa": 2.7354024774438535,
+              "exponent": 0
+            },
+            "idleSpeed": {
+              "decimal": "1.2762815625000004",
+              "mantissa": 1.2762815625000004,
+              "exponent": 0
+            },
+            "miningPower": {
+              "decimal": "2.5",
+              "mantissa": 2.5,
+              "exponent": 0
+            },
+            "idleDamageBoost": {
+              "decimal": "3",
+              "mantissa": 3,
+              "exponent": 0
+            },
+            "damageUpgradeBoost": {
+              "decimal": "1.6105100000000006",
+              "mantissa": 1.6105100000000006,
+              "exponent": 0
+            },
+            "planetCoinActivePower": {
+              "decimal": "0.02",
+              "mantissa": 2,
+              "exponent": -2
+            },
+            "gemChance": {
+              "decimal": "0.069",
+              "mantissa": 6.9,
+              "exponent": -2
+            },
+            "gemMultiplier": {
+              "decimal": "5",
+              "mantissa": 5,
+              "exponent": 0
+            },
+            "lastObjectGemMultiplier": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          },
+          "object": {
+            "id": 90,
+            "name": "Tiny Asteroid",
+            "hp": {
+              "decimal": "2e+43",
+              "mantissa": 2,
+              "exponent": 43
+            },
+            "totalHp": {
+              "decimal": "2e+43",
+              "mantissa": 2,
+              "exponent": 43
+            },
+            "defense": {
+              "decimal": "6e+40",
+              "mantissa": 6,
+              "exponent": 40
+            },
+            "value": {
+              "decimal": "3e+61",
+              "mantissa": 3,
+              "exponent": 61
+            },
+            "colors": ["#151515", "#868488"],
+            "skin": 17,
+            "drops": {
+              "planetcoin": {
+                "chance": 0.001,
+                "amount": 1
+              }
+            }
+          },
+          "result": {
+            "pickaxeDamage": {
+              "decimal": "1.25e+43",
+              "mantissa": 1.25,
+              "exponent": 43
+            },
+            "activeDamage": {
+              "decimal": "9.02237987174346e+43",
+              "mantissa": 9.02237987174346,
+              "exponent": 43
+            },
+            "idleDamage": {
+              "decimal": "4.12945597870135e+44",
+              "mantissa": 4.12945597870135,
+              "exponent": 44
+            },
+            "idleDps": {
+              "decimal": "5.270348528771928e+44",
+              "mantissa": 5.270348528771928,
+              "exponent": 44
+            },
+            "moneyPerClick": {
+              "decimal": "3e+61",
+              "mantissa": 3,
+              "exponent": 61
+            },
+            "moneyPerSecond": {
+              "decimal": "3.828844687500001e+61",
+              "mantissa": 3.828844687500001,
+              "exponent": 61
+            },
+            "gemsPerSecond": {
+              "decimal": "0.44031713906250014",
+              "mantissa": 4.403171390625001,
+              "exponent": -1
+            },
+            "planetCoinsPerSecond": {
+              "decimal": "0.0012762815625000003",
+              "mantissa": 1.2762815625000004,
+              "exponent": -3
+            },
+            "highestDamageableObjectLevel": 9007199254740991
+          }
+        },
+        {
+          "input": {
+            "name": "zero-damage-universe",
+            "objectId": 214,
+            "pickaxe": {
+              "power": "1",
+              "quality": "0.5"
+            },
+            "miningPower": "1",
+            "upgrades": {}
+          },
+          "effects": {
+            "activePower": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "idlePower": {
+              "decimal": "0.75",
+              "mantissa": 7.5,
+              "exponent": -1
+            },
+            "idleSpeed": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "miningPower": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "idleDamageBoost": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "damageUpgradeBoost": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "planetCoinActivePower": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gemChance": {
+              "decimal": "0.02",
+              "mantissa": 2,
+              "exponent": -2
+            },
+            "gemMultiplier": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "lastObjectGemMultiplier": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          },
+          "object": {
+            "id": 214,
+            "name": "THE UNIVERSE",
+            "hp": {
+              "decimal": "9.9999e+151",
+              "mantissa": 9.9999,
+              "exponent": 151
+            },
+            "totalHp": {
+              "decimal": "9.9999e+151",
+              "mantissa": 9.9999,
+              "exponent": 151
+            },
+            "defense": {
+              "decimal": "9.999e+150",
+              "mantissa": 9.999,
+              "exponent": 150
+            },
+            "value": {
+              "decimal": "9.9999e+199",
+              "mantissa": 9.9999,
+              "exponent": 199
+            },
+            "colors": ["#000000", "#ff0000", "#00ff00", "#0000ff"],
+            "skin": 35,
+            "drops": {
+              "wisdom": {
+                "chance": 1,
+                "amount": 1000000000000000
+              }
+            }
+          },
+          "result": {
+            "pickaxeDamage": {
+              "decimal": "0.5",
+              "mantissa": 5,
+              "exponent": -1
+            },
+            "activeDamage": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "idleDamage": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "idleDps": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "moneyPerClick": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "moneyPerSecond": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gemsPerSecond": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoinsPerSecond": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "highestDamageableObjectLevel": 212
+          }
+        }
+      ],
+      "currentObjectArgumentQuirk": {
+        "currentObjectId": 1,
+        "explicitTargetId": 118,
+        "activeDamage": {
+          "decimal": "0",
+          "mantissa": 0,
+          "exponent": 0
+        },
+        "idleDamageAtCurrentObject": {
+          "decimal": "12",
+          "mantissa": 1.2,
+          "exponent": 1
+        },
+        "idleDpsWhenPassedTarget": {
+          "decimal": "12",
+          "mantissa": 1.2,
+          "exponent": 1
+        }
+      }
     }
   }
 }

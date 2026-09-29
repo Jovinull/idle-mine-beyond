@@ -17,7 +17,7 @@ Every behavior implementation follows:
 - **Visual regression:** screenshot comparisons at fixed viewports, themes, and state fixtures.
 - **Native checks:** Tauri shell/config and platform builds when the required SDK/toolchain is available.
 
-The web Vite config serves a dev-only `/__test__/formatting` harness. Playwright loads the shared formatter package through the actual web alias and checks browser output; the harness route is not emitted as a product page by the static build.
+The web Vite config serves dev-only compatibility harness routes for formatting, mine objects, and mining rates. Playwright loads the shared packages in Chromium and compares their outputs with the frozen reference corpus; these routes are not emitted as product pages by the static build.
 
 ## Harness folders
 
@@ -40,6 +40,8 @@ Each fixture should identify the source repository and commit, source file or pr
 Use 1366×768, 1440×900, 1920×1080, and 2560×1440. Capture light and dark themes and states such as initial, gems unlocked, Planet Coins, Wisdom, story, settings, huge numbers, long generated names, and disabled controls.
 
 ## Current reference and compatibility harnesses
+
+The Vitest parity suite and a Playwright Chromium harness compare four controlled damage and rate configurations against oracle outputs from the pinned source/runtime. They include a last-damageable-object gem multiplier, a Planet Coin drop, the zero-damage path, and the legacy explicit-target/current-object behavior. Upgrade effects are captured inputs; this does not test upgrade purchase/effect progression.
 
 The Vitest parity suite checks the pinned reference corpus, asserts the 40-formatter boundary matrix and wrapper cutoff samples, and compares the core Decimal facade against captured Remix outputs. A property test also checks legacy JSON round-trips for safe integers. `RemixRandom` is golden-tested against mixed draws for 15 source seeds and property-tested for repeatable in-range streams. A separate golden captures the reference sequence-exhaustion result. The mine-object generator compares all 224 captured object outputs in Chromium and property-checks repeatability over 100 sampled IDs. Node's `Math.sin` differs by a few ulps from Chromium for generated Planet Coin chance values at IDs 118 and 132; Node masks only those two fields while Playwright checks the complete records. `packages/formatting` implements all 40 registered classes. Its unit tests compare Node-stable direct, exponent, and wrapper outputs; the Playwright browser harness compares the full captured corpus for every formatter and wrapper in Chromium. Node's `Math.log10` path returns `999` for `999.5` in Idle Mine Notation while captured Chromium returns `1,000`; the Node comparator omits only that engine-sensitive sample, and the browser test checks it exactly. Do not add rounding to the implementation to erase these runtime differences. Native WebView parity still needs validation.
 

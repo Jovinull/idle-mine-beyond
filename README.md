@@ -4,7 +4,7 @@ Idle Mine Beyond is a compatibility-focused reimplementation of the final **Idle
 
 ## Project phase
 
-**Phase 0 — Foundation / reference archaeology.** This repository contains the engineering foundation plus tested Decimal, RNG, formatter, and mine-object compatibility slices. It has no playable mining loop or complete game systems.
+**Phase 0 — Foundation / reference archaeology.** This repository contains the engineering foundation plus tested Decimal, RNG, formatter, mine-object, and captured mining-rate compatibility slices. It has no playable mining loop or complete game systems.
 
 The canonical source target is pinned in [`docs/knowledge/sources/reference-manifest.json`](docs/knowledge/sources/reference-manifest.json). Original Idle Mine is historical lineage; `idle-mine-remux` is prior art only.
 
