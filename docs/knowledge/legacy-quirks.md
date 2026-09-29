@@ -22,9 +22,9 @@ These are confirmed in code at the pinned revision. Player-visible effects shoul
 
 The bootstrap research records community criticism about long gem grinds, dud frustration, autoclicker advantage, one-hit farming, story pacing, background-tab progress, and save loss. These reports are valuable research leads, not proof of exact mechanics. Preserve them in the post-parity backlog with source links and do not change parity behavior based on them.
 
-## Suspected edge case
+## Rate hit-count overflow
 
-Some rate functions convert hit counts to Number and divide by idle damage. Whether this produces player-visible problems in reachable states has not been verified. Treat it as a hypothesis until a focused probe establishes the behavior.
+**Verified legacy behavior (source and controlled runtime):** at Mud with pickaxe damage `1e-308` and Idle Power level 1, damage remains positive as a Decimal but `totalHp / damage` exceeds Number range. Remix's `Math.ceil` conversion turns the hit count into Infinity, so MPC, MPS, and GPS evaluate to zero. The fixture case is `number-hit-count-overflow`. This confirms the code path, not that ordinary play can reach the state; save reachability remains unverified.
 
 ## Verified extreme-ID result
 

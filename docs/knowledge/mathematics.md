@@ -24,7 +24,7 @@ Remix uses JavaScript Number conversion in its hit-count and time calculations. 
 
 ## Implemented compatibility slice
 
-`packages/core/src/mining-rates.ts` implements the captured damage and rate functions with all upgrade/power effects injected as values. The reference probe supplies four controlled configurations: initial Mud, a last-damageable object with a gem bonus, an upgraded Planet Coin object, and THE UNIVERSE with zero damage. Exact Decimal output is asserted in `tests/parity/mining-rates.test.ts`. A separate test preserves the explicit-target/current-object argument quirk. This does not implement upgrade effect progression, hit application, random rewards, object navigation, or the mining loop. Broader precision/threshold and reachable-save coverage remains open.
+`packages/core/src/mining-rates.ts` implements the captured damage and rate functions with all upgrade/power effects injected as values. Nine controlled configurations cover initial Mud, the last-damageable gem bonus, an upgraded Planet Coin object, zero damage, exact/below/above defense boundaries, and Number hit-count overflow. Exact Decimal output is asserted in Vitest and Chromium; a separate test preserves the explicit-target/current-object argument quirk. This does not implement upgrade effect progression, hit application, random rewards, object navigation, or the mining loop. Broader precision/threshold and reachable-save coverage remains open.
 
 ## Crafting math
 
@@ -77,7 +77,7 @@ The formatting package uses the MIT-licensed `@antimatter-dimensions/notations@1
 
 ## Math evidence
 
-Initial sources: `Scripts/Define/functions.js`, `Scripts/pickaxe.js`, `Scripts/upgrade.js`, `Scripts/Define/game.js`, `Scripts/random.js`, and `Scripts/utils.js`. The exact reference commit is in the manifest. Decimal, seeded RNG, procedural-object, and four controlled mining-rate scenarios are captured and tested. Wider object-ID, exact defense-boundary, full upgrade, crafting, and reachable-save coverage remains pending.
+Initial sources: `Scripts/Define/functions.js`, `Scripts/pickaxe.js`, `Scripts/upgrade.js`, `Scripts/Define/game.js`, `Scripts/random.js`, and `Scripts/utils.js`. The exact reference commit is in the manifest. Decimal, seeded RNG, procedural-object, and nine controlled mining-rate scenarios are captured and tested. Wider object-ID, full upgrade, crafting, and reachable-save coverage remains pending.
 
 ## Controlled initial-state baseline
 

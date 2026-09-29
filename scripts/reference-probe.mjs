@@ -816,6 +816,41 @@ async function capture(reference, dependencies, dependencySnapshots) {
               miningPower: "1",
               upgrades: {},
             },
+            {
+              name: "active-damage-defense-boundary",
+              objectId: 4,
+              pickaxe: { power: "90", quality: "1" },
+              miningPower: "1",
+              upgrades: {},
+            },
+            {
+              name: "idle-damage-below-defense",
+              objectId: 4,
+              pickaxe: { power: "119.8", quality: "1" },
+              miningPower: "1",
+              upgrades: {},
+            },
+            {
+              name: "idle-damage-defense-boundary",
+              objectId: 4,
+              pickaxe: { power: "120", quality: "1" },
+              miningPower: "1",
+              upgrades: {},
+            },
+            {
+              name: "idle-damage-above-defense",
+              objectId: 4,
+              pickaxe: { power: "120.2", quality: "1" },
+              miningPower: "1",
+              upgrades: {},
+            },
+            {
+              name: "number-hit-count-overflow",
+              objectId: 0,
+              pickaxe: { power: "1e-308", quality: "1" },
+              miningPower: "1",
+              upgrades: { money: { idlePower: 1 } },
+            },
           ];
 
           try {

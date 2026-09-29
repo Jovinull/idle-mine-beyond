@@ -30,7 +30,7 @@ Names and caps in bootstrap notes are leads, not a complete verified table. Extr
 
 The reference has active clicks and an automatic mining loop. The current browser animation loop is tied to requestAnimationFrame. Its update advances at most one automatic hit when the interval threshold is crossed, then resets its timer; see [legacy quirks](legacy-quirks.md). Do not replace this with catch-up simulation during parity without evidence and an accepted exception.
 
-`packages/core/src/mining-rates.ts` reproduces pickaxe damage, active/idle damage, Idle DPS, Money per Click, and Money/Gem/Planet Coin rates from injected upgrade effects. Four controlled browser-oracle scenarios and the explicit-target/current-object quirk are covered. The functions do not apply damage, roll rewards, update timers/resources, or implement the mining loop; see [mathematics](mathematics.md).
+`packages/core/src/mining-rates.ts` reproduces pickaxe damage, active/idle damage, Idle DPS, Money per Click, and Money/Gem/Planet Coin rates from injected upgrade effects. Nine controlled browser-oracle scenarios and the explicit-target/current-object quirk are covered. The functions do not apply damage, roll rewards, update timers/resources, or implement the mining loop; see [mathematics](mathematics.md).
 
 ## Crafting
 

@@ -18,12 +18,12 @@ Create a reproducible, read-only reference baseline and enough source/runtime fi
 - Implemented all 40 registered formatter classes, the three display wrappers, and exponent behavior. Chromium compares every captured output in the complete formatter corpus; Node tests cover stable outputs and leave one engine-sensitive rounding value to the browser check.
 - Implemented the explicit-seed `RemixRandom` boundary with source-captured mixed-draw and sequence-exhaustion fixtures plus repeatability properties.
 - Captured source content and implemented fixed/special lookup plus all three procedural mine-object branches. Chromium matches all 224 captured object outputs; Node tests cover stable outputs and mask two engine-sensitive `Math.sin` chance values.
-- Captured four controlled damage/earnings scenarios and implemented injected-factor rate calculations. Golden tests cover damage, Money/Gem/Planet Coin rates, the last-damageable gem bonus, zero damage, and the current-object argument quirk.
+- Captured nine controlled damage/earnings scenarios and implemented injected-factor rate calculations. Vitest and Chromium cover damage/rates, defense boundaries, hit-count overflow, the last-damageable gem bonus, and the current-object argument quirk.
 
 ## Remaining work
 
 - Expand procedural object probes beyond the current captured IDs and verify more large/special boundaries.
-- Expand damage/earnings probes across exact defense boundaries and Number-conversion edges; extract upgrade effect/purchase rules before connecting rates to the deterministic mining state.
+- Expand damage/earnings probes across reachable saves and wider numeric ranges; extract upgrade effect/purchase rules before connecting rates to the deterministic mining state.
 - Extract full boundary matrices for upgrades/resources, random drops, crafting RNG, saves, offline behavior, and representative story/settings states.
 - Complete the asset/font provenance audit and extract save examples with no unsupported copying.
 
