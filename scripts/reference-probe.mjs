@@ -3570,6 +3570,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
             ]),
           );
           const previousHighestMineObjectLevel = game.highestMineObjectLevel;
+          const previousUsedGemsLevel = game.usedGemsLevel;
           const previousPowers = [...game.powers.data.values];
           const previousGems = game.gems;
           const previousPickaxe = game.pickaxe;
@@ -3588,6 +3589,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           const setState = (scenario) => {
             resetUpgradeLevels();
             game.highestMineObjectLevel = scenario.highestMineObjectLevel;
+            game.usedGemsLevel = scenario.usedGemsLevel ?? 0;
             game.powers.data.values = scenario.powers.map(
               (value) => new Decimal(value),
             );
@@ -3732,7 +3734,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
               {
                 name: "better-craft-replaces-and-saves",
                 gems: "1",
-                craftGems: "1",
+                usedGemsLevel: 0,
                 equippedPickaxe: {
                   name: "Toy Pickaxe",
                   power: "20",
@@ -3747,7 +3749,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
               {
                 name: "equal-damage-is-a-dud",
                 gems: "1",
-                craftGems: "1",
+                usedGemsLevel: 0,
                 equippedPickaxe: {
                   name: "Already Equipped",
                   power: "31.5",
@@ -3762,7 +3764,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
               {
                 name: "insufficient-gems-consumes-no-rng",
                 gems: "0.5",
-                craftGems: "1",
+                usedGemsLevel: 0,
                 equippedPickaxe: {
                   name: "Toy Pickaxe",
                   power: "20",
@@ -3777,7 +3779,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
               {
                 name: "bulk-success-dud-then-insufficient",
                 gems: "2",
-                craftGems: "1",
+                usedGemsLevel: 0,
                 equippedPickaxe: {
                   name: "Toy Pickaxe",
                   power: "20",
@@ -3795,7 +3797,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
               {
                 name: "fractional-gem-balance-rounds-after-spend",
                 gems: "2.6",
-                craftGems: "1",
+                usedGemsLevel: 0,
                 equippedPickaxe: {
                   name: "Toy Pickaxe",
                   power: "20",
@@ -3806,6 +3808,51 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 upgradeLevels: {},
                 shiftHeld: false,
                 randomValues: [...baselineRandomValues],
+              },
+              {
+                name: "selected-gem-level-controls-craft-cost",
+                gems: "3",
+                usedGemsLevel: 1,
+                equippedPickaxe: {
+                  name: "Toy Pickaxe",
+                  power: "20",
+                  quality: "1",
+                },
+                highestMineObjectLevel: 0,
+                powers: ["1", "1", "1", "1", "1"],
+                upgradeLevels: { money: { gemWaster: 1 } },
+                shiftHeld: false,
+                randomValues: [...baselineRandomValues],
+              },
+              {
+                name: "bulk-replacements-save-each-intermediate-state",
+                gems: "6",
+                usedGemsLevel: 1,
+                equippedPickaxe: {
+                  name: "Toy Pickaxe",
+                  power: "20",
+                  quality: "1",
+                },
+                highestMineObjectLevel: 0,
+                powers: ["1", "1", "1", "1", "1"],
+                upgradeLevels: {
+                  money: { gemWaster: 1 },
+                  planetCoins: { bulkCraft: 1 },
+                },
+                shiftHeld: true,
+                randomValues: [
+                  ...baselineRandomValues,
+                  0.9,
+                  0.9,
+                  0.99,
+                  0.99,
+                  0.6,
+                  0.5,
+                  0.5,
+                  0.5,
+                  0.5,
+                  0.5,
+                ],
               },
             ];
             const attempts = attemptScenarios.map((scenario) => {
@@ -3819,9 +3866,18 @@ async function capture(reference, dependencies, dependencySnapshots) {
               game.messageLog = [];
               let saveCalls = 0;
               const eventOrder = [];
+              const saveSnapshots = [];
               functions.saveGame = () => {
                 saveCalls++;
                 eventOrder.push("save");
+                saveSnapshots.push({
+                  gems: normalizedDecimal(game.gems),
+                  pickaxe: {
+                    name: game.pickaxe.name,
+                    power: normalizedDecimal(game.pickaxe.pow),
+                    quality: normalizedDecimal(game.pickaxe.quality),
+                  },
+                });
               };
               functions.logMessage = (message, color) => {
                 eventOrder.push(`log:${message}`);
@@ -3842,12 +3898,18 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 return value;
               };
               try {
-                functions.craftPick(new Decimal(scenario.craftGems));
+                const craftGems = functions.getUsedGems();
+                functions.craftPick(craftGems);
                 return {
                   name: scenario.name,
-                  input: scenario,
+                  input: {
+                    ...scenario,
+                    usedGemsLevel: scenario.usedGemsLevel ?? 0,
+                    craftGems: normalizedDecimal(craftGems),
+                  },
                   randomCalls,
                   saveCalls,
+                  saveSnapshots,
                   eventOrder,
                   messageLog: normalize(game.messageLog),
                   result: {
@@ -3898,6 +3960,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           } finally {
             Math.random = originalRandom;
             game.highestMineObjectLevel = previousHighestMineObjectLevel;
+            game.usedGemsLevel = previousUsedGemsLevel;
             game.powers.data.values = previousPowers;
             game.gems = previousGems;
             game.pickaxe = previousPickaxe;

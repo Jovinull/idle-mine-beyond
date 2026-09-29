@@ -46,7 +46,8 @@ type CraftCase = {
 };
 
 type CraftAttemptInput = CraftInput & {
-  craftGems: string;
+  craftGems: DecimalSnapshot;
+  usedGemsLevel: number;
   equippedPickaxe: { name: string; power: string; quality: string };
   shiftHeld: boolean;
   randomValues: number[];
@@ -57,6 +58,10 @@ type CraftAttemptCase = {
   input: CraftAttemptInput;
   randomCalls: number;
   saveCalls: number;
+  saveSnapshots: {
+    gems: DecimalSnapshot;
+    pickaxe: { name: string; power: DecimalSnapshot; quality: DecimalSnapshot };
+  }[];
   eventOrder: string[];
   messageLog: { message: string; color: string }[];
   result: {
@@ -227,7 +232,7 @@ it("matches source Gem spending, replacement, duds, bulk attempts, and feedback"
         gems: scenario.input.gems,
         pickaxe: scenario.input.equippedPickaxe,
       },
-      craftGems: scenario.input.craftGems,
+      craftGems: scenario.input.craftGems.decimal,
       shiftHeld: scenario.input.shiftHeld,
       context,
       random,
@@ -265,6 +270,17 @@ it("matches source Gem spending, replacement, duds, bulk attempts, and feedback"
       result.events.filter((event) => event.type === "save"),
       scenario.name,
     ).toHaveLength(scenario.saveCalls);
+    expect(
+      result.saveSnapshots.map(({ gems, pickaxe: savedPickaxe }) => ({
+        gems: snapshot(gems),
+        pickaxe: {
+          name: savedPickaxe.name,
+          power: snapshot(new Decimal(savedPickaxe.power)),
+          quality: snapshot(new Decimal(savedPickaxe.quality)),
+        },
+      })),
+      scenario.name,
+    ).toEqual(scenario.saveSnapshots);
     expect(eventOrder, scenario.name).toEqual(scenario.eventOrder);
     expect(messageLog, scenario.name).toEqual(scenario.messageLog);
     expect(

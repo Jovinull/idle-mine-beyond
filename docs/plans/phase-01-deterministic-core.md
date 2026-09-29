@@ -1,6 +1,6 @@
 # Phase 1 — Deterministic core
 
-Status: In progress. Decimal compatibility, source-backed transition slices, fresh simulation-state initialization, and composed click/frame/upgrade-purchase actions are implemented; crafting and offline-load dispatch remain open.
+Status: In progress. Decimal compatibility, source-backed transition slices, fresh simulation-state initialization, and composed click/frame/upgrade-purchase/crafting actions are implemented; offline-load dispatch remains open.
 
 ## Outcome
 
@@ -19,11 +19,11 @@ No UI or platform implementation in the core. Inject RNG, clock/time, and requir
 
 ## Completed slice
 
-`createInitialRemixSimulationState()` maps the source-observed fresh simulation defaults onto an injected, pinned object catalog. Vitest compares its resources, upgrades, Powers, pickaxe, progress, timers, and Story status with the oracle and checks that independent initial states do not share mutable data. `performRemixSimulationAction()` composes active clicks and idle frames with mining, save effects, and Story notification refresh, plus all four families of single/bulk upgrade purchases with no immediate effects. Three frame cases and 14 purchase cases protect the source behavior, including event order and save snapshots before Story refresh.
+`createInitialRemixSimulationState()` maps the source-observed fresh simulation defaults onto an injected, pinned object catalog. Vitest compares its resources, upgrades, Powers, pickaxe, progress, timers, and Story status with the oracle and checks that independent initial states do not share mutable data. `performRemixSimulationAction()` composes active clicks and idle frames with mining, save effects, and Story notification refresh; all four families of single/bulk upgrade purchases; and stochastic pickaxe crafting with injected RNG, source-selected Gem cost, and per-replacement save snapshots. Three frame cases, 14 purchase cases, and seven crafting cases protect the source behavior, including event order and intermediate save state.
 
 ## Remaining work
 
-Extend the action boundary to source-backed pickaxe crafting and offline-load effects, extracting cross-system fixtures before each integration. Add the actual persistence adapter only after its snapshot timing and legacy save behavior are covered. Story state, settings, messages, and user-facing dispatch still need full application wiring.
+Extend the action boundary to source-backed offline-load effects, extracting cross-system fixtures before integration. Add the actual persistence adapter only after its snapshot timing and legacy save behavior are covered. Story state, settings, messages, and user-facing dispatch still need full application wiring.
 
 ## Validation
 

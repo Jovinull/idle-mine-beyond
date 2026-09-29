@@ -66,6 +66,38 @@ type UpgradePurchaseCase = {
   purchases: number;
   endingResources: Record<string, DecimalSnapshot>;
 };
+type PickaxeSnapshot = {
+  name: string;
+  power: DecimalSnapshot;
+  quality: DecimalSnapshot;
+  damage: DecimalSnapshot;
+};
+type PickaxeCraftAttemptCase = {
+  name: string;
+  input: {
+    gems: string;
+    craftGems: DecimalSnapshot;
+    usedGemsLevel: number;
+    equippedPickaxe: { name: string; power: string; quality: string };
+    highestMineObjectLevel: number;
+    powers: string[];
+    upgradeLevels: Record<string, Record<string, number>>;
+    shiftHeld: boolean;
+    randomValues: number[];
+  };
+  randomCalls: number;
+  saveCalls: number;
+  saveSnapshots: {
+    gems: DecimalSnapshot;
+    pickaxe: {
+      name: string;
+      power: DecimalSnapshot;
+      quality: DecimalSnapshot;
+    };
+  }[];
+  eventOrder: string[];
+  result: { gems: DecimalSnapshot; pickaxe: PickaxeSnapshot };
+};
 
 const corpus = JSON.parse(
   await readFile(
@@ -82,6 +114,7 @@ const corpus = JSON.parse(
       cases: SimulationFrameCase[];
     };
     upgradeSemantics: { purchaseSemantics: UpgradePurchaseCase[] };
+    pickaxeCraftingSemantics: { attempts: PickaxeCraftAttemptCase[] };
   };
 };
 
@@ -380,4 +413,118 @@ it("composes all captured Remix upgrade purchases into full simulation state", (
       `${scenario.name}: input unchanged`,
     ).toEqual(before);
   }
+});
+
+it("composes source pickaxe crafts and each intermediate save snapshot", () => {
+  const scenarios = corpus.data.pickaxeCraftingSemantics.attempts;
+  expect(scenarios).toHaveLength(7);
+
+  for (const scenario of scenarios) {
+    const state = createInitialRemixSimulationState(
+      corpus.data.mineObjectCatalog,
+    );
+    state.resources.gems = new Decimal(scenario.input.gems);
+    state.usedGemsLevel = scenario.input.usedGemsLevel;
+    state.highestMineObjectLevel = scenario.input.highestMineObjectLevel;
+    state.powers = {
+      mining: new Decimal(scenario.input.powers[0]!),
+      craftsmanship: new Decimal(scenario.input.powers[1]!),
+      expertise: new Decimal(scenario.input.powers[2]!),
+      wisdom: new Decimal(scenario.input.powers[3]!),
+      exquisity: new Decimal(scenario.input.powers[4]!),
+    };
+    for (const [group, levels] of Object.entries(
+      scenario.input.upgradeLevels,
+    )) {
+      Object.assign(
+        state.upgrades[group as keyof typeof state.upgrades],
+        levels,
+      );
+    }
+    state.pickaxe = {
+      name: scenario.input.equippedPickaxe.name,
+      power: new Decimal(scenario.input.equippedPickaxe.power),
+      quality: new Decimal(scenario.input.equippedPickaxe.quality),
+    };
+    const before = completeStateSnapshot(state);
+    let randomCalls = 0;
+
+    const result = performRemixSimulationAction({
+      state,
+      action: { type: "craftPickaxe", shiftHeld: scenario.input.shiftHeld },
+      catalog: corpus.data.mineObjectCatalog,
+      random: {
+        nextDouble() {
+          const value = scenario.input.randomValues[randomCalls];
+          if (value === undefined) {
+            throw new Error(
+              `${scenario.name} consumed an uncaptured pickaxe RNG draw.`,
+            );
+          }
+          randomCalls++;
+          return value;
+        },
+      },
+    });
+    if (result.type !== "craftPickaxe") {
+      throw new Error(`${scenario.name}: expected a pickaxe craft result.`);
+    }
+
+    const expectedAfter = structuredClone(before);
+    expectedAfter.resources["gems"] = scenario.result.gems.decimal;
+    expectedAfter.pickaxe = {
+      name: scenario.result.pickaxe.name,
+      power: scenario.result.pickaxe.power.decimal,
+      quality: scenario.result.pickaxe.quality.decimal,
+    };
+    const expectedSaves = scenario.saveSnapshots.map((snapshot) => {
+      const expected = structuredClone(before);
+      expected.resources["gems"] = snapshot.gems.decimal;
+      expected.pickaxe = {
+        name: snapshot.pickaxe.name,
+        power: snapshot.pickaxe.power.decimal,
+        quality: snapshot.pickaxe.quality.decimal,
+      };
+      return expected;
+    });
+    const expectedEventTypes = scenario.eventOrder.map((event) =>
+      event === "save"
+        ? "save"
+        : event.includes("Got a new Pickaxe!")
+          ? "pickaxe-replaced"
+          : event.includes("crafted a dud!")
+            ? "dud"
+            : "insufficient-gems",
+    );
+
+    expect(randomCalls, `${scenario.name}: RNG draw count`).toBe(
+      scenario.randomCalls,
+    );
+    expect(
+      result.events.map(({ type }) => type),
+      `${scenario.name}: ordered source events`,
+    ).toEqual(expectedEventTypes);
+    expect(
+      result.effects.map(({ state: saved }) => completeStateSnapshot(saved)),
+      `${scenario.name}: exact state captured at each save`,
+    ).toEqual(expectedSaves);
+    expect(
+      completeStateSnapshot(result.state),
+      `${scenario.name}: final state`,
+    ).toEqual(expectedAfter);
+    expect(
+      completeStateSnapshot(state),
+      `${scenario.name}: input unchanged`,
+    ).toEqual(before);
+  }
+
+  const bulkReplacement = scenarios.find(
+    ({ name }) => name === "bulk-replacements-save-each-intermediate-state",
+  );
+  expect(
+    bulkReplacement?.saveSnapshots.map(({ gems }) => gems.decimal),
+  ).toEqual(["3", "0"]);
+  expect(
+    bulkReplacement?.saveSnapshots.map(({ pickaxe }) => pickaxe.name),
+  ).toEqual(["Bad Mud Pick", "Sturdy Mud Pick"]);
 });

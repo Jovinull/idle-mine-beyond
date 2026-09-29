@@ -53025,7 +53025,7 @@
           "input": {
             "name": "better-craft-replaces-and-saves",
             "gems": "1",
-            "craftGems": "1",
+            "usedGemsLevel": 0,
             "equippedPickaxe": {
               "name": "Toy Pickaxe",
               "power": "20",
@@ -53035,10 +53035,39 @@
             "powers": ["1", "1", "1", "1", "1"],
             "upgradeLevels": {},
             "shiftHeld": false,
-            "randomValues": [0.8, 0.9, 0.5, 0.2, 0.75, 0.2, 0.2, 0.5, 0.5, 0.75]
+            "randomValues": [
+              0.8, 0.9, 0.5, 0.2, 0.75, 0.2, 0.2, 0.5, 0.5, 0.75
+            ],
+            "craftGems": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
           },
           "randomCalls": 10,
           "saveCalls": 1,
+          "saveSnapshots": [
+            {
+              "gems": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "pickaxe": {
+                "name": "Bad Mud Pick",
+                "power": {
+                  "decimal": "31.5",
+                  "mantissa": 3.15,
+                  "exponent": 1
+                },
+                "quality": {
+                  "decimal": "0.9900000000000001",
+                  "mantissa": 9.9,
+                  "exponent": -1
+                }
+              }
+            }
+          ],
           "eventOrder": ["log:Got a new Pickaxe! \"Bad Mud Pick\"", "save"],
           "messageLog": [
             {
@@ -53077,7 +53106,7 @@
           "input": {
             "name": "equal-damage-is-a-dud",
             "gems": "1",
-            "craftGems": "1",
+            "usedGemsLevel": 0,
             "equippedPickaxe": {
               "name": "Already Equipped",
               "power": "31.5",
@@ -53087,10 +53116,18 @@
             "powers": ["1", "1", "1", "1", "1"],
             "upgradeLevels": {},
             "shiftHeld": false,
-            "randomValues": [0.8, 0.9, 0.5, 0.2, 0.75, 0.2, 0.2, 0.5, 0.5, 0.75]
+            "randomValues": [
+              0.8, 0.9, 0.5, 0.2, 0.75, 0.2, 0.2, 0.5, 0.5, 0.75
+            ],
+            "craftGems": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
           },
           "randomCalls": 10,
           "saveCalls": 0,
+          "saveSnapshots": [],
           "eventOrder": [
             "log:Sorry, I crafted a dud! (P: 32, Q: 99%, Dmg: 31)"
           ],
@@ -53131,7 +53168,7 @@
           "input": {
             "name": "insufficient-gems-consumes-no-rng",
             "gems": "0.5",
-            "craftGems": "1",
+            "usedGemsLevel": 0,
             "equippedPickaxe": {
               "name": "Toy Pickaxe",
               "power": "20",
@@ -53141,10 +53178,16 @@
             "powers": ["1", "1", "1", "1", "1"],
             "upgradeLevels": {},
             "shiftHeld": false,
-            "randomValues": []
+            "randomValues": [],
+            "craftGems": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
           },
           "randomCalls": 0,
           "saveCalls": 0,
+          "saveSnapshots": [],
           "eventOrder": ["log:Not enough Gems!"],
           "messageLog": [
             {
@@ -53183,7 +53226,7 @@
           "input": {
             "name": "bulk-success-dud-then-insufficient",
             "gems": "2",
-            "craftGems": "1",
+            "usedGemsLevel": 0,
             "equippedPickaxe": {
               "name": "Toy Pickaxe",
               "power": "20",
@@ -53200,10 +53243,37 @@
             "randomValues": [
               0.8, 0.9, 0.5, 0.2, 0.75, 0.2, 0.2, 0.5, 0.5, 0.75, 0.8, 0.9, 0.5,
               0.2, 0.75, 0.2, 0.2, 0.5, 0.5, 0.75
-            ]
+            ],
+            "craftGems": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
           },
           "randomCalls": 20,
           "saveCalls": 1,
+          "saveSnapshots": [
+            {
+              "gems": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "pickaxe": {
+                "name": "Bad Mud Pick",
+                "power": {
+                  "decimal": "31.5",
+                  "mantissa": 3.15,
+                  "exponent": 1
+                },
+                "quality": {
+                  "decimal": "0.9900000000000001",
+                  "mantissa": 9.9,
+                  "exponent": -1
+                }
+              }
+            }
+          ],
           "eventOrder": [
             "log:Got a new Pickaxe! \"Bad Mud Pick\"",
             "save",
@@ -53255,7 +53325,7 @@
           "input": {
             "name": "fractional-gem-balance-rounds-after-spend",
             "gems": "2.6",
-            "craftGems": "1",
+            "usedGemsLevel": 0,
             "equippedPickaxe": {
               "name": "Toy Pickaxe",
               "power": "20",
@@ -53265,10 +53335,39 @@
             "powers": ["1", "1", "1", "1", "1"],
             "upgradeLevels": {},
             "shiftHeld": false,
-            "randomValues": [0.8, 0.9, 0.5, 0.2, 0.75, 0.2, 0.2, 0.5, 0.5, 0.75]
+            "randomValues": [
+              0.8, 0.9, 0.5, 0.2, 0.75, 0.2, 0.2, 0.5, 0.5, 0.75
+            ],
+            "craftGems": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
           },
           "randomCalls": 10,
           "saveCalls": 1,
+          "saveSnapshots": [
+            {
+              "gems": {
+                "decimal": "2",
+                "mantissa": 2,
+                "exponent": 0
+              },
+              "pickaxe": {
+                "name": "Bad Mud Pick",
+                "power": {
+                  "decimal": "31.5",
+                  "mantissa": 3.15,
+                  "exponent": 1
+                },
+                "quality": {
+                  "decimal": "0.9900000000000001",
+                  "mantissa": 9.9,
+                  "exponent": -1
+                }
+              }
+            }
+          ],
           "eventOrder": ["log:Got a new Pickaxe! \"Bad Mud Pick\"", "save"],
           "messageLog": [
             {
@@ -53297,6 +53396,209 @@
               "damage": {
                 "decimal": "31.185000000000002",
                 "mantissa": 3.1185,
+                "exponent": 1
+              }
+            }
+          }
+        },
+        {
+          "name": "selected-gem-level-controls-craft-cost",
+          "input": {
+            "name": "selected-gem-level-controls-craft-cost",
+            "gems": "3",
+            "usedGemsLevel": 1,
+            "equippedPickaxe": {
+              "name": "Toy Pickaxe",
+              "power": "20",
+              "quality": "1"
+            },
+            "highestMineObjectLevel": 0,
+            "powers": ["1", "1", "1", "1", "1"],
+            "upgradeLevels": {
+              "money": {
+                "gemWaster": 1
+              }
+            },
+            "shiftHeld": false,
+            "randomValues": [
+              0.8, 0.9, 0.5, 0.2, 0.75, 0.2, 0.2, 0.5, 0.5, 0.75
+            ],
+            "craftGems": {
+              "decimal": "3",
+              "mantissa": 3,
+              "exponent": 0
+            }
+          },
+          "randomCalls": 10,
+          "saveCalls": 1,
+          "saveSnapshots": [
+            {
+              "gems": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "pickaxe": {
+                "name": "Bad Mud Pick",
+                "power": {
+                  "decimal": "44.099999999999994",
+                  "mantissa": 4.409999999999999,
+                  "exponent": 1
+                },
+                "quality": {
+                  "decimal": "1.0619999999999998",
+                  "mantissa": 1.0619999999999998,
+                  "exponent": 0
+                }
+              }
+            }
+          ],
+          "eventOrder": ["log:Got a new Pickaxe! \"Bad Mud Pick\"", "save"],
+          "messageLog": [
+            {
+              "message": "Got a new Pickaxe! \"Bad Mud Pick\"",
+              "color": "#00b400"
+            }
+          ],
+          "result": {
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "pickaxe": {
+              "name": "Bad Mud Pick",
+              "power": {
+                "decimal": "44.099999999999994",
+                "mantissa": 4.409999999999999,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "1.0619999999999998",
+                "mantissa": 1.0619999999999998,
+                "exponent": 0
+              },
+              "damage": {
+                "decimal": "46.83419999999998",
+                "mantissa": 4.683419999999998,
+                "exponent": 1
+              }
+            }
+          }
+        },
+        {
+          "name": "bulk-replacements-save-each-intermediate-state",
+          "input": {
+            "name": "bulk-replacements-save-each-intermediate-state",
+            "gems": "6",
+            "usedGemsLevel": 1,
+            "equippedPickaxe": {
+              "name": "Toy Pickaxe",
+              "power": "20",
+              "quality": "1"
+            },
+            "highestMineObjectLevel": 0,
+            "powers": ["1", "1", "1", "1", "1"],
+            "upgradeLevels": {
+              "money": {
+                "gemWaster": 1
+              },
+              "planetCoins": {
+                "bulkCraft": 1
+              }
+            },
+            "shiftHeld": true,
+            "randomValues": [
+              0.8, 0.9, 0.5, 0.2, 0.75, 0.2, 0.2, 0.5, 0.5, 0.75, 0.9, 0.9,
+              0.99, 0.99, 0.6, 0.5, 0.5, 0.5, 0.5, 0.5
+            ],
+            "craftGems": {
+              "decimal": "3",
+              "mantissa": 3,
+              "exponent": 0
+            }
+          },
+          "randomCalls": 20,
+          "saveCalls": 2,
+          "saveSnapshots": [
+            {
+              "gems": {
+                "decimal": "3",
+                "mantissa": 3,
+                "exponent": 0
+              },
+              "pickaxe": {
+                "name": "Bad Mud Pick",
+                "power": {
+                  "decimal": "44.099999999999994",
+                  "mantissa": 4.409999999999999,
+                  "exponent": 1
+                },
+                "quality": {
+                  "decimal": "1.0619999999999998",
+                  "mantissa": 1.0619999999999998,
+                  "exponent": 0
+                }
+              }
+            },
+            {
+              "gems": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "pickaxe": {
+                "name": "Sturdy Mud Pick",
+                "power": {
+                  "decimal": "59.877999999999986",
+                  "mantissa": 5.987799999999998,
+                  "exponent": 1
+                },
+                "quality": {
+                  "decimal": "1.2888",
+                  "mantissa": 1.2888,
+                  "exponent": 0
+                }
+              }
+            }
+          ],
+          "eventOrder": [
+            "log:Got a new Pickaxe! \"Bad Mud Pick\"",
+            "save",
+            "log:Got a new Pickaxe! \"Sturdy Mud Pick\"",
+            "save"
+          ],
+          "messageLog": [
+            {
+              "message": "Got a new Pickaxe! \"Sturdy Mud Pick\"",
+              "color": "#00b400"
+            },
+            {
+              "message": "Got a new Pickaxe! \"Bad Mud Pick\"",
+              "color": "#00b400"
+            }
+          ],
+          "result": {
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "pickaxe": {
+              "name": "Sturdy Mud Pick",
+              "power": {
+                "decimal": "59.877999999999986",
+                "mantissa": 5.987799999999998,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "1.2888",
+                "mantissa": 1.2888,
+                "exponent": 0
+              },
+              "damage": {
+                "decimal": "77.17076639999998",
+                "mantissa": 7.7170766399999975,
                 "exponent": 1
               }
             }

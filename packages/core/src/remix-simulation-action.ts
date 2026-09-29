@@ -1,4 +1,8 @@
-import type { RemixMineObjectCatalog } from "./mine-objects.js";
+import {
+  generateRemixMineObject,
+  type RemixMineObjectCatalog,
+} from "./mine-objects.js";
+import { Decimal } from "./decimal.js";
 import {
   performRemixMiningAction,
   type RemixMiningActionResult,
@@ -9,10 +13,19 @@ import {
   type RemixStoryMilestone,
 } from "./remix-story.js";
 import {
+  attemptRemixPickaxeCraft,
+  type RemixPickaxeCraftEvent,
+} from "./remix-pickaxe-crafting.js";
+import {
   executeRemixUpgradePurchase,
   type RemixUpgradePurchaseOperation,
 } from "./remix-upgrade-purchases.js";
-import type { RemixUpgradeGroup, RemixUpgradeKey } from "./remix-upgrades.js";
+import {
+  calculateRemixUpgradeEffect,
+  type RemixUpgradeContext,
+  type RemixUpgradeGroup,
+  type RemixUpgradeKey,
+} from "./remix-upgrades.js";
 import type { RemixSimulationState } from "./remix-simulation-state.js";
 
 export type RemixMiningSimulationAction =
@@ -27,8 +40,15 @@ export type RemixUpgradePurchaseSimulationAction = {
   };
 }[RemixUpgradeGroup];
 
+export type RemixPickaxeCraftSimulationAction = {
+  type: "craftPickaxe";
+  shiftHeld: boolean;
+};
+
 export type RemixSimulationAction =
-  RemixMiningSimulationAction | RemixUpgradePurchaseSimulationAction;
+  | RemixMiningSimulationAction
+  | RemixUpgradePurchaseSimulationAction
+  | RemixPickaxeCraftSimulationAction;
 
 export type RemixSimulationActionInput =
   | {
@@ -41,6 +61,12 @@ export type RemixSimulationActionInput =
   | {
       state: RemixSimulationState;
       action: RemixUpgradePurchaseSimulationAction;
+    }
+  | {
+      state: RemixSimulationState;
+      action: RemixPickaxeCraftSimulationAction;
+      catalog: RemixMineObjectCatalog;
+      random: RemixMiningRandom;
     };
 
 export type RemixSimulationEffect = {
@@ -57,6 +83,12 @@ export type RemixSimulationActionResult =
       purchases: number;
       operationResult: boolean | null;
       effects: [];
+    }
+  | {
+      type: "craftPickaxe";
+      state: RemixSimulationState;
+      events: RemixPickaxeCraftEvent[];
+      effects: RemixSimulationEffect[];
     };
 
 function performUpgradePurchase(
@@ -105,6 +137,73 @@ function performUpgradePurchase(
   };
 }
 
+function performPickaxeCraft(
+  state: RemixSimulationState,
+  action: RemixPickaxeCraftSimulationAction,
+  catalog: RemixMineObjectCatalog,
+  random: RemixMiningRandom,
+): RemixSimulationActionResult {
+  const context: Omit<RemixUpgradeContext, "random"> = {
+    levels: state.upgrades,
+    powers: {
+      craftsmanship: state.powers.craftsmanship,
+      expertise: state.powers.expertise,
+      exquisity: state.powers.exquisity,
+    },
+    highestMineObjectLevel: state.highestMineObjectLevel,
+  };
+  const craft = attemptRemixPickaxeCraft({
+    state: {
+      gems: state.resources.gems,
+      pickaxe: state.pickaxe,
+    },
+    craftGems: calculateRemixUpgradeEffect(
+      "money",
+      "gemWaster",
+      state.usedGemsLevel,
+      context,
+    ),
+    shiftHeld: action.shiftHeld,
+    context,
+    random,
+    mineObjectName(level) {
+      const baseObject = catalog.base[level];
+      return baseObject
+        ? baseObject.name
+        : generateRemixMineObject(level, catalog).name;
+    },
+  });
+  const makePickaxe = (pickaxe: {
+    name: string;
+    power: Decimal | number | string;
+    quality: Decimal | number | string;
+  }): RemixSimulationState["pickaxe"] => ({
+    name: pickaxe.name,
+    power: new Decimal(pickaxe.power),
+    quality: new Decimal(pickaxe.quality),
+  });
+  const nextState: RemixSimulationState = {
+    ...state,
+    resources: { ...state.resources, gems: craft.state.gems },
+    pickaxe: makePickaxe(craft.state.pickaxe),
+  };
+  const effects = craft.saveSnapshots.map((snapshot) => ({
+    type: "save" as const,
+    state: {
+      ...state,
+      resources: { ...state.resources, gems: snapshot.gems },
+      pickaxe: makePickaxe(snapshot.pickaxe),
+    },
+  }));
+
+  return {
+    type: "craftPickaxe",
+    state: nextState,
+    events: craft.events,
+    effects,
+  };
+}
+
 export type RemixMiningSimulationActionResult = {
   type: "mining";
   state: RemixSimulationState;
@@ -118,46 +217,55 @@ export type RemixMiningSimulationActionResult = {
 export function performRemixSimulationAction(
   input: RemixSimulationActionInput,
 ): RemixSimulationActionResult {
-  if (!("catalog" in input)) {
-    return performUpgradePurchase(input.state, input.action);
+  if ("storyMilestones" in input) {
+    const mining = performRemixMiningAction({
+      state: input.state,
+      action: input.action.type === "activeClick" ? "activeClick" : "idleTick",
+      deltaSeconds:
+        input.action.type === "idleFrame" ? input.action.deltaSeconds : 0,
+      catalog: input.catalog,
+      random: input.random,
+    });
+    let state: RemixSimulationState = {
+      ...input.state,
+      ...mining.state,
+      pickaxe: input.state.pickaxe,
+      powers: { ...input.state.powers, ...mining.state.powers },
+      upgrades: input.state.upgrades,
+      story: input.state.story,
+    };
+    const effects: RemixSimulationEffect[] = [];
+
+    if (mining.frameEvents.includes("save")) {
+      effects.push({ type: "save", state });
+    }
+
+    if (mining.frameEvents.includes("refreshStoryNotifications")) {
+      const story = refreshRemixStoryNotifications(
+        state.story,
+        input.storyMilestones,
+        {
+          highestMineObjectLevel: state.highestMineObjectLevel,
+          highestMoney: state.resources.highestMoney,
+          maxPlanetCoins: state.resources.maxPlanetCoins,
+          moneyUpgradeLevels: state.upgrades.money,
+          wisdomUpgradeLevels: state.upgrades.wisdom,
+        },
+      );
+      state = { ...state, story: { ...state.story, ...story } };
+    }
+
+    return { type: "mining", ...mining, state, effects };
   }
 
-  const mining = performRemixMiningAction({
-    state: input.state,
-    action: input.action.type === "activeClick" ? "activeClick" : "idleTick",
-    deltaSeconds:
-      input.action.type === "idleFrame" ? input.action.deltaSeconds : 0,
-    catalog: input.catalog,
-    random: input.random,
-  });
-  let state: RemixSimulationState = {
-    ...input.state,
-    ...mining.state,
-    pickaxe: input.state.pickaxe,
-    powers: { ...input.state.powers, ...mining.state.powers },
-    upgrades: input.state.upgrades,
-    story: input.state.story,
-  };
-  const effects: RemixSimulationEffect[] = [];
-
-  if (mining.frameEvents.includes("save")) {
-    effects.push({ type: "save", state });
-  }
-
-  if (mining.frameEvents.includes("refreshStoryNotifications")) {
-    const story = refreshRemixStoryNotifications(
-      state.story,
-      input.storyMilestones,
-      {
-        highestMineObjectLevel: state.highestMineObjectLevel,
-        highestMoney: state.resources.highestMoney,
-        maxPlanetCoins: state.resources.maxPlanetCoins,
-        moneyUpgradeLevels: state.upgrades.money,
-        wisdomUpgradeLevels: state.upgrades.wisdom,
-      },
+  if ("catalog" in input) {
+    return performPickaxeCraft(
+      input.state,
+      input.action,
+      input.catalog,
+      input.random,
     );
-    state = { ...state, story: { ...state.story, ...story } };
   }
 
-  return { type: "mining", ...mining, state, effects };
+  return performUpgradePurchase(input.state, input.action);
 }

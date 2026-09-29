@@ -59,6 +59,11 @@ export interface RemixPickaxeCraftAttemptResult {
   };
   /** Events retain the source order; a replacement logs before it requests a save. */
   readonly events: RemixPickaxeCraftEvent[];
+  /** Full craft-local state captured immediately before each source save call. */
+  readonly saveSnapshots: {
+    readonly gems: Decimal;
+    readonly pickaxe: RemixEquippedPickaxe;
+  }[];
 }
 
 const QUALITY_NAMES = [
@@ -234,6 +239,7 @@ export function attemptRemixPickaxeCraft(
       ).toNumber()
     : 1;
   const events: RemixPickaxeCraftEvent[] = [];
+  const saveSnapshots: RemixPickaxeCraftAttemptResult["saveSnapshots"] = [];
   let gems = new Decimal(input.state.gems);
   let pickaxe = input.state.pickaxe;
 
@@ -258,10 +264,18 @@ export function attemptRemixPickaxeCraft(
       pickaxe = candidate;
       events.push({ type: "pickaxe-replaced", pickaxe: candidate });
       events.push({ type: "save" });
+      saveSnapshots.push({
+        gems: new Decimal(gems),
+        pickaxe: {
+          name: pickaxe.name,
+          power: new Decimal(pickaxe.power),
+          quality: new Decimal(pickaxe.quality),
+        },
+      });
     } else {
       events.push({ type: "dud", pickaxe: candidate });
     }
   }
 
-  return { state: { gems, pickaxe }, events };
+  return { state: { gems, pickaxe }, events, saveSnapshots };
 }

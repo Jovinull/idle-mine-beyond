@@ -140,6 +140,7 @@ export type {
   RemixMiningSimulationAction,
   RemixMiningSimulationActionResult,
   RemixSimulationEffect,
+  RemixPickaxeCraftSimulationAction,
   RemixUpgradePurchaseSimulationAction,
 } from "./remix-simulation-action.js";
 export { RemixRandom } from "./remix-random.js";
