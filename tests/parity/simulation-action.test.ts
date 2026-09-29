@@ -6,6 +6,10 @@ import {
   performRemixSimulationAction,
   type RemixMineObjectCatalog,
   type RemixStoryMilestone,
+  type RemixUpgradeGroup,
+  type RemixUpgradeKey,
+  type RemixUpgradePurchaseOperation,
+  type RemixUpgradePurchaseSimulationAction,
 } from "../../packages/core/src/index.js";
 
 type DecimalSnapshot = { decimal: string };
@@ -50,6 +54,18 @@ type SimulationFrameCase = {
     };
   };
 };
+type UpgradePurchaseCase = {
+  name: string;
+  group: RemixUpgradeGroup;
+  key: string;
+  startingLevel: number;
+  startingResources: Record<string, DecimalSnapshot>;
+  operation: RemixUpgradePurchaseOperation;
+  operationResult: boolean | null;
+  endingLevel: number;
+  purchases: number;
+  endingResources: Record<string, DecimalSnapshot>;
+};
 
 const corpus = JSON.parse(
   await readFile(
@@ -65,6 +81,7 @@ const corpus = JSON.parse(
       randomSource: string;
       cases: SimulationFrameCase[];
     };
+    upgradeSemantics: { purchaseSemantics: UpgradePurchaseCase[] };
   };
 };
 
@@ -119,6 +136,33 @@ function expectedSnapshot(
   };
 }
 
+function completeStateSnapshot(
+  state: ReturnType<typeof createInitialRemixSimulationState>,
+) {
+  return {
+    ...stateSnapshot(state),
+    powers: Object.fromEntries(
+      Object.entries(state.powers).map(([key, value]) => [
+        key,
+        value.toString(),
+      ]),
+    ),
+    pickaxe: {
+      name: state.pickaxe.name,
+      power: state.pickaxe.power.toString(),
+      quality: state.pickaxe.quality.toString(),
+    },
+    upgrades: Object.fromEntries(
+      Object.entries(state.upgrades).map(([group, levels]) => [
+        group,
+        { ...levels },
+      ]),
+    ),
+    powersUnlocked: state.powersUnlocked,
+    usedGemsLevel: state.usedGemsLevel,
+  };
+}
+
 it("composes Remix clicks, idle frames, saves, and Story notifications", () => {
   const semantics = corpus.data.simulationFrameSemantics;
   expect(corpus.metadata.sourceCommit).toBe(
@@ -169,6 +213,9 @@ it("composes Remix clicks, idle frames, saves, and Story notifications", () => {
         },
       },
     });
+    if (result.type !== "mining") {
+      throw new Error(`${scenario.name}: expected a mining action result.`);
+    }
 
     expect(
       stateSnapshot(state),
@@ -236,4 +283,101 @@ it("composes Remix clicks, idle frames, saves, and Story notifications", () => {
     highestUnlocked: 1,
     notifications: 2,
   });
+});
+
+it("composes all captured Remix upgrade purchases into full simulation state", () => {
+  const scenarios = corpus.data.upgradeSemantics.purchaseSemantics;
+  expect(scenarios).toHaveLength(14);
+
+  for (const scenario of scenarios) {
+    const state = createInitialRemixSimulationState(
+      corpus.data.mineObjectCatalog,
+    );
+    const key = scenario.key as RemixUpgradeKey<typeof scenario.group>;
+    (state.upgrades[scenario.group] as Record<string, number>)[key] =
+      scenario.startingLevel;
+    state.resources = {
+      ...state.resources,
+      money: new Decimal(scenario.startingResources["money"]!.decimal),
+      gems: new Decimal(scenario.startingResources["gems"]!.decimal),
+      planetCoins: new Decimal(
+        scenario.startingResources["planetCoins"]!.decimal,
+      ),
+      wisdom: new Decimal(scenario.startingResources["wisdom"]!.decimal),
+    };
+    const before = completeStateSnapshot(state);
+    const expectedUpgrades = structuredClone(before.upgrades) as Record<
+      string,
+      Record<string, number>
+    >;
+    expectedUpgrades[scenario.group]![key] = scenario.endingLevel;
+    const expectedResources = structuredClone(before.resources) as Record<
+      string,
+      string
+    >;
+    for (const [resource, value] of Object.entries(scenario.endingResources)) {
+      expectedResources[resource] = value.decimal;
+    }
+
+    const result = performRemixSimulationAction({
+      state,
+      action: {
+        type: "upgradePurchase",
+        group: scenario.group,
+        key,
+        operation: scenario.operation,
+      } as RemixUpgradePurchaseSimulationAction,
+    });
+    if (result.type !== "upgradePurchase") {
+      throw new Error(`${scenario.name}: expected an upgrade purchase result.`);
+    }
+    const after = completeStateSnapshot(result.state);
+
+    expect(
+      {
+        purchases: result.purchases,
+        operationResult: result.operationResult,
+        endingLevel: (
+          result.state.upgrades[scenario.group] as Record<string, number>
+        )[key],
+        resources: after.resources,
+        effects: result.effects,
+        unchangedState: {
+          mineObjectLevel: after.mineObjectLevel,
+          currentObjectHp: after.currentObjectHp,
+          highestMineObjectLevel: after.highestMineObjectLevel,
+          powers: after.powers,
+          pickaxe: after.pickaxe,
+          upgrades: after.upgrades,
+          powersUnlocked: after.powersUnlocked,
+          usedGemsLevel: after.usedGemsLevel,
+          timer: after.timer,
+          story: after.story,
+        },
+      },
+      scenario.name,
+    ).toEqual({
+      purchases: scenario.purchases,
+      operationResult: scenario.operationResult,
+      endingLevel: scenario.endingLevel,
+      resources: expectedResources,
+      effects: [],
+      unchangedState: {
+        mineObjectLevel: before.mineObjectLevel,
+        currentObjectHp: before.currentObjectHp,
+        highestMineObjectLevel: before.highestMineObjectLevel,
+        powers: before.powers,
+        pickaxe: before.pickaxe,
+        upgrades: expectedUpgrades,
+        powersUnlocked: before.powersUnlocked,
+        usedGemsLevel: before.usedGemsLevel,
+        timer: before.timer,
+        story: before.story,
+      },
+    });
+    expect(
+      completeStateSnapshot(state),
+      `${scenario.name}: input unchanged`,
+    ).toEqual(before);
+  }
 });

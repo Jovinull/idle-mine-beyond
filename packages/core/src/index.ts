@@ -135,7 +135,11 @@ export type { RemixSimulationState } from "./remix-simulation-state.js";
 export { performRemixSimulationAction } from "./remix-simulation-action.js";
 export type {
   RemixSimulationAction,
+  RemixSimulationActionInput,
   RemixSimulationActionResult,
+  RemixMiningSimulationAction,
+  RemixMiningSimulationActionResult,
   RemixSimulationEffect,
+  RemixUpgradePurchaseSimulationAction,
 } from "./remix-simulation-action.js";
 export { RemixRandom } from "./remix-random.js";

@@ -68,7 +68,7 @@ Remix defines 29 upgrades across four resource families. A missing explicit cap 
 - Wisdom Increasing Damage Boost reads `game.highestMineObjectLevel`, not the current object's ID.
 - Price and effect functions can be called beyond a cap; purchase logic enforces the cap. Do not mistake a probe at `cap + 1` for a reachable purchase.
 
-**Project implementation status:** `packages/core/src/remix-upgrades.ts` evaluates all 29 pinned price/effect definitions and caps. Its 249 level snapshots, nine cross-upgrade effect outputs, and five controlled Blacksmith Expertise outcomes are covered in Vitest and the Chromium parity harness. The existing mining-factor calculator now delegates to this evaluator. `packages/core/src/remix-upgrade-purchases.ts` applies immutable single and bulk purchase transitions for the four resource families. Vitest compares all 14 captured source cases; game UI integration and browser interaction tests remain open.
+**Project implementation status:** `packages/core/src/remix-upgrades.ts` evaluates all 29 pinned price/effect definitions and caps. Its 249 level snapshots, nine cross-upgrade effect outputs, and five controlled Blacksmith Expertise outcomes are covered in Vitest and the Chromium parity harness. The mining-factor calculator delegates to this evaluator. `packages/core/src/remix-upgrade-purchases.ts` applies immutable single and bulk purchase transitions for all four resource families, and `performRemixSimulationAction()` composes them into the full state. Vitest compares all 14 captured source cases at both the transition and composition boundaries; game UI integration and browser interaction tests remain open.
 
 ## Purchase behavior
 

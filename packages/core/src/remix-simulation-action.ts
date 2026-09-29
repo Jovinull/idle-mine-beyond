@@ -8,10 +8,40 @@ import {
   refreshRemixStoryNotifications,
   type RemixStoryMilestone,
 } from "./remix-story.js";
+import {
+  executeRemixUpgradePurchase,
+  type RemixUpgradePurchaseOperation,
+} from "./remix-upgrade-purchases.js";
+import type { RemixUpgradeGroup, RemixUpgradeKey } from "./remix-upgrades.js";
 import type { RemixSimulationState } from "./remix-simulation-state.js";
 
-export type RemixSimulationAction =
+export type RemixMiningSimulationAction =
   { type: "activeClick" } | { type: "idleFrame"; deltaSeconds: number };
+
+export type RemixUpgradePurchaseSimulationAction = {
+  [Group in RemixUpgradeGroup]: {
+    type: "upgradePurchase";
+    group: Group;
+    key: RemixUpgradeKey<Group>;
+    operation: RemixUpgradePurchaseOperation;
+  };
+}[RemixUpgradeGroup];
+
+export type RemixSimulationAction =
+  RemixMiningSimulationAction | RemixUpgradePurchaseSimulationAction;
+
+export type RemixSimulationActionInput =
+  | {
+      state: RemixSimulationState;
+      action: RemixMiningSimulationAction;
+      catalog: RemixMineObjectCatalog;
+      storyMilestones: readonly RemixStoryMilestone[];
+      random: RemixMiningRandom;
+    }
+  | {
+      state: RemixSimulationState;
+      action: RemixUpgradePurchaseSimulationAction;
+    };
 
 export type RemixSimulationEffect = {
   type: "save";
@@ -19,25 +49,79 @@ export type RemixSimulationEffect = {
   state: RemixSimulationState;
 };
 
-export type RemixSimulationActionResult = Omit<
-  RemixMiningActionResult,
-  "state"
-> & {
+export type RemixSimulationActionResult =
+  | RemixMiningSimulationActionResult
+  | {
+      type: "upgradePurchase";
+      state: RemixSimulationState;
+      purchases: number;
+      operationResult: boolean | null;
+      effects: [];
+    };
+
+function performUpgradePurchase(
+  state: RemixSimulationState,
+  action: RemixUpgradePurchaseSimulationAction,
+): RemixSimulationActionResult {
+  const purchase = executeRemixUpgradePurchase({
+    state: {
+      levels: state.upgrades,
+      resources: {
+        money: state.resources.money,
+        gems: state.resources.gems,
+        planetCoins: state.resources.planetCoins,
+        wisdom: state.resources.wisdom,
+      },
+    },
+    group: action.group,
+    key: action.key,
+    operation: action.operation,
+  });
+  const resourceByGroup = {
+    money: "money",
+    gems: "gems",
+    planetCoins: "planetCoins",
+    wisdom: "wisdom",
+  } as const;
+  const resourceKey = resourceByGroup[action.group];
+  const nextState: RemixSimulationState = {
+    ...state,
+    resources: {
+      ...state.resources,
+      [resourceKey]: purchase.state.resources[action.group],
+    },
+    upgrades: {
+      ...state.upgrades,
+      [action.group]: purchase.state.levels[action.group],
+    } as RemixSimulationState["upgrades"],
+  };
+
+  return {
+    type: "upgradePurchase",
+    state: nextState,
+    purchases: purchase.purchases,
+    operationResult: purchase.operationResult,
+    effects: [],
+  };
+}
+
+export type RemixMiningSimulationActionResult = {
+  type: "mining";
   state: RemixSimulationState;
   effects: RemixSimulationEffect[];
-};
+} & Omit<RemixMiningActionResult, "state">;
 
 /**
- * Composes one player click or animation frame through the platform-independent
- * Remix state boundary. Clock, RNG, content, and persistence remain injected.
+ * Applies one player click, idle frame, or upgrade purchase without platform
+ * dependencies. Time, RNG, content, and save behavior stay at explicit edges.
  */
-export function performRemixSimulationAction(input: {
-  state: RemixSimulationState;
-  action: RemixSimulationAction;
-  catalog: RemixMineObjectCatalog;
-  storyMilestones: readonly RemixStoryMilestone[];
-  random: RemixMiningRandom;
-}): RemixSimulationActionResult {
+export function performRemixSimulationAction(
+  input: RemixSimulationActionInput,
+): RemixSimulationActionResult {
+  if (!("catalog" in input)) {
+    return performUpgradePurchase(input.state, input.action);
+  }
+
   const mining = performRemixMiningAction({
     state: input.state,
     action: input.action.type === "activeClick" ? "activeClick" : "idleTick",
@@ -75,5 +159,5 @@ export function performRemixSimulationAction(input: {
     state = { ...state, story: { ...state.story, ...story } };
   }
 
-  return { ...mining, state, effects };
+  return { type: "mining", ...mining, state, effects };
 }
