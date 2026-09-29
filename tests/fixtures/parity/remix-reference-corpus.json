@@ -38619,6 +38619,3470 @@
           "exponent": 1
         }
       }
+    },
+    "upgradeSemantics": {
+      "sourcePaths": [
+        "Scripts/Define/game.js",
+        "Scripts/upgrade.js",
+        "Scripts/utils.js"
+      ],
+      "controlledState": {
+        "highestMineObjectLevel": 171,
+        "powerValues": ["1", "1", "1", "1", "1"],
+        "otherUpgradeLevels": 0,
+        "stochasticEffectExcluded": ["money.blacksmithBonus"]
+      },
+      "groups": {
+        "money": {
+          "blacksmith": {
+            "name": "Blacksmith",
+            "resource": 0,
+            "maxLevel": "Infinity",
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "30",
+                  "mantissa": 3,
+                  "exponent": 1
+                },
+                "effect": {
+                  "decimal": "20",
+                  "mantissa": 2,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "111",
+                  "mantissa": 1.11,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "31.8",
+                  "mantissa": 3.18,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "193.2",
+                  "mantissa": 1.932,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "43.762",
+                  "mantissa": 4.3762,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "276.84000000000003",
+                  "mantissa": 2.7684,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "55.90058",
+                  "mantissa": 5.590058,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 5,
+                "price": {
+                  "decimal": "449.64959999999996",
+                  "mantissa": 4.496496,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "80.772479098",
+                  "mantissa": 8.0772479098,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "935.7520926719999",
+                  "mantissa": 9.35752092672,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "147.347273491842",
+                  "mantissa": 1.47347273491842,
+                  "exponent": 2
+                }
+              },
+              {
+                "level": 25,
+                "price": {
+                  "decimal": "4736.88649932207",
+                  "mantissa": 4.73688649932207,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "422.46161320806397",
+                  "mantissa": 4.22461613208064,
+                  "exponent": 2
+                }
+              },
+              {
+                "level": 50,
+                "price": {
+                  "decimal": "276763.144500064",
+                  "mantissa": 2.76763144500064,
+                  "exponent": 5
+                },
+                "effect": {
+                  "decimal": "1987.15040151639",
+                  "mantissa": 1.98715040151639,
+                  "exponent": 3
+                }
+              },
+              {
+                "level": 100,
+                "price": {
+                  "decimal": "2484546735.66043",
+                  "mantissa": 2.48454673566043,
+                  "exponent": 9
+                },
+                "effect": {
+                  "decimal": "111580.815836518",
+                  "mantissa": 1.11580815836518,
+                  "exponent": 5
+                }
+              }
+            ]
+          },
+          "blacksmithSkill": {
+            "name": "Blacksmith Skill",
+            "resource": 0,
+            "maxLevel": "Infinity",
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "80000",
+                  "mantissa": 8,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "0.9",
+                  "mantissa": 9,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "240000",
+                  "mantissa": 2.4,
+                  "exponent": 5
+                },
+                "effect": {
+                  "decimal": "0.9500000000000001",
+                  "mantissa": 9.5,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "720000",
+                  "mantissa": 7.2,
+                  "exponent": 5
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "2160000",
+                  "mantissa": 2.16,
+                  "exponent": 6
+                },
+                "effect": {
+                  "decimal": "1.05",
+                  "mantissa": 1.05,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 5,
+                "price": {
+                  "decimal": "19440000",
+                  "mantissa": 1.9440000000000002,
+                  "exponent": 7
+                },
+                "effect": {
+                  "decimal": "1.15",
+                  "mantissa": 1.15,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "4723920000",
+                  "mantissa": 4.72392,
+                  "exponent": 9
+                },
+                "effect": {
+                  "decimal": "1.4",
+                  "mantissa": 1.4,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 25,
+                "price": {
+                  "decimal": "67783088755440010",
+                  "mantissa": 6.778308875544001,
+                  "exponent": 16
+                },
+                "effect": {
+                  "decimal": "2.15",
+                  "mantissa": 2.15,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 50,
+                "price": {
+                  "decimal": "5.743183901534821e+28",
+                  "mantissa": 5.743183901534821,
+                  "exponent": 28
+                },
+                "effect": {
+                  "decimal": "3.4",
+                  "mantissa": 3.4,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 100,
+                "price": {
+                  "decimal": "4.12302016585609e+52",
+                  "mantissa": 4.12302016585609,
+                  "exponent": 52
+                },
+                "effect": {
+                  "decimal": "5.9",
+                  "mantissa": 5.9,
+                  "exponent": 0
+                }
+              }
+            ]
+          },
+          "blacksmithBonus": {
+            "name": "Blacksmith Expertise",
+            "resource": 0,
+            "maxLevel": 10,
+            "stochasticEffect": true,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "1000000",
+                  "mantissa": 1,
+                  "exponent": 6
+                },
+                "effect": null
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "5000000",
+                  "mantissa": 5,
+                  "exponent": 6
+                },
+                "effect": null
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "25000000",
+                  "mantissa": 2.5,
+                  "exponent": 7
+                },
+                "effect": null
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "125000000",
+                  "mantissa": 1.25,
+                  "exponent": 8
+                },
+                "effect": null
+              },
+              {
+                "level": 9,
+                "price": {
+                  "decimal": "1953125000000",
+                  "mantissa": 1.953125,
+                  "exponent": 12
+                },
+                "effect": null
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "9765625000000",
+                  "mantissa": 9.765625,
+                  "exponent": 12
+                },
+                "effect": null
+              },
+              {
+                "level": 11,
+                "price": {
+                  "decimal": "48828125000000",
+                  "mantissa": 4.8828125,
+                  "exponent": 13
+                },
+                "effect": null
+              }
+            ]
+          },
+          "gemChance": {
+            "name": "Gem Chance",
+            "resource": 0,
+            "maxLevel": 20,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "200",
+                  "mantissa": 2,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "0.02",
+                  "mantissa": 2,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "500",
+                  "mantissa": 5,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "0.024",
+                  "mantissa": 2.4,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "1250",
+                  "mantissa": 1.25,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "0.027999999999999997",
+                  "mantissa": 2.8,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "3125",
+                  "mantissa": 3.125,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "0.032",
+                  "mantissa": 3.2,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 19,
+                "price": {
+                  "decimal": "7275957614.183426",
+                  "mantissa": 7.275957614183426,
+                  "exponent": 9
+                },
+                "effect": {
+                  "decimal": "0.096",
+                  "mantissa": 9.6,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 20,
+                "price": {
+                  "decimal": "18189894035.458565",
+                  "mantissa": 1.8189894035458565,
+                  "exponent": 10
+                },
+                "effect": {
+                  "decimal": "0.1",
+                  "mantissa": 1,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 21,
+                "price": {
+                  "decimal": "45474735088.64641",
+                  "mantissa": 4.547473508864641,
+                  "exponent": 10
+                },
+                "effect": {
+                  "decimal": "0.10400000000000001",
+                  "mantissa": 1.04,
+                  "exponent": -1
+                }
+              }
+            ]
+          },
+          "activePower": {
+            "name": "Active Power",
+            "resource": 0,
+            "maxLevel": "Infinity",
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "1000",
+                  "mantissa": 1,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "2000",
+                  "mantissa": 2,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "1.1844999999999999",
+                  "mantissa": 1.1844999999999999,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "4000",
+                  "mantissa": 4,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "1.37917",
+                  "mantissa": 1.37917,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "8000",
+                  "mantissa": 8,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "1.58445415",
+                  "mantissa": 1.58445415,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 5,
+                "price": {
+                  "decimal": "32000",
+                  "mantissa": 3.2,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "2.028729630025",
+                  "mantissa": 2.028729630025,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "1024000",
+                  "mantissa": 1.024,
+                  "exponent": 6
+                },
+                "effect": {
+                  "decimal": "3.3597909483603057",
+                  "mantissa": 3.3597909483603057,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 25,
+                "price": {
+                  "decimal": "33554432000",
+                  "mantissa": 3.3554432,
+                  "exponent": 10
+                },
+                "effect": {
+                  "decimal": "9.945445165857526",
+                  "mantissa": 9.945445165857526,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 50,
+                "price": {
+                  "decimal": "1125899906842624100",
+                  "mantissa": 1.125899906842624,
+                  "exponent": 18
+                },
+                "effect": {
+                  "decimal": "37.263201159010315",
+                  "mantissa": 3.7263201159010313,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 100,
+                "price": {
+                  "decimal": "1.2676506002282293e+33",
+                  "mantissa": 1.2676506002282293,
+                  "exponent": 33
+                },
+                "effect": {
+                  "decimal": "307.49811169370076",
+                  "mantissa": 3.074981116937008,
+                  "exponent": 2
+                }
+              }
+            ]
+          },
+          "idlePower": {
+            "name": "Idle Power",
+            "resource": 0,
+            "maxLevel": "Infinity",
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "200",
+                  "mantissa": 2,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "0.75",
+                  "mantissa": 7.5,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "400",
+                  "mantissa": 4,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.03",
+                  "mantissa": 1.03,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "800",
+                  "mantissa": 8,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.326125",
+                  "mantissa": 1.326125,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "1600",
+                  "mantissa": 1.6,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "1.6390905",
+                  "mantissa": 1.6390905,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 5,
+                "price": {
+                  "decimal": "6400",
+                  "mantissa": 6.4,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "2.3185481486",
+                  "mantissa": 2.3185481486,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "204800",
+                  "mantissa": 2.048,
+                  "exponent": 5
+                },
+                "effect": {
+                  "decimal": "4.367728232868397",
+                  "mantissa": 4.367728232868397,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 25,
+                "price": {
+                  "decimal": "6710886400",
+                  "mantissa": 6.7108864,
+                  "exponent": 9
+                },
+                "effect": {
+                  "decimal": "14.656445507579512",
+                  "mantissa": 1.4656445507579512,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 50,
+                "price": {
+                  "decimal": "225179981368524830",
+                  "mantissa": 2.251799813685248,
+                  "exponent": 17
+                },
+                "effect": {
+                  "decimal": "58.08675474786902",
+                  "mantissa": 5.808675474786902,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 100,
+                "price": {
+                  "decimal": "2.5353012004564586e+32",
+                  "mantissa": 2.5353012004564586,
+                  "exponent": 32
+                },
+                "effect": {
+                  "decimal": "494.87977350704966",
+                  "mantissa": 4.948797735070497,
+                  "exponent": 2
+                }
+              }
+            ]
+          },
+          "idleSpeed": {
+            "name": "Idle Speed",
+            "resource": 0,
+            "maxLevel": 60,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "50",
+                  "mantissa": 5,
+                  "exponent": 1
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "110",
+                  "mantissa": 1.1,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.05",
+                  "mantissa": 1.05,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "242",
+                  "mantissa": 2.4200000000000004,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.1025",
+                  "mantissa": 1.1025,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "532.4000000000002",
+                  "mantissa": 5.324000000000002,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.1576250000000001",
+                  "mantissa": 1.1576250000000001,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 49,
+                "price": {
+                  "decimal": "3003871598214220000",
+                  "mantissa": 3.0038715982142197,
+                  "exponent": 18
+                },
+                "effect": {
+                  "decimal": "10.921333129289238",
+                  "mantissa": 1.0921333129289237,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 50,
+                "price": {
+                  "decimal": "6608517516071283000",
+                  "mantissa": 6.608517516071283,
+                  "exponent": 18
+                },
+                "effect": {
+                  "decimal": "11.4673997857537",
+                  "mantissa": 1.14673997857537,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 51,
+                "price": {
+                  "decimal": "154808487924479520000",
+                  "mantissa": 1.5480848792447952,
+                  "exponent": 20
+                },
+                "effect": {
+                  "decimal": "12.040769775041387",
+                  "mantissa": 1.2040769775041387,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 59,
+                "price": {
+                  "decimal": "1.4038495109699671e+31",
+                  "mantissa": 1.4038495109699671,
+                  "exponent": 31
+                },
+                "effect": {
+                  "decimal": "17.789700851545707",
+                  "mantissa": 1.7789700851545707,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 60,
+                "price": {
+                  "decimal": "3.2886017104178067e+32",
+                  "mantissa": 3.2886017104178067,
+                  "exponent": 32
+                },
+                "effect": {
+                  "decimal": "18.679185894122995",
+                  "mantissa": 1.8679185894122994,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 61,
+                "price": {
+                  "decimal": "7.70374682275634e+33",
+                  "mantissa": 7.70374682275634,
+                  "exponent": 33
+                },
+                "effect": {
+                  "decimal": "19.613145188829144",
+                  "mantissa": 1.9613145188829144,
+                  "exponent": 1
+                }
+              }
+            ]
+          },
+          "gemWaster": {
+            "name": "Gem Waster",
+            "resource": 0,
+            "maxLevel": 10,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "90000000",
+                  "mantissa": 9,
+                  "exponent": 7
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "180000000000",
+                  "mantissa": 1.8,
+                  "exponent": 11
+                },
+                "effect": {
+                  "decimal": "3",
+                  "mantissa": 3,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "1.44e+21",
+                  "mantissa": 1.44,
+                  "exponent": 21
+                },
+                "effect": {
+                  "decimal": "10",
+                  "mantissa": 1,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "4.608e+37",
+                  "mantissa": 4.608,
+                  "exponent": 37
+                },
+                "effect": {
+                  "decimal": "35",
+                  "mantissa": 3.5,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 9,
+                "price": {
+                  "decimal": "2.1760664753063326e+275",
+                  "mantissa": 2.1760664753063326,
+                  "exponent": 275
+                },
+                "effect": {
+                  "decimal": "46411",
+                  "mantissa": 4.6411,
+                  "exponent": 4
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "1.1408855402054063e+338",
+                  "mantissa": 1.1408855402054063,
+                  "exponent": 338
+                },
+                "effect": {
+                  "decimal": "153157",
+                  "mantissa": 1.53157,
+                  "exponent": 5
+                }
+              },
+              {
+                "level": 11,
+                "price": {
+                  "decimal": "2.3926103924128483e+407",
+                  "mantissa": 2.3926103924128483,
+                  "exponent": 407
+                },
+                "effect": {
+                  "decimal": "505421",
+                  "mantissa": 5.05421,
+                  "exponent": 5
+                }
+              }
+            ]
+          }
+        },
+        "gems": {
+          "blacksmith": {
+            "name": "Blacksmith+",
+            "resource": 1,
+            "maxLevel": "Infinity",
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "100",
+                  "mantissa": 1,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "107",
+                  "mantissa": 1.07,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.08",
+                  "mantissa": 1.08,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "114",
+                  "mantissa": 1.14,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.1664",
+                  "mantissa": 1.1664,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "121",
+                  "mantissa": 1.21,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.2597120000000002",
+                  "mantissa": 1.2597120000000002,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 5,
+                "price": {
+                  "decimal": "135",
+                  "mantissa": 1.35,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.4693280768000005",
+                  "mantissa": 1.4693280768000005,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "170",
+                  "mantissa": 1.7,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "2.158924997272788",
+                  "mantissa": 2.158924997272788,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 24,
+                "price": {
+                  "decimal": "268",
+                  "mantissa": 2.68,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "6.341180737240117",
+                  "mantissa": 6.341180737240117,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 25,
+                "price": {
+                  "decimal": "275",
+                  "mantissa": 2.75,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "6.8484751962193275",
+                  "mantissa": 6.8484751962193275,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 26,
+                "price": {
+                  "decimal": "289.04999999999995",
+                  "mantissa": 2.8904999999999994,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "7.396353211916874",
+                  "mantissa": 7.396353211916874,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 50,
+                "price": {
+                  "decimal": "834.2748442449682",
+                  "mantissa": 8.342748442449682,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "46.90161251323134",
+                  "mantissa": 4.6901612513231346,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 100,
+                "price": {
+                  "decimal": "5097.765940948782",
+                  "mantissa": 5.097765940948783,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "2199.7612563413",
+                  "mantissa": 2.1997612563413,
+                  "exponent": 3
+                }
+              }
+            ]
+          },
+          "blacksmithSkill": {
+            "name": "Blacksmith Skill II",
+            "resource": 1,
+            "maxLevel": 50,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "250",
+                  "mantissa": 2.5,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "280",
+                  "mantissa": 2.8,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.111921679385002",
+                  "mantissa": 1.111921679385002,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "310",
+                  "mantissa": 3.1,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.225001569067564",
+                  "mantissa": 1.225001569067564,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "350",
+                  "mantissa": 3.5,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.3391534529297504",
+                  "mantissa": 1.3391534529297504,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 49,
+                "price": {
+                  "decimal": "65000",
+                  "mantissa": 6.5,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "7.211662172292825",
+                  "mantissa": 7.211662172292825,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 50,
+                "price": {
+                  "decimal": "72000",
+                  "mantissa": 7.2,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "7.347847882138685",
+                  "mantissa": 7.347847882138685,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 51,
+                "price": {
+                  "decimal": "81000",
+                  "mantissa": 8.1,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "7.484290555383924",
+                  "mantissa": 7.484290555383924,
+                  "exponent": 0
+                }
+              }
+            ]
+          },
+          "idlePower": {
+            "name": "Idle Power II",
+            "resource": 1,
+            "maxLevel": 100,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "100",
+                  "mantissa": 1,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "110",
+                  "mantissa": 1.1,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.191191419909692",
+                  "mantissa": 1.191191419909692,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "120",
+                  "mantissa": 1.2,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.3887826697402006",
+                  "mantissa": 1.3887826697402006,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "130",
+                  "mantissa": 1.3,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.59221043255822",
+                  "mantissa": 1.59221043255822,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 99,
+                "price": {
+                  "decimal": "1774.899688920626",
+                  "mantissa": 1.7748996889206259,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "31.783127922330415",
+                  "mantissa": 3.1783127922330414,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 100,
+                "price": {
+                  "decimal": "1809.0950040282712",
+                  "mantissa": 1.8090950040282712,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "32.160100281114346",
+                  "mantissa": 3.2160100281114343,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 101,
+                "price": {
+                  "decimal": "1843.796735469177",
+                  "mantissa": 1.843796735469177,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "32.53796359287007",
+                  "mantissa": 3.253796359287007,
+                  "exponent": 1
+                }
+              }
+            ]
+          },
+          "gemWaster": {
+            "name": "Gem Waster+",
+            "resource": 1,
+            "maxLevel": 5,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "10000",
+                  "mantissa": 1,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "0",
+                  "mantissa": 0,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "450000",
+                  "mantissa": 4.5,
+                  "exponent": 5
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "20250000",
+                  "mantissa": 2.025,
+                  "exponent": 7
+                },
+                "effect": {
+                  "decimal": "2",
+                  "mantissa": 2,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "911250000.0000001",
+                  "mantissa": 9.1125,
+                  "exponent": 8
+                },
+                "effect": {
+                  "decimal": "3",
+                  "mantissa": 3,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 4,
+                "price": {
+                  "decimal": "41006250000",
+                  "mantissa": 4.100625,
+                  "exponent": 10
+                },
+                "effect": {
+                  "decimal": "4",
+                  "mantissa": 4,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 5,
+                "price": {
+                  "decimal": "1845281250000",
+                  "mantissa": 1.84528125,
+                  "exponent": 12
+                },
+                "effect": {
+                  "decimal": "5",
+                  "mantissa": 5,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 6,
+                "price": {
+                  "decimal": "83037656250000",
+                  "mantissa": 8.303765625,
+                  "exponent": 13
+                },
+                "effect": {
+                  "decimal": "6",
+                  "mantissa": 6,
+                  "exponent": 0
+                }
+              }
+            ]
+          },
+          "gemChance": {
+            "name": "Gem Chance II",
+            "resource": 1,
+            "maxLevel": 80,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "185.69685298549516",
+                  "mantissa": 1.8569685298549516,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "0",
+                  "mantissa": 0,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "347.84548339668675",
+                  "mantissa": 3.4784548339668673,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "0.005",
+                  "mantissa": 5,
+                  "exponent": -3
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "532.2011292953264",
+                  "mantissa": 5.322011292953263,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "0.01",
+                  "mantissa": 1,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "734.4113479235103",
+                  "mantissa": 7.344113479235103,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "0.015",
+                  "mantissa": 1.5,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 29,
+                "price": {
+                  "decimal": "9074.908704529775",
+                  "mantissa": 9.074908704529774,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "0.145",
+                  "mantissa": 1.4499999999999997,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 30,
+                "price": {
+                  "decimal": "9472.227113850171",
+                  "mantissa": 9.47222711385017,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "0.15",
+                  "mantissa": 1.4999999999999998,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 31,
+                "price": {
+                  "decimal": "11107.998794011426",
+                  "mantissa": 1.1107998794011427,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "0.155",
+                  "mantissa": 1.5499999999999998,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 79,
+                "price": {
+                  "decimal": "10597920.068297202",
+                  "mantissa": 1.0597920068297202,
+                  "exponent": 7
+                },
+                "effect": {
+                  "decimal": "0.395",
+                  "mantissa": 3.95,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 80,
+                "price": {
+                  "decimal": "12120443.500238186",
+                  "mantissa": 1.2120443500238185,
+                  "exponent": 7
+                },
+                "effect": {
+                  "decimal": "0.4",
+                  "mantissa": 4,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 81,
+                "price": {
+                  "decimal": "13858921.007217763",
+                  "mantissa": 1.3858921007217764,
+                  "exponent": 7
+                },
+                "effect": {
+                  "decimal": "0.405",
+                  "mantissa": 4.05,
+                  "exponent": -1
+                }
+              }
+            ]
+          },
+          "gemMultiply": {
+            "name": "Gem Multiplication",
+            "resource": 1,
+            "maxLevel": "Infinity",
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "1000",
+                  "mantissa": 1,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "2250",
+                  "mantissa": 2.25,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "2",
+                  "mantissa": 2,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "3502.5",
+                  "mantissa": 3.5025,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "3",
+                  "mantissa": 3,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "4757.625",
+                  "mantissa": 4.757625,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "4",
+                  "mantissa": 4,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 5,
+                "price": {
+                  "decimal": "7276.2815625",
+                  "mantissa": 7.2762815625,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "6",
+                  "mantissa": 6,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "13628.894626777399",
+                  "mantissa": 1.36288946267774,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "12",
+                  "mantissa": 1.2,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 25,
+                "price": {
+                  "decimal": "33386.3549408994",
+                  "mantissa": 3.33863549408994,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "28",
+                  "mantissa": 2.8,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 50,
+                "price": {
+                  "decimal": "71467.3997857537",
+                  "mantissa": 7.14673997857537,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "61",
+                  "mantissa": 6.1,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 100,
+                "price": {
+                  "decimal": "251501.257846304",
+                  "mantissa": 2.51501257846304,
+                  "exponent": 5
+                },
+                "effect": {
+                  "decimal": "232",
+                  "mantissa": 2.32,
+                  "exponent": 2
+                }
+              },
+              {
+                "level": 249,
+                "price": {
+                  "decimal": "189156835.74752",
+                  "mantissa": 1.8915683574752,
+                  "exponent": 8
+                },
+                "effect": {
+                  "decimal": "189107",
+                  "mantissa": 1.89107,
+                  "exponent": 5
+                }
+              },
+              {
+                "level": 250,
+                "price": {
+                  "decimal": "198600937.53489602",
+                  "mantissa": 1.98600937534896,
+                  "exponent": 8
+                },
+                "effect": {
+                  "decimal": "198551",
+                  "mantissa": 1.98551,
+                  "exponent": 5
+                }
+              },
+              {
+                "level": 251,
+                "price": {
+                  "decimal": "212681504.09987298",
+                  "mantissa": 2.12681504099873,
+                  "exponent": 8
+                },
+                "effect": {
+                  "decimal": "208467",
+                  "mantissa": 2.08467,
+                  "exponent": 5
+                }
+              },
+              {
+                "level": 999,
+                "price": {
+                  "decimal": "2.3533501288854515e+25",
+                  "mantissa": 2.3533501288854515,
+                  "exponent": 25
+                },
+                "effect": {
+                  "decimal": "1.4726846864114214e+21",
+                  "mantissa": 1.4726846864114214,
+                  "exponent": 21
+                }
+              },
+              {
+                "level": 1000,
+                "price": {
+                  "decimal": "2.474110273171188e+25",
+                  "mantissa": 2.474110273171188,
+                  "exponent": 25
+                },
+                "effect": {
+                  "decimal": "1.5463189207319925e+21",
+                  "mantissa": 1.5463189207319925,
+                  "exponent": 21
+                }
+              },
+              {
+                "level": 1001,
+                "price": {
+                  "decimal": "2.6270736871289175e+25",
+                  "mantissa": 2.6270736871289175,
+                  "exponent": 25
+                },
+                "effect": {
+                  "decimal": "1.6236348667685923e+21",
+                  "mantissa": 1.6236348667685923,
+                  "exponent": 21
+                }
+              },
+              {
+                "level": 2499,
+                "price": {
+                  "decimal": "6.5837875215802795e+58",
+                  "mantissa": 6.5837875215802795,
+                  "exponent": 58
+                },
+                "effect": {
+                  "decimal": "8.9548512426349e+52",
+                  "mantissa": 8.9548512426349,
+                  "exponent": 52
+                }
+              },
+              {
+                "level": 2500,
+                "price": {
+                  "decimal": "6.9203090403082514e+58",
+                  "mantissa": 6.9203090403082514,
+                  "exponent": 58
+                },
+                "effect": {
+                  "decimal": "9.402593804766646e+52",
+                  "mantissa": 9.402593804766646,
+                  "exponent": 52
+                }
+              },
+              {
+                "level": 2501,
+                "price": {
+                  "decimal": "7.419507735018357e+58",
+                  "mantissa": 7.419507735018357,
+                  "exponent": 58
+                },
+                "effect": {
+                  "decimal": "9.872723495004978e+52",
+                  "mantissa": 9.872723495004978,
+                  "exponent": 52
+                }
+              },
+              {
+                "level": 9999,
+                "price": {
+                  "decimal": "2.0041316180524404e+221",
+                  "mantissa": 2.0041316180524404,
+                  "exponent": 221
+                },
+                "effect": {
+                  "decimal": "7.443914912792492e+211",
+                  "mantissa": 7.443914912792492,
+                  "exponent": 211
+                }
+              },
+              {
+                "level": 10000,
+                "price": {
+                  "decimal": "2.105063060527308e+221",
+                  "mantissa": 2.105063060527308,
+                  "exponent": 221
+                },
+                "effect": {
+                  "decimal": "7.816110658432116e+211",
+                  "mantissa": 7.816110658432116,
+                  "exponent": 211
+                }
+              },
+              {
+                "level": 10001,
+                "price": {
+                  "decimal": "2.215499646846604e+221",
+                  "mantissa": 2.215499646846604,
+                  "exponent": 221
+                },
+                "effect": {
+                  "decimal": "8.206916191353724e+211",
+                  "mantissa": 8.206916191353724,
+                  "exponent": 211
+                }
+              }
+            ]
+          },
+          "offlineGems": {
+            "name": "Offline Gems",
+            "resource": 1,
+            "maxLevel": 15,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "4444",
+                  "mantissa": 4.444,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "0",
+                  "mantissa": 0,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "17776",
+                  "mantissa": 1.7776,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "0.05",
+                  "mantissa": 5,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "71104",
+                  "mantissa": 7.1104,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "0.1",
+                  "mantissa": 1,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "284416",
+                  "mantissa": 2.84416,
+                  "exponent": 5
+                },
+                "effect": {
+                  "decimal": "0.15000000000000002",
+                  "mantissa": 1.5000000000000002,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 14,
+                "price": {
+                  "decimal": "1192927166464",
+                  "mantissa": 1.192927166464,
+                  "exponent": 12
+                },
+                "effect": {
+                  "decimal": "0.7000000000000001",
+                  "mantissa": 7,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 15,
+                "price": {
+                  "decimal": "4771708665856",
+                  "mantissa": 4.771708665856,
+                  "exponent": 12
+                },
+                "effect": {
+                  "decimal": "0.75",
+                  "mantissa": 7.5,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 16,
+                "price": {
+                  "decimal": "19086834663424",
+                  "mantissa": 1.9086834663424,
+                  "exponent": 13
+                },
+                "effect": {
+                  "decimal": "0.8",
+                  "mantissa": 8,
+                  "exponent": -1
+                }
+              }
+            ]
+          }
+        },
+        "planetCoins": {
+          "activePower": {
+            "name": "Active Power",
+            "resource": 2,
+            "maxLevel": 10,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "100",
+                  "mantissa": 1,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "0",
+                  "mantissa": 0,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "1000",
+                  "mantissa": 1,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "0.01",
+                  "mantissa": 1,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "10000",
+                  "mantissa": 1,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "0.02",
+                  "mantissa": 2,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "100000",
+                  "mantissa": 1,
+                  "exponent": 5
+                },
+                "effect": {
+                  "decimal": "0.03",
+                  "mantissa": 3,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 9,
+                "price": {
+                  "decimal": "100000000000",
+                  "mantissa": 1,
+                  "exponent": 11
+                },
+                "effect": {
+                  "decimal": "0.09",
+                  "mantissa": 9,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "1000000000000",
+                  "mantissa": 1,
+                  "exponent": 12
+                },
+                "effect": {
+                  "decimal": "0.1",
+                  "mantissa": 1,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 11,
+                "price": {
+                  "decimal": "10000000000000",
+                  "mantissa": 1,
+                  "exponent": 13
+                },
+                "effect": {
+                  "decimal": "0.10999999999999999",
+                  "mantissa": 1.0999999999999999,
+                  "exponent": -1
+                }
+              }
+            ]
+          },
+          "gemMultiply": {
+            "name": "Gem Multiplication Multiplication",
+            "resource": 2,
+            "maxLevel": "Infinity",
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "100",
+                  "mantissa": 1,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "777",
+                  "mantissa": 7.77,
+                  "exponent": 2
+                },
+                "effect": {
+                  "decimal": "1.1",
+                  "mantissa": 1.1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "6037.29",
+                  "mantissa": 6.03729,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "1.2",
+                  "mantissa": 1.2,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "46909.743299999995",
+                  "mantissa": 4.6909743299999995,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "1.3",
+                  "mantissa": 1.3,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 5,
+                "price": {
+                  "decimal": "2832077.2412765687",
+                  "mantissa": 2.832077241276569,
+                  "exponent": 6
+                },
+                "effect": {
+                  "decimal": "1.5",
+                  "mantissa": 1.5,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "80206615005.56702",
+                  "mantissa": 8.020661500556702,
+                  "exponent": 10
+                },
+                "effect": {
+                  "decimal": "2",
+                  "mantissa": 2,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 25,
+                "price": {
+                  "decimal": "1.821903918966488e+24",
+                  "mantissa": 1.821903918966488,
+                  "exponent": 24
+                },
+                "effect": {
+                  "decimal": "3.5",
+                  "mantissa": 3.5,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 50,
+                "price": {
+                  "decimal": "3.3193338899454474e+46",
+                  "mantissa": 3.3193338899454474,
+                  "exponent": 46
+                },
+                "effect": {
+                  "decimal": "6",
+                  "mantissa": 6,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 100,
+                "price": {
+                  "decimal": "1.1017977472940377e+91",
+                  "mantissa": 1.1017977472940377,
+                  "exponent": 91
+                },
+                "effect": {
+                  "decimal": "11",
+                  "mantissa": 1.1,
+                  "exponent": 1
+                }
+              }
+            ]
+          },
+          "lastObjGems": {
+            "name": "Gem Bonus",
+            "resource": 2,
+            "maxLevel": 19,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "1000000",
+                  "mantissa": 1,
+                  "exponent": 6
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "100000000",
+                  "mantissa": 1,
+                  "exponent": 8
+                },
+                "effect": {
+                  "decimal": "2",
+                  "mantissa": 2,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "10000000000",
+                  "mantissa": 1,
+                  "exponent": 10
+                },
+                "effect": {
+                  "decimal": "3",
+                  "mantissa": 3,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "1000000000000",
+                  "mantissa": 1,
+                  "exponent": 12
+                },
+                "effect": {
+                  "decimal": "4",
+                  "mantissa": 4,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 18,
+                "price": {
+                  "decimal": "1e+42",
+                  "mantissa": 1,
+                  "exponent": 42
+                },
+                "effect": {
+                  "decimal": "19",
+                  "mantissa": 1.9,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 19,
+                "price": {
+                  "decimal": "1e+44",
+                  "mantissa": 1,
+                  "exponent": 44
+                },
+                "effect": {
+                  "decimal": "20",
+                  "mantissa": 2,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 20,
+                "price": {
+                  "decimal": "1e+46",
+                  "mantissa": 1,
+                  "exponent": 46
+                },
+                "effect": {
+                  "decimal": "21",
+                  "mantissa": 2.1,
+                  "exponent": 1
+                }
+              }
+            ]
+          },
+          "gemChance": {
+            "name": "Gem Chance III",
+            "resource": 2,
+            "maxLevel": 50,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "1000",
+                  "mantissa": 1,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "0",
+                  "mantissa": 0,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "1400",
+                  "mantissa": 1.4,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "0.01",
+                  "mantissa": 1,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "1960",
+                  "mantissa": 1.9599999999999997,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "0.02",
+                  "mantissa": 2,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "2744",
+                  "mantissa": 2.7439999999999993,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "0.03",
+                  "mantissa": 3,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 49,
+                "price": {
+                  "decimal": "14463511599.831648",
+                  "mantissa": 1.4463511599831649,
+                  "exponent": 10
+                },
+                "effect": {
+                  "decimal": "0.49",
+                  "mantissa": 4.8999999999999995,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 50,
+                "price": {
+                  "decimal": "20248916239.76431",
+                  "mantissa": 2.0248916239764307,
+                  "exponent": 10
+                },
+                "effect": {
+                  "decimal": "0.5",
+                  "mantissa": 5,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 51,
+                "price": {
+                  "decimal": "28348482735.670025",
+                  "mantissa": 2.8348482735670024,
+                  "exponent": 10
+                },
+                "effect": {
+                  "decimal": "0.51",
+                  "mantissa": 5.1,
+                  "exponent": -1
+                }
+              }
+            ]
+          },
+          "offlinePC": {
+            "name": "Offline Planet Coins",
+            "resource": 2,
+            "maxLevel": 10,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "10000",
+                  "mantissa": 1,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "0",
+                  "mantissa": 0,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "100000",
+                  "mantissa": 1,
+                  "exponent": 5
+                },
+                "effect": {
+                  "decimal": "0.05",
+                  "mantissa": 5,
+                  "exponent": -2
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "1000000",
+                  "mantissa": 1,
+                  "exponent": 6
+                },
+                "effect": {
+                  "decimal": "0.1",
+                  "mantissa": 1,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "10000000",
+                  "mantissa": 1,
+                  "exponent": 7
+                },
+                "effect": {
+                  "decimal": "0.15000000000000002",
+                  "mantissa": 1.5000000000000002,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 9,
+                "price": {
+                  "decimal": "10000000000000",
+                  "mantissa": 1,
+                  "exponent": 13
+                },
+                "effect": {
+                  "decimal": "0.45",
+                  "mantissa": 4.5,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "100000000000000",
+                  "mantissa": 1,
+                  "exponent": 14
+                },
+                "effect": {
+                  "decimal": "0.5",
+                  "mantissa": 5,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 11,
+                "price": {
+                  "decimal": "1000000000000000",
+                  "mantissa": 1,
+                  "exponent": 15
+                },
+                "effect": {
+                  "decimal": "0.55",
+                  "mantissa": 5.5,
+                  "exponent": -1
+                }
+              }
+            ]
+          },
+          "offlineTime": {
+            "name": "Offline Time",
+            "resource": 2,
+            "maxLevel": 42,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "10000",
+                  "mantissa": 1,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "0",
+                  "mantissa": 0,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "40000",
+                  "mantissa": 4,
+                  "exponent": 4
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "160000",
+                  "mantissa": 1.6,
+                  "exponent": 5
+                },
+                "effect": {
+                  "decimal": "2",
+                  "mantissa": 2,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "640000",
+                  "mantissa": 6.4,
+                  "exponent": 5
+                },
+                "effect": {
+                  "decimal": "3",
+                  "mantissa": 3,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 41,
+                "price": {
+                  "decimal": "4.835703278458517e+28",
+                  "mantissa": 4.835703278458517,
+                  "exponent": 28
+                },
+                "effect": {
+                  "decimal": "41",
+                  "mantissa": 4.1,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 42,
+                "price": {
+                  "decimal": "1.9342813113834065e+29",
+                  "mantissa": 1.9342813113834065,
+                  "exponent": 29
+                },
+                "effect": {
+                  "decimal": "42",
+                  "mantissa": 4.2,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 43,
+                "price": {
+                  "decimal": "7.737125245533626e+29",
+                  "mantissa": 7.737125245533626,
+                  "exponent": 29
+                },
+                "effect": {
+                  "decimal": "43",
+                  "mantissa": 4.3,
+                  "exponent": 1
+                }
+              }
+            ]
+          },
+          "bulkCraft": {
+            "name": "Bulk Crafting",
+            "resource": 2,
+            "maxLevel": 99,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "1000000000000",
+                  "mantissa": 1,
+                  "exponent": 12
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "10000000000000",
+                  "mantissa": 1,
+                  "exponent": 13
+                },
+                "effect": {
+                  "decimal": "2",
+                  "mantissa": 2,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "100000000000000",
+                  "mantissa": 1,
+                  "exponent": 14
+                },
+                "effect": {
+                  "decimal": "3",
+                  "mantissa": 3,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "1000000000000000",
+                  "mantissa": 1,
+                  "exponent": 15
+                },
+                "effect": {
+                  "decimal": "4",
+                  "mantissa": 4,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 98,
+                "price": {
+                  "decimal": "1e+110",
+                  "mantissa": 1,
+                  "exponent": 110
+                },
+                "effect": {
+                  "decimal": "99",
+                  "mantissa": 9.9,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 99,
+                "price": {
+                  "decimal": "1e+111",
+                  "mantissa": 1,
+                  "exponent": 111
+                },
+                "effect": {
+                  "decimal": "100",
+                  "mantissa": 1,
+                  "exponent": 2
+                }
+              },
+              {
+                "level": 100,
+                "price": {
+                  "decimal": "1e+112",
+                  "mantissa": 1,
+                  "exponent": 112
+                },
+                "effect": {
+                  "decimal": "101",
+                  "mantissa": 1.01,
+                  "exponent": 2
+                }
+              }
+            ]
+          }
+        },
+        "wisdom": {
+          "powerPowerActive": {
+            "name": "Power Power (Active)",
+            "resource": 3,
+            "maxLevel": "Infinity",
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "1000",
+                  "mantissa": 1,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "1.00005",
+                  "mantissa": 1.00005,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "1000000",
+                  "mantissa": 1,
+                  "exponent": 6
+                },
+                "effect": {
+                  "decimal": "1.0000629960524947",
+                  "mantissa": 1.0000629960524947,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "1000000000",
+                  "mantissa": 1,
+                  "exponent": 9
+                },
+                "effect": {
+                  "decimal": "1.0000721124785155",
+                  "mantissa": 1.0000721124785155,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 5,
+                "price": {
+                  "decimal": "1000000000000000",
+                  "mantissa": 1,
+                  "exponent": 15
+                },
+                "effect": {
+                  "decimal": "1.0000854987973338",
+                  "mantissa": 1.0000854987973338,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "1e+30",
+                  "mantissa": 1,
+                  "exponent": 30
+                },
+                "effect": {
+                  "decimal": "1.0001077217345016",
+                  "mantissa": 1.0001077217345016,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 25,
+                "price": {
+                  "decimal": "1e+75",
+                  "mantissa": 1,
+                  "exponent": 75
+                },
+                "effect": {
+                  "decimal": "1.0001462008869106",
+                  "mantissa": 1.0001462008869106,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 49,
+                "price": {
+                  "decimal": "1e+147",
+                  "mantissa": 1,
+                  "exponent": 147
+                },
+                "effect": {
+                  "decimal": "1.0001829652855012",
+                  "mantissa": 1.0001829652855012,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 50,
+                "price": {
+                  "decimal": "1e+150",
+                  "mantissa": 1,
+                  "exponent": 150
+                },
+                "effect": {
+                  "decimal": "1.000184201574932",
+                  "mantissa": 1.000184201574932,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 51,
+                "price": {
+                  "decimal": "4.4668359215096896e+160",
+                  "mantissa": 4.4668359215096896,
+                  "exponent": 160
+                },
+                "effect": {
+                  "decimal": "1.0001854214884633",
+                  "mantissa": 1.0001854214884633,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 100,
+                "price": {
+                  "decimal": "1.6593413132206454e+3440",
+                  "mantissa": 1.6593413132206454,
+                  "exponent": 3440
+                },
+                "effect": {
+                  "decimal": "1.0002320794416806",
+                  "mantissa": 1.0002320794416806,
+                  "exponent": 0
+                }
+              }
+            ]
+          },
+          "powerPowerIdle": {
+            "name": "Power Power (Idle)",
+            "resource": 3,
+            "maxLevel": "Infinity",
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "1000",
+                  "mantissa": 1,
+                  "exponent": 3
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "1000000",
+                  "mantissa": 1,
+                  "exponent": 6
+                },
+                "effect": {
+                  "decimal": "1.00002",
+                  "mantissa": 1.00002,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "1000000000",
+                  "mantissa": 1,
+                  "exponent": 9
+                },
+                "effect": {
+                  "decimal": "1.0000251984209978",
+                  "mantissa": 1.0000251984209978,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "1000000000000",
+                  "mantissa": 1,
+                  "exponent": 12
+                },
+                "effect": {
+                  "decimal": "1.000028844991406",
+                  "mantissa": 1.000028844991406,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 5,
+                "price": {
+                  "decimal": "1000000000000000000",
+                  "mantissa": 1,
+                  "exponent": 18
+                },
+                "effect": {
+                  "decimal": "1.0000341995189335",
+                  "mantissa": 1.0000341995189335,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "1e+33",
+                  "mantissa": 1,
+                  "exponent": 33
+                },
+                "effect": {
+                  "decimal": "1.0000430886938005",
+                  "mantissa": 1.0000430886938005,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 25,
+                "price": {
+                  "decimal": "1e+78",
+                  "mantissa": 1,
+                  "exponent": 78
+                },
+                "effect": {
+                  "decimal": "1.0000584803547643",
+                  "mantissa": 1.0000584803547643,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 49,
+                "price": {
+                  "decimal": "1e+150",
+                  "mantissa": 1,
+                  "exponent": 150
+                },
+                "effect": {
+                  "decimal": "1.0000731861142005",
+                  "mantissa": 1.0000731861142005,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 50,
+                "price": {
+                  "decimal": "1e+153",
+                  "mantissa": 1,
+                  "exponent": 153
+                },
+                "effect": {
+                  "decimal": "1.0000736806299728",
+                  "mantissa": 1.0000736806299728,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 51,
+                "price": {
+                  "decimal": "6.309573444802098e+163",
+                  "mantissa": 6.309573444802098,
+                  "exponent": 163
+                },
+                "effect": {
+                  "decimal": "1.0000741685953853",
+                  "mantissa": 1.0000741685953853,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 100,
+                "price": {
+                  "decimal": "4.189238473296087e+3474",
+                  "mantissa": 4.189238473296087,
+                  "exponent": 3474
+                },
+                "effect": {
+                  "decimal": "1.0000928317766722",
+                  "mantissa": 1.0000928317766722,
+                  "exponent": 0
+                }
+              }
+            ]
+          },
+          "damageBoost": {
+            "name": "Increasing Damage Boost",
+            "resource": 3,
+            "maxLevel": 20,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "262144",
+                  "mantissa": 2.62144,
+                  "exponent": 5
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "1554944255987.7378",
+                  "mantissa": 1.5549442559877378,
+                  "exponent": 12
+                },
+                "effect": {
+                  "decimal": "1.08",
+                  "mantissa": 1.08,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "4.722366482869646e+21",
+                  "mantissa": 4.722366482869646,
+                  "exponent": 21
+                },
+                "effect": {
+                  "decimal": "2.22",
+                  "mantissa": 2.22,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "7.343016637207171e+33",
+                  "mantissa": 7.343016637207171,
+                  "exponent": 33
+                },
+                "effect": {
+                  "decimal": "3.4200000000000004",
+                  "mantissa": 3.4200000000000004,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 19,
+                "price": {
+                  "decimal": "2.477572632802903e+597",
+                  "mantissa": 2.477572632802903,
+                  "exponent": 597
+                },
+                "effect": {
+                  "decimal": "30.78",
+                  "mantissa": 3.0780000000000003,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 20,
+                "price": {
+                  "decimal": "4.398762927097642e+655",
+                  "mantissa": 4.398762927097642,
+                  "exponent": 655
+                },
+                "effect": {
+                  "decimal": "33",
+                  "mantissa": 3.3,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 21,
+                "price": {
+                  "decimal": "3.998569768129224e+716",
+                  "mantissa": 3.998569768129224,
+                  "exponent": 716
+                },
+                "effect": {
+                  "decimal": "35.28",
+                  "mantissa": 3.528,
+                  "exponent": 1
+                }
+              }
+            ]
+          },
+          "gemBoostSimple": {
+            "name": "Simple Gem Boost",
+            "resource": 3,
+            "maxLevel": 10,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "10000000000",
+                  "mantissa": 1,
+                  "exponent": 10
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "100000000000000000000",
+                  "mantissa": 1,
+                  "exponent": 20
+                },
+                "effect": {
+                  "decimal": "1.5",
+                  "mantissa": 1.5,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "9.418182462037755e+32",
+                  "mantissa": 9.418182462037755,
+                  "exponent": 32
+                },
+                "effect": {
+                  "decimal": "2",
+                  "mantissa": 2,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "2.354659903582603e+47",
+                  "mantissa": 2.354659903582603,
+                  "exponent": 47
+                },
+                "effect": {
+                  "decimal": "2.5",
+                  "mantissa": 2.5,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 9,
+                "price": {
+                  "decimal": "4.635554083293704e+149",
+                  "mantissa": 4.635554083293704,
+                  "exponent": 149
+                },
+                "effect": {
+                  "decimal": "5.5",
+                  "mantissa": 5.5,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "3.0854552082205484e+168",
+                  "mantissa": 3.0854552082205484,
+                  "exponent": 168
+                },
+                "effect": {
+                  "decimal": "6",
+                  "mantissa": 6,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 11,
+                "price": {
+                  "decimal": "4.935933298415726e+187",
+                  "mantissa": 4.935933298415726,
+                  "exponent": 187
+                },
+                "effect": {
+                  "decimal": "6.5",
+                  "mantissa": 6.5,
+                  "exponent": 0
+                }
+              }
+            ]
+          },
+          "damageBoostUpgrades": {
+            "name": "Upgrade Damage Upgrade",
+            "resource": 3,
+            "maxLevel": 10,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "1e+50",
+                  "mantissa": 1,
+                  "exponent": 50
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "1e+75",
+                  "mantissa": 1,
+                  "exponent": 75
+                },
+                "effect": {
+                  "decimal": "1.05",
+                  "mantissa": 1.05,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "1e+100",
+                  "mantissa": 1,
+                  "exponent": 100
+                },
+                "effect": {
+                  "decimal": "1.2100000000000002",
+                  "mantissa": 1.2100000000000002,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "1e+125",
+                  "mantissa": 1,
+                  "exponent": 125
+                },
+                "effect": {
+                  "decimal": "1.5208749999999998",
+                  "mantissa": 1.5208749999999998,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 9,
+                "price": {
+                  "decimal": "1e+275",
+                  "mantissa": 1,
+                  "exponent": 275
+                },
+                "effect": {
+                  "decimal": "28.334269484119133",
+                  "mantissa": 2.8334269484119132,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "1e+300",
+                  "mantissa": 1,
+                  "exponent": 300
+                },
+                "effect": {
+                  "decimal": "57.6650390625",
+                  "mantissa": 5.76650390625,
+                  "exponent": 1
+                }
+              },
+              {
+                "level": 11,
+                "price": {
+                  "decimal": "1e+325",
+                  "mantissa": 1,
+                  "exponent": 325
+                },
+                "effect": {
+                  "decimal": "124.06482859572677",
+                  "mantissa": 1.2406482859572676,
+                  "exponent": 2
+                }
+              }
+            ]
+          },
+          "powerPowerPower": {
+            "name": "Power Power Power!",
+            "resource": 3,
+            "maxLevel": "Infinity",
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "1e+100",
+                  "mantissa": 1,
+                  "exponent": 100
+                },
+                "effect": {
+                  "decimal": "1",
+                  "mantissa": 1,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "1e+110",
+                  "mantissa": 1,
+                  "exponent": 110
+                },
+                "effect": {
+                  "decimal": "1.03",
+                  "mantissa": 1.03,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "1e+140",
+                  "mantissa": 1,
+                  "exponent": 140
+                },
+                "effect": {
+                  "decimal": "1.06",
+                  "mantissa": 1.06,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "1e+190",
+                  "mantissa": 1,
+                  "exponent": 190
+                },
+                "effect": {
+                  "decimal": "1.09",
+                  "mantissa": 1.09,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 5,
+                "price": {
+                  "decimal": "1e+350",
+                  "mantissa": 1,
+                  "exponent": 350
+                },
+                "effect": {
+                  "decimal": "1.15",
+                  "mantissa": 1.15,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 9,
+                "price": {
+                  "decimal": "1e+910",
+                  "mantissa": 1,
+                  "exponent": 910
+                },
+                "effect": {
+                  "decimal": "1.27",
+                  "mantissa": 1.27,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "1e+1100",
+                  "mantissa": 1,
+                  "exponent": 1100
+                },
+                "effect": {
+                  "decimal": "1.3",
+                  "mantissa": 1.3,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 11,
+                "price": {
+                  "decimal": "1e+1310",
+                  "mantissa": 1,
+                  "exponent": 1310
+                },
+                "effect": {
+                  "decimal": "1.33",
+                  "mantissa": 1.33,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 25,
+                "price": {
+                  "decimal": "1e+95250",
+                  "mantissa": 1,
+                  "exponent": 95250
+                },
+                "effect": {
+                  "decimal": "1.75",
+                  "mantissa": 1.75,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 50,
+                "price": {
+                  "decimal": "1e+1004000",
+                  "mantissa": 1,
+                  "exponent": 1004000
+                },
+                "effect": {
+                  "decimal": "2.5",
+                  "mantissa": 2.5,
+                  "exponent": 0
+                }
+              },
+              {
+                "level": 100,
+                "price": {
+                  "decimal": "1e+9009000",
+                  "mantissa": 1,
+                  "exponent": 9009000
+                },
+                "effect": {
+                  "decimal": "4",
+                  "mantissa": 4,
+                  "exponent": 0
+                }
+              }
+            ]
+          },
+          "powerResetKeep": {
+            "name": "Power Prestige Retainment",
+            "resource": 3,
+            "maxLevel": 10,
+            "stochasticEffect": false,
+            "samples": [
+              {
+                "level": 0,
+                "price": {
+                  "decimal": "1e+25",
+                  "mantissa": 1,
+                  "exponent": 25
+                },
+                "effect": {
+                  "decimal": "0.5",
+                  "mantissa": 5,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 1,
+                "price": {
+                  "decimal": "1e+50",
+                  "mantissa": 1,
+                  "exponent": 50
+                },
+                "effect": {
+                  "decimal": "0.55",
+                  "mantissa": 5.5,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 2,
+                "price": {
+                  "decimal": "1e+125",
+                  "mantissa": 1,
+                  "exponent": 125
+                },
+                "effect": {
+                  "decimal": "0.595",
+                  "mantissa": 5.949999999999999,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 3,
+                "price": {
+                  "decimal": "1e+250",
+                  "mantissa": 1,
+                  "exponent": 250
+                },
+                "effect": {
+                  "decimal": "0.6355",
+                  "mantissa": 6.3549999999999995,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 9,
+                "price": {
+                  "decimal": "1e+2050",
+                  "mantissa": 1,
+                  "exponent": 2050
+                },
+                "effect": {
+                  "decimal": "0.8062897554999999",
+                  "mantissa": 8.062897555,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 10,
+                "price": {
+                  "decimal": "1e+2525",
+                  "mantissa": 1,
+                  "exponent": 2525
+                },
+                "effect": {
+                  "decimal": "0.82566077995",
+                  "mantissa": 8.2566077995,
+                  "exponent": -1
+                }
+              },
+              {
+                "level": 11,
+                "price": {
+                  "decimal": "1e+3050",
+                  "mantissa": 1,
+                  "exponent": 3050
+                },
+                "effect": {
+                  "decimal": "0.8430947019549999",
+                  "mantissa": 8.430947019549999,
+                  "exponent": -1
+                }
+              }
+            ]
+          }
+        }
+      }
     }
   }
 }

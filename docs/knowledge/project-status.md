@@ -4,7 +4,7 @@ Last updated: 2026-09-29
 
 ## Phase
 
-**Phase 0 — Foundation / Reference Archaeology.** Source-backed Decimal, RNG, formatter, mine-object, and mining-rate slices are implemented and tested. No playable mining loop, full progression, crafting, story, or final UI has been implemented.
+**Phase 0 — Foundation / Reference Archaeology.** Source-backed Decimal, RNG, formatter, mine-object, mining-rate, and mining-upgrade-factor slices are implemented and tested. The full upgrade formulas and purchase rules are researched and captured but not implemented as a Beyond subsystem. No playable mining loop, full progression, crafting, story, or final UI has been implemented.
 
 ## Compatibility target
 
@@ -23,13 +23,14 @@ Idle Mine: Remix, repository default branch main, commit **0e0f4bf5a9c66e5603cda
 - Added `RemixRandom`, an explicit-seed port of the canonical `Random` stream. Fifteen seeds spanning object-region boundaries are golden-tested, including source sequence exhaustion; property tests cover repeatable finite streams for safe nonnegative seeds.
 - Added `packages/content` with 72 base objects, 78 special anchors, 25 skin-layer counts, and the 498-word source dictionary. `getRemixMineObject` reproduces source lookup and all three generation branches; Chromium matches all 224 captured object probes.
 - Added `calculateRemixMiningRates` with source-ordered active/idle damage and Money/Gem/Planet Coin rate formulas, plus `calculateRemixMiningFactors` for the mining-related upgrade effect subset. Nine controlled Chromium scenarios cover Money, Gem, Planet Coin, and selected Wisdom effects, Power of Exquisity above one, the last-damageable gem bonus, drop and no-drop rates, zero damage, defense boundaries, and hit-count overflow; a separate assertion preserves the current-object argument quirk. Factor outputs are checked from captured levels in Vitest and Chromium. Upgrade costs/caps/purchases, damage application, and resource updates remain separate work.
+- Added `upgradeSemantics` to the reference corpus: all 29 upgrade definitions and 249 controlled price/effect level samples, including finite cap boundaries and source softcaps. The new [upgrade reference](upgrades.md) documents prices, effects, cross-family dependencies, and source purchase rules. The random Blacksmith Expertise effect is explicitly excluded from the static level samples. Beyond still has no general price evaluator or purchase mutation.
 - Added `packages/formatting` with the complete 40-formatter Remix registry, all three custom formatters, and the number/thousands/percent wrappers. The omitted community ESM exports and Remix custom classes are independently implemented from the pinned source. Vitest checks Node-stable golden values; Playwright compares every captured direct, wrapper, and exponent output in Chromium, including the `999.5` Idle Mine Notation boundary.
 - Research checkouts match the recorded SHAs and are clean; the reference setup/check script is reproducible.
 - Windows Rust/Tauri `cargo check` and native build were validated; the Windows icon is an unbranded transparent scaffold placeholder.
 
 ## Not complete
 
-- No complete system extraction, playable Beyond simulation, gameplay UI, save importer, PWA, or parity certification. Object and rate corpora remain partial; only mining-related upgrade factor evaluation has begun, while costs/caps/purchases, damage ticks, reward rolls, resource updates, crafting, persistence, offline-time, and full progression are not implemented. No full gameplay matrix row is certified.
+- No complete system extraction, playable Beyond simulation, gameplay UI, save importer, PWA, or parity certification. Object and rate corpora remain partial; only mining-related upgrade factors are implemented, while general price/effect evaluators, purchase/cap behavior, damage ticks, reward rolls, resource updates, crafting, persistence, offline-time, and full progression are not implemented. The random upgrade outcome also needs a dedicated injected-RNG fixture. No full gameplay matrix row is certified.
 - No accepted behavioral exceptions.
 - No Android/iOS SDK or mobile build setup.
 - Upstream game code and artwork have not been ported. The source-derived mine content data is deliberately extracted and provenance-recorded under `packages/content`.
@@ -45,4 +46,4 @@ Idle Mine: Remix, repository default branch main, commit **0e0f4bf5a9c66e5603cda
 
 ## Next phase
 
-Continue Phase 0 by extracting upgrade costs, caps, purchase and bulk-buy semantics, then connect the tested factors/rates to deterministic mining ticks and source-matched resource payout/drop rolls. Follow with crafting, save/import, offline-time, and representative story/settings states. Add fixtures before implementing each respective domain; do not treat partial corpora as complete specifications.
+Continue Phase 0 by implementing and comparing deterministic upgrade prices/effects against `upgradeSemantics`, then capture/test stochastic Blacksmith Expertise outcomes and generic purchase/bulk-buy transitions. Connect the validated upgrade factors and rates to deterministic mining ticks and source-matched payouts/drop rolls. Follow with crafting, save/import, offline-time, and representative story/settings states. Add fixtures before implementing each respective domain; do not treat partial corpora as complete specifications.

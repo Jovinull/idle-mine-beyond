@@ -1029,6 +1029,130 @@ async function capture(reference, dependencies, dependencySnapshots) {
             }
           }
         })();
+        const upgradeSemantics = (() => {
+          const upgradeGroups = {
+            money: game.upgrades,
+            gems: game.gemUpgrades,
+            planetCoins: game.planetCoinUpgrades,
+            wisdom: game.powers.upgrades,
+          };
+          const previousLevels = Object.fromEntries(
+            Object.entries(upgradeGroups).map(([group, upgrades]) => [
+              group,
+              Object.fromEntries(
+                Object.entries(upgrades).map(([key, upgrade]) => [
+                  key,
+                  upgrade.level,
+                ]),
+              ),
+            ]),
+          );
+          const previousHighestObjectLevel = game.highestMineObjectLevel;
+          const previousPowers = [...game.powers.data.values];
+          const extraLevels = {
+            "money.idleSpeed": [49, 50, 51],
+            "gems.blacksmith": [24, 25, 26],
+            "gems.gemChance": [29, 30, 31],
+            "gems.gemMultiply": [
+              249, 250, 251, 999, 1000, 1001, 2499, 2500, 2501, 9999, 10000,
+              10001,
+            ],
+            "wisdom.powerPowerActive": [49, 50, 51],
+            "wisdom.powerPowerIdle": [49, 50, 51],
+            "wisdom.powerPowerPower": [9, 10, 11],
+          };
+
+          try {
+            game.highestMineObjectLevel = 171;
+            game.powers.data.values = previousPowers.map(() => new Decimal(1));
+            for (const upgrades of Object.values(upgradeGroups)) {
+              for (const upgrade of Object.values(upgrades)) {
+                upgrade.level = 0;
+              }
+            }
+
+            return {
+              sourcePaths: [
+                "Scripts/Define/game.js",
+                "Scripts/upgrade.js",
+                "Scripts/utils.js",
+              ],
+              controlledState: {
+                highestMineObjectLevel: 171,
+                powerValues: ["1", "1", "1", "1", "1"],
+                otherUpgradeLevels: 0,
+                stochasticEffectExcluded: ["money.blacksmithBonus"],
+              },
+              groups: Object.fromEntries(
+                Object.entries(upgradeGroups).map(([group, upgrades]) => [
+                  group,
+                  Object.fromEntries(
+                    Object.entries(upgrades).map(([key, upgrade]) => {
+                      const maxLevel = upgrade.getMaxLevel();
+                      const samples = new Set([0, 1, 2, 3]);
+                      if (Number.isFinite(maxLevel)) {
+                        samples.add(maxLevel - 1);
+                        samples.add(maxLevel);
+                        samples.add(maxLevel + 1);
+                      } else {
+                        for (const level of [5, 10, 25, 50, 100]) {
+                          samples.add(level);
+                        }
+                      }
+                      for (const level of extraLevels[group + "." + key] ??
+                        []) {
+                        samples.add(level);
+                      }
+                      const stochasticEffect =
+                        group === "money" && key === "blacksmithBonus";
+                      const values = [...samples]
+                        .filter((level) => level >= 0)
+                        .sort((a, b) => a - b)
+                        .map((level) => {
+                          for (const groupUpgrades of Object.values(
+                            upgradeGroups,
+                          )) {
+                            for (const otherUpgrade of Object.values(
+                              groupUpgrades,
+                            )) {
+                              otherUpgrade.level = 0;
+                            }
+                          }
+                          upgrade.level = level;
+                          return {
+                            level,
+                            price: normalizedDecimal(upgrade.getPrice(level)),
+                            effect: stochasticEffect
+                              ? null
+                              : normalizedDecimal(upgrade.getEffect(level)),
+                          };
+                        });
+                      return [
+                        key,
+                        {
+                          name: upgrade.name,
+                          resource: upgrade.resource,
+                          maxLevel:
+                            maxLevel === Infinity ? "Infinity" : maxLevel,
+                          stochasticEffect,
+                          samples: values,
+                        },
+                      ];
+                    }),
+                  ),
+                ]),
+              ),
+            };
+          } finally {
+            game.highestMineObjectLevel = previousHighestObjectLevel;
+            game.powers.data.values = previousPowers;
+            for (const [group, levels] of Object.entries(previousLevels)) {
+              for (const [key, level] of Object.entries(levels)) {
+                upgradeGroups[group][key].level = level;
+              }
+            }
+          }
+        })();
         return {
           initialState,
           initialRates: rates,
@@ -1039,6 +1163,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           randomSequenceExhaustion,
           mineObjectCatalog,
           formulaSemantics,
+          upgradeSemantics,
           objects: uniqueObjectIds.map(snapshotObject),
           probeRuntime: normalize(window.__idleMineProbe),
           currentObjectHpAfterCapture: normalizedDecimal(current.hp),
@@ -1285,8 +1410,15 @@ async function main() {
       );
     }
   }
+  const capturedUpgrades = Object.values(
+    expected.data.upgradeSemantics?.groups ?? {},
+  ).flatMap((group) => Object.values(group));
+  const upgradeSampleCount = capturedUpgrades.reduce(
+    (sum, upgrade) => sum + upgrade.samples.length,
+    0,
+  );
   process.stdout.write(
-    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters × ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values).\n`,
+    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples).\n`,
   );
 }
 

@@ -22,11 +22,9 @@ The source displays resources, stats, object information, upgrades, crafting, st
 
 ## Upgrade families
 
-The source defines money upgrades, gem upgrades, Planet Coin upgrades, and Wisdom upgrades. Names include Blacksmith, Blacksmith Skill, Blacksmith Expertise, Gem Chance, Active Power, Idle Power, Idle Speed, Gem Waster, Blacksmith+, Blacksmith Skill II, Gem Multiplication, Offline Gems, Gem Bonus, Offline Planet Coins, Offline Time, and Bulk Crafting.
+The source defines 8 Money, 7 Gem, 7 Planet Coin, and 7 Wisdom upgrades. The [upgrade reference](upgrades.md) records all 29 source keys, names, prices, effects, caps, dependencies, and generic purchase rules. `upgradeSemantics` in the oracle corpus captures 249 controlled level samples; the random Blacksmith Expertise effect is explicitly excluded from those static samples.
 
-Names and caps in bootstrap notes are leads, not a complete verified table. Extract every cost, cap, effect, bulk-buy rule, and rounding boundary from the pinned source before implementation.
-
-The core now evaluates the subset of upgrade effects that feed the mining damage and rate equations: Money Active/Idle Power, Idle Speed and Gem Chance; Gem Idle Power II, Gem Chance II and Gem Multiplication; Planet Coin Active Power, Gem Chance III, Gem Multiplication and last-object Gem Bonus; Wisdom Increasing Damage Boost, Upgrade Damage Upgrade and Simple Gem Boost. Exact formulas and tested levels are in [mathematics](mathematics.md) and `formulaSemantics` in the reference corpus. This does not implement purchase behavior, prices, caps, unlocks, bulk buying, or the other Wisdom/Power effects. The Wisdom input must include all purchased Wisdom levels because one formula counts every Wisdom upgrade.
+The core evaluates only the subset of effects that feed mining damage and rate equations: Money Active/Idle Power, Idle Speed and Gem Chance; Gem Idle Power II, Gem Chance II and Gem Multiplication; Planet Coin Active Power, Gem Chance III, Gem Multiplication and last-object Gem Bonus; Wisdom Increasing Damage Boost, Upgrade Damage Upgrade and Simple Gem Boost. Exact formulas and tests are in [mathematics](mathematics.md) and `formulaSemantics` in the reference corpus. Beyond has no general upgrade price evaluator, cap/purchase mutation, or complete effect evaluator yet. Its Wisdom input must include every purchased Wisdom level because one formula counts them all.
 
 ## Active and idle play
 
