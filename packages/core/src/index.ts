@@ -1,2 +1,2 @@
-/** Foundation marker only. Game simulation behavior belongs here after reference extraction. */
-export const implementationStatus = "not-started" as const;
+export { Decimal } from "./decimal.js";
+export type { DecimalSource } from "./decimal.js";

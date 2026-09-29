@@ -37,11 +37,13 @@ Each fixture should identify the source repository and commit, source file or pr
 
 Use 1366×768, 1440×900, 1920×1080, and 2560×1440. Capture light and dark themes and states such as initial, gems unlocked, Planet Coins, Wisdom, story, settings, huge numbers, long generated names, and disabled controls.
 
-## Current smoke harness
+## Current reference and compatibility harnesses
 
-Bootstrap tests prove the Vitest runner, a metadata-only parity fixture check, and a Playwright browser launch against the empty phase-status shell. They do not test game behavior or claim gameplay parity.
+The Vitest parity suite checks the pinned reference corpus and the core Decimal facade against captured Remix outputs. A property test also checks legacy JSON round-trips for safe integers. This covers only extracted arithmetic behavior; it does not claim overall gameplay parity.
 
-`pnpm test:reference` is a separate read-only browser probe. It loads the pinned Remix checkout, substitutes the SHA-verified CDN response snapshots recorded in `sources/runtime-dependencies.json`, fixes the clock and RNG, suppresses the animation loop, and compares the result with the checked-in oracle corpus. It does not execute Beyond behavior and is not parity certification.
+`pnpm test:reference` is a separate read-only browser probe. It loads the pinned Remix checkout, substitutes the SHA-verified CDN response snapshots recorded in `sources/runtime-dependencies.json`, fixes the clock and RNG, suppresses the animation loop, and compares the result with the checked-in oracle corpus. `pnpm reference:preview` writes a disposable capture under ignored `.research/outputs/`. `pnpm reference:extend` adds new fields only if every existing field still matches; `pnpm reference:update -- <field>` replaces exactly one named field after checking all others. Review every proposed fixture change. These commands never modify the canonical checkout or implement Beyond behavior.
+
+`pnpm test:reference` and `pnpm test:parity` do not certify overall gameplay parity.
 
 ## Completion rule
 

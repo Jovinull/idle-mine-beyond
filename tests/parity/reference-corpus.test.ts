@@ -1,6 +1,12 @@
 import { readFile } from "node:fs/promises";
 import { expect, it } from "vitest";
 
+type DecimalValue = {
+  decimal: string;
+  mantissa: number | string;
+  exponent: number | string;
+};
+
 const fixture = JSON.parse(
   await readFile(
     new URL("../fixtures/parity/remix-reference-corpus.json", import.meta.url),
@@ -34,6 +40,45 @@ const fixture = JSON.parse(
       value: { decimal: string };
     }[];
     notationOutputs: { notation: string; values: unknown[] }[];
+    decimalSemantics: {
+      constants: Record<string, DecimalValue>;
+      inputs: {
+        input: string;
+        value: DecimalValue;
+        toNumber: number | string;
+        json: string;
+        wrappedJson: string;
+        jsonRoundTrip: DecimalValue;
+      }[];
+      arithmetic: {
+        left: string;
+        right: string;
+        add: DecimalValue;
+        subtract: DecimalValue;
+        multiply: DecimalValue;
+        divide: DecimalValue;
+        compare: number | { error: string };
+        max: DecimalValue;
+        min: DecimalValue;
+      }[];
+      rounding: {
+        input: string;
+        floor: DecimalValue;
+        ceil: DecimalValue;
+        round: DecimalValue;
+        trunc: DecimalValue;
+        toFixed0: string;
+        toFixed2: string;
+      }[];
+      powers: { base: string; exponent: string; result: DecimalValue }[];
+      logarithms: {
+        input: string;
+        log10: number | string;
+        log2: number | string;
+        naturalLog: number | string;
+        logBase10: number | string;
+      }[];
+    };
   };
 };
 

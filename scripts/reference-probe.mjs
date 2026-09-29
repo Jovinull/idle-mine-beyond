@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { createServer } from "node:http";
 import { execFile } from "node:child_process";
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
@@ -21,6 +21,10 @@ const dependencyManifestPath = path.join(
 const fixturePath = path.join(
   root,
   "tests/fixtures/parity/remix-reference-corpus.json",
+);
+const previewPath = path.join(
+  root,
+  ".research/outputs/remix-reference-preview.json",
 );
 const fixedClock = 1_704_067_200_000;
 const randomSeed = 0x1d1e;
@@ -222,6 +226,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           if (Number.isNaN(value)) return "NaN";
           if (value === Infinity) return "Infinity";
           if (value === -Infinity) return "-Infinity";
+          if (Object.is(value, -0)) return "-0";
           return value;
         };
         const normalizedDecimal = (value) => ({
@@ -235,12 +240,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           if (typeof value === "string" || typeof value === "boolean") {
             return value;
           }
-          if (
-            typeof value === "object" &&
-            typeof value.mantissa === "number" &&
-            typeof value.exponent === "number" &&
-            typeof value.toString === "function"
-          ) {
+          if (value instanceof Decimal) {
             return normalizedDecimal(value);
           }
           if (Array.isArray(value)) return value.map(normalize);
@@ -326,6 +326,149 @@ async function capture(reference, dependencies, dependencySnapshots) {
         }
         game.numberFormatter = originalFormatter;
 
+        const captureResult = (operation) => {
+          try {
+            return normalize(operation());
+          } catch (error) {
+            return { error: String(error) };
+          }
+        };
+        const decimalInputStrings = [
+          "0",
+          "-0",
+          "1",
+          "-1",
+          "0.1",
+          "-0.1",
+          "1.2345678901234567",
+          "1e-325",
+          "1e-324",
+          "5e-324",
+          "1e-323",
+          "1e-301",
+          "1e-300",
+          "1e-299",
+          "1e308",
+          "1e309",
+          "1e10000",
+          "-1e10000",
+          "Infinity",
+          "-Infinity",
+          "NaN",
+        ];
+        const decimalInputs = decimalInputStrings.map((input) => {
+          const value = new Decimal(input);
+          return {
+            input,
+            value: normalizedDecimal(value),
+            toNumber: safeNumber(value.toNumber()),
+            json: captureResult(() => JSON.stringify(value)),
+            wrappedJson: captureResult(() => JSON.stringify({ value })),
+            jsonRoundTrip: captureResult(() => {
+              const parsed = JSON.parse(JSON.stringify(value));
+              return normalizedDecimal(new Decimal(parsed));
+            }),
+          };
+        });
+        const arithmeticPairs = [
+          ["1e100", "1"],
+          ["1e100", "1e100"],
+          ["1e100", "-1e100"],
+          ["1e-300", "1e300"],
+          ["1", "0"],
+          ["0", "0"],
+          ["Infinity", "Infinity"],
+          ["NaN", "1"],
+        ];
+        const arithmetic = arithmeticPairs.map(([leftInput, rightInput]) => {
+          const left = new Decimal(leftInput);
+          const right = new Decimal(rightInput);
+          return {
+            left: leftInput,
+            right: rightInput,
+            add: captureResult(() => left.add(right)),
+            subtract: captureResult(() => left.sub(right)),
+            multiply: captureResult(() => left.mul(right)),
+            divide: captureResult(() => left.div(right)),
+            compare: captureResult(() => left.cmp(right)),
+            max: captureResult(() => left.max(right)),
+            min: captureResult(() => left.min(right)),
+          };
+        });
+        const roundingInputs = [
+          "0.1",
+          "0.5",
+          "0.9",
+          "1.5",
+          "-0.1",
+          "-0.5",
+          "-0.9",
+          "-1.5",
+          "999.5",
+          "-999.5",
+          "1e-300",
+          "-1e-300",
+          "1e100",
+        ];
+        const rounding = roundingInputs.map((input) => {
+          const value = new Decimal(input);
+          return {
+            input,
+            floor: captureResult(() => Decimal.floor(value)),
+            ceil: captureResult(() => Decimal.ceil(value)),
+            round: captureResult(() => Decimal.round(value)),
+            trunc: captureResult(() => Decimal.trunc(value)),
+            toFixed0: captureResult(() => value.toFixed(0)),
+            toFixed2: captureResult(() => value.toFixed(2)),
+          };
+        });
+        const powers = [
+          ["2", "10"],
+          ["10", "0.5"],
+          ["10", "-1"],
+          ["0", "-1"],
+          ["-2", "0.5"],
+          ["-2", "3"],
+          ["1e100", "2"],
+        ].map(([baseInput, exponentInput]) => ({
+          base: baseInput,
+          exponent: exponentInput,
+          result: captureResult(() =>
+            new Decimal(baseInput).pow(new Decimal(exponentInput)),
+          ),
+        }));
+        const logarithms = [
+          "0",
+          "-1",
+          "0.1",
+          "1",
+          "1e100",
+          "Infinity",
+          "NaN",
+        ].map((input) => {
+          const value = new Decimal(input);
+          return {
+            input,
+            log10: captureResult(() => value.log10()),
+            log2: captureResult(() => value.log2()),
+            naturalLog: captureResult(() => value.ln()),
+            logBase10: captureResult(() => value.log(10)),
+          };
+        });
+        const decimalSemantics = {
+          constants: {
+            maxValue: normalizedDecimal(Decimal.MAX_VALUE),
+            minValue: normalizedDecimal(Decimal.MIN_VALUE),
+            numberMaxValue: normalizedDecimal(Decimal.NUMBER_MAX_VALUE),
+            numberMinValue: normalizedDecimal(Decimal.NUMBER_MIN_VALUE),
+          },
+          inputs: decimalInputs,
+          arithmetic,
+          rounding,
+          powers,
+          logarithms,
+        };
+
         const initialState = {
           clock: normalize(game.lastActive),
           timer: normalize(game.timer),
@@ -385,6 +528,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           initialState,
           initialRates: rates,
           notationOutputs,
+          decimalSemantics,
           objects: uniqueObjectIds.map(snapshotObject),
           probeRuntime: normalize(window.__idleMineProbe),
           currentObjectHpAfterCapture: normalizedDecimal(current.hp),
@@ -451,9 +595,15 @@ async function capture(reference, dependencies, dependencySnapshots) {
 
 async function main() {
   const mode = process.argv[2] ?? "verify";
-  if (mode !== "capture" && mode !== "verify") {
+  if (
+    mode !== "capture" &&
+    mode !== "extend" &&
+    mode !== "update" &&
+    mode !== "verify" &&
+    mode !== "preview"
+  ) {
     throw new Error(
-      "Use `capture` to create the initial corpus or `verify` to compare it.",
+      "Use `capture` for the initial corpus, `extend` to add fields, `update <field>` to replace one reviewed field, `preview` for a disposable capture, or `verify` to compare the fixture.",
     );
   }
   const references = JSON.parse(await readFile(referenceManifestPath, "utf8"));
@@ -470,6 +620,15 @@ async function main() {
   }
   const snapshots = await loadDependencySnapshots(dependencies);
   const result = await capture(reference, dependencies, snapshots);
+
+  if (mode === "preview") {
+    await mkdir(path.dirname(previewPath), { recursive: true });
+    await writeFile(previewPath, `${JSON.stringify(result, null, 2)}\n`);
+    process.stdout.write(
+      `Captured a disposable reference preview at ${path.relative(root, previewPath)}.\n`,
+    );
+    return;
+  }
 
   if (mode === "capture") {
     try {
@@ -489,6 +648,100 @@ async function main() {
     return;
   }
 
+  if (mode === "extend") {
+    const expected = JSON.parse(await readFile(fixturePath, "utf8"));
+    if (expected.metadata.sourceCommit !== reference.pinnedCommit) {
+      throw new Error(
+        "Fixture source revision differs from the pinned source manifest.",
+      );
+    }
+    if (
+      JSON.stringify(expected.metadata.dependencies) !==
+      JSON.stringify(result.metadata.dependencies)
+    ) {
+      throw new Error(
+        "Fixture runtime dependencies differ from the frozen snapshots.",
+      );
+    }
+
+    for (const [key, value] of Object.entries(expected.data)) {
+      if (
+        !(key in result.data) ||
+        JSON.stringify(value) !== JSON.stringify(result.data[key])
+      ) {
+        throw new Error(
+          `Existing fixture field ${key} changed. Preserve it and investigate instead of extending the corpus.`,
+        );
+      }
+    }
+
+    const newFields = Object.fromEntries(
+      Object.entries(result.data).filter(([key]) => !(key in expected.data)),
+    );
+    const addedFieldNames = Object.keys(newFields);
+    if (addedFieldNames.length === 0) {
+      throw new Error("No new reference fields are available to extend.");
+    }
+
+    const extended = {
+      ...expected,
+      data: { ...expected.data, ...newFields },
+    };
+    await writeFile(fixturePath, `${JSON.stringify(extended, null, 2)}\n`);
+    process.stdout.write(
+      `Extended the reference corpus with: ${addedFieldNames.join(", ")}.\n`,
+    );
+    return;
+  }
+
+  if (mode === "update") {
+    const field = process.argv[3];
+    if (!field) throw new Error("Name the one fixture field to update.");
+    const expected = JSON.parse(await readFile(fixturePath, "utf8"));
+    if (expected.metadata.sourceCommit !== reference.pinnedCommit) {
+      throw new Error(
+        "Fixture source revision differs from the pinned source manifest.",
+      );
+    }
+    if (
+      JSON.stringify(expected.metadata.dependencies) !==
+      JSON.stringify(result.metadata.dependencies)
+    ) {
+      throw new Error(
+        "Fixture runtime dependencies differ from the frozen snapshots.",
+      );
+    }
+    if (!(field in expected.data) || !(field in result.data)) {
+      throw new Error(
+        `Fixture field ${field} does not exist in both captures.`,
+      );
+    }
+    for (const [key, value] of Object.entries(expected.data)) {
+      if (
+        key !== field &&
+        JSON.stringify(value) !== JSON.stringify(result.data[key])
+      ) {
+        throw new Error(
+          `Unselected fixture field ${key} changed. Update exactly one reviewed field at a time.`,
+        );
+      }
+    }
+    if (
+      JSON.stringify(expected.data[field]) ===
+      JSON.stringify(result.data[field])
+    ) {
+      throw new Error(`Fixture field ${field} already matches the capture.`);
+    }
+
+    const updated = {
+      ...expected,
+      data: { ...expected.data, [field]: result.data[field] },
+    };
+    await writeFile(fixturePath, `${JSON.stringify(updated, null, 2)}\n`);
+    process.stdout.write(`Updated only reference field ${field}.\n`);
+    return;
+  }
+
   const expected = JSON.parse(await readFile(fixturePath, "utf8"));
   if (expected.metadata.sourceCommit !== reference.pinnedCommit) {
     throw new Error(
@@ -503,13 +756,27 @@ async function main() {
       "Fixture runtime dependencies differ from the frozen snapshots.",
     );
   }
-  if (JSON.stringify(expected.data) !== JSON.stringify(result.data)) {
+  const expectedFields = Object.keys(expected.data);
+  const actualFields = Object.keys(result.data);
+  if (
+    expectedFields.length !== actualFields.length ||
+    expectedFields.some((key) => !actualFields.includes(key))
+  ) {
     throw new Error(
-      "Reference corpus mismatch. Investigate source, runtime, and probe inputs; do not overwrite the fixture to make verification pass.",
+      "Reference corpus fields differ. Investigate source and probe inputs; do not overwrite the fixture to make verification pass.",
     );
   }
+  for (const key of expectedFields) {
+    if (
+      JSON.stringify(expected.data[key]) !== JSON.stringify(result.data[key])
+    ) {
+      throw new Error(
+        `Reference corpus mismatch in ${key}. Investigate source, runtime, and probe inputs; do not overwrite the fixture to make verification pass.`,
+      );
+    }
+  }
   process.stdout.write(
-    `Verified ${expected.data.objects.length} reference objects against ${reference.pinnedCommit}.\n`,
+    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs).\n`,
   );
 }
 

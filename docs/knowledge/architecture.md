@@ -58,7 +58,7 @@ PWA installability and service-worker caching are deferred until the browser rel
 
 ## Big numbers
 
-Use a narrow facade that matches the Remix break_infinity.js semantics. Preserve rounding, coercion, overflow, Decimal serialization, notation behavior, and operation order. A replacement library requires a full golden compatibility corpus.
+Use the narrow `packages/core/src/decimal.ts` facade for all game-domain numbers. It pins `break_infinity.js@2.2.0`, the exact version resolved from the Remix runtime dependency snapshot. Preserve rounding, coercion, overflow, Decimal serialization, notation behavior, and operation order. A replacement library requires a full golden compatibility corpus.
 
 ## Platform adapters
 

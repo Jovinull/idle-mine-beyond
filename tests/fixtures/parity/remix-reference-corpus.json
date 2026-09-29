@@ -9193,6 +9193,1095 @@
       "decimal": "100",
       "mantissa": 1,
       "exponent": 2
+    },
+    "decimalSemantics": {
+      "constants": {
+        "maxValue": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 9000000000000000
+        },
+        "minValue": {
+          "decimal": "0",
+          "mantissa": 1,
+          "exponent": -9000000000000000
+        },
+        "numberMaxValue": {
+          "decimal": "1.7976931348623157e+308",
+          "mantissa": 1.7976931348623157,
+          "exponent": 308
+        },
+        "numberMinValue": {
+          "decimal": "5e-324",
+          "mantissa": 5,
+          "exponent": -324
+        }
+      },
+      "inputs": [
+        {
+          "input": "0",
+          "value": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "toNumber": 0,
+          "json": "\"0\"",
+          "wrappedJson": "{\"value\":\"0\"}",
+          "jsonRoundTrip": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          }
+        },
+        {
+          "input": "-0",
+          "value": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "toNumber": 0,
+          "json": "\"0\"",
+          "wrappedJson": "{\"value\":\"0\"}",
+          "jsonRoundTrip": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          }
+        },
+        {
+          "input": "1",
+          "value": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "toNumber": 1,
+          "json": "\"1\"",
+          "wrappedJson": "{\"value\":\"1\"}",
+          "jsonRoundTrip": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          }
+        },
+        {
+          "input": "-1",
+          "value": {
+            "decimal": "-1",
+            "mantissa": -1,
+            "exponent": 0
+          },
+          "toNumber": -1,
+          "json": "\"-1\"",
+          "wrappedJson": "{\"value\":\"-1\"}",
+          "jsonRoundTrip": {
+            "decimal": "-1",
+            "mantissa": -1,
+            "exponent": 0
+          }
+        },
+        {
+          "input": "0.1",
+          "value": {
+            "decimal": "0.1",
+            "mantissa": 1,
+            "exponent": -1
+          },
+          "toNumber": 0.1,
+          "json": "\"0.1\"",
+          "wrappedJson": "{\"value\":\"0.1\"}",
+          "jsonRoundTrip": {
+            "decimal": "0.1",
+            "mantissa": 1,
+            "exponent": -1
+          }
+        },
+        {
+          "input": "-0.1",
+          "value": {
+            "decimal": "-0.1",
+            "mantissa": -1,
+            "exponent": -1
+          },
+          "toNumber": -0.1,
+          "json": "\"-0.1\"",
+          "wrappedJson": "{\"value\":\"-0.1\"}",
+          "jsonRoundTrip": {
+            "decimal": "-0.1",
+            "mantissa": -1,
+            "exponent": -1
+          }
+        },
+        {
+          "input": "1.2345678901234567",
+          "value": {
+            "decimal": "1.2345678901234567",
+            "mantissa": 1.2345678901234567,
+            "exponent": 0
+          },
+          "toNumber": 1.2345678901234567,
+          "json": "\"1.2345678901234567\"",
+          "wrappedJson": "{\"value\":\"1.2345678901234567\"}",
+          "jsonRoundTrip": {
+            "decimal": "1.2345678901234567",
+            "mantissa": 1.2345678901234567,
+            "exponent": 0
+          }
+        },
+        {
+          "input": "1e-325",
+          "value": {
+            "decimal": "1e-325",
+            "mantissa": 1,
+            "exponent": -325
+          },
+          "toNumber": 0,
+          "json": "\"1e-325\"",
+          "wrappedJson": "{\"value\":\"1e-325\"}",
+          "jsonRoundTrip": {
+            "decimal": "1e-325",
+            "mantissa": 1,
+            "exponent": -325
+          }
+        },
+        {
+          "input": "1e-324",
+          "value": {
+            "decimal": "1e-324",
+            "mantissa": 1,
+            "exponent": -324
+          },
+          "toNumber": 5e-324,
+          "json": "\"1e-324\"",
+          "wrappedJson": "{\"value\":\"1e-324\"}",
+          "jsonRoundTrip": {
+            "decimal": "1e-324",
+            "mantissa": 1,
+            "exponent": -324
+          }
+        },
+        {
+          "input": "5e-324",
+          "value": {
+            "decimal": "5e-324",
+            "mantissa": 5,
+            "exponent": -324
+          },
+          "toNumber": 5e-324,
+          "json": "\"5e-324\"",
+          "wrappedJson": "{\"value\":\"5e-324\"}",
+          "jsonRoundTrip": {
+            "decimal": "5e-324",
+            "mantissa": 5,
+            "exponent": -324
+          }
+        },
+        {
+          "input": "1e-323",
+          "value": {
+            "decimal": "1e-323",
+            "mantissa": 1,
+            "exponent": -323
+          },
+          "toNumber": 1e-323,
+          "json": "\"1e-323\"",
+          "wrappedJson": "{\"value\":\"1e-323\"}",
+          "jsonRoundTrip": {
+            "decimal": "1e-323",
+            "mantissa": 1,
+            "exponent": -323
+          }
+        },
+        {
+          "input": "1e-301",
+          "value": {
+            "decimal": "1e-301",
+            "mantissa": 1,
+            "exponent": -301
+          },
+          "toNumber": 1e-301,
+          "json": "\"1e-301\"",
+          "wrappedJson": "{\"value\":\"1e-301\"}",
+          "jsonRoundTrip": {
+            "decimal": "1e-301",
+            "mantissa": 1,
+            "exponent": -301
+          }
+        },
+        {
+          "input": "1e-300",
+          "value": {
+            "decimal": "1e-300",
+            "mantissa": 1,
+            "exponent": -300
+          },
+          "toNumber": 1e-300,
+          "json": "\"1e-300\"",
+          "wrappedJson": "{\"value\":\"1e-300\"}",
+          "jsonRoundTrip": {
+            "decimal": "1e-300",
+            "mantissa": 1,
+            "exponent": -300
+          }
+        },
+        {
+          "input": "1e-299",
+          "value": {
+            "decimal": "1e-299",
+            "mantissa": 1,
+            "exponent": -299
+          },
+          "toNumber": 1e-299,
+          "json": "\"1e-299\"",
+          "wrappedJson": "{\"value\":\"1e-299\"}",
+          "jsonRoundTrip": {
+            "decimal": "1e-299",
+            "mantissa": 1,
+            "exponent": -299
+          }
+        },
+        {
+          "input": "1e308",
+          "value": {
+            "decimal": "1e+308",
+            "mantissa": 1,
+            "exponent": 308
+          },
+          "toNumber": 1e308,
+          "json": "\"1e+308\"",
+          "wrappedJson": "{\"value\":\"1e+308\"}",
+          "jsonRoundTrip": {
+            "decimal": "1e+308",
+            "mantissa": 1,
+            "exponent": 308
+          }
+        },
+        {
+          "input": "1e309",
+          "value": {
+            "decimal": "1e+309",
+            "mantissa": 1,
+            "exponent": 309
+          },
+          "toNumber": "Infinity",
+          "json": "\"1e+309\"",
+          "wrappedJson": "{\"value\":\"1e+309\"}",
+          "jsonRoundTrip": {
+            "decimal": "1e+309",
+            "mantissa": 1,
+            "exponent": 309
+          }
+        },
+        {
+          "input": "1e10000",
+          "value": {
+            "decimal": "1e+10000",
+            "mantissa": 1,
+            "exponent": 10000
+          },
+          "toNumber": "Infinity",
+          "json": "\"1e+10000\"",
+          "wrappedJson": "{\"value\":\"1e+10000\"}",
+          "jsonRoundTrip": {
+            "decimal": "1e+10000",
+            "mantissa": 1,
+            "exponent": 10000
+          }
+        },
+        {
+          "input": "-1e10000",
+          "value": {
+            "decimal": "-1e+10000",
+            "mantissa": -1,
+            "exponent": 10000
+          },
+          "toNumber": "-Infinity",
+          "json": "\"-1e+10000\"",
+          "wrappedJson": "{\"value\":\"-1e+10000\"}",
+          "jsonRoundTrip": {
+            "decimal": "-1e+10000",
+            "mantissa": -1,
+            "exponent": 10000
+          }
+        },
+        {
+          "input": "Infinity",
+          "value": {
+            "decimal": "Infinity",
+            "mantissa": 1,
+            "exponent": 9000000000000000
+          },
+          "toNumber": "Infinity",
+          "json": "\"Infinity\"",
+          "wrappedJson": "{\"value\":\"Infinity\"}",
+          "jsonRoundTrip": {
+            "decimal": "Infinity",
+            "mantissa": 1,
+            "exponent": 9000000000000000
+          }
+        },
+        {
+          "input": "-Infinity",
+          "value": {
+            "decimal": "-Infinity",
+            "mantissa": -1,
+            "exponent": 9000000000000000
+          },
+          "toNumber": "-Infinity",
+          "json": "\"-Infinity\"",
+          "wrappedJson": "{\"value\":\"-Infinity\"}",
+          "jsonRoundTrip": {
+            "decimal": "-Infinity",
+            "mantissa": -1,
+            "exponent": 9000000000000000
+          }
+        },
+        {
+          "input": "NaN",
+          "value": {
+            "decimal": "NaN",
+            "mantissa": "NaN",
+            "exponent": "NaN"
+          },
+          "toNumber": "NaN",
+          "json": "\"NaN\"",
+          "wrappedJson": "{\"value\":\"NaN\"}",
+          "jsonRoundTrip": {
+            "decimal": "NaN",
+            "mantissa": "NaN",
+            "exponent": "NaN"
+          }
+        }
+      ],
+      "arithmetic": [
+        {
+          "left": "1e100",
+          "right": "1",
+          "add": {
+            "decimal": "1e+100",
+            "mantissa": 1,
+            "exponent": 100
+          },
+          "subtract": {
+            "decimal": "1e+100",
+            "mantissa": 1,
+            "exponent": 100
+          },
+          "multiply": {
+            "decimal": "1e+100",
+            "mantissa": 1,
+            "exponent": 100
+          },
+          "divide": {
+            "decimal": "1e+100",
+            "mantissa": 1,
+            "exponent": 100
+          },
+          "compare": 1,
+          "max": {
+            "decimal": "1e+100",
+            "mantissa": 1,
+            "exponent": 100
+          },
+          "min": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          }
+        },
+        {
+          "left": "1e100",
+          "right": "1e100",
+          "add": {
+            "decimal": "2e+100",
+            "mantissa": 2,
+            "exponent": 100
+          },
+          "subtract": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "multiply": {
+            "decimal": "1e+200",
+            "mantissa": 1,
+            "exponent": 200
+          },
+          "divide": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "compare": 0,
+          "max": {
+            "decimal": "1e+100",
+            "mantissa": 1,
+            "exponent": 100
+          },
+          "min": {
+            "decimal": "1e+100",
+            "mantissa": 1,
+            "exponent": 100
+          }
+        },
+        {
+          "left": "1e100",
+          "right": "-1e100",
+          "add": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "subtract": {
+            "decimal": "2e+100",
+            "mantissa": 2,
+            "exponent": 100
+          },
+          "multiply": {
+            "decimal": "-1e+200",
+            "mantissa": -1,
+            "exponent": 200
+          },
+          "divide": {
+            "decimal": "-1",
+            "mantissa": -1,
+            "exponent": 0
+          },
+          "compare": 1,
+          "max": {
+            "decimal": "1e+100",
+            "mantissa": 1,
+            "exponent": 100
+          },
+          "min": {
+            "decimal": "-1e+100",
+            "mantissa": -1,
+            "exponent": 100
+          }
+        },
+        {
+          "left": "1e-300",
+          "right": "1e300",
+          "add": {
+            "decimal": "1e+300",
+            "mantissa": 1,
+            "exponent": 300
+          },
+          "subtract": {
+            "decimal": "-1e+300",
+            "mantissa": -1,
+            "exponent": 300
+          },
+          "multiply": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "divide": {
+            "decimal": "1e-600",
+            "mantissa": 1,
+            "exponent": -600
+          },
+          "compare": -1,
+          "max": {
+            "decimal": "1e+300",
+            "mantissa": 1,
+            "exponent": 300
+          },
+          "min": {
+            "decimal": "1e-300",
+            "mantissa": 1,
+            "exponent": -300
+          }
+        },
+        {
+          "left": "1",
+          "right": "0",
+          "add": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "subtract": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "multiply": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "divide": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "compare": 1,
+          "max": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "min": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          }
+        },
+        {
+          "left": "0",
+          "right": "0",
+          "add": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "subtract": {
+            "decimal": "0",
+            "mantissa": "-0",
+            "exponent": 0
+          },
+          "multiply": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "divide": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "compare": 0,
+          "max": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "min": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          }
+        },
+        {
+          "left": "Infinity",
+          "right": "Infinity",
+          "add": {
+            "decimal": "Infinity",
+            "mantissa": 2,
+            "exponent": 9000000000000000
+          },
+          "subtract": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "multiply": {
+            "decimal": "Infinity",
+            "mantissa": 1,
+            "exponent": 18000000000000000
+          },
+          "divide": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "compare": 0,
+          "max": {
+            "decimal": "Infinity",
+            "mantissa": 1,
+            "exponent": 9000000000000000
+          },
+          "min": {
+            "decimal": "Infinity",
+            "mantissa": 1,
+            "exponent": 9000000000000000
+          }
+        },
+        {
+          "left": "NaN",
+          "right": "1",
+          "add": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "subtract": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "multiply": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "divide": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "compare": {
+            "error": "Error: Unreachable code"
+          },
+          "max": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "min": {
+            "decimal": "NaN",
+            "mantissa": "NaN",
+            "exponent": "NaN"
+          }
+        }
+      ],
+      "rounding": [
+        {
+          "input": "0.1",
+          "floor": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "ceil": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "round": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "trunc": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "toFixed0": "0",
+          "toFixed2": "0.10"
+        },
+        {
+          "input": "0.5",
+          "floor": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "ceil": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "round": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "trunc": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "toFixed0": "1",
+          "toFixed2": "0.50"
+        },
+        {
+          "input": "0.9",
+          "floor": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "ceil": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "round": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "trunc": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "toFixed0": "1",
+          "toFixed2": "0.90"
+        },
+        {
+          "input": "1.5",
+          "floor": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "ceil": {
+            "decimal": "2",
+            "mantissa": 2,
+            "exponent": 0
+          },
+          "round": {
+            "decimal": "2",
+            "mantissa": 2,
+            "exponent": 0
+          },
+          "trunc": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "toFixed0": "2",
+          "toFixed2": "1.50"
+        },
+        {
+          "input": "-0.1",
+          "floor": {
+            "decimal": "-1",
+            "mantissa": -1,
+            "exponent": 0
+          },
+          "ceil": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "round": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "trunc": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "toFixed0": "-0",
+          "toFixed2": "-0.10"
+        },
+        {
+          "input": "-0.5",
+          "floor": {
+            "decimal": "-1",
+            "mantissa": -1,
+            "exponent": 0
+          },
+          "ceil": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "round": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "trunc": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "toFixed0": "-1",
+          "toFixed2": "-0.50"
+        },
+        {
+          "input": "-0.9",
+          "floor": {
+            "decimal": "-1",
+            "mantissa": -1,
+            "exponent": 0
+          },
+          "ceil": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "round": {
+            "decimal": "-1",
+            "mantissa": -1,
+            "exponent": 0
+          },
+          "trunc": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "toFixed0": "-1",
+          "toFixed2": "-0.90"
+        },
+        {
+          "input": "-1.5",
+          "floor": {
+            "decimal": "-2",
+            "mantissa": -2,
+            "exponent": 0
+          },
+          "ceil": {
+            "decimal": "-1",
+            "mantissa": -1,
+            "exponent": 0
+          },
+          "round": {
+            "decimal": "-1",
+            "mantissa": -1,
+            "exponent": 0
+          },
+          "trunc": {
+            "decimal": "-1",
+            "mantissa": -1,
+            "exponent": 0
+          },
+          "toFixed0": "-2",
+          "toFixed2": "-1.50"
+        },
+        {
+          "input": "999.5",
+          "floor": {
+            "decimal": "999",
+            "mantissa": 9.99,
+            "exponent": 2
+          },
+          "ceil": {
+            "decimal": "1000",
+            "mantissa": 1,
+            "exponent": 3
+          },
+          "round": {
+            "decimal": "999",
+            "mantissa": 9.99,
+            "exponent": 2
+          },
+          "trunc": {
+            "decimal": "999",
+            "mantissa": 9.99,
+            "exponent": 2
+          },
+          "toFixed0": "999",
+          "toFixed2": "999.50"
+        },
+        {
+          "input": "-999.5",
+          "floor": {
+            "decimal": "-1000",
+            "mantissa": -1,
+            "exponent": 3
+          },
+          "ceil": {
+            "decimal": "-999",
+            "mantissa": -9.99,
+            "exponent": 2
+          },
+          "round": {
+            "decimal": "-999",
+            "mantissa": -9.99,
+            "exponent": 2
+          },
+          "trunc": {
+            "decimal": "-999",
+            "mantissa": -9.99,
+            "exponent": 2
+          },
+          "toFixed0": "-999",
+          "toFixed2": "-999.50"
+        },
+        {
+          "input": "1e-300",
+          "floor": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "ceil": {
+            "decimal": "1",
+            "mantissa": 1,
+            "exponent": 0
+          },
+          "round": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "trunc": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "toFixed0": "0",
+          "toFixed2": "0.00"
+        },
+        {
+          "input": "-1e-300",
+          "floor": {
+            "decimal": "-1",
+            "mantissa": -1,
+            "exponent": 0
+          },
+          "ceil": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "round": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "trunc": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          },
+          "toFixed0": "-0",
+          "toFixed2": "-0.00"
+        },
+        {
+          "input": "1e100",
+          "floor": {
+            "decimal": "1e+100",
+            "mantissa": 1,
+            "exponent": 100
+          },
+          "ceil": {
+            "decimal": "1e+100",
+            "mantissa": 1,
+            "exponent": 100
+          },
+          "round": {
+            "decimal": "1e+100",
+            "mantissa": 1,
+            "exponent": 100
+          },
+          "trunc": {
+            "decimal": "1e+100",
+            "mantissa": 1,
+            "exponent": 100
+          },
+          "toFixed0": "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "toFixed2": "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.00"
+        }
+      ],
+      "powers": [
+        {
+          "base": "2",
+          "exponent": "10",
+          "result": {
+            "decimal": "1024",
+            "mantissa": 1.024,
+            "exponent": 3
+          }
+        },
+        {
+          "base": "10",
+          "exponent": "0.5",
+          "result": {
+            "decimal": "3.1622776601683795",
+            "mantissa": 3.1622776601683795,
+            "exponent": 0
+          }
+        },
+        {
+          "base": "10",
+          "exponent": "-1",
+          "result": {
+            "decimal": "0.1",
+            "mantissa": 1,
+            "exponent": -1
+          }
+        },
+        {
+          "base": "0",
+          "exponent": "-1",
+          "result": {
+            "decimal": "0",
+            "mantissa": 0,
+            "exponent": 0
+          }
+        },
+        {
+          "base": "-2",
+          "exponent": "0.5",
+          "result": {
+            "decimal": "NaN",
+            "mantissa": "NaN",
+            "exponent": "NaN"
+          }
+        },
+        {
+          "base": "-2",
+          "exponent": "3",
+          "result": {
+            "decimal": "-8",
+            "mantissa": -8,
+            "exponent": 0
+          }
+        },
+        {
+          "base": "1e100",
+          "exponent": "2",
+          "result": {
+            "decimal": "1e+200",
+            "mantissa": 1,
+            "exponent": 200
+          }
+        }
+      ],
+      "logarithms": [
+        {
+          "input": "0",
+          "log10": "-Infinity",
+          "log2": "-Infinity",
+          "naturalLog": "-Infinity",
+          "logBase10": "-Infinity"
+        },
+        {
+          "input": "-1",
+          "log10": "NaN",
+          "log2": "NaN",
+          "naturalLog": "NaN",
+          "logBase10": "NaN"
+        },
+        {
+          "input": "0.1",
+          "log10": -1,
+          "log2": -3.321928094887362,
+          "naturalLog": -2.302585092994045,
+          "logBase10": -1
+        },
+        {
+          "input": "1",
+          "log10": 0,
+          "log2": 0,
+          "naturalLog": 0,
+          "logBase10": 0
+        },
+        {
+          "input": "1e100",
+          "log10": 100,
+          "log2": 332.1928094887362,
+          "naturalLog": 230.2585092994045,
+          "logBase10": 100
+        },
+        {
+          "input": "Infinity",
+          "log10": 9000000000000000,
+          "log2": 29897352853986260,
+          "naturalLog": 20723265836946404,
+          "logBase10": 9000000000000000
+        },
+        {
+          "input": "NaN",
+          "log10": "NaN",
+          "log2": "NaN",
+          "naturalLog": "NaN",
+          "logBase10": "NaN"
+        }
+      ]
     }
   }
 }

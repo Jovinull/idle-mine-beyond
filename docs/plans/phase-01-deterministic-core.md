@@ -1,6 +1,6 @@
 # Phase 1 — Deterministic core
 
-Status: Not started; blocked on source fixtures, not on tooling.
+Status: Decimal compatibility boundary implemented; deterministic state transitions remain not started pending their behavior fixtures.
 
 ## Outcome
 
@@ -15,6 +15,7 @@ No UI or platform implementation in the core. Inject RNG, clock/time, and requir
 - Documented state fields and initialization.
 - Golden fixtures for the first implemented rules.
 - Verified Decimal operation and serialization expectations.
+- A version-pinned Decimal facade and its first golden/property checks exist. This does not satisfy the remaining system formula and state-transition evidence.
 
 ## Validation
 
