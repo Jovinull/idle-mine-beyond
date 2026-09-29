@@ -42082,6 +42082,69 @@
             ]
           }
         }
+      },
+      "stochasticEffects": {
+        "blacksmithBonus": {
+          "sourcePath": "Scripts/Define/game.js",
+          "randomSource": "Math.random",
+          "samples": [
+            {
+              "name": "zero-level-consumes-chance-draw",
+              "level": 0,
+              "controlledRandomValues": [0.1],
+              "randomCalls": 1,
+              "effect": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              }
+            },
+            {
+              "name": "chance-threshold-is-exclusive",
+              "level": 10,
+              "controlledRandomValues": [0.25],
+              "randomCalls": 1,
+              "effect": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              }
+            },
+            {
+              "name": "chance-passes-low-roll",
+              "level": 10,
+              "controlledRandomValues": [0.1, 0.19],
+              "randomCalls": 2,
+              "effect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            },
+            {
+              "name": "chance-passes-high-roll",
+              "level": 10,
+              "controlledRandomValues": [0.2499, 0.9999],
+              "randomCalls": 2,
+              "effect": {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              }
+            },
+            {
+              "name": "level-one-can-still-be-a-dud",
+              "level": 1,
+              "controlledRandomValues": [0.1, 0.99],
+              "randomCalls": 2,
+              "effect": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              }
+            }
+          ]
+        }
       }
     }
   }

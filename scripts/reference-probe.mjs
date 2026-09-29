@@ -1071,6 +1071,59 @@ async function capture(reference, dependencies, dependencySnapshots) {
               }
             }
 
+            const blacksmithBonus = upgradeGroups.money.blacksmithBonus;
+            const originalRandom = Math.random;
+            const blacksmithBonusSamples = [
+              {
+                name: "zero-level-consumes-chance-draw",
+                level: 0,
+                values: [0.1],
+              },
+              {
+                name: "chance-threshold-is-exclusive",
+                level: 10,
+                values: [0.25],
+              },
+              {
+                name: "chance-passes-low-roll",
+                level: 10,
+                values: [0.1, 0.19],
+              },
+              {
+                name: "chance-passes-high-roll",
+                level: 10,
+                values: [0.2499, 0.9999],
+              },
+              {
+                name: "level-one-can-still-be-a-dud",
+                level: 1,
+                values: [0.1, 0.99],
+              },
+            ].map((sample) => {
+              let randomCalls = 0;
+              blacksmithBonus.level = sample.level;
+              Math.random = () => {
+                if (randomCalls >= sample.values.length) {
+                  throw new Error(
+                    "Blacksmith bonus consumed an uncaptured RNG draw.",
+                  );
+                }
+                return sample.values[randomCalls++];
+              };
+              try {
+                const effect = blacksmithBonus.getEffect(sample.level);
+                return {
+                  name: sample.name,
+                  level: sample.level,
+                  controlledRandomValues: sample.values,
+                  randomCalls,
+                  effect: normalizedDecimal(effect),
+                };
+              } finally {
+                Math.random = originalRandom;
+              }
+            });
+
             return {
               sourcePaths: [
                 "Scripts/Define/game.js",
@@ -1142,6 +1195,13 @@ async function capture(reference, dependencies, dependencySnapshots) {
                   ),
                 ]),
               ),
+              stochasticEffects: {
+                blacksmithBonus: {
+                  sourcePath: "Scripts/Define/game.js",
+                  randomSource: "Math.random",
+                  samples: blacksmithBonusSamples,
+                },
+              },
             };
           } finally {
             game.highestMineObjectLevel = previousHighestObjectLevel;
@@ -1417,8 +1477,11 @@ async function main() {
     (sum, upgrade) => sum + upgrade.samples.length,
     0,
   );
+  const stochasticSampleCount = Object.values(
+    expected.data.upgradeSemantics?.stochasticEffects ?? {},
+  ).reduce((sum, effect) => sum + (effect.samples?.length ?? 0), 0);
   process.stdout.write(
-    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples).\n`,
+    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${stochasticSampleCount} stochastic RNG cases).\n`,
   );
 }
 
