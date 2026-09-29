@@ -62,6 +62,12 @@ Keep `break_infinity.js@2.2.0` behind the core facade for the initial parity imp
 
 All 40 direct formatter outputs were captured for 67 values with no probe exceptions. This is a useful golden matrix, not proof that every formatter's internal threshold or every possible value has been exhausted. Add source-specific boundaries before implementing a formatter whose current class logic remains uncertain.
 
+### Implemented compatibility slice
+
+`packages/formatting` currently creates the six formatters initialized by `Scripts/Define/game.js`: Standard, Scientific, Engineering, Letters, Logarithm, and Cancer. It reproduces the pinned wrappers for these six. Golden tests compare every captured direct value, wrapper scenario, thousands result, and percent result for this subset against the reference corpus. The remaining 34 registered formatters are not implemented or certified.
+
+The formatting package uses the MIT-licensed `@antimatter-dimensions/notations@1.6.0` dependency credited by Remix. Its ESM import is bridged to Beyond's `break_infinity.js@2.2.0` Decimal facade to match the canonical browser runtime; see [ADR 0008](decisions/0008-notation-compatibility.md). No upstream formatter source or assets have been copied into product code.
+
 ## Math evidence
 
 Initial sources: `Scripts/Define/functions.js`, `Scripts/pickaxe.js`, `Scripts/upgrade.js`, `Scripts/Define/game.js`, and `Scripts/Define/functions.js` procedural generation. The exact reference commit is in the manifest. Decimal fixtures are extracted; damage, earnings, crafting, and procedural formula boundary matrices remain pending.

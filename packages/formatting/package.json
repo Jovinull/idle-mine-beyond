@@ -1,0 +1,13 @@
+{
+  "name": "@idle-mine-beyond/formatting",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@antimatter-dimensions/notations": "1.6.0",
+    "@idle-mine-beyond/core": "workspace:*"
+  }
+}

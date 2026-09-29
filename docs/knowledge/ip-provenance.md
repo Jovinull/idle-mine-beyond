@@ -12,7 +12,7 @@ The original Idle Mine source/license was not identified during bootstrap. The a
 
 The initial parity corpus contains normalized runtime outputs for mine objects and default formulas, extracted from the pinned Remix implementation at `0e0f4bf5a9c66e5603cda2ce4bd54213023dae21`. It is derived data, not copied JavaScript or artwork. The fixture identifies the source paths and copyright/license notice; the corresponding full upstream notice is preserved in [idle-mine-remix-MIT.txt](sources/licenses/idle-mine-remix-MIT.txt). The publisher's ability to license any inherited original-game material remains unverified.
 
-The runtime CDN JavaScript response snapshots live only in ignored `.research/`; the tracked manifest records their versions, hashes, and npm license metadata. They are not product dependencies or bundled assets.
+The runtime CDN JavaScript response snapshots live only in ignored `.research/`; the tracked manifest records their versions, hashes, and npm license metadata. The snapshots themselves are not bundled assets. `@antimatter-dimensions/notations@1.6.0` is now an explicit product dependency; its upstream MIT license is included in the installed package, and no upstream source or assets were copied into product directories. The short display wrappers were independently implemented from Remix's `Scripts/Define/functions.js` and are golden-tested against the extracted outputs.
 
 ## Provenance ledger for future derived work
 
@@ -36,3 +36,10 @@ The runtime CDN JavaScript response snapshots live only in ignored `.research/`;
 ## Distribution gate
 
 Before public or commercial release, review the provenance ledger and license obligations with the appropriate rights holder or qualified counsel. Keep this as an evidence workflow, not an assertion that publication is legally cleared.
+
+## Recorded implementation provenance
+
+| Item                    | Origin                                                                                       | Relationship                                                            | License/permission                                                                                   | Notice / destination                                                                      |
+| ----------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| AD notation classes     | `@antimatter-dimensions/notations@1.6.0`, https://github.com/antimatter-dimensions/notations | Unmodified pinned npm dependency, used through its ESM entry            | MIT, verified in npm metadata and package archive                                                    | License remains in installed dependency; product use is isolated in `packages/formatting` |
+| Number wrapper behavior | Remix `Scripts/Define/functions.js` at `0e0f4bf5a9c66e5603cda2ce4bd54213023dae21`            | Independently implemented; exact outputs compared to reference fixtures | Derived from the MIT-licensed Remix repository; inherited-material rights caveat above still applies | `packages/formatting/src/index.ts`; no source file copied                                 |

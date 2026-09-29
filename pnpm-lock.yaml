@@ -162,6 +162,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@antimatter-dimensions/notations@1.6.0>break_infinity.js': 2.2.0
+
 importers:
 
   .:
@@ -229,7 +232,11 @@ importers:
 
   apps/native: {}
 
-  apps/web: {}
+  apps/web:
+    dependencies:
+      '@idle-mine-beyond/formatting':
+        specifier: workspace:*
+        version: link:../../packages/formatting
 
   packages/core:
     dependencies:
@@ -237,7 +244,19 @@ importers:
         specifier: 2.2.0
         version: 2.2.0
 
+  packages/formatting:
+    dependencies:
+      '@antimatter-dimensions/notations':
+        specifier: 1.6.0
+        version: 1.6.0
+      '@idle-mine-beyond/core':
+        specifier: workspace:*
+        version: link:../core
+
 packages:
+
+  '@antimatter-dimensions/notations@1.6.0':
+    resolution: {integrity: sha512-lF9rXd/UNz2cw6DPY/QTNH0QW1DFac6kppfSKZAP/cGFXnZU3IEasafeFKOkMn9bkCIk8VQUPHX6Mt1CTnhPRw==}
 
   '@cacheable/memory@2.2.0':
     resolution: {integrity: sha512-CTLKqLItRCEixEAewD3/j9DB3/o96gpTPD4eJ1v+DGOlxZRZncRQkGYqqnAGCscYd6RNeXfGeiuCphsPtqyIfQ==}
@@ -1233,6 +1252,9 @@ packages:
     peerDependencies:
       typescript: '>=4.8.4'
 
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
     engines: {node: '>= 0.8.0'}
@@ -1379,6 +1401,11 @@ packages:
     resolution: {integrity: sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==}
 
 snapshots:
+
+  '@antimatter-dimensions/notations@1.6.0':
+    dependencies:
+      break_infinity.js: 2.2.0
+      tslib: 2.8.1
 
   '@cacheable/memory@2.2.0':
     dependencies:
@@ -2261,6 +2288,8 @@ snapshots:
   ts-api-utils@2.5.0(typescript@6.0.3):
     dependencies:
       typescript: 6.0.3
+
+  tslib@2.8.1: {}
 
   type-check@0.4.0:
     dependencies:

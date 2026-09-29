@@ -1,5 +1,6 @@
 {
   "extends": "./.svelte-kit/tsconfig.json",
+  "files": ["../../packages/formatting/src/ad-notations.d.ts"],
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
