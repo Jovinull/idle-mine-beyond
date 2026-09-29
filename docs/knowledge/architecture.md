@@ -8,6 +8,8 @@ RNG, clock/time, persistence, and platform integrations are explicit interfaces 
 
 `packages/core/src/remix-simulation-state.ts` constructs the fresh simulation subset from the pinned mine-object catalog and source-observed defaults. It owns no clock, RNG, storage, notation registry, UI settings, or message buffer. Keep static presentation content in `packages/content` and execute elapsed-time or persistence behavior through injected services when the simulation loop is composed.
 
+`performRemixSimulationAction()` currently composes active clicks and idle frames through mining, save-request, and Story-notification transitions. It receives the frame delta, object catalog, Story milestones, and RNG explicitly. When an idle frame breaks an object and autosaves, its save effect carries the post-mining state before that frame's Story-notification refresh, matching the pinned `update()` order. Persistence adapters, purchase/craft dispatch, and UI wiring remain separate work.
+
 ## Repository map
 
 | Path                 | Responsibility                                                                                  |

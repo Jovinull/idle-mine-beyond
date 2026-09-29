@@ -1,6 +1,6 @@
 # Phase 1 — Deterministic core
 
-Status: In progress. Decimal compatibility, source-backed transition slices, and fresh simulation-state initialization are implemented; the unified state/action/effect loop remains open.
+Status: In progress. Decimal compatibility, source-backed transition slices, fresh simulation-state initialization, and the first composed click/frame action boundary are implemented; broader action dispatch remains open.
 
 ## Outcome
 
@@ -19,11 +19,11 @@ No UI or platform implementation in the core. Inject RNG, clock/time, and requir
 
 ## Completed slice
 
-`createInitialRemixSimulationState()` maps the source-observed fresh simulation defaults onto an injected, pinned object catalog. Vitest compares its resources, upgrades, Powers, pickaxe, progress, timers, and Story status with the oracle and checks that independent initial states do not share mutable data.
+`createInitialRemixSimulationState()` maps the source-observed fresh simulation defaults onto an injected, pinned object catalog. Vitest compares its resources, upgrades, Powers, pickaxe, progress, timers, and Story status with the oracle and checks that independent initial states do not share mutable data. `performRemixSimulationAction()` composes active clicks and idle frames with mining, save effects, and Story notification refresh; three pinned-runtime cases protect event order and the state captured by a save before notification refresh.
 
 ## Remaining work
 
-Compose the tested operations behind one immutable simulation input/state/effect boundary. Extract fixtures for action ordering and cross-system interactions before integrating mining, purchases, crafting, Story notifications, time, and persistence.
+Extend the action boundary to source-backed upgrade purchases, pickaxe crafting, and offline-load effects, extracting cross-system fixtures before each integration. Add the actual persistence adapter only after its snapshot timing and legacy save behavior are covered. Story state, settings, messages, and user-facing dispatch still need full application wiring.
 
 ## Validation
 

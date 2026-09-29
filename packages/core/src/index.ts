@@ -132,4 +132,10 @@ export type {
 } from "./remix-pickaxe-crafting.js";
 export { createInitialRemixSimulationState } from "./remix-simulation-state.js";
 export type { RemixSimulationState } from "./remix-simulation-state.js";
+export { performRemixSimulationAction } from "./remix-simulation-action.js";
+export type {
+  RemixSimulationAction,
+  RemixSimulationActionResult,
+  RemixSimulationEffect,
+} from "./remix-simulation-action.js";
 export { RemixRandom } from "./remix-random.js";

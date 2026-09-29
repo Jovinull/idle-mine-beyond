@@ -53303,6 +53303,340 @@
           }
         }
       ]
+    },
+    "simulationFrameSemantics": {
+      "sourcePaths": [
+        "Scripts/main.js",
+        "Scripts/Define/game.js",
+        "Scripts/Define/functions.js",
+        "Scripts/mineobject.js"
+      ],
+      "randomSource": "Math.random",
+      "cases": [
+        {
+          "name": "idle-break-saves-before-story-notification-refresh",
+          "input": {
+            "action": "idleFrame",
+            "currentHp": "1",
+            "elapsedMilliseconds": 2000,
+            "autoPickaxeTimer": 0,
+            "saveTimer": 60,
+            "story": {
+              "page": 0,
+              "highestUnlocked": -1,
+              "notifications": 0
+            },
+            "randomValues": [0.99]
+          },
+          "result": {
+            "hitOccurred": true,
+            "hitDamage": {
+              "decimal": "15",
+              "mantissa": 1.5,
+              "exponent": 1
+            },
+            "damagedObjectHp": {
+              "decimal": "-14",
+              "mantissa": -1.4,
+              "exponent": 1
+            },
+            "currentObjectHp": {
+              "decimal": "100",
+              "mantissa": 1,
+              "exponent": 2
+            },
+            "currentObjectWasReplaced": true,
+            "resources": {
+              "money": {
+                "decimal": "2",
+                "mantissa": 2,
+                "exponent": 0
+              },
+              "highestMoney": {
+                "decimal": "2",
+                "mantissa": 2,
+                "exponent": 0
+              },
+              "gems": {
+                "decimal": "5",
+                "mantissa": 5,
+                "exponent": 0
+              },
+              "planetCoins": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "maxPlanetCoins": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "wisdom": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "maxWisdom": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              }
+            },
+            "highestMineObjectLevel": 1,
+            "miningPower": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "autoPickaxeTimer": 0,
+            "saveTimer": 0,
+            "story": {
+              "page": 0,
+              "highestUnlocked": 1,
+              "notifications": 2
+            },
+            "randomCalls": 1,
+            "frameEvents": ["save", "refreshStoryNotifications"],
+            "savedSnapshot": {
+              "mineObjectLevel": 0,
+              "highestMineObjectLevel": 1,
+              "currentObjectHp": {
+                "decimal": "100",
+                "mantissa": 1,
+                "exponent": 2
+              },
+              "resources": {
+                "money": {
+                  "decimal": "2",
+                  "mantissa": 2,
+                  "exponent": 0
+                },
+                "highestMoney": {
+                  "decimal": "2",
+                  "mantissa": 2,
+                  "exponent": 0
+                },
+                "gems": {
+                  "decimal": "5",
+                  "mantissa": 5,
+                  "exponent": 0
+                },
+                "planetCoins": {
+                  "decimal": "0",
+                  "mantissa": 0,
+                  "exponent": 0
+                },
+                "maxPlanetCoins": {
+                  "decimal": "0",
+                  "mantissa": 0,
+                  "exponent": 0
+                },
+                "wisdom": {
+                  "decimal": "0",
+                  "mantissa": 0,
+                  "exponent": 0
+                },
+                "maxWisdom": {
+                  "decimal": "0",
+                  "mantissa": 0,
+                  "exponent": 0
+                }
+              },
+              "miningPower": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "timer": {
+                "autoPickaxe": 0,
+                "save": 0
+              },
+              "story": {
+                "page": 0,
+                "highestUnlocked": -1,
+                "notifications": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "equal-idle-threshold-refreshes-game-start-without-saving",
+          "input": {
+            "action": "idleFrame",
+            "currentHp": "100",
+            "elapsedMilliseconds": 1000,
+            "autoPickaxeTimer": 0,
+            "saveTimer": 0,
+            "story": {
+              "page": 0,
+              "highestUnlocked": -1,
+              "notifications": 0
+            },
+            "randomValues": []
+          },
+          "result": {
+            "hitOccurred": false,
+            "hitDamage": {
+              "decimal": "15",
+              "mantissa": 1.5,
+              "exponent": 1
+            },
+            "damagedObjectHp": {
+              "decimal": "100",
+              "mantissa": 1,
+              "exponent": 2
+            },
+            "currentObjectHp": {
+              "decimal": "100",
+              "mantissa": 1,
+              "exponent": 2
+            },
+            "currentObjectWasReplaced": false,
+            "resources": {
+              "money": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "highestMoney": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "gems": {
+                "decimal": "5",
+                "mantissa": 5,
+                "exponent": 0
+              },
+              "planetCoins": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "maxPlanetCoins": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "wisdom": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "maxWisdom": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              }
+            },
+            "highestMineObjectLevel": 0,
+            "miningPower": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "autoPickaxeTimer": 1,
+            "saveTimer": 1,
+            "story": {
+              "page": 0,
+              "highestUnlocked": 0,
+              "notifications": 1
+            },
+            "randomCalls": 0,
+            "frameEvents": ["refreshStoryNotifications"],
+            "savedSnapshot": null
+          }
+        },
+        {
+          "name": "active-click-does-not-refresh-story-notifications",
+          "input": {
+            "action": "activeClick",
+            "currentHp": "100",
+            "elapsedMilliseconds": 0,
+            "autoPickaxeTimer": 0,
+            "saveTimer": 0,
+            "story": {
+              "page": 0,
+              "highestUnlocked": -1,
+              "notifications": 0
+            },
+            "randomValues": []
+          },
+          "result": {
+            "hitOccurred": true,
+            "hitDamage": {
+              "decimal": "20",
+              "mantissa": 2,
+              "exponent": 1
+            },
+            "damagedObjectHp": {
+              "decimal": "80",
+              "mantissa": 8,
+              "exponent": 1
+            },
+            "currentObjectHp": {
+              "decimal": "80",
+              "mantissa": 8,
+              "exponent": 1
+            },
+            "currentObjectWasReplaced": false,
+            "resources": {
+              "money": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "highestMoney": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "gems": {
+                "decimal": "5",
+                "mantissa": 5,
+                "exponent": 0
+              },
+              "planetCoins": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "maxPlanetCoins": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "wisdom": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "maxWisdom": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              }
+            },
+            "highestMineObjectLevel": 0,
+            "miningPower": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "autoPickaxeTimer": 0,
+            "saveTimer": 0,
+            "story": {
+              "page": 0,
+              "highestUnlocked": -1,
+              "notifications": 0
+            },
+            "randomCalls": 0,
+            "frameEvents": [],
+            "savedSnapshot": null
+          }
+        }
+      ]
     }
   }
 }

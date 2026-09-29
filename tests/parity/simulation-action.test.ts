@@ -1,0 +1,239 @@
+import { readFile } from "node:fs/promises";
+import { expect, it } from "vitest";
+import {
+  Decimal,
+  createInitialRemixSimulationState,
+  performRemixSimulationAction,
+  type RemixMineObjectCatalog,
+  type RemixStoryMilestone,
+} from "../../packages/core/src/index.js";
+
+type DecimalSnapshot = { decimal: string };
+type StoryProgress = {
+  page: number;
+  highestUnlocked: number;
+  notifications: number;
+};
+type SimulationFrameCase = {
+  name: string;
+  input: {
+    action: "activeClick" | "idleFrame";
+    currentHp: string;
+    elapsedMilliseconds: number;
+    autoPickaxeTimer: number;
+    saveTimer: number;
+    story: StoryProgress;
+    randomValues: number[];
+  };
+  result: {
+    hitOccurred: boolean;
+    hitDamage: DecimalSnapshot;
+    damagedObjectHp: DecimalSnapshot;
+    currentObjectHp: DecimalSnapshot;
+    currentObjectWasReplaced: boolean;
+    resources: Record<string, DecimalSnapshot>;
+    highestMineObjectLevel: number;
+    miningPower: DecimalSnapshot;
+    autoPickaxeTimer: number;
+    saveTimer: number;
+    story: StoryProgress;
+    randomCalls: number;
+    frameEvents: ("save" | "refreshStoryNotifications")[];
+    savedSnapshot: null | {
+      mineObjectLevel: number;
+      highestMineObjectLevel: number;
+      currentObjectHp: DecimalSnapshot;
+      resources: Record<string, DecimalSnapshot>;
+      miningPower: DecimalSnapshot;
+      timer: { autoPickaxe: number; save: number };
+      story: StoryProgress;
+    };
+  };
+};
+
+const corpus = JSON.parse(
+  await readFile(
+    new URL("../fixtures/parity/remix-reference-corpus.json", import.meta.url),
+    "utf8",
+  ),
+) as {
+  metadata: { sourceCommit: string };
+  data: {
+    mineObjectCatalog: RemixMineObjectCatalog;
+    simulationFrameSemantics: {
+      sourcePaths: string[];
+      randomSource: string;
+      cases: SimulationFrameCase[];
+    };
+  };
+};
+
+const storyContent = JSON.parse(
+  await readFile(
+    new URL(
+      "../../packages/content/src/remix-story-milestones.json",
+      import.meta.url,
+    ),
+    "utf8",
+  ),
+) as { milestones: RemixStoryMilestone[] };
+
+function stateSnapshot(
+  state: ReturnType<typeof createInitialRemixSimulationState>,
+) {
+  return {
+    mineObjectLevel: state.mineObjectLevel,
+    highestMineObjectLevel: state.highestMineObjectLevel,
+    currentObjectHp: state.currentObject.hp.toString(),
+    resources: Object.fromEntries(
+      Object.entries(state.resources).map(([key, value]) => [
+        key,
+        value.toString(),
+      ]),
+    ),
+    miningPower: state.powers.mining.toString(),
+    timer: {
+      autoPickaxe: state.autoPickaxeTimer,
+      save: state.saveTimer,
+    },
+    story: state.story,
+  };
+}
+
+function expectedSnapshot(
+  snapshot: NonNullable<SimulationFrameCase["result"]["savedSnapshot"]>,
+) {
+  return {
+    mineObjectLevel: snapshot.mineObjectLevel,
+    highestMineObjectLevel: snapshot.highestMineObjectLevel,
+    currentObjectHp: snapshot.currentObjectHp.decimal,
+    resources: Object.fromEntries(
+      Object.entries(snapshot.resources).map(([key, value]) => [
+        key,
+        value.decimal,
+      ]),
+    ),
+    miningPower: snapshot.miningPower.decimal,
+    timer: snapshot.timer,
+    story: snapshot.story,
+  };
+}
+
+it("composes Remix clicks, idle frames, saves, and Story notifications", () => {
+  const semantics = corpus.data.simulationFrameSemantics;
+  expect(corpus.metadata.sourceCommit).toBe(
+    "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  );
+  expect(semantics.sourcePaths).toEqual([
+    "Scripts/main.js",
+    "Scripts/Define/game.js",
+    "Scripts/Define/functions.js",
+    "Scripts/mineobject.js",
+  ]);
+  expect(semantics.randomSource).toBe("Math.random");
+  expect(semantics.cases).toHaveLength(3);
+
+  for (const scenario of semantics.cases) {
+    const state = createInitialRemixSimulationState(
+      corpus.data.mineObjectCatalog,
+    );
+    state.currentObject = {
+      ...state.currentObject,
+      hp: new Decimal(scenario.input.currentHp),
+    };
+    state.autoPickaxeTimer = scenario.input.autoPickaxeTimer;
+    state.saveTimer = scenario.input.saveTimer;
+    state.story = { ...scenario.input.story };
+    const initialSnapshot = stateSnapshot(state);
+
+    let randomCalls = 0;
+    const result = performRemixSimulationAction({
+      state,
+      action:
+        scenario.input.action === "activeClick"
+          ? { type: "activeClick" }
+          : {
+              type: "idleFrame",
+              deltaSeconds: scenario.input.elapsedMilliseconds / 1000,
+            },
+      catalog: corpus.data.mineObjectCatalog,
+      storyMilestones: storyContent.milestones,
+      random: {
+        nextDouble() {
+          const value = scenario.input.randomValues[randomCalls];
+          if (value === undefined) {
+            throw new Error(`${scenario.name} exhausted its RNG fixture.`);
+          }
+          randomCalls++;
+          return value;
+        },
+      },
+    });
+
+    expect(
+      stateSnapshot(state),
+      `${scenario.name}: input remains unchanged`,
+    ).toEqual(initialSnapshot);
+
+    expect(
+      {
+        hitOccurred: result.hitOccurred,
+        hitDamage: result.hitDamage.toString(),
+        damagedObjectHp: result.damagedObjectHp.toString(),
+        currentObjectHp: result.state.currentObject.hp.toString(),
+        objectBroken: result.objectBroken,
+        resources: Object.fromEntries(
+          Object.entries(result.state.resources).map(([key, value]) => [
+            key,
+            value.toString(),
+          ]),
+        ),
+        highestMineObjectLevel: result.state.highestMineObjectLevel,
+        miningPower: result.state.powers.mining.toString(),
+        autoPickaxeTimer: result.state.autoPickaxeTimer,
+        saveTimer: result.state.saveTimer,
+        story: result.state.story,
+        randomCalls,
+        frameEvents: result.frameEvents,
+        savedSnapshots: result.effects.map(({ state: saved }) =>
+          stateSnapshot(saved),
+        ),
+      },
+      scenario.name,
+    ).toEqual({
+      hitOccurred: scenario.result.hitOccurred,
+      hitDamage: scenario.result.hitDamage.decimal,
+      damagedObjectHp: scenario.result.damagedObjectHp.decimal,
+      currentObjectHp: scenario.result.currentObjectHp.decimal,
+      objectBroken: scenario.result.currentObjectWasReplaced,
+      resources: Object.fromEntries(
+        Object.entries(scenario.result.resources).map(([key, value]) => [
+          key,
+          value.decimal,
+        ]),
+      ),
+      highestMineObjectLevel: scenario.result.highestMineObjectLevel,
+      miningPower: scenario.result.miningPower.decimal,
+      autoPickaxeTimer: scenario.result.autoPickaxeTimer,
+      saveTimer: scenario.result.saveTimer,
+      story: scenario.result.story,
+      randomCalls: scenario.result.randomCalls,
+      frameEvents: scenario.result.frameEvents,
+      savedSnapshots:
+        scenario.result.savedSnapshot === null
+          ? []
+          : [expectedSnapshot(scenario.result.savedSnapshot)],
+    });
+  }
+
+  expect(semantics.cases[0]!.result.savedSnapshot!.story).toEqual({
+    page: 0,
+    highestUnlocked: -1,
+    notifications: 0,
+  });
+  expect(semantics.cases[0]!.result.story).toEqual({
+    page: 0,
+    highestUnlocked: 1,
+    notifications: 2,
+  });
+});

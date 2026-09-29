@@ -224,7 +224,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
     }
 
     const data = await page.evaluate(
-      ({ selectedPostUniverseIds }) => {
+      ({ selectedPostUniverseIds, fixedClock }) => {
         const game = window.game;
         const functions = window.functions;
         const app = window.app;
@@ -2778,6 +2778,264 @@ async function capture(reference, dependencies, dependencySnapshots) {
             }
           }
         })();
+        const simulationFrameSemantics = (() => {
+          const upgradeGroups = {
+            money: game.upgrades,
+            gems: game.gemUpgrades,
+            planetCoins: game.planetCoinUpgrades,
+            wisdom: game.powers.upgrades,
+          };
+          const previousLevels = Object.fromEntries(
+            Object.entries(upgradeGroups).map(([group, upgrades]) => [
+              group,
+              Object.fromEntries(
+                Object.entries(upgrades).map(([key, upgrade]) => [
+                  key,
+                  upgrade.level,
+                ]),
+              ),
+            ]),
+          );
+          const resourceKeys = [
+            "money",
+            "highestMoney",
+            "gems",
+            "planetCoins",
+            "maxPlanetCoins",
+            "wisdom",
+            "maxWisdom",
+          ];
+          const previous = {
+            currentMineObject: game.currentMineObject,
+            mineObjectLevel: game.mineObjectLevel,
+            highestMineObjectLevel: game.highestMineObjectLevel,
+            pickaxe: game.pickaxe,
+            powers: [...game.powers.data.values],
+            resources: Object.fromEntries(
+              resourceKeys.map((key) => [key, game[key]]),
+            ),
+            story: {
+              page: game.story.page,
+              highestUnlocked: game.story.highestUnlocked,
+              notifications: game.story.notifications,
+            },
+            timer: { ...game.timer },
+            deltaTimeNew: window.deltaTimeNew,
+            deltaTimeOld: window.deltaTimeOld,
+            dateNow: Object.getOwnPropertyDescriptor(Date, "now"),
+            random: Math.random,
+            saveGame: functions.saveGame,
+            refreshStoryNotifications: functions.refreshStoryNotifications,
+          };
+          const scenarios = [
+            {
+              name: "idle-break-saves-before-story-notification-refresh",
+              action: "idleFrame",
+              currentHp: "1",
+              elapsedMilliseconds: 2000,
+              autoPickaxeTimer: 0,
+              saveTimer: 60,
+              story: { page: 0, highestUnlocked: -1, notifications: 0 },
+              randomValues: [0.99],
+            },
+            {
+              name: "equal-idle-threshold-refreshes-game-start-without-saving",
+              action: "idleFrame",
+              currentHp: "100",
+              elapsedMilliseconds: 1000,
+              autoPickaxeTimer: 0,
+              saveTimer: 0,
+              story: { page: 0, highestUnlocked: -1, notifications: 0 },
+              randomValues: [],
+            },
+            {
+              name: "active-click-does-not-refresh-story-notifications",
+              action: "activeClick",
+              currentHp: "100",
+              elapsedMilliseconds: 0,
+              autoPickaxeTimer: 0,
+              saveTimer: 0,
+              story: { page: 0, highestUnlocked: -1, notifications: 0 },
+              randomValues: [],
+            },
+          ];
+          const snapshot = () => ({
+            mineObjectLevel: game.mineObjectLevel,
+            highestMineObjectLevel: game.highestMineObjectLevel,
+            currentObjectHp: normalizedDecimal(game.currentMineObject.hp),
+            resources: Object.fromEntries(
+              resourceKeys.map((key) => [key, normalizedDecimal(game[key])]),
+            ),
+            miningPower: normalizedDecimal(
+              game.powers.data.values[POWER_MINING],
+            ),
+            timer: { ...game.timer },
+            story: {
+              page: game.story.page,
+              highestUnlocked: game.story.highestUnlocked,
+              notifications: game.story.notifications,
+            },
+          });
+          const frameEvents = [];
+          let savedSnapshot = null;
+          const animationFrameCalls =
+            window.__idleMineProbe.animationFrameCalls;
+
+          try {
+            functions.saveGame = () => {
+              frameEvents.push("save");
+              savedSnapshot = snapshot();
+            };
+            const originalRefresh = previous.refreshStoryNotifications;
+            functions.refreshStoryNotifications = () => {
+              frameEvents.push("refreshStoryNotifications");
+              originalRefresh();
+            };
+
+            return {
+              sourcePaths: [
+                "Scripts/main.js",
+                "Scripts/Define/game.js",
+                "Scripts/Define/functions.js",
+                "Scripts/mineobject.js",
+              ],
+              randomSource: "Math.random",
+              cases: scenarios.map((scenario) => {
+                for (const upgrades of Object.values(upgradeGroups)) {
+                  for (const upgrade of Object.values(upgrades)) {
+                    upgrade.level = 0;
+                  }
+                }
+                game.mineObjectLevel = 0;
+                game.highestMineObjectLevel = 0;
+                game.currentMineObject = functions.getMineObject(0);
+                game.currentMineObject.hp = new Decimal(scenario.currentHp);
+                game.pickaxe = new Pickaxe("Toy Pickaxe", 20, 1);
+                game.powers.data.values = Array.from(
+                  { length: 5 },
+                  () => new Decimal(1),
+                );
+                game.money = new Decimal(0);
+                game.highestMoney = new Decimal(0);
+                game.gems = new Decimal(5);
+                game.planetCoins = new Decimal(0);
+                game.maxPlanetCoins = new Decimal(0);
+                game.wisdom = new Decimal(0);
+                game.maxWisdom = new Decimal(0);
+                game.story.page = scenario.story.page;
+                game.story.highestUnlocked = scenario.story.highestUnlocked;
+                game.story.notifications = scenario.story.notifications;
+                game.timer.autoPickaxe = scenario.autoPickaxeTimer;
+                game.timer.save = scenario.saveTimer;
+                window.deltaTimeOld = fixedClock;
+                frameEvents.length = 0;
+                savedSnapshot = null;
+
+                let randomCalls = 0;
+                Math.random = () => {
+                  const value = scenario.randomValues[randomCalls];
+                  if (value === undefined) {
+                    throw new Error(
+                      `Simulation frame ${scenario.name} exhausted its RNG fixture.`,
+                    );
+                  }
+                  randomCalls++;
+                  return value;
+                };
+                Object.defineProperty(Date, "now", {
+                  configurable: true,
+                  value: () => fixedClock + scenario.elapsedMilliseconds,
+                });
+
+                const hitObject = game.currentMineObject;
+                const startingHp = new Decimal(hitObject.hp);
+                const hitDamage = normalizedDecimal(
+                  scenario.action === "activeClick"
+                    ? functions.getActiveDamage()
+                    : functions.getIdleDamage(),
+                );
+                if (scenario.action === "activeClick") {
+                  functions.clickMineObject();
+                } else {
+                  window.update();
+                  window.__idleMineProbe.animationFrameCalls =
+                    animationFrameCalls;
+                }
+                const hitOccurred =
+                  hitObject !== game.currentMineObject ||
+                  !hitObject.hp.eq(startingHp);
+
+                return {
+                  name: scenario.name,
+                  input: {
+                    action: scenario.action,
+                    currentHp: scenario.currentHp,
+                    elapsedMilliseconds: scenario.elapsedMilliseconds,
+                    autoPickaxeTimer: scenario.autoPickaxeTimer,
+                    saveTimer: scenario.saveTimer,
+                    story: scenario.story,
+                    randomValues: scenario.randomValues,
+                  },
+                  result: {
+                    hitOccurred,
+                    hitDamage,
+                    damagedObjectHp: normalizedDecimal(hitObject.hp),
+                    currentObjectHp: normalizedDecimal(
+                      game.currentMineObject.hp,
+                    ),
+                    currentObjectWasReplaced:
+                      game.currentMineObject !== hitObject,
+                    resources: Object.fromEntries(
+                      resourceKeys.map((key) => [
+                        key,
+                        normalizedDecimal(game[key]),
+                      ]),
+                    ),
+                    highestMineObjectLevel: game.highestMineObjectLevel,
+                    miningPower: normalizedDecimal(
+                      game.powers.data.values[POWER_MINING],
+                    ),
+                    autoPickaxeTimer: game.timer.autoPickaxe,
+                    saveTimer: game.timer.save,
+                    story: {
+                      page: game.story.page,
+                      highestUnlocked: game.story.highestUnlocked,
+                      notifications: game.story.notifications,
+                    },
+                    randomCalls,
+                    frameEvents: [...frameEvents],
+                    savedSnapshot,
+                  },
+                };
+              }),
+            };
+          } finally {
+            Math.random = previous.random;
+            Object.defineProperty(Date, "now", previous.dateNow);
+            game.currentMineObject = previous.currentMineObject;
+            game.mineObjectLevel = previous.mineObjectLevel;
+            game.highestMineObjectLevel = previous.highestMineObjectLevel;
+            game.pickaxe = previous.pickaxe;
+            game.powers.data.values = previous.powers;
+            for (const [key, value] of Object.entries(previous.resources)) {
+              game[key] = value;
+            }
+            Object.assign(game.story, previous.story);
+            game.timer.autoPickaxe = previous.timer.autoPickaxe;
+            game.timer.save = previous.timer.save;
+            window.deltaTimeNew = previous.deltaTimeNew;
+            window.deltaTimeOld = previous.deltaTimeOld;
+            window.__idleMineProbe.animationFrameCalls = animationFrameCalls;
+            functions.saveGame = previous.saveGame;
+            functions.refreshStoryNotifications =
+              previous.refreshStoryNotifications;
+            for (const [group, levels] of Object.entries(previousLevels)) {
+              for (const [key, level] of Object.entries(levels)) {
+                upgradeGroups[group][key].level = level;
+              }
+            }
+          }
+        })();
         const upgradeSemantics = (() => {
           const upgradeGroups = {
             money: game.upgrades,
@@ -3665,6 +3923,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           mineObjectCatalog,
           formulaSemantics,
           miningHitSemantics,
+          simulationFrameSemantics,
           payUSDebtSemantics,
           offlineProgressionSemantics,
           saveSemantics,
@@ -3677,7 +3936,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           currentObjectHpAfterCapture: normalizedDecimal(current.hp),
         };
       },
-      { selectedPostUniverseIds: postUniverseIds },
+      { selectedPostUniverseIds: postUniverseIds, fixedClock },
     );
 
     const clockSamples = await page.evaluate(() => ({
@@ -3942,6 +4201,8 @@ async function main() {
     (scenario) => !scenario.name.startsWith("frame-"),
   ).length;
   const updateFrameCaseCount = miningCases.length - miningHitCaseCount;
+  const simulationFrameCaseCount =
+    expected.data.simulationFrameSemantics?.cases?.length ?? 0;
   const storySemantics = expected.data.storySemantics;
   const storyBoundarySampleCount = storySemantics.conditionBoundaries.reduce(
     (total, boundary) => total + boundary.samples.length,
@@ -3968,7 +4229,7 @@ async function main() {
   const saveLoadErrorCount =
     expected.data.saveSemantics?.loadErrors.length ?? 0;
   process.stdout.write(
-    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases / ${miningHitCaseCount} mining-hit cases / ${updateFrameCaseCount} update-frame cases / ${storySemantics.chapters.length} story chapters / ${storySemantics.milestones.length} milestones / ${storyBoundarySampleCount} condition-boundary samples / ${storySemantics.notificationScenarios.length} notification scenarios / ${storySemantics.notificationSequence.length} sequenced notification stages / ${storyMineLevelObjectiveCount} mine-level objective outputs / ${storyNotationObjectiveCount} notation-dependent objective outputs / ${payUSDebtCaseCount} debt-interaction cases / ${storyTabCaseCount} story-tab cases / ${offlineScenarioCount} offline-progression cases / ${saveCodecVectorCount} save codec vectors / ${saveLoadErrorCount} load error branches).\n`,
+    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases / ${miningHitCaseCount} mining-hit cases / ${updateFrameCaseCount} update-frame cases / ${simulationFrameCaseCount} composed simulation-frame cases / ${storySemantics.chapters.length} story chapters / ${storySemantics.milestones.length} milestones / ${storyBoundarySampleCount} condition-boundary samples / ${storySemantics.notificationScenarios.length} notification scenarios / ${storySemantics.notificationSequence.length} sequenced notification stages / ${storyMineLevelObjectiveCount} mine-level objective outputs / ${storyNotationObjectiveCount} notation-dependent objective outputs / ${payUSDebtCaseCount} debt-interaction cases / ${storyTabCaseCount} story-tab cases / ${offlineScenarioCount} offline-progression cases / ${saveCodecVectorCount} save codec vectors / ${saveLoadErrorCount} load error branches).\n`,
   );
 }
 
