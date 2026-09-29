@@ -20,3 +20,10 @@ export type {
   RemixLegacySaveData,
   RemixLegacySaveSettings,
 } from "./remix-legacy-save-application.js";
+export { loadRemixLegacySaveIntoState } from "./remix-legacy-save-load.js";
+export type {
+  LoadRemixLegacySaveInput,
+  LoadRemixLegacySaveResult,
+  RemixLegacySaveLoadEffect,
+  RemixLegacySaveNumberFormatterResolver,
+} from "./remix-legacy-save-load.js";

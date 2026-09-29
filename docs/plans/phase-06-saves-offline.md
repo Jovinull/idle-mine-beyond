@@ -1,6 +1,6 @@
 # Phase 6 — Saves and offline behavior
 
-Status: Not started.
+Status: Planned after Phase 1. Current-save decoding, field application, and pure offline-load orchestration are being established as core prerequisites; versioned persistence, migration, storage, and recovery remain future work.
 
 ## Outcome
 

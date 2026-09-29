@@ -1,6 +1,6 @@
 # Phase 1 — Deterministic core
 
-Status: In progress. Decimal compatibility, source-backed transition slices, fresh simulation-state initialization, and composed click/frame/upgrade-purchase/crafting/offline-load actions are implemented; live offline-rate derivation is checked against four real pinned-browser loads, while persistence integration remains open.
+Status: In progress. Decimal compatibility, source-backed transition slices, fresh simulation-state initialization, composed click/frame/upgrade-purchase/crafting/offline-load actions, and a pure current-save→offline-load orchestration service are implemented. Live offline rates are checked against pinned loads; platform persistence integration remains open.
 
 ## Outcome
 
@@ -19,11 +19,11 @@ No UI or platform implementation in the core. Inject RNG, clock/time, and requir
 
 ## Completed slice
 
-`createInitialRemixSimulationState()` maps the source-observed fresh simulation defaults onto an injected, pinned object catalog. Vitest compares its resources, upgrades, Powers, pickaxe, progress, timers, and Story status with the oracle and checks that independent initial states do not share mutable data. `performRemixSimulationAction()` composes active clicks and idle frames with mining, save effects, and Story notification refresh; all four families of single/bulk upgrade purchases; stochastic pickaxe crafting with injected RNG, source-selected Gem cost, and per-replacement save snapshots; and offline-load rewards with injected clock/catalog/formatter, lazy live MPS/GPS/PCPS derivation, and upgrade-derived caps/multipliers. Three frame cases, 14 purchase cases, seven crafting cases, ten offline branch cases, and nine composed mining-formula cases protect the source behavior, including event order and exact save snapshots.
+`createInitialRemixSimulationState()` maps the source-observed fresh simulation defaults onto an injected, pinned object catalog. Vitest compares its resources, upgrades, Powers, pickaxe, progress, timers, and Story status with the oracle and checks that independent initial states do not share mutable data. `performRemixSimulationAction()` composes active clicks and idle frames with mining, save effects, and Story notification refresh; all four families of single/bulk upgrade purchases; stochastic pickaxe crafting with injected RNG, source-selected Gem cost, and per-replacement save snapshots; and offline-load rewards with injected clock/catalog/formatter, lazy live MPS/GPS/PCPS derivation, and upgrade-derived caps/multipliers. `loadRemixLegacySaveIntoState()` adds the current wrapped-save decoder and field mapper before the same offline action, reusing the eager `lastActive` fallback read so the captured four-read reward path remains exact. Three frame cases, 14 purchase cases, seven crafting cases, ten offline branch cases, nine composed mining-formula cases, and the complete save/offline capture protect source behavior, including event order and save snapshots.
 
 ## Remaining work
 
-Add cross-system fixtures for representative legacy saves, then implement the versioned import and persistence adapter with source-ordered `Game Saved!` confirmation behavior. Story state, settings, messages, and user-facing dispatch still need full application wiring.
+Add cross-system fixtures for more representative legacy saves and malformed application boundaries. Then implement versioned validation/migration, import/export serialization, and browser/native persistence adapters; the adapter must perform writes before dispatching Remix's post-write `Game Saved!` message. Story state, settings, messages, and user-facing dispatch still need full application wiring.
 
 ## Validation
 

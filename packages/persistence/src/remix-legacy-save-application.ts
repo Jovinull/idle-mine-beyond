@@ -90,6 +90,8 @@ export interface ApplyRemixLegacySaveInput {
 export interface ApplyRemixLegacySaveResult {
   state: RemixLegacySaveApplicationState;
   effects: RemixLegacySaveApplicationEffect[];
+  /** Eager fallback argument evaluated by the pinned loader even when present. */
+  evaluatedLastActiveFallbackMs: number;
 }
 
 const POWER_VALUE_KEYS = [
@@ -304,5 +306,6 @@ export function applyRemixLegacySaveFields(
       powerValueExtras,
     },
     effects,
+    evaluatedLastActiveFallbackMs: now,
   };
 }

@@ -33,6 +33,8 @@ export interface RemixOfflineRates {
 type RemixOfflineProgressInput = {
   readonly state: RemixOfflineState;
   readonly clock: RemixOfflineClock;
+  /** Date.now() already evaluated by a preceding legacy-save field load. */
+  readonly evaluatedLastActiveFallbackMs?: number;
   readonly noOffline: boolean;
   readonly maxOfflineSeconds: number;
   readonly offlineGemsMultiplier: DecimalSource;
@@ -96,7 +98,8 @@ export function processRemixOfflineProgress(
 ): RemixOfflineResult {
   // loadVal(loadObj.lastActive, Date.now()) evaluates the fallback even when
   // the save already has lastActive, then loadGame reads Date.now() again.
-  const fallbackNowMs = input.clock.now();
+  const fallbackNowMs =
+    input.evaluatedLastActiveFallbackMs ?? input.clock.now();
   const lastActiveMs = input.state.lastActiveMs ?? fallbackNowMs;
   const nowMs = input.clock.now();
   const elapsedSeconds = (nowMs - lastActiveMs) / 1000;

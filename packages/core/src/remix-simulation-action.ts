@@ -58,6 +58,11 @@ export type RemixOfflineLoadSimulationAction = {
   type: "offlineLoad";
   /** Mirrors `loadGame`'s third argument. Omitted means offline rewards apply. */
   noOffline?: boolean;
+  /**
+   * Reuses the eager `lastActive` fallback read from the preceding save load.
+   * Standalone offline actions omit it and read their own fallback from clock.
+   */
+  evaluatedLastActiveFallbackMs?: number;
 };
 
 export type RemixSimulationAction =
@@ -262,6 +267,11 @@ function performOfflineLoad(
         : { lastActiveMs: state.lastActiveMs }),
     },
     clock: input.clock,
+    ...(action.evaluatedLastActiveFallbackMs === undefined
+      ? {}
+      : {
+          evaluatedLastActiveFallbackMs: action.evaluatedLastActiveFallbackMs,
+        }),
     noOffline: action.noOffline ?? false,
     maxOfflineSeconds: calculateRemixOfflineCapSeconds(
       calculateRemixUpgradeEffect(

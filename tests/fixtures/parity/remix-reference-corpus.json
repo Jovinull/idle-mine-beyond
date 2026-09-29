@@ -54597,6 +54597,163 @@
           "exponent": 0
         }
       }
+    },
+    "saveOfflineApplicationSemantics": {
+      "inputJson": "{\"money\":\"100\",\"highestMoney\":\"125\",\"gems\":\"10\",\"planetCoins\":\"5\",\"maxPlanetCoins\":\"6\",\"wisdom\":\"101\",\"maxWisdom\":\"205\",\"mineObjectLevel\":90,\"highestMineObjectLevel\":90,\"lastActive\":1704063599000,\"story\":{\"page\":2,\"notifications\":4,\"highestUnlocked\":17,\"scrollY\":123},\"settings\":{\"tab\":\"story\",\"numberFormatterIndex\":3,\"theme\":\"dark\",\"showMineObjLevel\":true,\"showMinCraftDamage\":true},\"upgrades\":{\"activePower\":{\"level\":3},\"idlePower\":{\"level\":4},\"idleSpeed\":{\"level\":5},\"gemChance\":{\"level\":6}},\"gemUpgrades\":{\"idlePower\":{\"level\":2},\"gemChance\":{\"level\":3},\"gemMultiply\":{\"level\":4},\"offlineGems\":{\"level\":15}},\"planetCoinUpgrades\":{\"activePower\":{\"level\":2},\"gemChance\":{\"level\":1},\"gemMultiply\":{\"level\":2},\"lastObjGems\":{\"level\":3},\"offlineTime\":{\"level\":0},\"offlinePC\":{\"level\":10}},\"powers\":{\"data\":{\"values\":[\"2.5\",\"1\",\"1\",\"1\",\"2.5\"]},\"upgrades\":{\"powerPowerActive\":{\"level\":1},\"powerPowerIdle\":{\"level\":2},\"damageBoost\":{\"level\":3},\"damageBoostUpgrades\":{\"level\":2},\"gemBoostSimple\":{\"level\":2},\"powerPowerPower\":{\"level\":3},\"powerResetKeep\":{\"level\":4}}},\"pickaxe\":{\"name\":\"Reference offline-rate probe\",\"pow\":\"1e43\",\"quality\":\"1.25\"}}",
+      "elapsedSeconds": 3601,
+      "processedSeconds": 3601,
+      "clockReadCount": 4,
+      "dateNowReads": [
+        1704067200000, 1704067200000, 1704067200100, 1704067200200
+      ],
+      "rates": {
+        "moneyPerSecond": {
+          "decimal": "3.828844687500001e+61",
+          "mantissa": 3.828844687500001,
+          "exponent": 61
+        },
+        "gemsPerSecond": {
+          "decimal": "2.7299662621875007",
+          "mantissa": 2.7299662621875007,
+          "exponent": 0
+        },
+        "planetCoinsPerSecond": {
+          "decimal": "0.0012762815625000003",
+          "mantissa": 1.2762815625000004,
+          "exponent": -3
+        }
+      },
+      "stateAfterLoad": {
+        "money": {
+          "decimal": "6.893834859843752e+64",
+          "mantissa": 6.893834859843752,
+          "exponent": 64
+        },
+        "highestMoney": {
+          "decimal": "6.893834859843752e+64",
+          "mantissa": 6.893834859843752,
+          "exponent": 64
+        },
+        "gems": {
+          "decimal": "7382",
+          "mantissa": 7.382,
+          "exponent": 3
+        },
+        "planetCoins": {
+          "decimal": "7",
+          "mantissa": 7,
+          "exponent": 0
+        },
+        "maxPlanetCoins": {
+          "decimal": "7",
+          "mantissa": 7,
+          "exponent": 0
+        },
+        "lastActive": 1704067200200,
+        "mineObjectLevel": 90,
+        "highestMineObjectLevel": 90,
+        "story": {
+          "page": 2,
+          "notifications": 4,
+          "highestUnlocked": 17,
+          "scrollY": 123
+        },
+        "settings": {
+          "tab": "settings",
+          "numberFormatterIndex": 3,
+          "theme": "dark",
+          "showMineObjLevel": true,
+          "showMinCraftDamage": true
+        },
+        "pickaxe": {
+          "name": "Reference offline-rate probe",
+          "power": {
+            "decimal": "1e+43",
+            "mantissa": 1,
+            "exponent": 43
+          },
+          "quality": {
+            "decimal": "1.25",
+            "mantissa": 1.25,
+            "exponent": 0
+          }
+        }
+      },
+      "events": [
+        {
+          "type": "setTheme",
+          "theme": "dark"
+        },
+        {
+          "type": "logMessage",
+          "message": "Welcome back! While you were away, your Auto-Mining-Device earned you 68.94u $ and 7.37a gem(s). You also got 2 Planet Coins.",
+          "color": "#948a00"
+        },
+        {
+          "type": "storageWrite",
+          "key": "IdleMine"
+        },
+        {
+          "type": "logMessage",
+          "message": "Game Saved!",
+          "color": "#00a5ff"
+        }
+      ],
+      "storageWrites": [
+        {
+          "key": "IdleMine",
+          "save": {
+            "lastActive": 1704067200200,
+            "money": {
+              "decimal": "6.893834859843752e+64",
+              "mantissa": 6.893834859843752,
+              "exponent": 64
+            },
+            "highestMoney": {
+              "decimal": "6.893834859843752e+64",
+              "mantissa": 6.893834859843752,
+              "exponent": 64
+            },
+            "gems": {
+              "decimal": "7382",
+              "mantissa": 7.382,
+              "exponent": 3
+            },
+            "planetCoins": {
+              "decimal": "7",
+              "mantissa": 7,
+              "exponent": 0
+            },
+            "maxPlanetCoins": {
+              "decimal": "7",
+              "mantissa": 7,
+              "exponent": 0
+            },
+            "mineObjectLevel": 90,
+            "highestMineObjectLevel": 90,
+            "pickaxe": {
+              "name": "Reference offline-rate probe",
+              "power": {
+                "decimal": "1e+43",
+                "mantissa": 1,
+                "exponent": 43
+              },
+              "quality": {
+                "decimal": "1.25",
+                "mantissa": 1.25,
+                "exponent": 0
+              }
+            },
+            "settings": {
+              "tab": "settings",
+              "numberFormatterIndex": 3,
+              "theme": "dark",
+              "showMineObjLevel": true,
+              "showMinCraftDamage": true
+            }
+          }
+        }
+      ]
     }
   }
 }
