@@ -1,6 +1,6 @@
 # Phase 1 — Deterministic core
 
-Status: In progress. Decimal compatibility, source-backed transition slices, fresh simulation-state initialization, and composed click/frame/upgrade-purchase/crafting/offline-load actions are implemented; legacy-compatible live offline-rate derivation is covered by captured mining formula states, while persistence integration remains open.
+Status: In progress. Decimal compatibility, source-backed transition slices, fresh simulation-state initialization, and composed click/frame/upgrade-purchase/crafting/offline-load actions are implemented; live offline-rate derivation is checked against four real pinned-browser loads, while persistence integration remains open.
 
 ## Outcome
 
@@ -23,7 +23,7 @@ No UI or platform implementation in the core. Inject RNG, clock/time, and requir
 
 ## Remaining work
 
-Add a direct pinned-browser probe that combines loaded game states with the source offline-load branch, then add cross-system fixtures for representative legacy saves. Add the actual persistence adapter only after its snapshot timing and legacy save behavior are covered. Story state, settings, messages, and user-facing dispatch still need full application wiring.
+Add cross-system fixtures for representative legacy saves, then implement the versioned import and persistence adapter with source-ordered `Game Saved!` confirmation behavior. Story state, settings, messages, and user-facing dispatch still need full application wiring.
 
 ## Validation
 

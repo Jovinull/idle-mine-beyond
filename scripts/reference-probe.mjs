@@ -2239,6 +2239,219 @@ async function capture(reference, dependencies, dependencySnapshots) {
             }
           }
         })();
+        const offlineLoadRateCompositionSemantics = (() => {
+          const definitions = [
+            {
+              name: "initial-mud-live-money-rate",
+              formulaScenario: "initial-mud",
+              elapsedSeconds: 3601,
+              offlineUpgrades: { offlineTime: 0, offlineGems: 0, offlinePC: 0 },
+            },
+            {
+              name: "last-damageable-object-live-gem-rate",
+              formulaScenario: "last-damageable-object",
+              elapsedSeconds: 3601,
+              offlineUpgrades: {
+                offlineTime: 0,
+                offlineGems: 15,
+                offlinePC: 0,
+              },
+            },
+            {
+              name: "upgraded-asteroid-live-planet-coin-rate",
+              formulaScenario: "upgraded-planet-coin-asteroid",
+              elapsedSeconds: 3601,
+              offlineUpgrades: {
+                offlineTime: 0,
+                offlineGems: 15,
+                offlinePC: 10,
+              },
+            },
+            {
+              name: "zero-damage-universe-live-rates",
+              formulaScenario: "zero-damage-universe",
+              elapsedSeconds: 3601,
+              offlineUpgrades: {
+                offlineTime: 0,
+                offlineGems: 15,
+                offlinePC: 10,
+              },
+            },
+          ];
+          const formulaInputs = new Map(
+            formulaSemantics.scenarios.map((scenario) => [
+              scenario.input.name,
+              scenario.input,
+            ]),
+          );
+          functions.loadGame(window.initialGame, false, true);
+          const baseSave = JSON.parse(
+            unescape(decodeURIComponent(atob(functions.getSaveString()))),
+          );
+          const initialResources = {
+            money: "100",
+            highestMoney: "125",
+            gems: "10",
+            planetCoins: "5",
+            maxPlanetCoins: "6",
+          };
+          const sourceUpgrades = {
+            money: "upgrades",
+            gems: "gemUpgrades",
+            planetCoins: "planetCoinUpgrades",
+            wisdom: "powers.upgrades",
+          };
+          const original = {
+            logMessage: functions.logMessage,
+            setItem: window.Storage.prototype.setItem,
+            dateNow: Date.now,
+          };
+          try {
+            return {
+              sourcePaths: [
+                "Scripts/Define/functions.js",
+                "Scripts/Define/game.js",
+                "Scripts/upgrade.js",
+                "Scripts/pickaxe.js",
+              ],
+              scenarios: definitions.map((definition) => {
+                const formulaInput = formulaInputs.get(
+                  definition.formulaScenario,
+                );
+                if (!formulaInput) {
+                  throw new Error(
+                    `Missing formula scenario ${definition.formulaScenario}.`,
+                  );
+                }
+                const save = JSON.parse(JSON.stringify(baseSave));
+                Object.assign(save, initialResources, {
+                  mineObjectLevel: formulaInput.objectId,
+                  highestMineObjectLevel: formulaInput.objectId,
+                  lastActive: fixedClock - definition.elapsedSeconds * 1000,
+                });
+                save.pickaxe = {
+                  name: "Reference offline-rate probe",
+                  pow: formulaInput.pickaxe.power,
+                  quality: formulaInput.pickaxe.quality,
+                };
+                save.powers.data.values[POWER_MINING] =
+                  formulaInput.miningPower;
+                save.powers.data.values[POWER_EXQUISITY] =
+                  formulaInput.exquisityPower ?? "1";
+                for (const [group, levels] of Object.entries(
+                  formulaInput.upgrades,
+                )) {
+                  const path = sourceUpgrades[group];
+                  const target = path
+                    .split(".")
+                    .reduce((value, key) => value[key], save);
+                  for (const [key, level] of Object.entries(levels)) {
+                    target[key].level = level;
+                  }
+                }
+                save.gemUpgrades.offlineGems.level =
+                  definition.offlineUpgrades.offlineGems;
+                save.planetCoinUpgrades.offlineTime.level =
+                  definition.offlineUpgrades.offlineTime;
+                save.planetCoinUpgrades.offlinePC.level =
+                  definition.offlineUpgrades.offlinePC;
+
+                const events = [];
+                const storageWrites = [];
+                functions.logMessage = (message, color) =>
+                  events.push({
+                    type: "logMessage",
+                    message: String(message),
+                    color: normalize(color),
+                  });
+                window.Storage.prototype.setItem = function (key, value) {
+                  const decoded = JSON.parse(
+                    unescape(decodeURIComponent(atob(String(value)))),
+                  );
+                  storageWrites.push({
+                    key: String(key),
+                    save: {
+                      lastActive: decoded.lastActive,
+                      money: normalizedDecimal(new Decimal(decoded.money)),
+                      highestMoney: normalizedDecimal(
+                        new Decimal(decoded.highestMoney),
+                      ),
+                      gems: normalizedDecimal(new Decimal(decoded.gems)),
+                      planetCoins: normalizedDecimal(
+                        new Decimal(decoded.planetCoins),
+                      ),
+                      maxPlanetCoins: normalizedDecimal(
+                        new Decimal(decoded.maxPlanetCoins),
+                      ),
+                    },
+                  });
+                };
+
+                const clockAdvancesMs = [0, 0, 100, 200];
+                let clockReadCount = 0;
+                const dateNowReads = [];
+                Date.now = () => {
+                  const offset =
+                    clockAdvancesMs[
+                      Math.min(clockReadCount, clockAdvancesMs.length - 1)
+                    ] ?? 0;
+                  clockReadCount++;
+                  const value = fixedClock + offset;
+                  dateNowReads.push(value);
+                  return value;
+                };
+                try {
+                  functions.loadGame(JSON.stringify(save), false, false);
+                } finally {
+                  Date.now = original.dateNow;
+                }
+
+                return {
+                  name: definition.name,
+                  input: {
+                    formulaScenario: definition.formulaScenario,
+                    objectId: formulaInput.objectId,
+                    pickaxe: formulaInput.pickaxe,
+                    miningPower: formulaInput.miningPower,
+                    exquisityPower: formulaInput.exquisityPower ?? "1",
+                    miningUpgrades: formulaInput.upgrades,
+                    offlineUpgrades: definition.offlineUpgrades,
+                    initialResources,
+                    elapsedSeconds: definition.elapsedSeconds,
+                    nowMs: fixedClock,
+                    clockAdvancesMs,
+                  },
+                  clockReadCount,
+                  dateNowReads,
+                  highestDamageableObjectLevel:
+                    functions.getHighestDamageableMineObjectLevel(),
+                  rates: {
+                    moneyPerSecond: normalizedDecimal(functions.getMPS()),
+                    gemsPerSecond: normalizedDecimal(functions.getGPS()),
+                    planetCoinsPerSecond: normalizedDecimal(
+                      functions.getPCPS(),
+                    ),
+                  },
+                  stateAfterLoad: {
+                    money: normalizedDecimal(game.money),
+                    highestMoney: normalizedDecimal(game.highestMoney),
+                    gems: normalizedDecimal(game.gems),
+                    planetCoins: normalizedDecimal(game.planetCoins),
+                    maxPlanetCoins: normalizedDecimal(game.maxPlanetCoins),
+                    lastActive: game.lastActive,
+                  },
+                  events,
+                  storageWrites,
+                };
+              }),
+            };
+          } finally {
+            functions.logMessage = original.logMessage;
+            window.Storage.prototype.setItem = original.setItem;
+            Date.now = original.dateNow;
+            functions.loadGame(window.initialGame, false, true);
+          }
+        })();
         const miningHitSemantics = (() => {
           const upgradeGroups = {
             money: game.upgrades,
@@ -3985,6 +4198,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           randomSequenceExhaustion,
           mineObjectCatalog,
           formulaSemantics,
+          offlineLoadRateCompositionSemantics,
           miningHitSemantics,
           simulationFrameSemantics,
           payUSDebtSemantics,
@@ -4287,12 +4501,14 @@ async function main() {
     expected.data.storyTabSemantics?.scenarios.length ?? 0;
   const offlineScenarioCount =
     expected.data.offlineProgressionSemantics?.scenarios.length ?? 0;
+  const offlineRateCompositionScenarioCount =
+    expected.data.offlineLoadRateCompositionSemantics?.scenarios.length ?? 0;
   const saveCodecVectorCount =
     expected.data.saveSemantics?.codecVectors.length ?? 0;
   const saveLoadErrorCount =
     expected.data.saveSemantics?.loadErrors.length ?? 0;
   process.stdout.write(
-    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases / ${miningHitCaseCount} mining-hit cases / ${updateFrameCaseCount} update-frame cases / ${simulationFrameCaseCount} composed simulation-frame cases / ${storySemantics.chapters.length} story chapters / ${storySemantics.milestones.length} milestones / ${storyBoundarySampleCount} condition-boundary samples / ${storySemantics.notificationScenarios.length} notification scenarios / ${storySemantics.notificationSequence.length} sequenced notification stages / ${storyMineLevelObjectiveCount} mine-level objective outputs / ${storyNotationObjectiveCount} notation-dependent objective outputs / ${payUSDebtCaseCount} debt-interaction cases / ${storyTabCaseCount} story-tab cases / ${offlineScenarioCount} offline-progression cases / ${saveCodecVectorCount} save codec vectors / ${saveLoadErrorCount} load error branches).\n`,
+    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases / ${miningHitCaseCount} mining-hit cases / ${updateFrameCaseCount} update-frame cases / ${simulationFrameCaseCount} composed simulation-frame cases / ${storySemantics.chapters.length} story chapters / ${storySemantics.milestones.length} milestones / ${storyBoundarySampleCount} condition-boundary samples / ${storySemantics.notificationScenarios.length} notification scenarios / ${storySemantics.notificationSequence.length} sequenced notification stages / ${storyMineLevelObjectiveCount} mine-level objective outputs / ${storyNotationObjectiveCount} notation-dependent objective outputs / ${payUSDebtCaseCount} debt-interaction cases / ${storyTabCaseCount} story-tab cases / ${offlineScenarioCount} offline-progression cases / ${offlineRateCompositionScenarioCount} live-rate offline-load cases / ${saveCodecVectorCount} save codec vectors / ${saveLoadErrorCount} load error branches).\n`,
   );
 }
 

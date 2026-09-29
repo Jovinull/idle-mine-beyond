@@ -2,11 +2,13 @@ import { readFile } from "node:fs/promises";
 import { expect, it, vi } from "vitest";
 import {
   calculateRemixOfflineCapSeconds,
+  calculateRemixMiningRates,
   Decimal,
   createInitialRemixSimulationState,
   getRemixMineObject,
   performRemixSimulationAction,
   processRemixOfflineProgress,
+  resolveRemixMiningInput,
   type DecimalSource,
   type RemixMineObjectCatalog,
   type RemixSimulationState,
@@ -40,6 +42,62 @@ const corpus = JSON.parse(
           gemsPerSecond: { decimal: string };
           planetCoinsPerSecond: { decimal: string };
         };
+      }[];
+    };
+    offlineLoadRateCompositionSemantics: {
+      scenarios: {
+        name: string;
+        input: {
+          formulaScenario: string;
+          objectId: number;
+          pickaxe: { power: string; quality: string };
+          miningPower: string;
+          exquisityPower: string;
+          miningUpgrades: Record<string, Record<string, number>>;
+          offlineUpgrades: {
+            offlineTime: number;
+            offlineGems: number;
+            offlinePC: number;
+          };
+          initialResources: {
+            money: string;
+            highestMoney: string;
+            gems: string;
+            planetCoins: string;
+            maxPlanetCoins: string;
+          };
+          elapsedSeconds: number;
+          nowMs: number;
+          clockAdvancesMs: number[];
+        };
+        clockReadCount: number;
+        dateNowReads: number[];
+        highestDamageableObjectLevel: number;
+        rates: {
+          moneyPerSecond: DecimalSnapshot;
+          gemsPerSecond: DecimalSnapshot;
+          planetCoinsPerSecond: DecimalSnapshot;
+        };
+        stateAfterLoad: {
+          money: DecimalSnapshot;
+          highestMoney: DecimalSnapshot;
+          gems: DecimalSnapshot;
+          planetCoins: DecimalSnapshot;
+          maxPlanetCoins: DecimalSnapshot;
+          lastActive: number;
+        };
+        events: { type: string; message: string; color: string }[];
+        storageWrites: {
+          key: string;
+          save: {
+            lastActive: number;
+            money: DecimalSnapshot;
+            highestMoney: DecimalSnapshot;
+            gems: DecimalSnapshot;
+            planetCoins: DecimalSnapshot;
+            maxPlanetCoins: DecimalSnapshot;
+          };
+        }[];
       }[];
     };
     offlineProgressionSemantics: {
@@ -355,6 +413,123 @@ it("derives offline rewards from source-captured full mining states", () => {
     expect(result.effects[1], scenario.name).toEqual({
       type: "save",
       state: result.state,
+    });
+  }
+});
+
+it("matches direct Remix loads using live mining rates and source save effects", () => {
+  const formatter = createRemixFormatters().find(
+    (candidate) => candidate.name === "Standard",
+  );
+  expect(formatter).toBeDefined();
+
+  for (const scenario of corpus.data.offlineLoadRateCompositionSemantics
+    .scenarios) {
+    const { input } = scenario;
+    const state = createInitialRemixSimulationState(
+      corpus.data.mineObjectCatalog,
+    );
+    state.mineObjectLevel = input.objectId;
+    state.highestMineObjectLevel = input.objectId;
+    state.currentObject = getRemixMineObject(
+      input.objectId,
+      corpus.data.mineObjectCatalog,
+    );
+    state.pickaxe = {
+      name: "Reference offline-rate probe",
+      power: new Decimal(input.pickaxe.power),
+      quality: new Decimal(input.pickaxe.quality),
+    };
+    state.powers.mining = new Decimal(input.miningPower);
+    state.powers.exquisity = new Decimal(input.exquisityPower);
+    for (const [group, levels] of Object.entries(input.miningUpgrades)) {
+      Object.assign(
+        state.upgrades[group as keyof RemixSimulationState["upgrades"]],
+        levels,
+      );
+    }
+    state.upgrades.planetCoins.offlineTime = input.offlineUpgrades.offlineTime;
+    state.upgrades.gems.offlineGems = input.offlineUpgrades.offlineGems;
+    state.upgrades.planetCoins.offlinePC = input.offlineUpgrades.offlinePC;
+    state.resources.money = new Decimal(input.initialResources.money);
+    state.resources.highestMoney = new Decimal(
+      input.initialResources.highestMoney,
+    );
+    state.resources.gems = new Decimal(input.initialResources.gems);
+    state.resources.planetCoins = new Decimal(
+      input.initialResources.planetCoins,
+    );
+    state.resources.maxPlanetCoins = new Decimal(
+      input.initialResources.maxPlanetCoins,
+    );
+    state.lastActiveMs = input.nowMs - input.elapsedSeconds * 1000;
+
+    const resolvedMining = resolveRemixMiningInput({
+      state,
+      catalog: corpus.data.mineObjectCatalog,
+    });
+    const rates = calculateRemixMiningRates(resolvedMining.mining);
+    expect(resolvedMining.highestDamageableMineObjectLevel, scenario.name).toBe(
+      scenario.highestDamageableObjectLevel,
+    );
+    expect(
+      {
+        moneyPerSecond: snapshot(rates.moneyPerSecond),
+        gemsPerSecond: snapshot(rates.gemsPerSecond),
+        planetCoinsPerSecond: snapshot(rates.planetCoinsPerSecond),
+      },
+      scenario.name,
+    ).toEqual(scenario.rates);
+
+    let clockReadCount = 0;
+    const result = performRemixSimulationAction({
+      state,
+      action: { type: "offlineLoad" },
+      catalog: corpus.data.mineObjectCatalog,
+      clock: {
+        now() {
+          return input.nowMs + input.clockAdvancesMs[clockReadCount++]!;
+        },
+      },
+      formatNumber: (value, precision, limit, below1000) =>
+        formatNumber(value, formatter!, precision, limit, below1000),
+    });
+    if (result.type !== "offlineLoad") {
+      throw new Error(`${scenario.name}: expected an offline-load result.`);
+    }
+
+    expect(clockReadCount, scenario.name).toBe(scenario.clockReadCount);
+    expect(result.elapsedSeconds, scenario.name).toBe(
+      (scenario.dateNowReads[1]! - state.lastActiveMs!) / 1000,
+    );
+    expect(
+      {
+        money: snapshot(result.state.resources.money),
+        highestMoney: snapshot(result.state.resources.highestMoney),
+        gems: snapshot(result.state.resources.gems),
+        planetCoins: snapshot(result.state.resources.planetCoins),
+        maxPlanetCoins: snapshot(result.state.resources.maxPlanetCoins),
+        lastActive: result.state.lastActiveMs,
+      },
+      scenario.name,
+    ).toEqual(scenario.stateAfterLoad);
+    expect(result.effects[0], scenario.name).toEqual(scenario.events[0]);
+    expect(result.effects[1], scenario.name).toEqual({
+      type: "save",
+      state: result.state,
+    });
+    expect(scenario.events[1], scenario.name).toEqual({
+      type: "logMessage",
+      message: "Game Saved!",
+      color: "#00a5ff",
+    });
+    expect(scenario.storageWrites[0]?.save, scenario.name).toEqual({
+      lastActive: result.state.lastActiveMs,
+      money: snapshot(result.state.resources.money),
+      highestMoney: snapshot(result.state.resources.highestMoney),
+      gems: snapshot(result.state.resources.gems),
+      planetCoins: snapshot(result.state.resources.planetCoins),
+      maxPlanetCoins: snapshot(result.state.resources.maxPlanetCoins),
     });
   }
 });
