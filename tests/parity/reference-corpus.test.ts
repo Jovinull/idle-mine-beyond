@@ -6,6 +6,7 @@ type DecimalValue = {
   mantissa: number | string;
   exponent: number | string;
 };
+type FormatterValue = { input: string; output: string | { error: string } };
 
 const fixture = JSON.parse(
   await readFile(
@@ -20,6 +21,7 @@ const fixture = JSON.parse(
   };
   data: {
     initialState: {
+      numberFormatters: string[];
       progress: {
         mineObjectLevel: number;
         mineObjectCount: number;
@@ -40,6 +42,32 @@ const fixture = JSON.parse(
       value: { decimal: string };
     }[];
     notationOutputs: { notation: string; values: unknown[] }[];
+    notationSemantics: {
+      formatterRegistry: { name: string }[];
+      directFormatterInputs: string[];
+      directFormatterOutputs: {
+        notation: string;
+        values: FormatterValue[];
+      }[];
+      formatNumberScenarios: {
+        notation: string;
+        scenarios: { name: string; values: FormatterValue[] }[];
+      }[];
+      formatThousands: {
+        notation: string;
+        values: {
+          input: string;
+          default: string | { error: string };
+          precisionTwo: string | { error: string };
+        }[];
+      }[];
+      formatPercent: { notation: string; values: FormatterValue[] }[];
+      exponentFormatterInputs: number[];
+      exponentFormatterOutputs: {
+        notation: string;
+        values: { input: number; output: string | { error: string } }[];
+      }[];
+    };
     decimalSemantics: {
       constants: Record<string, DecimalValue>;
       inputs: {
@@ -127,4 +155,81 @@ it("records independently observed starting values and reference outputs", () =>
     moneyPerClick: { decimal: "0.4" },
   });
   expect(fixture.data.notationOutputs.length).toBeGreaterThanOrEqual(6);
+});
+
+it("captures formatting boundaries for every registered Remix formatter", () => {
+  const notation = fixture.data.notationSemantics;
+  const names = fixture.data.initialState.numberFormatters;
+
+  expect(notation.formatterRegistry.map(({ name }) => name)).toEqual(names);
+  expect(
+    notation.directFormatterOutputs.map(({ notation: name }) => name),
+  ).toEqual(names);
+  expect(
+    notation.formatNumberScenarios.map(({ notation: name }) => name),
+  ).toEqual(names);
+  expect(notation.formatPercent.map(({ notation: name }) => name)).toEqual(
+    names,
+  );
+  expect(notation.exponentFormatterOutputs).toHaveLength(names.length);
+  expect(notation.directFormatterInputs).toContain("1e100");
+  expect(notation.directFormatterInputs).toContain("1e91");
+  expect(notation.directFormatterInputs).toContain("1e99");
+
+  const outputsFor = (
+    rows: { notation: string; values: FormatterValue[] }[],
+    formatter: string,
+  ) => rows.find(({ notation: name }) => name === formatter)?.values;
+  const standard = notation.formatNumberScenarios.find(
+    ({ notation: name }) => name === "Standard",
+  );
+  const standardLimit = standard?.scenarios.find(
+    ({ name }) => name === "limit-1e12",
+  );
+  const findOutput = (values: FormatterValue[] | undefined, input: string) =>
+    values?.find((value) => value.input === input)?.output;
+
+  expect(findOutput(standardLimit?.values, "1e12")).toBe("1,000,000,000,000");
+  expect(findOutput(standardLimit?.values, "1000000000001")).toBe("1.00 T");
+  const idleMineScenarios = notation.formatNumberScenarios.find(
+    ({ notation: name }) => name === "Idle Mine Notation",
+  );
+  const idleMineLimit = idleMineScenarios?.scenarios.find(
+    ({ name }) => name === "limit-1e12",
+  );
+  expect(findOutput(idleMineLimit?.values, "1e12")).toBe("1,000.00b");
+  const standardThousands = notation.formatThousands.find(
+    ({ notation: name }) => name === "Standard",
+  );
+  expect(
+    standardThousands?.values.find(({ input }) => input === "999999999999")
+      ?.default,
+  ).toBe("999,999,999,999");
+  expect(
+    standardThousands?.values.find(({ input }) => input === "1e12")?.default,
+  ).toBe("1 T");
+  expect(
+    outputsFor(notation.formatPercent, "Standard")?.find(
+      ({ input }) => input === "0.005",
+    )?.output,
+  ).toBe("0.50%");
+
+  const idleMine = outputsFor(
+    notation.directFormatterOutputs,
+    "Idle Mine Notation",
+  );
+  expect(findOutput(idleMine, "1e10")).toBe("10.00b");
+  expect(findOutput(idleMine, "1e19")).toBe("10.00qt");
+
+  const siCurrent = outputsFor(
+    notation.directFormatterOutputs,
+    "SI Notation (Current)",
+  );
+  const si2022 = outputsFor(
+    notation.directFormatterOutputs,
+    "SI Notation (2022)",
+  );
+  expect(findOutput(siCurrent, "1e27")).toBe("1.00 KY");
+  expect(findOutput(si2022, "1e27")).toBe("1.00 Ronna");
+  expect(findOutput(si2022, "1e30")).toBe("1.00 Quecca");
 });

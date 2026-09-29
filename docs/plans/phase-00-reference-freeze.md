@@ -18,7 +18,7 @@ Create a reproducible, read-only reference baseline and enough source/runtime fi
 
 ## Remaining work
 
-- Expand notation probes to every compatibility threshold and formatter edge.
+- Resolve remaining class-specific notation thresholds and formatter edge behavior; the current matrix probes 40 formatters at 67 values plus all three game wrapper paths.
 - Extract full boundary matrices for damage/earnings, upgrades, crafting RNG, saves, offline behavior, and representative story/settings states.
 - Complete the asset/font provenance audit and extract save examples with no unsupported copying.
 

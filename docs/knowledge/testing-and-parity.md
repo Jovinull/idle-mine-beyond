@@ -39,7 +39,7 @@ Use 1366×768, 1440×900, 1920×1080, and 2560×1440. Capture light and dark the
 
 ## Current reference and compatibility harnesses
 
-The Vitest parity suite checks the pinned reference corpus and the core Decimal facade against captured Remix outputs. A property test also checks legacy JSON round-trips for safe integers. This covers only extracted arithmetic behavior; it does not claim overall gameplay parity.
+The Vitest parity suite checks the pinned reference corpus, asserts the 40-formatter boundary matrix and wrapper cutoff samples, and compares the core Decimal facade against captured Remix outputs. A property test also checks legacy JSON round-trips for safe integers. Number formatter assertions currently validate the oracle fixture and selected reference outputs; Beyond formatter behavior is not implemented yet.
 
 `pnpm test:reference` is a separate read-only browser probe. It loads the pinned Remix checkout, substitutes the SHA-verified CDN response snapshots recorded in `sources/runtime-dependencies.json`, fixes the clock and RNG, suppresses the animation loop, and compares the result with the checked-in oracle corpus. `pnpm reference:preview` writes a disposable capture under ignored `.research/outputs/`. `pnpm reference:extend` adds new fields only if every existing field still matches; `pnpm reference:update -- <field>` replaces exactly one named field after checking all others. Review every proposed fixture change. These commands never modify the canonical checkout or implement Beyond behavior.
 

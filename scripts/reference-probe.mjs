@@ -301,6 +301,13 @@ async function capture(reference, dependencies, dependencySnapshots) {
         ];
         const uniqueObjectIds = [...new Set(objectIds)].sort((a, b) => a - b);
         const originalFormatter = game.numberFormatter;
+        const captureResult = (operation) => {
+          try {
+            return normalize(operation());
+          } catch (error) {
+            return { error: String(error) };
+          }
+        };
         const notationInputs = ["0", "999", "1000", "1e6", "1e12", "1e100"];
         const notationOutputs = [];
         for (const formatter of game.numberFormatters) {
@@ -326,13 +333,157 @@ async function capture(reference, dependencies, dependencySnapshots) {
         }
         game.numberFormatter = originalFormatter;
 
-        const captureResult = (operation) => {
-          try {
-            return normalize(operation());
-          } catch (error) {
-            return { error: String(error) };
-          }
+        const notationBoundaryInputs = [
+          ...new Set([
+            "0",
+            "-1e-301",
+            "1e-301",
+            "1e-300",
+            "1e-299",
+            "0.999",
+            "1",
+            "9.999",
+            "10",
+            "999.49",
+            "999.5",
+            "999.999",
+            "1000",
+            "1000.001",
+            "999999",
+            "1000000",
+            "999999999",
+            "1000000000",
+            "999999999999",
+            "1e12",
+            "1000000000001",
+            "1e15",
+            "1e18",
+            "1e24",
+            "1e27",
+            "1e30",
+            "1e33",
+            "1e60",
+            "1e100",
+            "1e308",
+            "1e309",
+            "1e10000",
+            ...Array.from({ length: 33 }, (_, index) => `1e${(index + 1) * 3}`),
+            ...Array.from({ length: 11 }, (_, index) => `1e${10 + index * 9}`),
+          ]),
+        ];
+        const wrapperInputs = [
+          "999.49",
+          "999.5",
+          "999.99",
+          "1000",
+          "1000.01",
+          "999999999999",
+          "1e12",
+          "1000000000001",
+        ];
+        const wrapperScenarios = [
+          { name: "defaults", args: [] },
+          { name: "precision-two", args: [2] },
+          { name: "limit-1000", args: [2, new Decimal(1000), 0] },
+          { name: "limit-1e12", args: [2, new Decimal(1e12), 0] },
+        ];
+        const exponentInputs = [
+          99999, 100000, 100001, 999999999, 1000000000, 1000000001,
+        ];
+        const notationSemantics = {
+          formatterRegistry: game.numberFormatters.map((formatter) => {
+            const methodNames = new Set();
+            for (
+              let prototype = Object.getPrototypeOf(formatter);
+              prototype && prototype !== Object.prototype;
+              prototype = Object.getPrototypeOf(prototype)
+            ) {
+              for (const name of Object.getOwnPropertyNames(prototype)) {
+                if (name !== "constructor") methodNames.add(name);
+              }
+            }
+            return {
+              name: formatter.name,
+              constructorName: formatter.constructor.name,
+              ownProperties: Object.keys(formatter).sort(),
+              methods: [...methodNames].sort(),
+            };
+          }),
+          directFormatterInputs: notationBoundaryInputs,
+          directFormatterOutputs: game.numberFormatters.map((formatter) => {
+            game.numberFormatter = formatter;
+            return {
+              notation: formatter.name,
+              values: notationBoundaryInputs.map((input) => ({
+                input,
+                output: captureResult(() =>
+                  formatter.format(new Decimal(input), 2, 0),
+                ),
+              })),
+            };
+          }),
+          formatNumberInputs: wrapperInputs,
+          formatNumberScenarios: game.numberFormatters.map((formatter) => {
+            game.numberFormatter = formatter;
+            return {
+              notation: formatter.name,
+              scenarios: wrapperScenarios.map((scenario) => ({
+                name: scenario.name,
+                values: wrapperInputs.map((input) => ({
+                  input,
+                  output: captureResult(() =>
+                    functions.formatNumber(
+                      new Decimal(input),
+                      ...scenario.args,
+                    ),
+                  ),
+                })),
+              })),
+            };
+          }),
+          formatThousands: game.numberFormatters.map((formatter) => {
+            game.numberFormatter = formatter;
+            return {
+              notation: formatter.name,
+              values: ["999999999999", "1e12", "1000000000001"].map(
+                (input) => ({
+                  input,
+                  default: captureResult(() =>
+                    functions.formatThousands(new Decimal(input)),
+                  ),
+                  precisionTwo: captureResult(() =>
+                    functions.formatThousands(new Decimal(input), Infinity, 2),
+                  ),
+                }),
+              ),
+            };
+          }),
+          formatPercent: game.numberFormatters.map((formatter) => {
+            game.numberFormatter = formatter;
+            return {
+              notation: formatter.name,
+              values: ["0", "0.005", "-0.005", "1e10"].map((input) => ({
+                input,
+                output: captureResult(() =>
+                  functions.formatPercent(new Decimal(input)),
+                ),
+              })),
+            };
+          }),
+          exponentFormatterInputs: exponentInputs,
+          exponentFormatterOutputs: game.numberFormatters
+            .filter(
+              (formatter) => typeof formatter.formatExponent === "function",
+            )
+            .map((formatter) => ({
+              notation: formatter.name,
+              values: exponentInputs.map((input) => ({
+                input,
+                output: captureResult(() => formatter.formatExponent(input)),
+              })),
+            })),
         };
+        game.numberFormatter = originalFormatter;
         const decimalInputStrings = [
           "0",
           "-0",
@@ -528,6 +679,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           initialState,
           initialRates: rates,
           notationOutputs,
+          notationSemantics,
           decimalSemantics,
           objects: uniqueObjectIds.map(snapshotObject),
           probeRuntime: normalize(window.__idleMineProbe),
@@ -776,7 +928,7 @@ async function main() {
     }
   }
   process.stdout.write(
-    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs).\n`,
+    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters × ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values).\n`,
   );
 }
 

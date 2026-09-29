@@ -44,7 +44,23 @@ Keep `break_infinity.js@2.2.0` behind the core facade for the initial parity imp
 
 ## Number formatting
 
-Remix delegates many formats to AD Notations and community notation code, adds custom notations, and treats Standard, Scientific, and Engineering formats specially below configured limits. Exact behavior depends on the selected formatter and thresholds. Number formatting is player-visible and part of parity.
+### Verified wrapper behavior
+
+`Scripts/Define/functions.js` defines three distinct player-facing paths, and `Scripts/main.js` registers 40 formatters at the pinned revision. The [notation boundary corpus](../../tests/fixtures/parity/remix-reference-corpus.json) records direct formatter results and wrapper results across small values, 1,000 and 1e12 boundaries, SI transitions, and Idle Mine suffix transitions.
+
+- `formatNumber` defaults its limit to 1,000 and `below1000` precision to zero. Only Standard, Scientific, and Engineering use that limit. They call the formatter only when `n > limit`; otherwise values below 1,000 use locale grouping with `below1000` digits and values at or above 1,000 use grouping with zero digits. The exact limit therefore stays grouped.
+- For other formatter names, `formatNumber` calls the selected formatter directly and does not use its `limit` argument. This is observable with Idle Mine Notation at 1e12.
+- `formatThousands` defaults its limit to 1e12 and uses the selected formatter when `n >= limit`. Below that boundary it converts to JavaScript Number and calls `toLocaleString("en-us")` with fixed minimum and maximum digits. This conversion can overflow for large Decimal values.
+- `formatPercent` multiplies by 100 before passing the value to `formatNumber`; the default precision is two digits.
+- `Scripts/main.js` starts with six AD Notations formatters, adds nonduplicate AD Community Notations formatters, then appends Idle Mine Notation, SI Notation (Current), and SI Notation (2022). Preserve the registered display names and order.
+
+### Verified custom notation boundaries
+
+- Idle Mine Notation computes `order = max(0, floor((log10(value) - 1) / 9))`, selects one of 12 legacy suffixes, then falls back to Standard notation once the list is exhausted. Probes include every suffix transition from exponent 10 through 100.
+- The current SI formatter uses long labels only while the exponent is below 27; SI Notation (2022) uses long labels while it is below 33 and includes Ronna and Quecca. The corpus checks their divergent output from exponent 27 onward and repeated short-label output at larger values.
+- AD Community Notation's shared base has separate formatting paths below exponent -300, below exponent 3, and at or above `Decimal.MAX_VALUE`. Its exponent helper also branches at 1e5 and 1e9; captured samples straddle both limits.
+
+All 40 direct formatter outputs were captured for 67 values with no probe exceptions. This is a useful golden matrix, not proof that every formatter's internal threshold or every possible value has been exhausted. Add source-specific boundaries before implementing a formatter whose current class logic remains uncertain.
 
 ## Math evidence
 
@@ -52,4 +68,4 @@ Initial sources: `Scripts/Define/functions.js`, `Scripts/pickaxe.js`, `Scripts/u
 
 ## Controlled initial-state baseline
 
-The pinned runtime corpus captures a fresh, pre-animation Mud state with Money 0, Gems 5, Toy Pickaxe damage 20, Mud HP 100/value 2, active damage 20, idle damage/DPS 15, MPC 0.4, MPS `0.2857142857142857`, GPS `0.0028571428571428567`, and PCPS 0. Every money, gem, Planet Coin, and Powers upgrade records level-0/current and next cost/effect outputs; notation outputs cover the source's registered formatters at 0, 999, 1,000, 1e6, 1e12, and 1e100. The Decimal section adds edge arithmetic, rounding, and serialization probes. These remain a partial corpus, not a full formula or notation specification. See [the corpus](../../tests/fixtures/parity/remix-reference-corpus.json).
+The pinned runtime corpus captures a fresh, pre-animation Mud state with Money 0, Gems 5, Toy Pickaxe damage 20, Mud HP 100/value 2, active damage 20, idle damage/DPS 15, MPC 0.4, MPS `0.2857142857142857`, GPS `0.0028571428571428567`, and PCPS 0. Every money, gem, Planet Coin, and Powers upgrade records level-0/current and next cost/effect outputs. The initial notation samples and expanded 40-formatter boundary matrix are recorded alongside Decimal edge arithmetic, rounding, and serialization probes. These remain partial corpora, not a full formula or all-value notation specification. See [the corpus](../../tests/fixtures/parity/remix-reference-corpus.json).
