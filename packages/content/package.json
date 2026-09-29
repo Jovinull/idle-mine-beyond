@@ -1,0 +1,9 @@
+{
+  "name": "@idle-mine-beyond/content",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./remix-mine-content": "./src/remix-mine-content.json"
+  }
+}

@@ -114,3 +114,48 @@ test("bundles the pinned formatter boundary in a browser", async ({ page }) => {
     exponentFormatterOutputs: reference.exponentFormatterOutputs,
   });
 });
+
+test("generates the captured mine objects in Chromium", async ({ page }) => {
+  await page.goto("/__test__/mine-objects");
+  await expect(page.locator("#result")).toHaveAttribute("data-ready", "true");
+
+  const corpus = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as { data: { objects: { id: number }[] } };
+  const content = JSON.parse(
+    await readFile(
+      new URL(
+        "../../packages/content/src/remix-mine-content.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as {
+    base: unknown[];
+    special: unknown[];
+    skinLayerAmounts: number[];
+    dictionaryEnglish: string[];
+  };
+  const input = {
+    catalog: content,
+    ids: corpus.data.objects.map(({ id }) => id),
+  };
+  const observed = await page.evaluate((probeInput) => {
+    const probe = (
+      window as Window & {
+        __idleMineObjectProbe?: (value: typeof probeInput) => unknown;
+      }
+    ).__idleMineObjectProbe;
+    if (!probe)
+      throw new Error("Mine-object browser probe did not initialize.");
+    return probe(probeInput);
+  }, input);
+
+  expect(observed).toEqual(corpus.data.objects);
+});

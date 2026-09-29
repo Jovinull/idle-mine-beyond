@@ -6,17 +6,25 @@ const workspaceRoot = searchForWorkspaceRoot(
   fileURLToPath(new URL("../..", import.meta.url)),
 );
 
-function formattingBrowserHarness(): Plugin {
+function compatibilityBrowserHarness(): Plugin {
   const smokeModule = fileURLToPath(
     new URL("./tests/formatting-smoke.ts", import.meta.url),
   ).replaceAll("\\", "/");
+  const mineObjectModule = fileURLToPath(
+    new URL("./tests/mine-objects-smoke.ts", import.meta.url),
+  ).replaceAll("\\", "/");
+  const harnessModules = new Map([
+    ["/__test__/formatting", smokeModule],
+    ["/__test__/mine-objects", mineObjectModule],
+  ]);
 
   return {
-    name: "formatting-browser-test-harness",
+    name: "compatibility-browser-test-harness",
     apply: "serve",
     configureServer(server) {
       server.middlewares.use((request, response, next) => {
-        if (request.url?.split("?")[0] !== "/__test__/formatting") {
+        const modulePath = harnessModules.get(request.url?.split("?")[0] ?? "");
+        if (!modulePath) {
           next();
           return;
         }
@@ -24,7 +32,7 @@ function formattingBrowserHarness(): Plugin {
         response.statusCode = 200;
         response.setHeader("Content-Type", "text/html; charset=utf-8");
         response.end(
-          `<!doctype html><html><body><pre id="result" data-ready="false">Loading</pre><script type="module" src="/@fs/${smokeModule}"></script></body></html>`,
+          `<!doctype html><html><body><pre id="result" data-ready="false">Loading</pre><script type="module" src="/@fs/${modulePath}"></script></body></html>`,
         );
       });
     },
@@ -32,7 +40,7 @@ function formattingBrowserHarness(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [formattingBrowserHarness(), sveltekit()],
+  plugins: [compatibilityBrowserHarness(), sveltekit()],
   server: { fs: { allow: [workspaceRoot] } },
   resolve: {
     alias: {

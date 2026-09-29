@@ -8,24 +8,24 @@ RNG, clock/time, persistence, and platform integrations are explicit interfaces 
 
 ## Repository map
 
-| Path                | Responsibility                                               |
-| ------------------- | ------------------------------------------------------------ |
-| apps/web            | SvelteKit static SPA shell, UI, browser adapters             |
-| apps/native         | Tauri 2 shell and native/platform integration only           |
-| packages/core       | Pure simulation and compatibility math facade                |
-| packages/formatting | Source-compatible number display and notation adapters       |
-| packages/content    | Extracted Remix content definitions                          |
-| packages/save       | Schemas, migrations, legacy importer, persistence interfaces |
-| packages/ui         | Reusable UI components after source inspection               |
-| tests/unit          | Unit and property tests                                      |
-| tests/parity        | Reference fixtures and compatibility assertions              |
-| tests/fixtures      | Versioned test inputs and outputs                            |
-| tests/e2e           | Browser workflows                                            |
-| tests/visual        | Screenshot baselines and diffs                               |
-| docs/knowledge      | Canonical project knowledge and evidence                     |
-| scripts             | Reproducible repository operations                           |
-| .agents/skills      | Project-local Codex Skills                                   |
-| .research           | Ignored, disposable, read-only upstream checkouts            |
+| Path                | Responsibility                                                     |
+| ------------------- | ------------------------------------------------------------------ |
+| apps/web            | SvelteKit static SPA shell, UI, browser adapters                   |
+| apps/native         | Tauri 2 shell and native/platform integration only                 |
+| packages/core       | Pure simulation and compatibility math facade                      |
+| packages/formatting | Source-compatible number display and notation adapters             |
+| packages/content    | Extracted Remix content definitions, separate from engine behavior |
+| packages/save       | Schemas, migrations, legacy importer, persistence interfaces       |
+| packages/ui         | Reusable UI components after source inspection                     |
+| tests/unit          | Unit and property tests                                            |
+| tests/parity        | Reference fixtures and compatibility assertions                    |
+| tests/fixtures      | Versioned test inputs and outputs                                  |
+| tests/e2e           | Browser workflows                                                  |
+| tests/visual        | Screenshot baselines and diffs                                     |
+| docs/knowledge      | Canonical project knowledge and evidence                           |
+| scripts             | Reproducible repository operations                                 |
+| .agents/skills      | Project-local Codex Skills                                         |
+| .research           | Ignored, disposable, read-only upstream checkouts                  |
 
 ## Selected stack
 

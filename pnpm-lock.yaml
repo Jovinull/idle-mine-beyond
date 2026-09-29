@@ -234,9 +234,14 @@ importers:
 
   apps/web:
     dependencies:
+      '@idle-mine-beyond/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@idle-mine-beyond/formatting':
         specifier: workspace:*
         version: link:../../packages/formatting
+
+  packages/content: {}
 
   packages/core:
     dependencies:

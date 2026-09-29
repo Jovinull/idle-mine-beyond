@@ -9,6 +9,7 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
+    "@idle-mine-beyond/core": "workspace:*",
     "@idle-mine-beyond/formatting": "workspace:*"
   }
 }

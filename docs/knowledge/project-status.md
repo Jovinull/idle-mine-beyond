@@ -4,7 +4,7 @@ Last updated: 2026-09-29
 
 ## Phase
 
-**Phase 0 — Foundation / Reference Archaeology.** No game simulation, progression, crafting, story, or final UI has been implemented.
+**Phase 0 — Foundation / Reference Archaeology.** Source-backed Decimal, RNG, formatter, and mine-object slices are implemented and tested. No playable mining loop, full progression, crafting, story, or final UI has been implemented.
 
 ## Compatibility target
 
@@ -21,16 +21,17 @@ Idle Mine: Remix, repository default branch main, commit **0e0f4bf5a9c66e5603cda
 - Extracted a controlled oracle corpus for all IDs 0–214, nine extreme/post-Universe IDs, the initial game state, base formula outputs, upgrade level-0→1 values, 40 formatter outputs at 67 values plus wrapper boundaries, and Decimal arithmetic/rounding/serialization edges. `pnpm test:reference` replays it from the pinned runtime and hash-pinned CDN snapshots.
 - Added `break_infinity.js@2.2.0` as the core's only Decimal boundary. The parity suite matches its captured arithmetic/serialization corpus and property-checks safe-integer JSON round-trips; damage/progression simulation remains unimplemented.
 - Added `RemixRandom`, an explicit-seed port of the canonical `Random` stream. Fifteen seeds spanning object-region boundaries are golden-tested, including source sequence exhaustion; property tests cover repeatable finite streams for safe nonnegative seeds.
+- Added `packages/content` with 72 base objects, 78 special anchors, 25 skin-layer counts, and the 498-word source dictionary. `getRemixMineObject` reproduces source lookup and all three generation branches; Chromium matches all 224 captured object probes.
 - Added `packages/formatting` with the complete 40-formatter Remix registry, all three custom formatters, and the number/thousands/percent wrappers. The omitted community ESM exports and Remix custom classes are independently implemented from the pinned source. Vitest checks Node-stable golden values; Playwright compares every captured direct, wrapper, and exponent output in Chromium, including the `999.5` Idle Mine Notation boundary.
 - Research checkouts match the recorded SHAs and are clean; the reference setup/check script is reproducible.
 - Windows Rust/Tauri `cargo check` and native build were validated; the Windows icon is an unbranded transparent scaffold placeholder.
 
 ## Not complete
 
-- No complete system extraction, Beyond gameplay simulation, gameplay UI, save importer, PWA, or parity certification. Object/rate corpora remain partial; the procedural generator does not yet consume `RemixRandom`; no full gameplay matrix row is certified.
+- No complete system extraction, playable Beyond simulation, gameplay UI, save importer, PWA, or parity certification. Object and rate corpora remain partial; drop rolls, damage, earnings, crafting, persistence, and full progression are not implemented. No full gameplay matrix row is certified.
 - No accepted behavioral exceptions.
 - No Android/iOS SDK or mobile build setup.
-- Upstream game code/assets have not been ported into product code.
+- Upstream game code and artwork have not been ported. The source-derived mine content data is deliberately extracted and provenance-recorded under `packages/content`.
 
 ## Tooling status
 
@@ -43,4 +44,4 @@ Idle Mine: Remix, repository default branch main, commit **0e0f4bf5a9c66e5603cda
 
 ## Next phase
 
-Continue Phase 0 by extracting fixed/special anchor content and the remaining procedural-generator inputs, then implement mine-object lookup against the complete oracle corpus. Follow with damage/earnings and upgrade/resource boundaries, crafting RNG, save/import, offline-time, and representative story/settings states. Add fixtures before implementing each respective domain; do not treat partial corpora as complete specifications.
+Continue Phase 0 by expanding object-generator probes beyond the captured IDs, then extract damage/earnings boundaries and implement the deterministic mining state. Follow with upgrade/resource boundaries, random drop and crafting behavior, save/import, offline-time, and representative story/settings states. Add fixtures before implementing each respective domain; do not treat partial corpora as complete specifications.

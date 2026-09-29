@@ -70,7 +70,7 @@ The formatting package uses the MIT-licensed `@antimatter-dimensions/notations@1
 
 ## Math evidence
 
-Initial sources: `Scripts/Define/functions.js`, `Scripts/pickaxe.js`, `Scripts/upgrade.js`, `Scripts/Define/game.js`, `Scripts/random.js`, and `Scripts/utils.js`. The exact reference commit is in the manifest. Decimal and seeded RNG fixtures are extracted; damage, earnings, crafting, and procedural formula boundary matrices remain pending.
+Initial sources: `Scripts/Define/functions.js`, `Scripts/pickaxe.js`, `Scripts/upgrade.js`, `Scripts/Define/game.js`, `Scripts/random.js`, and `Scripts/utils.js`. The exact reference commit is in the manifest. Decimal and seeded RNG fixtures are extracted; captured procedural-object outputs are tested, while wider object-ID, damage, earnings, and crafting boundaries remain pending.
 
 ## Controlled initial-state baseline
 

@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "pnpm --dir apps/web dev",
     "build": "pnpm --dir apps/web build",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "check": "pnpm content:check && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint apps packages tests scripts eslint.config.js playwright.config.ts vite.config.ts",
@@ -26,6 +26,8 @@
     "reference:extend": "node scripts/reference-probe.mjs extend",
     "reference:update": "node scripts/reference-probe.mjs update",
     "reference:preview": "node scripts/reference-probe.mjs preview",
+    "content:check": "node scripts/sync-mine-content.mjs --check",
+    "content:sync": "node scripts/sync-mine-content.mjs",
     "test:reference": "node scripts/reference-probe.mjs verify",
     "docs:check": "node scripts/check-docs.mjs",
     "skills:check": "node scripts/check-skills.mjs",

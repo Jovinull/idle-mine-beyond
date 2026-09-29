@@ -10,6 +10,12 @@ The exact generator is `functions.generateMineObject(id)` in `Scripts/Define/fun
 
 **Project decision:** `RemixRandom` requires an explicit seed and does not reproduce the source's seedless `Date.now()` constructor path. All simulation callers must supply a seed through their deterministic input or injected RNG service.
 
+## Implemented compatibility slice
+
+`packages/content/src/remix-mine-content.json` contains the source-derived 72 base definitions, 78 special anchors, 25 skin-layer counts, and 498-word dictionary. `pnpm content:sync` deterministically derives it from the pinned oracle catalog and checks the source SHA and table shape. Its upstream notice and file provenance are embedded and tracked in [IP provenance](ip-provenance.md).
+
+`packages/core/src/mine-objects.ts` implements fixed/special lookup and the three source generation branches. Chromium compares every captured output for IDs 0–214 and nine high-ID probes against the pinned oracle. A repeatability property samples IDs through 1,000,000. Node differs by a few floating-point ulps in the `Math.sin` drop chances at IDs 118 and 132; Node tests exclude only those two chance fields, while Playwright asserts the complete object records, including those chances, in Chromium. This evidence does not cover every possible numeric ID or gameplay interactions.
+
 The design target is deterministic lookup: the same object ID under the same frozen content and code revision produces the same observable object. This must become a golden/property-tested contract; do not claim it is already validated across the full index space.
 
 Special anchor positions, region boundaries, names, colors, skins, values, and drops are all compatibility-critical. Preserve the original JavaScript and Decimal operation order during extraction.

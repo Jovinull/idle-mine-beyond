@@ -1,4 +1,4 @@
-/* global Random -- injected by the pinned classic-script reference runtime */
+/* global Random, SKIN_LAYER_AMOUNTS, DICTIONARY_ENGLISH -- pinned classic-script bindings */
 
 import { createHash } from "node:crypto";
 import { createServer } from "node:http";
@@ -8,7 +8,11 @@ import path from "node:path";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { chromium } from "@playwright/test";
+import { format } from "prettier";
 import { getChromiumLaunchOptions } from "./playwright-browser.mjs";
+
+const renderJson = (value) =>
+  format(JSON.stringify(value, null, 2), { parser: "json" });
 
 const execFileAsync = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -737,6 +741,14 @@ async function capture(reference, dependencies, dependencySnapshots) {
           gemsPerSecond: normalizedDecimal(functions.getGPS()),
           planetCoinsPerSecond: normalizedDecimal(functions.getPCPS()),
         };
+        const mineObjectCatalog = {
+          base: game.mineObjects.map((_, id) => snapshotObject(id)),
+          special: game.specialMineObjects.map(({ index }) =>
+            snapshotObject(index),
+          ),
+          skinLayerAmounts: [...SKIN_LAYER_AMOUNTS],
+          dictionaryEnglish: [...DICTIONARY_ENGLISH],
+        };
         return {
           initialState,
           initialRates: rates,
@@ -745,6 +757,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           decimalSemantics,
           randomSemantics,
           randomSequenceExhaustion,
+          mineObjectCatalog,
           objects: uniqueObjectIds.map(snapshotObject),
           probeRuntime: normalize(window.__idleMineProbe),
           currentObjectHpAfterCapture: normalizedDecimal(current.hp),
@@ -839,7 +852,7 @@ async function main() {
 
   if (mode === "preview") {
     await mkdir(path.dirname(previewPath), { recursive: true });
-    await writeFile(previewPath, `${JSON.stringify(result, null, 2)}\n`);
+    await writeFile(previewPath, await renderJson(result));
     process.stdout.write(
       `Captured a disposable reference preview at ${path.relative(root, previewPath)}.\n`,
     );
@@ -855,7 +868,7 @@ async function main() {
     } catch (error) {
       if (error.code !== "ENOENT") throw error;
     }
-    await writeFile(fixturePath, `${JSON.stringify(result, null, 2)}\n`, {
+    await writeFile(fixturePath, await renderJson(result), {
       flag: "wx",
     });
     process.stdout.write(
@@ -903,7 +916,7 @@ async function main() {
       ...expected,
       data: { ...expected.data, ...newFields },
     };
-    await writeFile(fixturePath, `${JSON.stringify(extended, null, 2)}\n`);
+    await writeFile(fixturePath, await renderJson(extended));
     process.stdout.write(
       `Extended the reference corpus with: ${addedFieldNames.join(", ")}.\n`,
     );
@@ -953,7 +966,7 @@ async function main() {
       ...expected,
       data: { ...expected.data, [field]: result.data[field] },
     };
-    await writeFile(fixturePath, `${JSON.stringify(updated, null, 2)}\n`);
+    await writeFile(fixturePath, await renderJson(updated));
     process.stdout.write(`Updated only reference field ${field}.\n`);
     return;
   }
