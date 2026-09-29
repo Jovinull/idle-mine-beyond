@@ -1,0 +1,50 @@
+# Local canonical-source research workspace (never commit upstream checkouts)
+.research/
+.playwright-mcp/
+
+# Dependencies and build output
+node_modules/
+.pnpm-store/
+dist/
+build/
+.svelte-kit/
+.output/
+coverage/
+playwright-report/
+test-results/
+blob-report/
+
+# Rust / Tauri
+target/
+src-tauri/target/
+apps/native/src-tauri/gen/
+*.rs.bk
+
+# Tauri CLI generated all-platform icon variants; keep only the authored transparent
+# source, its Windows smoke-build ICO, and the local explanation tracked.
+apps/native/src-tauri/icons/*
+!apps/native/src-tauri/icons/README.md
+!apps/native/src-tauri/icons/placeholder.svg
+!apps/native/src-tauri/icons/icon.ico
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+.codex/config.toml
+*.pem
+*.pfx
+*.p12
+
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp

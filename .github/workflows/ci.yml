@@ -1,0 +1,42 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Install, checks, build, and browser smoke
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install pinned pnpm and Node.js runtime
+        uses: pnpm/setup@v3
+        with:
+          version: 12.6.0
+          runtime: node@24.21.0
+          cache: true
+
+      - name: Reconstruct and verify pinned research clones
+        run: pnpm research:setup
+
+      - name: Validate documentation and project Skills
+        run: |
+          pnpm docs:check
+          pnpm skills:check
+
+      - name: Run formatting, lint, type, unit, parity, and build checks
+        run: pnpm check
+
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run browser smoke test
+        run: pnpm test:e2e

@@ -1,0 +1,53 @@
+{
+  "name": "idle-mine-beyond",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@12.6.0",
+  "engines": {
+    "node": ">=24 <25",
+    "pnpm": ">=12 <13"
+  },
+  "scripts": {
+    "dev": "pnpm --dir apps/web dev",
+    "build": "pnpm --dir apps/web build",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint apps packages tests scripts eslint.config.js playwright.config.ts vite.config.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json && pnpm --dir apps/web check",
+    "test": "pnpm test:unit && pnpm test:parity",
+    "test:unit": "vitest run --project unit",
+    "test:parity": "vitest run --project parity",
+    "test:e2e": "playwright test",
+    "research:setup": "node scripts/research.mjs setup",
+    "research:check": "node scripts/research.mjs check",
+    "docs:check": "node scripts/check-docs.mjs",
+    "skills:check": "node scripts/check-skills.mjs",
+    "native:dev": "pnpm --dir apps/native dev",
+    "native:build": "pnpm --dir apps/native build",
+    "native:check": "cargo check --manifest-path apps/native/src-tauri/Cargo.toml"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.19.0",
+    "@playwright/test": "1.63.0",
+    "@sveltejs/adapter-static": "3.0.10",
+    "@sveltejs/kit": "2.70.3",
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "@tauri-apps/cli": "2.12.0",
+    "eslint": "10.11.0",
+    "eslint-plugin-svelte": "3.23.0",
+    "fast-check": "4.10.2",
+    "globals": "17.4.0",
+    "prettier": "3.9.9",
+    "prettier-plugin-svelte": "4.1.1",
+    "svelte": "5.57.1",
+    "svelte-check": "4.7.6",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.0",
+    "vite": "8.3.1",
+    "vitest": "5.0.2",
+    "zod": "4.6.5"
+  }
+}

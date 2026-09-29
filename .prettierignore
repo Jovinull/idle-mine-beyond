@@ -1,0 +1,10 @@
+node_modules
+.research
+.svelte-kit
+build
+coverage
+playwright-report
+test-results
+target
+Cargo.lock
+pnpm-lock.yaml
