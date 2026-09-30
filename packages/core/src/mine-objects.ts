@@ -77,9 +77,9 @@ const POST_UNIVERSE_NAMES = [
   "Inverse",
   "Debug",
   "Reverse",
-  "Î±",
-  "Î²",
-  "Î»",
+  "\u03b1",
+  "\u03b2",
+  "\u03bb",
 ];
 
 function isNormalizedDecimal(value: unknown): value is NormalizedDecimal {
