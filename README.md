@@ -4,7 +4,7 @@ Idle Mine Beyond is a compatibility-focused reimplementation of the final **Idle
 
 ## Project phase
 
-**Phase 0 — Foundation / reference archaeology.** This repository contains the engineering foundation plus tested Decimal, RNG, formatter, mine-object, and captured mining-rate compatibility slices. It has no playable mining loop or complete game systems.
+**Phase 1 ? Deterministic core and behavioral slices (in progress).** The web shell exercises source-backed Mining, random pickaxe crafting, upgrades, Powers/Wisdom, Story, Settings, save import/export and recovery. Simulation and save boundaries have focused parity tests, and selected full-screen Mining, Story, and Settings states match the pinned source exactly in both themes at 1440x900. This is ongoing implementation work, not a complete game or parity certification.
 
 The canonical source target is pinned in [`docs/knowledge/sources/reference-manifest.json`](docs/knowledge/sources/reference-manifest.json). Original Idle Mine is historical lineage; `idle-mine-remux` is prior art only.
 
@@ -30,4 +30,4 @@ Useful focused commands include `pnpm test:unit`, `pnpm test:parity`, `pnpm test
 - `.research/` is a local, disposable, Git-ignored workspace for pinned upstream clones. Recreate it with `pnpm research:setup`; never treat it as product source or edit its canonical checkouts.
 - Skills are in `.agents/skills/` and reference the canonical docs instead of duplicating them.
 
-There is no playable game, release artifact, or selected project license at this stage.
+There is no complete parity-v1 game or release artifact yet, and Idle Mine Beyond has no selected project license.
