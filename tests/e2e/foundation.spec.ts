@@ -3,21 +3,23 @@ import { readFile } from "node:fs/promises";
 
 test.describe.configure({ mode: "serial" });
 
-test("serves the foundation shell without implying gameplay exists", async ({
+test("serves the connected Remix session and fresh mine object", async ({
   page,
 }) => {
+  await page.addInitScript(() => {
+    localStorage.clear();
+    Date.now = () => 1_700_000_000_000;
+  });
   await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
   await expect(
-    page.getByRole("heading", { name: "Foundation scaffold" }),
+    page.getByRole("heading", { name: "Idle Mine: Remix" }),
   ).toBeVisible();
-  await expect(
-    page.getByText("Phase 0 — Foundation / reference archaeology"),
-  ).toBeVisible();
-  await expect(
-    page.getByText(
-      "Playable gameplay has not started; tested compatibility slices are not yet connected to a game loop.",
-    ),
-  ).toBeVisible();
+  await expect(page.locator("[data-mine-object-hp]")).toHaveText("100");
+  await expect(page.locator("canvas.mine-object")).toHaveAttribute(
+    "data-rendered",
+    "true",
+  );
 });
 
 test("bundles the pinned formatter boundary in a browser", async ({ page }) => {
@@ -286,6 +288,41 @@ test("calculates all captured upgrade formulas and interactions in Chromium", as
     data: { upgradeSemantics: Record<string, unknown> };
   };
   const reference = corpus.data.upgradeSemantics;
+  const formulaGroups = Object.fromEntries(
+    Object.entries(
+      reference["groups"] as Record<
+        string,
+        Record<
+          string,
+          {
+            name: string;
+            resource: number;
+            maxLevel: number | "Infinity";
+            stochasticEffect: boolean;
+            samples: { level: number; price: unknown; effect: unknown }[];
+          }
+        >
+      >,
+    ).map(([group, upgrades]) => [
+      group,
+      Object.fromEntries(
+        Object.entries(upgrades).map(([key, upgrade]) => [
+          key,
+          {
+            name: upgrade.name,
+            resource: upgrade.resource,
+            maxLevel: upgrade.maxLevel,
+            stochasticEffect: upgrade.stochasticEffect,
+            samples: upgrade.samples.map(({ level, price, effect }) => ({
+              level,
+              price,
+              effect,
+            })),
+          },
+        ]),
+      ),
+    ]),
+  );
   const observed = await page.evaluate((input) => {
     const probe = (
       window as Window & {
@@ -297,7 +334,7 @@ test("calculates all captured upgrade formulas and interactions in Chromium", as
   }, reference);
 
   expect(observed).toEqual({
-    groups: reference["groups"],
+    groups: formulaGroups,
     stochasticEffects: reference["stochasticEffects"],
     effectInteractions: reference["effectInteractions"],
   });

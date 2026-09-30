@@ -54,6 +54,7 @@
   class:nodmg={nodamage || !damageable}
   width="256"
   height="224"
+  data-damageable={damageable ? "true" : "false"}
   data-rendered={rendered ? "true" : "false"}
   data-level={renderedLevel}
   data-error={renderError}
