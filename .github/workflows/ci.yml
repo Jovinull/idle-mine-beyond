@@ -8,6 +8,44 @@ permissions:
   contents: read
 
 jobs:
+  native-windows:
+    name: Native Tauri storage tests
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install pinned pnpm and Node.js runtime
+        uses: pnpm/setup@v3
+        with:
+          version: 12.6.0
+          runtime: node@24.21.0
+          cache: true
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            apps/native/src-tauri/target
+          key: windows-cargo-${{ hashFiles('apps/native/src-tauri/Cargo.lock') }}
+
+      - name: Install workspace dependencies and build the static frontend
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --dir apps/web build
+
+      - name: Test and check the native host
+        run: |
+          pnpm native:test
+          pnpm native:check
+
   validate:
     name: Install, checks, build, and browser smoke
     runs-on: ubuntu-latest

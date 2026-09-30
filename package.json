@@ -40,6 +40,7 @@
     "skills:check": "node scripts/check-skills.mjs",
     "native:dev": "pnpm --dir apps/native dev",
     "native:build": "pnpm --dir apps/native build",
+    "native:test": "cargo test --manifest-path apps/native/src-tauri/Cargo.toml",
     "native:check": "cargo check --manifest-path apps/native/src-tauri/Cargo.toml"
   },
   "devDependencies": {
