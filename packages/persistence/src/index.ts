@@ -33,6 +33,16 @@ export type {
   LoadRemixBeyondSaveIntoStateResult,
   RemixBeyondSaveLoadEffect,
 } from "./remix-beyond-save-load.js";
+export { decodeRemixBeyondRecoveryFile } from "./remix-beyond-recovery-file.js";
+export type {
+  DecodeRemixBeyondRecoveryFileResult,
+  RemixBeyondRecoveryFileSource,
+} from "./remix-beyond-recovery-file.js";
+export { importRemixBeyondRecoveryFile } from "./remix-beyond-recovery-import.js";
+export type {
+  ImportRemixBeyondRecoveryFileResult,
+  RemixBeyondRecoveryImportEffect,
+} from "./remix-beyond-recovery-import.js";
 export { importRemixLegacySaveToBeyond } from "./remix-legacy-save-import.js";
 export type {
   ImportRemixLegacySaveToBeyondResult,
