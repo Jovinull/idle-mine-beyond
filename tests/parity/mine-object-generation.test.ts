@@ -142,7 +142,7 @@ it("matches every captured fixed, special, and generated mine object", () => {
 
 it("generates the same object repeatedly for each requested ID", () => {
   fc.assert(
-    fc.property(fc.integer({ min: 0, max: 1_000_000 }), (id) => {
+    fc.property(fc.integer({ min: 0, max: Number.MAX_SAFE_INTEGER }), (id) => {
       expect(snapshotMineObject(id)).toEqual(snapshotMineObject(id));
     }),
     { numRuns: 100 },

@@ -35,10 +35,6 @@ const previewPath = path.join(
 const fixedClock = 1_704_067_200_000;
 const randomSeed = 0x1d1e;
 const postUniverseIds = [
-  215,
-  216,
-  217,
-  244,
   1_000,
   10_000,
   1_000_000,
@@ -311,7 +307,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           "maxWisdom",
         ];
         const objectIds = [
-          ...Array.from({ length: 215 }, (_, id) => id),
+          ...Array.from({ length: 513 }, (_, id) => id),
           ...selectedPostUniverseIds,
         ];
         const uniqueObjectIds = [...new Set(objectIds)].sort((a, b) => a - b);

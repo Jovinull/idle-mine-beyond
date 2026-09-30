@@ -125,12 +125,14 @@ it("records the complete indexed mine-object range and high-ID oracle probes", (
   expect(fixture.metadata.licenseNotice).toContain(
     "Copyright (c) 2023 veprogames",
   );
-  expect(fixture.data.objects.slice(0, 215).map((object) => object.id)).toEqual(
-    Array.from({ length: 215 }, (_, id) => id),
-  );
-  expect(fixture.data.objects.map((object) => object.id)).toContain(
+  expect(fixture.data.objects.map((object) => object.id)).toEqual([
+    ...Array.from({ length: 513 }, (_, id) => id),
+    1_000,
+    10_000,
+    1_000_000,
+    2_147_483_647,
     Number.MAX_SAFE_INTEGER,
-  );
+  ]);
   expect(fixture.data.initialState.progress).toMatchObject({
     mineObjectLevel: 0,
     mineObjectCount: 72,
