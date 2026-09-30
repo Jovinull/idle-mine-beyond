@@ -8,7 +8,7 @@
 - The random pickaxe crafting behavior and deterministic procedural object identity are compatibility-critical.
 - Use the workflow `REFERENCE → EXTRACT BEHAVIOR → CREATE FIXTURE/TEST → IMPLEMENT → COMPARE → DOCUMENT → COMMIT`.
 - Update canonical docs and `docs/knowledge/PARITY_MATRIX.md` when evidence, architecture, behavior, or parity status changes. A task that requires a material knowledge update is incomplete without it.
-- Run relevant validation before claiming completion or committing. Use concise English Conventional Commit subjects only; no bodies by default, coauthor trailers, AI attribution, or force pushes.
+- Run relevant validation before claiming completion or committing. Use concise English Conventional Commit subjects only; no bodies by default, coauthor trailers, AI attribution, amendments, or force pushes. Push each validated local commit to its configured upstream; if this environment prevents Git writes or authentication, document the blocker and leave the change uncommitted rather than bypassing it.
 - Do not implement gameplay until the reference/parity foundation is ready. Keep post-parity proposals in `docs/knowledge/POST_PARITY_BACKLOG.md`.
 
 Start with `docs/knowledge/README.md`, `project-status.md`, and the applicable focused docs. Large work follows `PLANS.md`.

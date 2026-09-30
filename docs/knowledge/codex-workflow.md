@@ -67,7 +67,9 @@ Use the root PLANS.md conventions for multi-step work and keep active plans in d
 
 ## Commits
 
-Use English Conventional Commit subjects, subject-only by default. No co-author trailers or AI/tool attribution. Commit only a coherent validated unit and synchronize material documentation changes.
+Use English Conventional Commit subjects, subject-only by default. No co-author trailers or AI/tool attribution. Commit only a coherent validated unit and synchronize material documentation changes. The user's explicit instruction authorizes pushing every validated local commit to this repository's configured upstream branch; push it after committing, without force or history rewriting. If `.git` is read-only or scoped authentication is unavailable, finish validation, record the exact blocker, and leave the work uncommitted. Do not route around those restrictions.
+
+Some managed sessions can read the repository's `.git` directory while mounting it read-only, or can be unable to read the local credential helper. Do not bypass these filesystem boundaries. First validate and preserve the full worktree, then record the exact blocker in [project status](project-status.md). If a repository-scoped GitHub write MCP is available and the user has authorized pushing, it may create a normal non-force Git commit through the Git Data API from the exact current `main` parent, including binary blobs with their original bytes, then fast-forward the branch and verify its new SHA. This is a remote commit, not a local Git commit: report that distinction, do not claim the local tree is clean, and leave local index/ref synchronization for a session with writable Git metadata. If the MCP's automatic approval review rejects the write, record its exact error and stop that write path; keep the work uncommitted until the session has a writable local index or an approved scoped remote writer. Never fall back to broader authentication.
 
 ## Research
 
