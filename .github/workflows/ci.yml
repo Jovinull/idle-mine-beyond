@@ -81,3 +81,6 @@ jobs:
 
       - name: Run browser smoke test
         run: pnpm test:e2e
+
+      - name: Run project site browser tests
+        run: pnpm test:site

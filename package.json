@@ -43,6 +43,7 @@
     "site:preview": "node scripts/serve-site.mjs",
     "site:check": "pnpm --dir apps/site check",
     "site:og": "node scripts/capture-site-og.mjs",
+    "test:site": "playwright test -c playwright.site.config.ts",
     "test:reference": "node scripts/reference-probe.mjs verify && node scripts/extract-story-markup.mjs --check && node scripts/extract-story-runtime.mjs --check && node scripts/extract-story-runtime.mjs --check-pixel-goldens && node scripts/capture-remix-mining-screen.mjs --check",
     "docs:check": "node scripts/check-docs.mjs",
     "skills:check": "node scripts/check-skills.mjs",
