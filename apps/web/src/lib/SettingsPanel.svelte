@@ -64,27 +64,25 @@
     onclick={() => onThemeChange("dark")}>Dark</button
   >
   <br />
-  <label>
-    <span>Show Mineral Level</span>
-    <input
+  <label
+    ><span>Show Mineral Level</span><input
       data-setting="showMineObjLevel"
       type="checkbox"
       checked={settings.showMineObjLevel}
       onchange={(event) =>
         onPreferenceChange("showMineObjLevel", event.currentTarget.checked)}
-    />
-  </label>
+    /></label
+  >
   <br />
-  <label>
-    <span>Show minimum Base Damage for crafted Pickaxes</span>
-    <input
+  <label
+    ><span>Show minimum Base Damage for crafted Pickaxes</span><input
       data-setting="showMinCraftDamage"
       type="checkbox"
       checked={settings.showMinCraftDamage}
       onchange={(event) =>
         onPreferenceChange("showMinCraftDamage", event.currentTarget.checked)}
-    />
-  </label>
+    /></label
+  >
   <br />
   <button data-settings-save onclick={onSave}>Save</button>
   <button data-settings-export onclick={onExport}>Export</button>
@@ -104,12 +102,45 @@
       exportFieldString = event.currentTarget.value;
       onExportFieldStringChange(exportFieldString);
     }}></textarea>
+  <p>
+    Thanks to crovie, the creator of <a
+      target="_blank"
+      href="https://www.kongregate.com/games/crovie/idle-mine"
+      ><i>Idle Mine</i></a
+    > for making this interesting Game concept.
+  </p>
+  <p>
+    Notations provided by <a
+      target="_blank"
+      href="https://github.com/antimatter-dimensions/notations"
+      ><i>ad-notations</i></a
+    >.
+  </p>
+  <div class="social" aria-label="Game links">
+    <a target="_blank" href="https://www.youtube.com/veprogames"
+      ><img src="/Images/social/youtube.png" alt="" /></a
+    >
+    <span>My YouTube</span>
+    <a target="_blank" href="https://veprogames.github.io"
+      ><img src="/Images/social/cook1eegames.png" alt="" /></a
+    >
+    <span>My Website</span>
+    <a target="_blank" href="https://idle-mine-remix.fandom.com/wiki/"
+      ><img src="/Images/social/wiki.png" alt="" /></a
+    >
+    <span>Wiki</span>
+  </div>
   {#if error}
     <p class="settings-error" role="alert">{error}</p>
   {/if}
 </article>
 
 <style>
+  article.settings h2 {
+    margin: 0;
+    font-family: Montserrat, sans-serif;
+  }
+
   article.settings {
     box-sizing: border-box;
     height: 84vh;
@@ -120,20 +151,39 @@
   article.settings button {
     margin: 0.5em;
     font-family: "Work Sans", Helvetica, Arial, sans-serif;
+    background-color: #cfcfcf;
+    border: none;
+    font-size: 110%;
+    outline: 0;
   }
 
-  article.settings label {
-    display: inline-flex;
-    align-items: center;
-  }
-
-  article.settings input {
-    margin-left: 0.5em;
+  article.settings button:hover {
+    background-color: #b6b6b6;
   }
 
   article.settings textarea {
     width: 50%;
     height: 10rem;
+  }
+
+  .social {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    bottom: 9vh;
+    left: 0;
+  }
+
+  .social span {
+    margin-right: 1rem;
+  }
+
+  .social a {
+    margin: 0 0.5rem;
+  }
+
+  .social a img {
+    height: 2rem;
   }
 
   :global(body[data-theme="dark"]) article.settings {
@@ -150,6 +200,14 @@
 
   :global(body[data-theme="dark"]) article.settings button:hover {
     background-color: #636363;
+  }
+
+  :global(body[data-theme="dark"]) article.settings a {
+    color: #299bff;
+  }
+
+  :global(body[data-theme="dark"]) article.settings a:visited {
+    color: #0072ff;
   }
 
   .settings-error {

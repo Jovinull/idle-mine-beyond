@@ -126,6 +126,21 @@
       "source": "Images/upgrades/pcoffline.png",
       "destination": "apps/web/static/Images/upgrades/pcoffline.png",
       "sha256": "1FDDE2AFBAAE952C69583EF4506F59AEC2F8656797931116E5AC96BB6DDBE3D6"
+    },
+    {
+      "source": "Images/social/youtube.png",
+      "destination": "apps/web/static/Images/social/youtube.png",
+      "sha256": "10D22DAED5989F516E94E3F33B60B090EDBA1FC01A61C0E74FBF55E02E53B074"
+    },
+    {
+      "source": "Images/social/cook1eegames.png",
+      "destination": "apps/web/static/Images/social/cook1eegames.png",
+      "sha256": "8F9D092F5178DB2CA17C83E534EE2DCC977F665276CFBF96677FF70504AB9D8C"
+    },
+    {
+      "source": "Images/social/wiki.png",
+      "destination": "apps/web/static/Images/social/wiki.png",
+      "sha256": "E725F477E9F3EF79D17A2BD2E38246C329C512335A6574531B4BDC9851F1CB68"
     }
   ],
   "copiedFonts": [
