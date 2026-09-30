@@ -11,9 +11,12 @@ import {
 import { createInitialRemixSimulationState } from "@idle-mine-beyond/core";
 import {
   createInitialRemixLegacySaveApplicationState,
+  createRemixLegacySaveExportData,
+  encodeRemixLegacySave,
   importRemixLegacySaveToBeyond,
   loadRemixBeyondSaveIntoState,
   persistRemixBeyondSave,
+  type ImportRemixLegacySaveToBeyondResult,
   type PersistRemixBeyondSaveResult,
   type RemixBeyondSaveConfirmationEffect,
   type RemixBeyondSaveStorageAdapter,
@@ -64,10 +67,75 @@ export type RemixWebSessionActionResult =
       readonly initialization: RemixWebSessionInitialization;
     };
 
+export type RemixWebSessionStateUpdateResult =
+  | {
+      readonly status: "updated";
+      readonly state: RemixLegacySaveApplicationState;
+    }
+  | {
+      readonly status: "recoveryRequired";
+      readonly initialization: RemixWebSessionInitialization;
+    };
+
+export type RemixWebSessionSaveResult =
+  | {
+      readonly status: "saved";
+      readonly state: RemixLegacySaveApplicationState;
+    }
+  | {
+      readonly status: "persistenceFailed";
+      readonly state: RemixLegacySaveApplicationState;
+      readonly persistence: SaveFailure;
+    }
+  | {
+      readonly status: "recoveryRequired";
+      readonly initialization: RemixWebSessionInitialization;
+    };
+
+export type RemixWebSessionExportResult =
+  | {
+      readonly status: "exported";
+      readonly state: RemixLegacySaveApplicationState;
+      readonly saveString: string;
+    }
+  | {
+      readonly status: "recoveryRequired";
+      readonly initialization: RemixWebSessionInitialization;
+    };
+
+export type RemixWebSessionImportResult =
+  | {
+      readonly status: "imported" | "persistenceFailed";
+      readonly state: RemixLegacySaveApplicationState;
+      readonly result: Extract<
+        ImportRemixLegacySaveToBeyondResult,
+        { status: "imported" | "persistenceFailed" }
+      >;
+    }
+  | {
+      readonly status: "legacyLoadFailed";
+      readonly result: Extract<
+        ImportRemixLegacySaveToBeyondResult,
+        { status: "legacyLoadFailed" }
+      >;
+    }
+  | {
+      readonly status: "recoveryRequired";
+      readonly initialization: RemixWebSessionInitialization;
+    };
+
 export interface RemixWebGameSession {
   initialize(): Promise<RemixWebSessionInitialization>;
   getState(): RemixLegacySaveApplicationState | undefined;
   dispatch(action: RemixSimulationAction): Promise<RemixWebSessionActionResult>;
+  updateApplicationState(
+    update: (
+      state: RemixLegacySaveApplicationState,
+    ) => RemixLegacySaveApplicationState,
+  ): Promise<RemixWebSessionStateUpdateResult>;
+  saveNow(): Promise<RemixWebSessionSaveResult>;
+  exportLegacySave(): Promise<RemixWebSessionExportResult>;
+  importLegacySave(saveString: string): Promise<RemixWebSessionImportResult>;
 }
 
 export interface CreateRemixWebGameSessionInput {
@@ -308,5 +376,149 @@ export function createRemixWebGameSession(
     return task;
   }
 
-  return { initialize, getState: () => state, dispatch };
+  function updateApplicationState(
+    update: (
+      current: RemixLegacySaveApplicationState,
+    ) => RemixLegacySaveApplicationState,
+  ): Promise<RemixWebSessionStateUpdateResult> {
+    const task: Promise<RemixWebSessionStateUpdateResult> = actionQueue.then(
+      async () => {
+        const initialized = await initialize();
+        if (initialized.status !== "ready") {
+          return {
+            status: "recoveryRequired",
+            initialization: initialized,
+          };
+        }
+        const current = state;
+        if (!current)
+          throw new Error("Ready session has no application state.");
+        state = update(current);
+        return { status: "updated", state };
+      },
+    );
+    actionQueue = task.then(
+      () => undefined,
+      () => undefined,
+    );
+    return task;
+  }
+
+  function saveNow(): Promise<RemixWebSessionSaveResult> {
+    const task = actionQueue.then(async () => {
+      const initialized = await initialize();
+      if (initialized.status !== "ready") {
+        return {
+          status: "recoveryRequired" as const,
+          initialization: initialized,
+        };
+      }
+      const current = state;
+      if (!current) throw new Error("Ready session has no application state.");
+
+      const saveTimestampMs = input.clock.now();
+      const persisted = await persistRemixBeyondSave({
+        state: current,
+        saveTimestampMs,
+        storage: input.storage,
+      });
+      state = persisted.state;
+      if (persisted.status !== "saved") {
+        return {
+          status: "persistenceFailed" as const,
+          state: persisted.state,
+          persistence: persisted,
+        };
+      }
+      if (persisted.confirmation !== null) {
+        await input.dispatchEffect(persisted.confirmation);
+      }
+      return { status: "saved" as const, state: persisted.state };
+    });
+    actionQueue = task.then(
+      () => undefined,
+      () => undefined,
+    );
+    return task;
+  }
+
+  function exportLegacySave(): Promise<RemixWebSessionExportResult> {
+    const task = actionQueue.then(async () => {
+      const initialized = await initialize();
+      if (initialized.status !== "ready") {
+        return {
+          status: "recoveryRequired" as const,
+          initialization: initialized,
+        };
+      }
+      const current = state;
+      if (!current) throw new Error("Ready session has no application state.");
+
+      const saveString = encodeRemixLegacySave(
+        createRemixLegacySaveExportData(
+          current,
+          current.simulation.lastActiveMs ?? input.clock.now(),
+        ),
+      );
+      state = {
+        ...current,
+        settings: { ...current.settings, exportFieldString: saveString },
+      };
+      return { status: "exported" as const, state, saveString };
+    });
+    actionQueue = task.then(
+      () => undefined,
+      () => undefined,
+    );
+    return task;
+  }
+
+  function importLegacySave(
+    saveString: string,
+  ): Promise<RemixWebSessionImportResult> {
+    const task = actionQueue.then(async () => {
+      const initialized = await initialize();
+      if (initialized.status !== "ready") {
+        return {
+          status: "recoveryRequired" as const,
+          initialization: initialized,
+        };
+      }
+      const current = state;
+      if (!current) throw new Error("Ready session has no application state.");
+
+      const result = await importRemixLegacySaveToBeyond({
+        load: {
+          state: current,
+          saveString,
+          catalog: input.catalog,
+          clock: input.clock,
+          resolveNumberFormatter: input.resolveNumberFormatter,
+        },
+        storage: input.storage,
+        dispatchEffect: input.dispatchEffect,
+      });
+      if (result.status === "legacyLoadFailed") {
+        return { status: "legacyLoadFailed" as const, result };
+      }
+
+      state = result.loaded.state;
+      return { status: result.status, state, result };
+    });
+    actionQueue = task.then(
+      () => undefined,
+      () => undefined,
+    );
+    return task;
+  }
+
+  return {
+    initialize,
+    getState: () => state,
+    dispatch,
+    updateApplicationState,
+    saveNow,
+    exportLegacySave,
+    importLegacySave,
+  };
 }
