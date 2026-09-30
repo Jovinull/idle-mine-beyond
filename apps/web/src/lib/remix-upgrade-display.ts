@@ -4,8 +4,10 @@ import {
   calculateRemixUpgradePrice,
   getRemixUpgradeMaxLevel,
   type RemixSimulationState,
+  type RemixUpgradeKey,
   type RemixUpgradeContext,
 } from "@idle-mine-beyond/core";
+import upgradePresentation from "@idle-mine-beyond/content/remix-upgrade-presentation" with { type: "json" };
 import {
   formatNumber,
   formatThousands,
@@ -94,6 +96,34 @@ const EFFECT_DISPLAY: Record<
       below1000: 0,
     },
   },
+};
+
+type WisdomUpgradeDisplay = {
+  kind: "number" | "percent" | "raw";
+  digits?: number;
+  prefix?: string;
+};
+
+const WISDOM_EFFECT_DISPLAY: Record<
+  RemixUpgradeKey<"wisdom">,
+  WisdomUpgradeDisplay
+> = {
+  powerPowerActive: { kind: "percent", digits: 4 },
+  powerPowerIdle: { kind: "percent", digits: 4 },
+  damageBoost: { kind: "number", digits: 2, prefix: "x" },
+  gemBoostSimple: { kind: "raw", prefix: "x" },
+  damageBoostUpgrades: { kind: "number", digits: 2, prefix: "x" },
+  powerPowerPower: { kind: "number", digits: 2, prefix: "x" },
+  powerResetKeep: { kind: "number", digits: 2, prefix: "x^" },
+};
+
+const wisdomPresentation = upgradePresentation as {
+  groups: {
+    wisdom: Record<
+      RemixUpgradeKey<"wisdom">,
+      { name: string; description: string; maxLevel: number | "Infinity" }
+    >;
+  };
 };
 
 function upgradeContext(state: RemixSimulationState): RemixUpgradeContext {
@@ -196,6 +226,67 @@ export function getRemixShopUpgradeDisplay(input: {
       maxLevel === Infinity ? String(level) : `${level}/${maxLevel}`,
     effectDisplay,
     price,
+    priceDisplay,
+  };
+}
+
+/** Formats a Wisdom upgrade using the pinned standalone-card display rules. */
+export function getRemixWisdomUpgradeDisplay(input: {
+  key: RemixUpgradeKey<"wisdom">;
+  state: RemixSimulationState;
+  formatter: NotationFormatter;
+}) {
+  const { key, state, formatter } = input;
+  const level = state.upgrades.wisdom[key];
+  const context = upgradeContext(state);
+  const maxLevel = getRemixUpgradeMaxLevel("wisdom", key);
+  const current = calculateRemixUpgradeEffect("wisdom", key, level, context);
+  const next = calculateRemixUpgradeEffect("wisdom", key, level + 1, context);
+  const spec = WISDOM_EFFECT_DISPLAY[key];
+  const hasFiniteMax = maxLevel !== Infinity;
+  const belowMaxLevel = level < maxLevel;
+  const formatEffect = (value: Decimal) => {
+    if (spec.kind === "raw") return `${spec.prefix ?? ""}${value}`;
+    if (spec.kind === "percent") {
+      return `${formatNumber(
+        value.mul(100),
+        formatter,
+        spec.digits,
+        1e9,
+        spec.digits,
+      )}%`;
+    }
+    return `${spec.prefix ?? ""}${formatNumber(
+      value,
+      formatter,
+      spec.digits,
+      1e9,
+      spec.digits,
+    )}`;
+  };
+
+  const effectDisplay =
+    level === maxLevel
+      ? formatEffect(current)
+      : `${formatEffect(current)} → ${formatEffect(next)}`;
+  const priceDisplay = belowMaxLevel
+    ? `${formatNumber(
+        calculateRemixUpgradePrice("wisdom", key, level),
+        formatter,
+        2,
+        1e12,
+        0,
+      )} `
+    : "Max";
+  const metadata = wisdomPresentation.groups.wisdom[key];
+
+  return {
+    name: metadata.name,
+    description: metadata.description,
+    level,
+    maxLevel,
+    levelDisplay: `${level}${hasFiniteMax ? `/${maxLevel}` : ""}`,
+    effectDisplay,
     priceDisplay,
   };
 }

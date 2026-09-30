@@ -6,7 +6,10 @@ import {
   type RemixSimulationState,
 } from "../../packages/core/src/index.js";
 import { createRemixFormatters } from "../../packages/formatting/src/index.js";
-import { getRemixShopUpgradeDisplay } from "../../apps/web/src/lib/remix-upgrade-display.js";
+import {
+  getRemixShopUpgradeDisplay,
+  getRemixWisdomUpgradeDisplay,
+} from "../../apps/web/src/lib/remix-upgrade-display.js";
 
 const corpus = JSON.parse(
   await readFile(
@@ -22,6 +25,8 @@ const corpus = JSON.parse(
         Record<
           string,
           {
+            name: string;
+            description: string;
             samples: {
               level: number;
               levelDisplay: string;
@@ -102,4 +107,41 @@ it("preserves source affordability styling when a saved level exceeds its cap", 
   });
   expect(aboveCap.affordable).toBe(true);
   expect(aboveCap.priceDisplay).toBe("Max");
+});
+
+it("matches captured standalone Wisdom upgrade names and displays", () => {
+  const formatter = createRemixFormatters()[0]!;
+  const state = createInitialRemixSimulationState(
+    corpus.data.mineObjectCatalog,
+  );
+  state.highestMineObjectLevel = 171;
+  const sourceWisdom = corpus.data.upgradeSemantics.groups["wisdom"]!;
+
+  for (const [key, upgrade] of Object.entries(sourceWisdom)) {
+    for (const sample of upgrade.samples) {
+      for (const upgradeKey of Object.keys(state.upgrades.wisdom)) {
+        state.upgrades.wisdom[
+          upgradeKey as keyof typeof state.upgrades.wisdom
+        ] = 0;
+      }
+      state.upgrades.wisdom[key as keyof typeof state.upgrades.wisdom] =
+        sample.level;
+      const display = getRemixWisdomUpgradeDisplay({
+        key: key as keyof typeof state.upgrades.wisdom,
+        state,
+        formatter,
+      });
+      expect(display.name, key).toBe(upgrade.name);
+      expect(display.description, key).toBe(upgrade.description);
+      expect(display.levelDisplay, `${key} level ${sample.level}`).toBe(
+        sample.levelDisplay,
+      );
+      expect(display.effectDisplay, `${key} level ${sample.level}`).toBe(
+        sample.effectDisplay,
+      );
+      expect(display.priceDisplay, `${key} level ${sample.level}`).toBe(
+        sample.priceDisplay,
+      );
+    }
+  }
 });
