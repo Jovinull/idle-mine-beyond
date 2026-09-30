@@ -135,6 +135,7 @@ export type {
 } from "./remix-pickaxe-crafting.js";
 export { createInitialRemixSimulationState } from "./remix-simulation-state.js";
 export type { RemixSimulationState } from "./remix-simulation-state.js";
+export { createRemixHardResetSimulationState } from "./remix-hard-reset.js";
 export { performRemixSimulationAction } from "./remix-simulation-action.js";
 export type {
   RemixSimulationAction,
