@@ -6,6 +6,8 @@ import {
 
 type BrowserStorage = Pick<Storage, "getItem" | "setItem">;
 
+export const REMIX_LEGACY_SAVE_KEY = "IdleMine";
+
 /** Creates the webview adapter without exposing browser storage to game code. */
 export function createBrowserRemixSaveStorage(
   providedStorage?: BrowserStorage,
@@ -25,4 +27,13 @@ export function createBrowserRemixSaveStorage(
       getStorage().setItem(REMIX_BEYOND_BACKUP_SAVE_KEY, serialized);
     },
   };
+}
+
+/** Reads, but never mutates or removes, the pinned Remix save key. */
+export function readBrowserRemixLegacySave(
+  providedStorage?: Pick<Storage, "getItem">,
+): string | null {
+  return (providedStorage ?? window.localStorage).getItem(
+    REMIX_LEGACY_SAVE_KEY,
+  );
 }
