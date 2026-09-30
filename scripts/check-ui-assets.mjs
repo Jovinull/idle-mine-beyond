@@ -4,10 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
-const manifestPath = path.join(
-  root,
-  "docs/knowledge/sources/story-assets.json",
-);
+const manifestPath = path.join(root, "docs/knowledge/sources/ui-assets.json");
 const sourceManifestPath = path.join(
   root,
   "docs/knowledge/sources/reference-manifest.json",
@@ -108,5 +105,5 @@ for (const font of manifest.copiedFonts) {
 }
 
 process.stdout.write(
-  `Verified ${manifest.copiedImages.length} Story images and ${manifest.copiedFonts.length} font files against tracked SHA-256 values${hasUpstream ? " and the pinned Remix checkout" : ""}; required notices and ${manifest.remix.productLicenseCopies.length} full MIT license copies are present.\n`,
+  `Verified ${manifest.copiedImages.length} UI images and ${manifest.copiedFonts.length} font files against tracked SHA-256 values${hasUpstream ? " and the pinned Remix checkout" : ""}; required notices and ${manifest.remix.productLicenseCopies.length} full MIT license copies are present.\n`,
 );

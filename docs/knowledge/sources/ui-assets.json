@@ -38,6 +38,11 @@
       "sha256": "8AC5F142EEC59844EE607241D982DEF2ADA9AD93CC443F7B38D3CD7B77492EFF"
     },
     {
+      "source": "Images/settings.png",
+      "destination": "apps/web/static/Images/settings.png",
+      "sha256": "CE9941FDA25994E7EA3AAE4556822860DBA5DD10C6F4119BAE90143C3A55380E"
+    },
+    {
       "source": "Images/wisdom.png",
       "destination": "apps/web/static/Images/wisdom.png",
       "sha256": "FF1CBF7DC1E05FFAA7C2314C8CFED8229AC2A33033D5F87B452196A952B587E2"
@@ -51,6 +56,71 @@
       "source": "Images/upgrades/gemwaster.png",
       "destination": "apps/web/static/Images/upgrades/gemwaster.png",
       "sha256": "A0F62B56162D3D45A87FA2FC3CA88DC2177776CF73A27B8681FA44BA3A7AE0BF"
+    },
+    {
+      "source": "Images/upgrades/activepower.png",
+      "destination": "apps/web/static/Images/upgrades/activepower.png",
+      "sha256": "20BC9E4084D1BE436DC4CAEE0C6DC546868D56E668890B7B7A48097BBA778D80"
+    },
+    {
+      "source": "Images/upgrades/blacksmithbonus.png",
+      "destination": "apps/web/static/Images/upgrades/blacksmithbonus.png",
+      "sha256": "1D4D02D83CE651E0D361FFBA3EE1F25CE7C47AB175FC56C0D2086DCF167B5FFD"
+    },
+    {
+      "source": "Images/upgrades/blacksmithskill.png",
+      "destination": "apps/web/static/Images/upgrades/blacksmithskill.png",
+      "sha256": "04AAFB48BE52695EB72576630964ACB3F135EEDD17A63AEE92694AB009705222"
+    },
+    {
+      "source": "Images/upgrades/bulkcraft.png",
+      "destination": "apps/web/static/Images/upgrades/bulkcraft.png",
+      "sha256": "F223F49C03480FF6FCD2DD6BACF5CE1955EB6A47C0AAD89E523FA0E5A05C9DAF"
+    },
+    {
+      "source": "Images/upgrades/gembonus.png",
+      "destination": "apps/web/static/Images/upgrades/gembonus.png",
+      "sha256": "35313B9DAE0CB48B0895788C824DC18335F00444BE7C48CB39C9B68152DA1BB5"
+    },
+    {
+      "source": "Images/upgrades/gemchance.png",
+      "destination": "apps/web/static/Images/upgrades/gemchance.png",
+      "sha256": "3A8907920213B2F85627994D992ED700C6678BE5F6DD4B57DE05358663F6E654"
+    },
+    {
+      "source": "Images/upgrades/gemmulti.png",
+      "destination": "apps/web/static/Images/upgrades/gemmulti.png",
+      "sha256": "7079AC9F83B10203049FB031E8230AEA80E94B6258258268A6817543611BD4D7"
+    },
+    {
+      "source": "Images/upgrades/gemmultimulti.png",
+      "destination": "apps/web/static/Images/upgrades/gemmultimulti.png",
+      "sha256": "B1796C6C4291CFF3AD7C95CE965446E9B52C1E76EDD20EDCD40623771689BBCF"
+    },
+    {
+      "source": "Images/upgrades/gemoffline.png",
+      "destination": "apps/web/static/Images/upgrades/gemoffline.png",
+      "sha256": "21EE7A7AE437DF6AE4EA64C4D47B3CFE390F1508B69334E0BC7B111B2A1EAF77"
+    },
+    {
+      "source": "Images/upgrades/idlepower.png",
+      "destination": "apps/web/static/Images/upgrades/idlepower.png",
+      "sha256": "A2F49F5CC2A8B1120D731C044BF00824138EE38987B8AF96B9790A4A7767218F"
+    },
+    {
+      "source": "Images/upgrades/idlespeed.png",
+      "destination": "apps/web/static/Images/upgrades/idlespeed.png",
+      "sha256": "A852E75AF16EBAEC276AED24ECA6F76A71FCBEBDB78299F0B184BA831A44B815"
+    },
+    {
+      "source": "Images/upgrades/offlinetime.png",
+      "destination": "apps/web/static/Images/upgrades/offlinetime.png",
+      "sha256": "C5F4BD24310A58C44C802A372BF70A672810E577A596EFC0817867CD9DC1085E"
+    },
+    {
+      "source": "Images/upgrades/pcoffline.png",
+      "destination": "apps/web/static/Images/upgrades/pcoffline.png",
+      "sha256": "1FDDE2AFBAAE952C69583EF4506F59AEC2F8656797931116E5AC96BB6DDBE3D6"
     }
   ],
   "copiedFonts": [
