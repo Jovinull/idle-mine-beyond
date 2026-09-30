@@ -4679,6 +4679,49 @@ async function capture(reference, dependencies, dependencySnapshots) {
               randomValues: [0.3, 0.8, 0.4, 0.4, 0.7, 0.6, 0.4, 0.8, 0.8, 0.9],
             },
           ];
+          const distributionScenarios = [
+            {
+              name: "baseline-one-gem",
+              gems: "1",
+              highestMineObjectLevel: 25,
+              powers: ["1", "1", "1", "1", "1"],
+              upgradeLevels: {},
+            },
+            {
+              name: "upgraded-twenty-five-gem",
+              gems: "25",
+              highestMineObjectLevel: 25,
+              powers: ["1", "2.5", "3.25", "1", "1"],
+              upgradeLevels: {
+                money: {
+                  blacksmith: 7,
+                  blacksmithSkill: 4,
+                  blacksmithBonus: 10,
+                },
+                gems: { blacksmith: 8, blacksmithSkill: 5 },
+              },
+            },
+          ];
+          const distributionSeeds = [0x1d1e, 0xc0ffee, 0x5eed1234];
+          const distributionSampleCount = 512;
+          const summarizeValues = (values) => {
+            const sorted = [...values].sort((left, right) => left - right);
+            const roundSummary = (value) => Number(value.toPrecision(10));
+            const quantile = (probability) =>
+              roundSummary(
+                sorted[Math.floor((sorted.length - 1) * probability)],
+              );
+            return {
+              min: roundSummary(sorted[0]),
+              p10: quantile(0.1),
+              p50: quantile(0.5),
+              p90: quantile(0.9),
+              max: roundSummary(sorted[sorted.length - 1]),
+              mean: roundSummary(
+                values.reduce((sum, value) => sum + value, 0) / values.length,
+              ),
+            };
+          };
 
           try {
             const crafts = randomCases.map((scenario) => {
@@ -4739,6 +4782,80 @@ async function capture(reference, dependencies, dependencySnapshots) {
               new Decimal(deterministic.gems),
               true,
             );
+            const distributions = distributionScenarios.map((scenario) => {
+              setState(scenario);
+              const seedResults = distributionSeeds.map((seed) => {
+                let randomState = seed >>> 0;
+                let randomCalls = 0;
+                let sampleRandomValues = [];
+                const randomDrawCounts = {};
+                const qualityStreakCounts = Array(16).fill(0);
+                const nameForms = { word: 0, object: 0 };
+                const samples = { power: [], quality: [], damage: [] };
+                const nextRandom = () => {
+                  randomState =
+                    (Math.imul(randomState, 1_664_525) + 1_013_904_223) >>> 0;
+                  randomCalls++;
+                  const value = randomState / 0x1_0000_0000;
+                  sampleRandomValues.push(value);
+                  return value;
+                };
+                Math.random = nextRandom;
+                try {
+                  for (
+                    let sample = 0;
+                    sample < distributionSampleCount;
+                    sample++
+                  ) {
+                    const drawsBefore = randomCalls;
+                    sampleRandomValues = [];
+                    const pickaxe = Pickaxe.craft(
+                      new Decimal(scenario.gems),
+                      false,
+                    );
+                    const consumed = randomCalls - drawsBefore;
+                    const bonusLevel =
+                      scenario.upgradeLevels.money?.blacksmithBonus ?? 0;
+                    const bonusRollCount =
+                      bonusLevel > 0 && sampleRandomValues[1] < 0.25 ? 1 : 0;
+                    const firstQualityRoll = 4 + bonusRollCount;
+                    let qualityStreak = 0;
+                    for (
+                      let roll = 0;
+                      roll < 15 &&
+                      sampleRandomValues[firstQualityRoll + roll] < 0.5;
+                      roll++
+                    ) {
+                      qualityStreak++;
+                    }
+                    randomDrawCounts[consumed] =
+                      (randomDrawCounts[consumed] ?? 0) + 1;
+                    qualityStreakCounts[qualityStreak]++;
+                    nameForms[pickaxe.name.includes('"') ? "word" : "object"]++;
+                    samples.power.push(pickaxe.pow.toNumber());
+                    samples.quality.push(pickaxe.quality.toNumber());
+                    samples.damage.push(pickaxe.getDamage().toNumber());
+                  }
+                  return {
+                    seed,
+                    sampleCount: distributionSampleCount,
+                    randomCalls,
+                    randomDrawCounts,
+                    qualityStreakCounts,
+                    nameForms,
+                    values: Object.fromEntries(
+                      Object.entries(samples).map(([key, values]) => [
+                        key,
+                        summarizeValues(values),
+                      ]),
+                    ),
+                  };
+                } finally {
+                  Math.random = originalRandom;
+                }
+              });
+              return { name: scenario.name, input: scenario, seedResults };
+            });
             const baselineRandomValues = randomCases[0].randomValues;
             const attemptScenarios = [
               {
@@ -4960,6 +5077,17 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 transitions: controlTransitions,
               },
               crafts,
+              distributions: {
+                sourcePaths: [
+                  "Scripts/pickaxe.js",
+                  "Scripts/utils.js",
+                  "Scripts/Define/functions.js",
+                ],
+                rng: "32-bit LCG (1664525, 1013904223, modulo 2^32)",
+                sampleCountPerSeed: distributionSampleCount,
+                seedResults: distributionSeeds,
+                scenarios: distributions,
+              },
               deterministic: {
                 input: deterministic,
                 randomCalls,
