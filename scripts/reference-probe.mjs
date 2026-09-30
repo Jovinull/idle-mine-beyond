@@ -2077,6 +2077,50 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 functions.loadGame(encodeProbeSave(input), undefined, true);
                 return inputJson;
               }),
+              captureLoadedVariant("high-magnitude-decimal-fields", (input) => {
+                Object.assign(input, {
+                  money: "1.2345678901234567e+100000",
+                  highestMoney: "9.876543210987654e+100001",
+                  gems: "3.141592653589793e+75000",
+                  planetCoins: "2.718281828459045e+50000",
+                  maxPlanetCoins: "9.999999999999999e+50000",
+                  wisdom: "1.618033988749895e+25000",
+                  maxWisdom: "2.414213562373095e+25000",
+                  mineObjectLevel: 244,
+                  highestMineObjectLevel: 244,
+                  story: {
+                    page: 8,
+                    notifications: 2,
+                    highestUnlocked: 60,
+                    scrollY: 500,
+                  },
+                  settings: {
+                    ...input.settings,
+                    numberFormatterIndex: 39,
+                    theme: "dark",
+                    showMineObjLevel: true,
+                    showMinCraftDamage: true,
+                  },
+                  powers: {
+                    ...input.powers,
+                    data: {
+                      ...input.powers.data,
+                      values: [
+                        "1e+15000",
+                        "2e+20000",
+                        "3e+25000",
+                        "4e+30000",
+                        "5e+35000",
+                      ],
+                    },
+                  },
+                  pickaxe: {
+                    ...input.pickaxe,
+                    pow: "6.02214076e+40000",
+                    quality: "2.99792458e+35000",
+                  },
+                });
+              }),
             ];
             saveExportSemantics = {
               sourcePaths: [
@@ -5555,6 +5599,26 @@ async function capture(reference, dependencies, dependencySnapshots) {
       snapshot.currentMineObject = snapshot.object.currentMineObject;
       snapshot.messageLog = snapshot.object.messageLog;
       snapshot.settings = snapshot.object.settings;
+      if (snapshot.name === "high-magnitude-decimal-fields") {
+        snapshot.decimalFields = {
+          resources: Object.fromEntries(
+            [
+              "money",
+              "highestMoney",
+              "gems",
+              "planetCoins",
+              "maxPlanetCoins",
+              "wisdom",
+              "maxWisdom",
+            ].map((key) => [key, snapshot.object[key]]),
+          ),
+          powerValues: snapshot.object.powers.data.values,
+          pickaxe: {
+            power: snapshot.object.pickaxe.pow,
+            quality: snapshot.object.pickaxe.quality,
+          },
+        };
+      }
       snapshot.jsonUtf8Bytes = Buffer.byteLength(snapshot.json, "utf8");
       snapshot.jsonSha256 = sha256(snapshot.json);
       snapshot.saveStringAsciiBytes = snapshot.encoded.length;

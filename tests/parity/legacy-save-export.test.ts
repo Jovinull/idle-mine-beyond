@@ -46,6 +46,11 @@ const corpus = JSON.parse(
       variants: {
         name: string;
         changedFields: string[];
+        decimalFields?: {
+          resources: Record<string, string>;
+          powerValues: string[];
+          pickaxe: { power: string; quality: string };
+        };
         mineObjectLevel: number;
         highestMineObjectLevel: number;
         lastActive: number;
@@ -278,6 +283,22 @@ it("matches full-save hashes across generated objects and dynamic states", () =>
       "story",
       "settings",
     ],
+    "high-magnitude-decimal-fields": [
+      "money",
+      "highestMoney",
+      "gems",
+      "pickaxe",
+      "currentMineObject",
+      "mineObjectLevel",
+      "highestMineObjectLevel",
+      "planetCoins",
+      "maxPlanetCoins",
+      "wisdom",
+      "maxWisdom",
+      "powers",
+      "story",
+      "settings",
+    ],
   };
   for (const variant of corpus.data.saveExportSemantics.variants) {
     expect(variant.changedFields, variant.name).toEqual(
@@ -353,7 +374,7 @@ it("matches full-save hashes across generated objects and dynamic states", () =>
       ];
       for (const key of expectedResourceFields) {
         expect(exported[key], `${variant.name}: ${key}`).toBe(
-          variantInput[key],
+          variant.decimalFields?.resources[key] ?? variantInput[key],
         );
       }
       for (const key of ["upgrades", "gemUpgrades", "planetCoinUpgrades"]) {
@@ -376,7 +397,18 @@ it("matches full-save hashes across generated objects and dynamic states", () =>
         data: { values: string[] };
         upgrades: Record<string, { level: number }>;
       };
-      expect(exportedPowers.data.values).toEqual(expectedPowers.data.values);
+      expect(exportedPowers.data.values).toEqual(
+        variant.decimalFields?.powerValues ?? expectedPowers.data.values,
+      );
+      if (variant.decimalFields) {
+        expect(Object.keys(variant.decimalFields.resources)).toEqual(
+          expectedResourceFields,
+        );
+        expect(exported["pickaxe"]).toMatchObject({
+          pow: variant.decimalFields.pickaxe.power,
+          quality: variant.decimalFields.pickaxe.quality,
+        });
+      }
       const actualWisdomUpgrades = (
         exported["powers"] as {
           upgrades: Record<string, { level: number }>;
@@ -416,4 +448,46 @@ it("matches full-save hashes across generated objects and dynamic states", () =>
   expect(cappedLog?.messageLog).toHaveLength(6);
   expect(cappedLog?.messageLog[0]?.message).toBe("Export probe 7");
   expect(cappedLog?.messageLog.at(-1)?.message).toBe("Export probe 2");
+});
+
+it("covers high-magnitude Decimal fields in a Remix save export", () => {
+  const variant = corpus.data.saveExportSemantics.variants.find(
+    (candidate) => candidate.name === "high-magnitude-decimal-fields",
+  );
+  expect(variant).toBeDefined();
+  if (!variant?.inputJson) return;
+
+  const input = JSON.parse(variant.inputJson) as {
+    money: string;
+    highestMoney: string;
+    gems: string;
+    planetCoins: string;
+    maxPlanetCoins: string;
+    wisdom: string;
+    maxWisdom: string;
+    powers: { data: { values: string[] } };
+    pickaxe: { pow: string; quality: string };
+  };
+  expect(input).toMatchObject({
+    money: "1.2345678901234567e+100000",
+    highestMoney: "9.876543210987654e+100001",
+    gems: "3.141592653589793e+75000",
+    planetCoins: "2.718281828459045e+50000",
+    maxPlanetCoins: "9.999999999999999e+50000",
+    wisdom: "1.618033988749895e+25000",
+    maxWisdom: "2.414213562373095e+25000",
+    powers: {
+      data: {
+        values: ["1e+15000", "2e+20000", "3e+25000", "4e+30000", "5e+35000"],
+      },
+    },
+    pickaxe: { pow: "6.02214076e+40000", quality: "2.99792458e+35000" },
+  });
+  expect(variant.changedFields).toContain("powers");
+  expect(variant.changedFields).toContain("pickaxe");
+  expect(variant.decimalFields).toBeDefined();
+  expect(variant.decimalFields?.resources).toHaveProperty(
+    "maxPlanetCoins",
+    "9.999999999999998e+50000",
+  );
 });
