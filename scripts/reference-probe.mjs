@@ -1,4 +1,4 @@
-/* global Random, SKIN_LAYER_AMOUNTS, DICTIONARY_ENGLISH, POWER_MINING, POWER_EXQUISITY, POWER_WISDOM, Pickaxe, applyUpgrade -- pinned classic-script bindings */
+/* global Random, SKIN_LAYER_AMOUNTS, DICTIONARY_ENGLISH, POWER_MINING, POWER_EXQUISITY, POWER_WISDOM, Pickaxe, Vue, applyUpgrade -- pinned classic-script bindings */
 
 import { createHash } from "node:crypto";
 import { createServer } from "node:http";
@@ -732,6 +732,160 @@ async function capture(reference, dependencies, dependencySnapshots) {
           },
           messageLog: normalize(game.messageLog),
         };
+        const powersTableSemantics = (() => {
+          const previousHighestMineObjectLevel = game.highestMineObjectLevel;
+          const previousPowerValues = [...game.powers.data.values];
+          const previousPowerResetKeepLevel =
+            game.powers.upgrades.powerResetKeep.level;
+          const componentMethods =
+            Vue.component("powers-table").options.methods;
+          const makeValues = (values) =>
+            values.map((value) => new Decimal(value));
+          const getEffect = (values, index) => {
+            const context = { pow: { values } };
+            return componentMethods.getPrestigeEffect.call(context, index);
+          };
+          const snapshotRows = (values) =>
+            values.map((current, index) => {
+              const next = values[index + 1];
+              if (next === undefined) {
+                return {
+                  index,
+                  name: game.powers.data.names[index],
+                  current: normalizedDecimal(current),
+                  next: null,
+                  prestigeEffect: null,
+                  cell: null,
+                };
+              }
+              const effect = getEffect(values, index);
+              const isVisible =
+                current.gte(1e3) || (index < values.length - 1 && next.gt(1));
+              return {
+                index,
+                name: game.powers.data.names[index],
+                current: normalizedDecimal(current),
+                next: normalizedDecimal(next),
+                prestigeEffect: normalizedDecimal(effect),
+                cell: {
+                  visible: isVisible,
+                  disabled: isVisible && next.gte(effect),
+                  text: isVisible
+                    ? `Prestige: x${functions.formatNumber(effect, 2, 1e9, 2)}`
+                    : `Req. x${functions.formatNumber(1e3)}`,
+                },
+              };
+            });
+          const scenarios = [
+            {
+              name: "fresh-power-table",
+              powerResetKeepLevel: 0,
+              values: ["1", "1", "1", "1", "1"],
+            },
+            {
+              name: "active-power-prestige-effect",
+              powerResetKeepLevel: 4,
+              values: ["1e6", "1", "1", "1", "1"],
+            },
+            {
+              name: "craftsmanship-prestige-effect",
+              powerResetKeepLevel: 4,
+              values: ["1", "1e6", "1", "1", "1"],
+            },
+            {
+              name: "expertise-prestige-effect",
+              powerResetKeepLevel: 4,
+              values: ["1", "1", "1e6", "1", "1"],
+            },
+            {
+              name: "wisdom-prestige-effect-is-logarithmic",
+              powerResetKeepLevel: 4,
+              values: ["1", "1", "1", "1e6", "1"],
+            },
+            {
+              name: "button-shows-from-next-power-above-one",
+              powerResetKeepLevel: 0,
+              values: ["100", "2", "1", "1", "1"],
+            },
+            {
+              name: "button-is-disabled-when-next-power-meets-effect",
+              powerResetKeepLevel: 0,
+              values: ["1e6", "40", "1", "1", "1"],
+            },
+          ].map((scenario) => {
+            game.powers.upgrades.powerResetKeep.level =
+              scenario.powerResetKeepLevel;
+            const rows = snapshotRows(makeValues(scenario.values));
+            return {
+              name: scenario.name,
+              input: {
+                powerResetKeepLevel: scenario.powerResetKeepLevel,
+                values: scenario.values,
+              },
+              rows,
+            };
+          });
+          const prestiges = [
+            {
+              name: "active-power-retains-source-exponent",
+              index: 0,
+              powerResetKeepLevel: 4,
+              values: ["1e6", "1", "1", "1", "1"],
+            },
+            {
+              name: "wisdom-prestige-uses-logarithmic-target",
+              index: 3,
+              powerResetKeepLevel: 4,
+              values: ["1", "1", "1", "1e6", "1"],
+            },
+            {
+              name: "already-met-next-power-is-unchanged",
+              index: 0,
+              powerResetKeepLevel: 4,
+              values: ["1e6", "40", "1", "1", "1"],
+            },
+          ].map((scenario) => {
+            game.powers.upgrades.powerResetKeep.level =
+              scenario.powerResetKeepLevel;
+            const values = makeValues(scenario.values);
+            const before = values.map(normalizedDecimal);
+            const context = { pow: { values } };
+            context.getPrestigeEffect = (index) =>
+              componentMethods.getPrestigeEffect.call(context, index);
+            componentMethods.prestigePower.call(context, scenario.index);
+            return {
+              name: scenario.name,
+              input: {
+                index: scenario.index,
+                powerResetKeepLevel: scenario.powerResetKeepLevel,
+                values: scenario.values,
+              },
+              before,
+              after: values.map(normalizedDecimal),
+            };
+          });
+
+          const unlock = [169, 170, 171].map((level) => {
+            game.highestMineObjectLevel = level;
+            return {
+              highestMineObjectLevel: level,
+              unlocked: game.powers.unlocked(),
+            };
+          });
+
+          game.highestMineObjectLevel = previousHighestMineObjectLevel;
+          game.powers.data.values = previousPowerValues;
+          game.powers.upgrades.powerResetKeep.level =
+            previousPowerResetKeepLevel;
+
+          return {
+            names: [...game.powers.data.names],
+            icons: [...game.powers.data.icons],
+            unlock,
+            scenarios,
+            prestiges,
+          };
+        })();
         const storySemantics = (() => {
           const milestoneEntries = Object.entries(game.story.milestones);
           const wisdomUpgradeEntries = Object.entries(game.powers.upgrades);
@@ -4534,6 +4688,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
         })();
         return {
           initialState,
+          powersTableSemantics,
           initialRates: rates,
           notationOutputs,
           notationSemantics,

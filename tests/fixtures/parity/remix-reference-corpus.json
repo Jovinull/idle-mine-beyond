@@ -55564,6 +55564,1045 @@
           }
         }
       ]
+    },
+    "powersTableSemantics": {
+      "names": [
+        "Power of Mining",
+        "Power of Craftsmenship",
+        "Power of Expertise",
+        "Power of Wisdom",
+        "Power of Exquisity"
+      ],
+      "icons": [
+        "pickaxe.png",
+        "upgrades/blacksmith.png",
+        "upgrades/blacksmithskill.png",
+        "wisdom.png",
+        "gem.png"
+      ],
+      "unlock": [
+        {
+          "highestMineObjectLevel": 169,
+          "unlocked": false
+        },
+        {
+          "highestMineObjectLevel": 170,
+          "unlocked": true
+        },
+        {
+          "highestMineObjectLevel": 171,
+          "unlocked": true
+        }
+      ],
+      "scenarios": [
+        {
+          "name": "fresh-power-table",
+          "input": {
+            "powerResetKeepLevel": 0,
+            "values": ["1", "1", "1", "1", "1"]
+          },
+          "rows": [
+            {
+              "index": 0,
+              "name": "Power of Mining",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 1,
+              "name": "Power of Craftsmenship",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 2,
+              "name": "Power of Expertise",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 3,
+              "name": "Power of Wisdom",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 4,
+              "name": "Power of Exquisity",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": null,
+              "prestigeEffect": null,
+              "cell": null
+            }
+          ]
+        },
+        {
+          "name": "active-power-prestige-effect",
+          "input": {
+            "powerResetKeepLevel": 4,
+            "values": ["1e6", "1", "1", "1", "1"]
+          },
+          "rows": [
+            {
+              "index": 0,
+              "name": "Power of Mining",
+              "current": {
+                "decimal": "1000000",
+                "mantissa": 1,
+                "exponent": 6
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "31.622776601683796",
+                "mantissa": 3.1622776601683795,
+                "exponent": 1
+              },
+              "cell": {
+                "visible": true,
+                "disabled": false,
+                "text": "Prestige: x31.62"
+              }
+            },
+            {
+              "index": 1,
+              "name": "Power of Craftsmenship",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 2,
+              "name": "Power of Expertise",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 3,
+              "name": "Power of Wisdom",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 4,
+              "name": "Power of Exquisity",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": null,
+              "prestigeEffect": null,
+              "cell": null
+            }
+          ]
+        },
+        {
+          "name": "craftsmanship-prestige-effect",
+          "input": {
+            "powerResetKeepLevel": 4,
+            "values": ["1", "1e6", "1", "1", "1"]
+          },
+          "rows": [
+            {
+              "index": 0,
+              "name": "Power of Mining",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1000000",
+                "mantissa": 1,
+                "exponent": 6
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": true,
+                "disabled": true,
+                "text": "Prestige: x1.00"
+              }
+            },
+            {
+              "index": 1,
+              "name": "Power of Craftsmenship",
+              "current": {
+                "decimal": "1000000",
+                "mantissa": 1,
+                "exponent": 6
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "15.84893192461114",
+                "mantissa": 1.584893192461114,
+                "exponent": 1
+              },
+              "cell": {
+                "visible": true,
+                "disabled": false,
+                "text": "Prestige: x15.85"
+              }
+            },
+            {
+              "index": 2,
+              "name": "Power of Expertise",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 3,
+              "name": "Power of Wisdom",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 4,
+              "name": "Power of Exquisity",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": null,
+              "prestigeEffect": null,
+              "cell": null
+            }
+          ]
+        },
+        {
+          "name": "expertise-prestige-effect",
+          "input": {
+            "powerResetKeepLevel": 4,
+            "values": ["1", "1", "1e6", "1", "1"]
+          },
+          "rows": [
+            {
+              "index": 0,
+              "name": "Power of Mining",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 1,
+              "name": "Power of Craftsmenship",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1000000",
+                "mantissa": 1,
+                "exponent": 6
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": true,
+                "disabled": true,
+                "text": "Prestige: x1.00"
+              }
+            },
+            {
+              "index": 2,
+              "name": "Power of Expertise",
+              "current": {
+                "decimal": "1000000",
+                "mantissa": 1,
+                "exponent": 6
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "7.943282347242813",
+                "mantissa": 7.943282347242813,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": true,
+                "disabled": false,
+                "text": "Prestige: x7.94"
+              }
+            },
+            {
+              "index": 3,
+              "name": "Power of Wisdom",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 4,
+              "name": "Power of Exquisity",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": null,
+              "prestigeEffect": null,
+              "cell": null
+            }
+          ]
+        },
+        {
+          "name": "wisdom-prestige-effect-is-logarithmic",
+          "input": {
+            "powerResetKeepLevel": 4,
+            "values": ["1", "1", "1", "1e6", "1"]
+          },
+          "rows": [
+            {
+              "index": 0,
+              "name": "Power of Mining",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 1,
+              "name": "Power of Craftsmenship",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 2,
+              "name": "Power of Expertise",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1000000",
+                "mantissa": 1,
+                "exponent": 6
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": true,
+                "disabled": true,
+                "text": "Prestige: x1.00"
+              }
+            },
+            {
+              "index": 3,
+              "name": "Power of Wisdom",
+              "current": {
+                "decimal": "1000000",
+                "mantissa": 1,
+                "exponent": 6
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1.5999999999999999",
+                "mantissa": 1.5999999999999999,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": true,
+                "disabled": false,
+                "text": "Prestige: x1.60"
+              }
+            },
+            {
+              "index": 4,
+              "name": "Power of Exquisity",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": null,
+              "prestigeEffect": null,
+              "cell": null
+            }
+          ]
+        },
+        {
+          "name": "button-shows-from-next-power-above-one",
+          "input": {
+            "powerResetKeepLevel": 0,
+            "values": ["100", "2", "1", "1", "1"]
+          },
+          "rows": [
+            {
+              "index": 0,
+              "name": "Power of Mining",
+              "current": {
+                "decimal": "100",
+                "mantissa": 1,
+                "exponent": 2
+              },
+              "next": {
+                "decimal": "2",
+                "mantissa": 2,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": true,
+                "disabled": true,
+                "text": "Prestige: x1.00"
+              }
+            },
+            {
+              "index": 1,
+              "name": "Power of Craftsmenship",
+              "current": {
+                "decimal": "2",
+                "mantissa": 2,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 2,
+              "name": "Power of Expertise",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 3,
+              "name": "Power of Wisdom",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 4,
+              "name": "Power of Exquisity",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": null,
+              "prestigeEffect": null,
+              "cell": null
+            }
+          ]
+        },
+        {
+          "name": "button-is-disabled-when-next-power-meets-effect",
+          "input": {
+            "powerResetKeepLevel": 0,
+            "values": ["1e6", "40", "1", "1", "1"]
+          },
+          "rows": [
+            {
+              "index": 0,
+              "name": "Power of Mining",
+              "current": {
+                "decimal": "1000000",
+                "mantissa": 1,
+                "exponent": 6
+              },
+              "next": {
+                "decimal": "40",
+                "mantissa": 4,
+                "exponent": 1
+              },
+              "prestigeEffect": {
+                "decimal": "31.622776601683796",
+                "mantissa": 3.1622776601683795,
+                "exponent": 1
+              },
+              "cell": {
+                "visible": true,
+                "disabled": true,
+                "text": "Prestige: x31.62"
+              }
+            },
+            {
+              "index": 1,
+              "name": "Power of Craftsmenship",
+              "current": {
+                "decimal": "40",
+                "mantissa": 4,
+                "exponent": 1
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 2,
+              "name": "Power of Expertise",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 3,
+              "name": "Power of Wisdom",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "prestigeEffect": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "cell": {
+                "visible": false,
+                "disabled": false,
+                "text": "Req. x1,000"
+              }
+            },
+            {
+              "index": 4,
+              "name": "Power of Exquisity",
+              "current": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "next": null,
+              "prestigeEffect": null,
+              "cell": null
+            }
+          ]
+        }
+      ],
+      "prestiges": [
+        {
+          "name": "active-power-retains-source-exponent",
+          "input": {
+            "index": 0,
+            "powerResetKeepLevel": 4,
+            "values": ["1e6", "1", "1", "1", "1"]
+          },
+          "before": [
+            {
+              "decimal": "1000000",
+              "mantissa": 1,
+              "exponent": 6
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          ],
+          "after": [
+            {
+              "decimal": "10757.218745734002",
+              "mantissa": 1.0757218745734003,
+              "exponent": 4
+            },
+            {
+              "decimal": "31.622776601683796",
+              "mantissa": 3.1622776601683795,
+              "exponent": 1
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          ]
+        },
+        {
+          "name": "wisdom-prestige-uses-logarithmic-target",
+          "input": {
+            "index": 3,
+            "powerResetKeepLevel": 4,
+            "values": ["1", "1", "1", "1e6", "1"]
+          },
+          "before": [
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1000000",
+              "mantissa": 1,
+              "exponent": 6
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          ],
+          "after": [
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "10757.218745734002",
+              "mantissa": 1.0757218745734003,
+              "exponent": 4
+            },
+            {
+              "decimal": "1.5999999999999999",
+              "mantissa": 1.5999999999999999,
+              "exponent": 0
+            }
+          ]
+        },
+        {
+          "name": "already-met-next-power-is-unchanged",
+          "input": {
+            "index": 0,
+            "powerResetKeepLevel": 4,
+            "values": ["1e6", "40", "1", "1", "1"]
+          },
+          "before": [
+            {
+              "decimal": "1000000",
+              "mantissa": 1,
+              "exponent": 6
+            },
+            {
+              "decimal": "40",
+              "mantissa": 4,
+              "exponent": 1
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          ],
+          "after": [
+            {
+              "decimal": "1000000",
+              "mantissa": 1,
+              "exponent": 6
+            },
+            {
+              "decimal": "40",
+              "mantissa": 4,
+              "exponent": 1
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          ]
+        }
+      ]
     }
   }
 }
