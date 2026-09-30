@@ -5,6 +5,7 @@ export default defineConfig({
   testDir: "./tests/e2e",
   snapshotPathTemplate: "{testDir}/../fixtures/visual/{arg}{ext}",
   fullyParallel: true,
+  workers: 2,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? "github" : "list",
