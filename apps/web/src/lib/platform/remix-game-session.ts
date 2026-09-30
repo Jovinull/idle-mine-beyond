@@ -197,6 +197,9 @@ function actionInput(
       },
     });
   }
+  if (action.type === "prestigePower") {
+    return performRemixSimulationAction({ state, action });
+  }
   return performRemixSimulationAction({ state, action });
 }
 

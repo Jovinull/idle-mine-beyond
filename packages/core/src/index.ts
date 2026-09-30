@@ -136,6 +136,16 @@ export type {
 export { createInitialRemixSimulationState } from "./remix-simulation-state.js";
 export type { RemixSimulationState } from "./remix-simulation-state.js";
 export { createRemixHardResetSimulationState } from "./remix-hard-reset.js";
+export {
+  calculateRemixPowerPrestigeEffect,
+  getRemixPowerPrestigeRows,
+  isRemixPowersUnlocked,
+  performRemixPowerPrestige,
+} from "./remix-powers.js";
+export type {
+  RemixPowerPrestigeIndex,
+  RemixPowerPrestigeRow,
+} from "./remix-powers.js";
 export { performRemixSimulationAction } from "./remix-simulation-action.js";
 export type {
   RemixSimulationAction,
@@ -146,6 +156,7 @@ export type {
   RemixSimulationEffect,
   RemixPickaxeCraftSimulationAction,
   RemixOfflineLoadSimulationAction,
+  RemixPowerPrestigeSimulationAction,
   RemixUpgradePurchaseSimulationAction,
 } from "./remix-simulation-action.js";
 export { RemixRandom } from "./remix-random.js";

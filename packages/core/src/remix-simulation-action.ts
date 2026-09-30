@@ -35,6 +35,11 @@ import {
   type RemixUpgradeGroup,
   type RemixUpgradeKey,
 } from "./remix-upgrades.js";
+import {
+  isRemixPowersUnlocked,
+  performRemixPowerPrestige,
+  type RemixPowerPrestigeIndex,
+} from "./remix-powers.js";
 import type { RemixSimulationState } from "./remix-simulation-state.js";
 
 export type RemixMiningSimulationAction =
@@ -65,11 +70,17 @@ export type RemixOfflineLoadSimulationAction = {
   evaluatedLastActiveFallbackMs?: number;
 };
 
+export type RemixPowerPrestigeSimulationAction = {
+  type: "prestigePower";
+  index: RemixPowerPrestigeIndex;
+};
+
 export type RemixSimulationAction =
   | RemixMiningSimulationAction
   | RemixUpgradePurchaseSimulationAction
   | RemixPickaxeCraftSimulationAction
-  | RemixOfflineLoadSimulationAction;
+  | RemixOfflineLoadSimulationAction
+  | RemixPowerPrestigeSimulationAction;
 
 export type RemixSimulationActionInput =
   | {
@@ -95,6 +106,10 @@ export type RemixSimulationActionInput =
       catalog: RemixMineObjectCatalog;
       clock: RemixOfflineClock;
       formatNumber: RemixOfflineNumberFormatter;
+    }
+  | {
+      state: RemixSimulationState;
+      action: RemixPowerPrestigeSimulationAction;
     };
 
 export type RemixSimulationEffect =
@@ -112,6 +127,12 @@ export type RemixSimulationActionResult =
       state: RemixSimulationState;
       purchases: number;
       operationResult: boolean | null;
+      effects: [];
+    }
+  | {
+      type: "prestigePower";
+      state: RemixSimulationState;
+      changed: boolean;
       effects: [];
     }
   | {
@@ -360,6 +381,9 @@ export function performRemixSimulationAction(
       ...mining.state,
       pickaxe: input.state.pickaxe,
       powers: { ...input.state.powers, ...mining.state.powers },
+      powersUnlocked: isRemixPowersUnlocked(
+        mining.state.highestMineObjectLevel,
+      ),
       upgrades: input.state.upgrades,
       story: input.state.story,
     };
@@ -398,6 +422,16 @@ export function performRemixSimulationAction(
       input.catalog,
       input.random,
     );
+  }
+
+  if (input.action.type === "prestigePower") {
+    const prestige = performRemixPowerPrestige(input.state, input.action.index);
+    return {
+      type: "prestigePower",
+      state: prestige.state,
+      changed: prestige.changed,
+      effects: [],
+    };
   }
 
   return performUpgradePurchase(input.state, input.action);
