@@ -22,6 +22,8 @@ Special anchor positions, region boundaries, names, colors, skins, values, and d
 
 The first controlled oracle capture contains results for every ID from 0 through 214 (including generated entries between anchors), followed by probes at 215, 216, 217, 244, 1,000, 10,000, 1,000,000, 2,147,483,647, and `Number.MAX_SAFE_INTEGER`. The highest probe yields `Infinity` for HP, defense, and value after the reference Decimal's exponent exceeds its representable range. This is a verified extreme-input result, not evidence that such progression is ordinarily reachable. `pnpm test:reference` regenerates the output in a fresh browser context and compares it to the fixture.
 
+The save-export oracle additionally captures current objects at IDs 72, 125, 215, 216, and 244 inside complete serialized saves. This spans the pre-Portal, post-Portal, and post-Universe generator branches, no-drop and drop configs, both post-Universe drop resources, and later Universe scaling. Beyond reconstructs each current object from the frozen catalog and matches the complete encoded-save hash. These five saves validate representative paths, not every ID or every dynamic game state.
+
 ## Rendering
 
 The reference loads Images/stone_new.png as a layered spritesheet. Scripts/main.js draws a 256 × 224 mask region per layer, colors it, and composites using Canvas operations including multiply, destination-in, and source-over. Mine objects select a skin and color list rather than owning a unique sprite each.

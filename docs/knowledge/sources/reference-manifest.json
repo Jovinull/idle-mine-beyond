@@ -1,5 +1,5 @@
 {
-  "inspectedOn": "2026-09-28",
+  "inspectedOn": "2026-09-30",
   "references": [
     {
       "name": "Idle Mine: Remix",
@@ -13,7 +13,7 @@
       "licenseDetected": "MIT",
       "copyrightNotice": "Copyright (c) 2023 veprogames",
       "researchCheckout": ".research/upstream/idle-mine-remix",
-      "notes": "First-party VeproGames repository, archived read-only. Canonical source pin for initial parity research. The repository includes HTML, CSS, JavaScript, assets, fonts, and license. Do not edit this checkout."
+      "notes": "First-party VeproGames repository, archived read-only. Canonical source pin for initial parity research. The repository includes HTML, CSS, JavaScript, assets, fonts, and license. A 2026-09-30 history audit found no tags or releases and only the initial source commit for the save loader and game definitions; distinct historical save schemas remain unverified. Do not edit this checkout."
     },
     {
       "name": "idle-mine-remux",

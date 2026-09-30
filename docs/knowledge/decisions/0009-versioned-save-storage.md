@@ -22,7 +22,7 @@ The pinned Remix `saveGame()` sets `lastActive` from `Date.now()`, writes the ve
 ## Consequences
 
 - The core remains independent of localStorage and native storage APIs.
-- The web adapter is implemented; native storage, recovery UI, export/import UI, and app-level simulation wiring remain open.
+- The browser adapter, Tauri file adapter, Settings import/export, and a recovery route with read-only slot export plus acknowledged legacy and Beyond v1 file imports are implemented. Native WebView save/reload certification remains open. The native implementation is recorded separately in [ADR 0010](0010-native-save-storage.md).
 - A single backup protects against an interrupted or malformed current save but does not provide a multi-generation history.
 
 ## Evidence
