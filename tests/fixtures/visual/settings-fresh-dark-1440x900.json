@@ -12,7 +12,10 @@
   "browserName": "Chromium",
   "browserVersion": "153.0.8010.12",
   "playwrightVersion": "1.63.0",
-  "viewport": { "width": 1440, "height": 900 },
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
   "deviceScaleFactor": 1,
   "browserColorScheme": "light",
   "gameTheme": "dark",
@@ -32,7 +35,7 @@
     "exportFieldString": "Exported String will appear here..."
   },
   "captureNote": "The capture sets one Story notification in memory to match the fresh Beyond route after its first simulated idle frame; it does not persist the reference save.",
-  "screenshotSha256": "ce2c12a449e1d996a9edc2568f083883bdb0da37f35b7dcabe63566d2e6f7020",
+  "screenshotSha256": "971eb051250804b22c0d380e3d3be480d1826e739e85faffc0ac14e8122cf3bf",
   "capturedOn": "2026-09-30",
   "screenshotPath": "tests/fixtures/visual/settings-fresh-dark-1440x900.png"
 }

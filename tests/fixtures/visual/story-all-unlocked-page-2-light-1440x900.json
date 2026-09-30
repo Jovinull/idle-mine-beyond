@@ -1,0 +1,42 @@
+{
+  "repository": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": [
+    "index.html",
+    "main.css",
+    "Themes/dark.css",
+    "Scripts/main.js",
+    "Scripts/Components/mine-object.js"
+  ],
+  "browserName": "Chromium",
+  "browserVersion": "153.0.8010.12",
+  "playwrightVersion": "1.63.0",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "browserColorScheme": "light",
+  "gameTheme": "light",
+  "locale": "en-US",
+  "timezoneId": "UTC",
+  "clockMs": 1704067200000,
+  "state": {
+    "tab": "story",
+    "mineObjectLevel": 0,
+    "highestMineObjectLevel": 215,
+    "highestMoney": "5e13",
+    "maxPlanetCoins": "1",
+    "blacksmithLevel": 1,
+    "gemWasterLevel": 1,
+    "firstWisdomUpgradeLevel": 1,
+    "story": {
+      "page": 2,
+      "notifications": 0,
+      "highestUnlocked": 60,
+      "scrollTop": 249
+    }
+  },
+  "screenshotSha256": "7455144c6ee81af5a1b6d0b813a15fc015d654ae9b7ca01c44c5cfe1c4a470b1",
+  "screenshotPath": "tests/fixtures/visual/story-all-unlocked-page-2-light-1440x900.png"
+}

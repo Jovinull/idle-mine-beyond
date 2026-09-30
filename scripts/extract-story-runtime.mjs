@@ -540,6 +540,34 @@ async function captureStory(
           fullPage: true,
         });
       }
+      await page.evaluate(async () => {
+        window.game.story.page = 8;
+        await new Promise((resolve) => window.app.$nextTick(resolve));
+        const scroller = document.querySelector(".story-milestones");
+        if (!scroller) throw new Error("Story scroller was not rendered.");
+        scroller.scrollTop = 249;
+        for (const animation of document.getAnimations()) {
+          animation.pause();
+          animation.currentTime = 0;
+        }
+      });
+      const lightPageEightScroll = await page.evaluate(() => {
+        const scroller = document.querySelector(".story-milestones");
+        return scroller?.scrollTop ?? null;
+      });
+      if (lightPageEightScroll !== 249) {
+        throw new Error(
+          `Light Story page 8 screenshot requires 249px scroll; received ${lightPageEightScroll}.`,
+        );
+      }
+      await page.mouse.move(viewport.width - 1, viewport.height - 1);
+      await page.screenshot({
+        path: path.join(
+          outputDirectory,
+          "story-all-unlocked-page-8-light-1440x900.png",
+        ),
+        fullPage: false,
+      });
       await page.evaluate(() => window.functions.setTheme("dark"));
       await page.waitForTimeout(100);
       const themeProbe = await page.evaluate(() => ({
@@ -592,6 +620,108 @@ async function captureStory(
         ),
         fullPage: false,
       });
+      await page.evaluate(async () => {
+        window.game.story.page = 8;
+        await new Promise((resolve) => window.app.$nextTick(resolve));
+        const scroller = document.querySelector(".story-milestones");
+        if (!scroller) throw new Error("Story scroller was not rendered.");
+        scroller.scrollTop = 249;
+        for (const animation of document.getAnimations()) {
+          animation.pause();
+          animation.currentTime = 0;
+        }
+      });
+      const darkPageEightScroll = await page.evaluate(() => {
+        const scroller = document.querySelector(".story-milestones");
+        return scroller?.scrollTop ?? null;
+      });
+      if (darkPageEightScroll !== 249) {
+        throw new Error(
+          `Dark Story page 8 screenshot requires 249px scroll; received ${darkPageEightScroll}.`,
+        );
+      }
+      await page.screenshot({
+        path: path.join(
+          outputDirectory,
+          "story-all-unlocked-page-8-dark-1440x900.png",
+        ),
+        fullPage: false,
+      });
+      const visualCaptureMetrics = [];
+      for (const theme of ["light", "dark"]) {
+        await page.evaluate(async (selectedTheme) => {
+          window.functions.setTheme(selectedTheme);
+          await new Promise((resolve) => window.app.$nextTick(resolve));
+        }, theme);
+        await page.waitForTimeout(100);
+        const themeState = await page.evaluate(() => ({
+          bodyBackground: getComputedStyle(document.body).backgroundColor,
+          gameTheme: window.game.settings.theme,
+        }));
+        const expectedBackground =
+          theme === "dark" ? "rgb(54, 54, 54)" : "rgb(250, 250, 250)";
+        if (
+          themeState.gameTheme !== theme ||
+          themeState.bodyBackground !== expectedBackground
+        ) {
+          throw new Error(
+            "Remix " +
+              theme +
+              " theme failed before Story screenshots: " +
+              JSON.stringify(themeState),
+          );
+        }
+        for (let pageIndex = 0; pageIndex < 9; pageIndex += 1) {
+          const scrollState = await page.evaluate(async (pageNumber) => {
+            window.game.story.page = pageNumber;
+            await new Promise((resolve) => window.app.$nextTick(resolve));
+            await new Promise((resolve) => setTimeout(resolve, 40));
+            const scroller = document.querySelector(".story-milestones");
+            if (!scroller) throw new Error("Story scroller was not rendered.");
+            scroller.scrollTop = 249;
+            for (const animation of document.getAnimations()) {
+              animation.pause();
+              animation.currentTime = 0;
+            }
+            return {
+              page: window.game.story.page,
+              scrollTop: scroller.scrollTop,
+              clientHeight: scroller.clientHeight,
+              scrollHeight: scroller.scrollHeight,
+            };
+          }, pageIndex);
+          if (scrollState.page !== pageIndex) {
+            throw new Error(
+              "Story page selection failed: " + JSON.stringify(scrollState),
+            );
+          }
+          await page.mouse.move(viewport.width - 1, viewport.height - 1);
+          await page.waitForTimeout(40);
+          const fileName =
+            "story-all-unlocked-page-" +
+            pageIndex +
+            "-" +
+            theme +
+            "-1440x900.png";
+          await page.screenshot({
+            path: path.join(outputDirectory, fileName),
+            fullPage: false,
+          });
+          visualCaptureMetrics.push({
+            page: pageIndex,
+            theme,
+            scrollTop: scrollState.scrollTop,
+            clientHeight: scrollState.clientHeight,
+            scrollHeight: scrollState.scrollHeight,
+            screenshot: fileName,
+          });
+        }
+      }
+      await writeFile(
+        path.join(outputDirectory, "story-fullscreen-metrics.json"),
+        JSON.stringify(visualCaptureMetrics, null, 2) + "\n",
+        "utf8",
+      );
       await page.reload({ waitUntil: "load" });
       await page.waitForFunction(
         "Boolean(window.game && window.functions && window.app?.$el)",
