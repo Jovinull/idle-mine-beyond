@@ -104,9 +104,6 @@ test("renders Story mine-object previews against pinned Remix Canvas goldens", a
     height: number;
     pixelSha256: string;
     referencePixelSha256: string;
-    maxRgbDelta: number;
-    differentRgbPixels: number;
-    alphaMismatchPixels: number;
   }[];
   expect(previews).toHaveLength(expected.length);
 
@@ -121,14 +118,9 @@ test("renders Story mine-object previews against pinned Remix Canvas goldens", a
       referencePixelSha256: source.pixelSha256,
     });
 
-    const exactMatch = preview.pixelSha256 === source.pixelSha256;
-    const changedPixelLimit = Math.ceil(preview.width * preview.height * 0.02);
     expect(
-      exactMatch ||
-        (preview.alphaMismatchPixels === 0 &&
-          preview.maxRgbDelta <= 1 &&
-          preview.differentRgbPixels <= changedPixelLimit),
-      `Level ${source.level} exceeds the one-unit RGB compositing tolerance for ${golden.file}.`,
-    ).toBe(true);
+      preview.pixelSha256,
+      `Level ${source.level} must match the pinned RGBA pixels in ${golden.file}.`,
+    ).toBe(source.pixelSha256);
   }
 });
