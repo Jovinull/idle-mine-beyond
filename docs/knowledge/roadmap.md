@@ -19,7 +19,7 @@ The roadmap is ordered around evidence first and implementation second. Phase co
 
 ## Current recommended action
 
-Phase 0 established the pinned reference and parity harness; Phase 1 is now active. Tested slices cover mine objects, notations, upgrades, mining transitions, Story state, standalone Story rendering, pickaxe craft transactions, fresh state, versioned storage, legacy migration, v1 offline reload, and a serialized browser session coordinator for startup/actions/save effects. Next connect that coordinator to the Svelte route, add source-backed visible state/effect rendering, and build UI slices with controlled states and viewport fixtures.
+Phase 0 established the pinned reference and parity harness; Phase 1 is now active. Tested slices cover mine objects, notations, upgrades, mining transitions, Story state, standalone Story rendering, pickaxe craft transactions, fresh state, versioned storage, legacy migration, v1 offline reload, and a serialized browser session coordinator for startup/actions/save effects. The Svelte route now connects the session to Mining, Story, upgrade-shop, and crafting controls. Next finish Settings/Powers and save management, add source-backed controlled states and viewport fixtures, and implement the native persistence adapter.
 
 ## Platform targets
 
