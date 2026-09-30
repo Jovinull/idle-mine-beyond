@@ -1,0 +1,2894 @@
+{
+  "source": {
+    "name": "Idle Mine: Remix",
+    "url": "https://github.com/veprogames/idle-mine-remix",
+    "commit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+    "capturedOn": "2026-09-29",
+    "files": [
+      "Scripts/Define/functions.js",
+      "Scripts/Define/game.js",
+      "Scripts/mineobject.js",
+      "Scripts/upgrade.js"
+    ],
+    "licenseNotice": "MIT; Copyright (c) 2023 veprogames. See docs/knowledge/sources/licenses/idle-mine-remix-MIT.txt."
+  },
+  "template": {
+    "numberFormatters": [
+      {},
+      {},
+      {},
+      {
+        "letters": "abcdefghijklmnopqrstuvwxyz",
+        "mantissaExponentSeparator": "",
+        "separator": ""
+      },
+      {},
+      {
+        "letters": [
+          "😠",
+          "🎂",
+          "🎄",
+          "💀",
+          "🍆",
+          "👪",
+          "🌈",
+          "💯",
+          "🍦",
+          "🎃",
+          "💋",
+          "😂",
+          "🌙",
+          "⛔",
+          "🐙",
+          "💩",
+          "❓",
+          "☢",
+          "🙈",
+          "👍",
+          "☂",
+          "✌",
+          "⚠",
+          "❌",
+          "😋",
+          "⚡"
+        ],
+        "mantissaExponentSeparator": "",
+        "separator": ""
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      { "base": 2, "digits": "01" },
+      {},
+      {},
+      {},
+      {},
+      {
+        "letters": [
+          "🇦🇫",
+          "🇦🇩",
+          "🇦🇪",
+          "🇦🇫",
+          "🇦🇬",
+          "🇦🇮",
+          "🇦🇱",
+          "🇦🇲",
+          "🇦🇴",
+          "🇦🇶",
+          "🇦🇷",
+          "🇦🇸",
+          "🇦🇹",
+          "🇦🇺",
+          "🇦🇼",
+          "🇦🇽",
+          "🇦🇿",
+          "🇧🇦",
+          "🇧🇧",
+          "🇧🇩",
+          "🇧🇪",
+          "🇧🇫",
+          "🇧🇬",
+          "🇧🇭",
+          "🇧🇮",
+          "🇧🇯",
+          "🇧🇱",
+          "🇧🇲",
+          "🇧🇳",
+          "🇧🇴",
+          "🇧🇶",
+          "🇧🇷",
+          "🇧🇸",
+          "🇧🇹",
+          "🇧🇻",
+          "🇧🇼",
+          "🇧🇾",
+          "🇧🇿",
+          "🇨🇦",
+          "🇨🇨",
+          "🇨🇩",
+          "🇨🇫",
+          "🇨🇬",
+          "🇨🇭",
+          "🇨🇮",
+          "🇨🇰",
+          "🇨🇱",
+          "🇨🇲",
+          "🇨🇳",
+          "🇨🇴",
+          "🇨🇵",
+          "🇨🇷",
+          "🇨🇺",
+          "🇨🇻",
+          "🇨🇼",
+          "🇨🇽",
+          "🇨🇾",
+          "🇨🇿",
+          "🇩🇪",
+          "🇩🇬",
+          "🇩🇯",
+          "🇩🇰",
+          "🇩🇲",
+          "🇩🇴",
+          "🇩🇿",
+          "🇪🇦",
+          "🇪🇨",
+          "🇪🇪",
+          "🇪🇬",
+          "🇪🇭",
+          "🇪🇷",
+          "🇪🇸",
+          "🇪🇹",
+          "🇪🇺",
+          "🇫🇮",
+          "🇫🇯",
+          "🇫🇰",
+          "🇫🇲",
+          "🇫🇴",
+          "🇫🇷",
+          "🇬🇦",
+          "🇬🇧",
+          "🇬🇩",
+          "🇬🇪",
+          "🇬🇫",
+          "🇬🇬",
+          "🇬🇭",
+          "🇬🇮",
+          "🇬🇱",
+          "🇬🇲",
+          "🇬🇳",
+          "🇬🇵",
+          "🇬🇶",
+          "🇬🇷",
+          "🇬🇸",
+          "🇬🇹",
+          "🇬🇺",
+          "🇬🇼",
+          "🇬🇾",
+          "🇭🇰",
+          "🇭🇲",
+          "🇭🇳",
+          "🇭🇷",
+          "🇭🇹",
+          "🇭🇺",
+          "🇮🇨",
+          "🇮🇩",
+          "🇮🇪",
+          "🇮🇱",
+          "🇮🇲",
+          "🇮🇳",
+          "🇮🇴",
+          "🇮🇶",
+          "🇮🇷",
+          "🇮🇸",
+          "🇮🇹",
+          "🇯🇪",
+          "🇯🇲",
+          "🇯🇴",
+          "🇯🇵",
+          "🇰🇪",
+          "🇰🇬",
+          "🇰🇭",
+          "🇰🇮",
+          "🇰🇲",
+          "🇰🇳",
+          "🇰🇵",
+          "🇰🇷",
+          "🇰🇼",
+          "🇰🇾",
+          "🇰🇿",
+          "🇱🇦",
+          "🇱🇧",
+          "🇱🇨",
+          "🇱🇮",
+          "🇱🇰",
+          "🇱🇷",
+          "🇱🇸",
+          "🇱🇹",
+          "🇱🇺",
+          "🇱🇻",
+          "🇱🇾",
+          "🇲🇦",
+          "🇲🇨",
+          "🇲🇩",
+          "🇲🇪",
+          "🇲🇫",
+          "🇲🇬",
+          "🇲🇭",
+          "🇲🇰",
+          "🇲🇱",
+          "🇲🇲",
+          "🇲🇳",
+          "🇲🇴",
+          "🇲🇵",
+          "🇲🇶",
+          "🇲🇷",
+          "🇲🇸",
+          "🇲🇹",
+          "🇲🇺",
+          "🇲🇻",
+          "🇲🇼",
+          "🇲🇽",
+          "🇲🇾",
+          "🇲🇿",
+          "🇳🇦",
+          "🇳🇨",
+          "🇳🇪",
+          "🇳🇫",
+          "🇳🇬",
+          "🇳🇮",
+          "🇳🇱",
+          "🇳🇴",
+          "🇳🇵",
+          "🇳🇷",
+          "🇳🇺",
+          "🇳🇿",
+          "🇴🇲",
+          "🇵🇦",
+          "🇵🇪",
+          "🇵🇫",
+          "🇵🇬",
+          "🇵🇭",
+          "🇵🇰",
+          "🇵🇱",
+          "🇵🇲",
+          "🇵🇳",
+          "🇵🇷",
+          "🇵🇸",
+          "🇵🇹",
+          "🇵🇼",
+          "🇵🇾",
+          "🇶🇦",
+          "🇷🇪",
+          "🇷🇴",
+          "🇷🇸",
+          "🇷🇺",
+          "🇷🇼",
+          "🇸🇦",
+          "🇸🇧",
+          "🇸🇨",
+          "🇸🇩",
+          "🇸🇪",
+          "🇸🇬",
+          "🇸🇭",
+          "🇸🇮",
+          "🇸🇯",
+          "🇸🇰",
+          "🇸🇱",
+          "🇸🇲",
+          "🇸🇳",
+          "🇸🇴",
+          "🇸🇷",
+          "🇸🇸",
+          "🇸🇹",
+          "🇸🇻",
+          "🇸🇽",
+          "🇸🇾",
+          "🇸🇿",
+          "🇹🇦",
+          "🇹🇨",
+          "🇹🇩",
+          "🇹🇫",
+          "🇹🇬",
+          "🇹🇭",
+          "🇹🇯",
+          "🇹🇰",
+          "🇹🇱",
+          "🇹🇲",
+          "🇹🇳",
+          "🇹🇴",
+          "🇹🇷",
+          "🇹🇹",
+          "🇹🇻",
+          "🇹🇼",
+          "🇹🇿",
+          "🇺🇦",
+          "🇺🇬",
+          "🇺🇲",
+          "🇺🇳",
+          "🇺🇸",
+          "🇺🇾",
+          "🇺🇿",
+          "🇻🇦",
+          "🇻🇨",
+          "🇻🇪",
+          "🇻🇬",
+          "🇻🇮",
+          "🇻🇳",
+          "🇻🇺",
+          "🇼🇫",
+          "🇼🇸",
+          "🇽🇰",
+          "🇾🇪",
+          "🇾🇹",
+          "🇿🇦",
+          "🇿🇲",
+          "🇿🇼"
+        ],
+        "mantissaExponentSeparator": "",
+        "separator": ""
+      },
+      {},
+      {},
+      { "base": 16, "digits": "0123456789ABCDEF" },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+    ],
+    "numberFormatter": {},
+    "timer": { "autoPickaxe": 0, "save": 0 },
+    "lastActive": 1704067200000,
+    "money": "0",
+    "highestMoney": "0",
+    "gems": "5",
+    "usedGemsLevel": 0,
+    "pickaxe": { "name": "Toy Pickaxe", "pow": "20", "quality": "1" },
+    "pickStatus": "",
+    "messageLog": [],
+    "mineObjects": [
+      {
+        "name": "Mud",
+        "hp": "100",
+        "totalHp": "100",
+        "def": "0",
+        "value": "2",
+        "colors": ["#000000", "#663300"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Paper",
+        "hp": "400",
+        "totalHp": "400",
+        "def": "3",
+        "value": "10",
+        "colors": ["#000000", "#00ccff", "#cc0033", "#ffffff"],
+        "skin": 13,
+        "drops": {}
+      },
+      {
+        "name": "Salt",
+        "hp": "700",
+        "totalHp": "700",
+        "def": "15",
+        "value": "22",
+        "colors": ["#000000", "#ffffff"],
+        "skin": 1,
+        "drops": {}
+      },
+      {
+        "name": "Clay",
+        "hp": "1400",
+        "totalHp": "1400",
+        "def": "35",
+        "value": "50",
+        "colors": ["#000000", "#663333"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Rock",
+        "hp": "2200",
+        "totalHp": "2200",
+        "def": "90",
+        "value": "120",
+        "colors": ["#000000", "#666666"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Coal",
+        "hp": "4000",
+        "totalHp": "4000",
+        "def": "200",
+        "value": "275",
+        "colors": ["#000000", "#121212"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Bone",
+        "hp": "7000",
+        "totalHp": "7000",
+        "def": "380",
+        "value": "580",
+        "colors": ["#000000", "#ffff99"],
+        "skin": 2,
+        "drops": {}
+      },
+      {
+        "name": "Lead",
+        "hp": "12400",
+        "totalHp": "12400",
+        "def": "700",
+        "value": "1100",
+        "colors": ["#000000", "#242424"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Iron",
+        "hp": "16000",
+        "totalHp": "16000",
+        "def": "1140",
+        "value": "1850",
+        "colors": ["#000000", "#333333"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Copper",
+        "hp": "25000",
+        "totalHp": "25000",
+        "def": "1600",
+        "value": "3200",
+        "colors": ["#000000", "#660000"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Carbonite",
+        "hp": "40000",
+        "totalHp": "40000",
+        "def": "2500",
+        "value": "5200",
+        "colors": ["#000000", "#262626"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Quartz",
+        "hp": "64000",
+        "totalHp": "64000",
+        "def": "3800",
+        "value": "8600",
+        "colors": ["#000000", "#ffffff"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Spooky Bone",
+        "hp": "92000",
+        "totalHp": "92000",
+        "def": "5400",
+        "value": "14000",
+        "colors": ["#000000", "#ffff99", "#000000"],
+        "skin": 3,
+        "drops": {}
+      },
+      {
+        "name": "Silver",
+        "hp": "128000",
+        "totalHp": "128000",
+        "def": "7200",
+        "value": "20000",
+        "colors": ["#000000", "#aaaaaa"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Crystal",
+        "hp": "200000",
+        "totalHp": "200000",
+        "def": "9999",
+        "value": "42000",
+        "colors": ["#b2fcff", "#7ff6ff"],
+        "skin": 6,
+        "drops": {}
+      },
+      {
+        "name": "Topaz",
+        "hp": "500000",
+        "totalHp": "500000",
+        "def": "13500",
+        "value": "140000",
+        "colors": ["#330000", "#ff9900"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Amethyst",
+        "hp": "1400000",
+        "totalHp": "1400000",
+        "def": "18000",
+        "value": "480000",
+        "colors": ["#6633cc", "#663399"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Aquamarine",
+        "hp": "4800000",
+        "totalHp": "4800000",
+        "def": "24500",
+        "value": "2200000",
+        "colors": ["#000066", "#0066ff"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Emerald",
+        "hp": "13000000",
+        "totalHp": "13000000",
+        "def": "34000",
+        "value": "7200000",
+        "colors": ["#006600", "#339966"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Ruby",
+        "hp": "42000000",
+        "totalHp": "42000000",
+        "def": "50000",
+        "value": "25500000",
+        "colors": ["#330000", "#ff0000"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Sapphire",
+        "hp": "120000000",
+        "totalHp": "120000000",
+        "def": "80000",
+        "value": "85000000",
+        "colors": ["#000066", "#0000ff"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Haunted Bone",
+        "hp": "200000000",
+        "totalHp": "200000000",
+        "def": "130000",
+        "value": "190000000",
+        "colors": ["#000000", "#ffff99", "#ff0000"],
+        "skin": 3,
+        "drops": {}
+      },
+      {
+        "name": "Gold",
+        "hp": "360000000",
+        "totalHp": "360000000",
+        "def": "200000",
+        "value": "400000000",
+        "colors": ["#cccc00", "#cc9900"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Platinum",
+        "hp": "500000000",
+        "totalHp": "500000000",
+        "def": "295000",
+        "value": "760000000",
+        "colors": ["#337777", "#99cccc"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Diamond",
+        "hp": "700000000",
+        "totalHp": "700000000",
+        "def": "440000",
+        "value": "1600000000",
+        "colors": ["#999999", "#ffffff"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Mithril",
+        "hp": "1000000000",
+        "totalHp": "1000000000",
+        "def": "680000",
+        "value": "2800000000",
+        "colors": ["#001111", "#336666"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Obsidian",
+        "hp": "1400000000",
+        "totalHp": "1400000000",
+        "def": "1050000",
+        "value": "4800000000",
+        "colors": ["#660066", "#000000"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Earth Essence",
+        "hp": "2000000000",
+        "totalHp": "2000000000",
+        "def": "1400000",
+        "value": "8199999999.999999",
+        "colors": ["#000000", "#33ff00", "#cc6600"],
+        "skin": 4,
+        "drops": {}
+      },
+      {
+        "name": "Orbium",
+        "hp": "2600000000",
+        "totalHp": "2600000000",
+        "def": "2000000",
+        "value": "13500000000",
+        "colors": ["#cccccc", "#000000", "#00ffff"],
+        "skin": 5,
+        "drops": {}
+      },
+      {
+        "name": "Novalite",
+        "hp": "3500000000",
+        "totalHp": "3500000000",
+        "def": "2800000",
+        "value": "24500000000",
+        "colors": ["#ff0000", "#000000", "#ffff00"],
+        "skin": 5,
+        "drops": {}
+      },
+      {
+        "name": "Magic Crystal",
+        "hp": "4900000000",
+        "totalHp": "4900000000",
+        "def": "4000000",
+        "value": "42000000000",
+        "colors": ["#00ff00", "#6633ff"],
+        "skin": 6,
+        "drops": {}
+      },
+      {
+        "name": "Darkstone",
+        "hp": "7200000000",
+        "totalHp": "7200000000",
+        "def": "5800000",
+        "value": "70000000000",
+        "colors": ["#660000", "#000000"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Adamantium",
+        "hp": "10000000000",
+        "totalHp": "10000000000",
+        "def": "8500000",
+        "value": "125000000000",
+        "colors": ["#ff6600", "#993300"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Fire Essence",
+        "hp": "14000000000",
+        "totalHp": "14000000000",
+        "def": "12000000",
+        "value": "200000000000",
+        "colors": ["#000000", "#ff0000", "#ffff00"],
+        "skin": 4,
+        "drops": {}
+      },
+      {
+        "name": "Lunalite",
+        "hp": "20000000000",
+        "totalHp": "20000000000",
+        "def": "17000000",
+        "value": "340000000000",
+        "colors": ["#999900", "#ffcc66", "#ffffcc"],
+        "skin": 5,
+        "drops": {}
+      },
+      {
+        "name": "Mysterium",
+        "hp": "30000000000",
+        "totalHp": "30000000000",
+        "def": "24000000",
+        "value": "680000000000",
+        "colors": ["#303030", "#ffffff", "#303030"],
+        "skin": 7,
+        "drops": {}
+      },
+      {
+        "name": "Cursed Bone",
+        "hp": "45000000000",
+        "totalHp": "45000000000",
+        "def": "33500000",
+        "value": "1050000000000",
+        "colors": ["#000000", "#660066", "#6699ff"],
+        "skin": 3,
+        "drops": {}
+      },
+      {
+        "name": "Wind Essence",
+        "hp": "68000000000",
+        "totalHp": "68000000000",
+        "def": "48000000",
+        "value": "1700000000000",
+        "colors": ["#000000", "#aaffff", "#66ffff"],
+        "skin": 4,
+        "drops": {}
+      },
+      {
+        "name": "Unobtanium",
+        "hp": "100000000000",
+        "totalHp": "100000000000",
+        "def": "69000000",
+        "value": "3000000000000",
+        "colors": ["#000000", "black"],
+        "skin": 10,
+        "drops": {}
+      },
+      {
+        "name": "Sollite",
+        "hp": "130000000000",
+        "totalHp": "130000000000",
+        "def": "95000000",
+        "value": "4800000000000",
+        "colors": ["#ffff00", "#ffff00", "#ff6600"],
+        "skin": 5,
+        "drops": {}
+      },
+      {
+        "name": "Water Essence",
+        "hp": "175000000000",
+        "totalHp": "175000000000",
+        "def": "138000000",
+        "value": "7200000000000",
+        "colors": ["#000000", "#0000ff", "#0033ff"],
+        "skin": 4,
+        "drops": {}
+      },
+      {
+        "name": "Absurdium",
+        "hp": "240000000000",
+        "totalHp": "240000000000",
+        "def": "204999999.99999997",
+        "value": "12000000000000",
+        "colors": ["#bbbbbb", "#ffffff"],
+        "skin": 8,
+        "drops": {}
+      },
+      {
+        "name": "Cosmolite",
+        "hp": "320000000000",
+        "totalHp": "320000000000",
+        "def": "300000000",
+        "value": "20000000000000",
+        "colors": ["#000066", "#000066", "#ffffff"],
+        "skin": 5,
+        "drops": {}
+      },
+      {
+        "name": "Shadow Essence",
+        "hp": "434999999999.99994",
+        "totalHp": "434999999999.99994",
+        "def": "440000000.00000006",
+        "value": "30000000000000",
+        "colors": ["#000000", "#4400ac", "#000000"],
+        "skin": 4,
+        "drops": {}
+      },
+      {
+        "name": "Demonite",
+        "hp": "590000000000",
+        "totalHp": "590000000000",
+        "def": "640000000",
+        "value": "48000000000000",
+        "colors": ["#ff0000", "#000000"],
+        "skin": 9,
+        "drops": {}
+      },
+      {
+        "name": "Eternium",
+        "hp": "780000000000",
+        "totalHp": "780000000000",
+        "def": "950000000",
+        "value": "72000000000000",
+        "colors": ["#0000ff", "#0000ff", "#ffffff"],
+        "skin": 11,
+        "drops": {}
+      },
+      {
+        "name": "Mysticite",
+        "hp": "1050000000000",
+        "totalHp": "1050000000000",
+        "def": "1400000000",
+        "value": "110000000000000.02",
+        "colors": ["#00ff00", "#006633"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Light Essence",
+        "hp": "1350000000000",
+        "totalHp": "1350000000000",
+        "def": "2000000000",
+        "value": "170000000000000",
+        "colors": ["#000000", "#ffcc00", "#ffffff"],
+        "skin": 4,
+        "drops": {}
+      },
+      {
+        "name": "Soulstone",
+        "hp": "1800000000000",
+        "totalHp": "1800000000000",
+        "def": "3100000000",
+        "value": "270000000000000.03",
+        "colors": ["#00ffff", "#003366"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Arcanium",
+        "hp": "2400000000000",
+        "totalHp": "2400000000000",
+        "def": "4800000000",
+        "value": "420000000000000",
+        "colors": ["#ffff99", "#ccffff"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Hellstone Lv. 1",
+        "hp": "3200000000000",
+        "totalHp": "3200000000000",
+        "def": "7000000000",
+        "value": "680000000000000",
+        "colors": ["#00ff00", "#ff0000"],
+        "skin": 9,
+        "drops": {}
+      },
+      {
+        "name": "Hellstone Lv. 2",
+        "hp": "7000000000000",
+        "totalHp": "7000000000000",
+        "def": "15000000000",
+        "value": "3500000000000000",
+        "colors": ["#00ff00", "#cd0000"],
+        "skin": 9,
+        "drops": {}
+      },
+      {
+        "name": "Hellstone Lv. 3",
+        "hp": "16000000000000",
+        "totalHp": "16000000000000",
+        "def": "36000000000",
+        "value": "26000000000000000",
+        "colors": ["#00ff00", "#9c0000"],
+        "skin": 9,
+        "drops": {}
+      },
+      {
+        "name": "Hellstone Lv. 4",
+        "hp": "42000000000000",
+        "totalHp": "42000000000000",
+        "def": "89000000000",
+        "value": "200000000000000000",
+        "colors": ["#00ff00", "#580000"],
+        "skin": 9,
+        "drops": {}
+      },
+      {
+        "name": "Hellstone Lv. 666",
+        "hp": "666000000000000",
+        "totalHp": "666000000000000",
+        "def": "3660000000000",
+        "value": "16660000000000000000",
+        "colors": ["#00ff00", "#300000"],
+        "skin": 12,
+        "drops": {}
+      },
+      {
+        "name": "Infinitum",
+        "hp": "3000000000000000",
+        "totalHp": "3000000000000000",
+        "def": "4000000000000",
+        "value": "150000000000000000000",
+        "colors": ["#ffffff", "#ffffff", "#000000"],
+        "skin": 11,
+        "drops": {}
+      },
+      {
+        "name": "Omega Essence",
+        "hp": "10000000000000000",
+        "totalHp": "10000000000000000",
+        "def": "13000000000000",
+        "value": "1e+21",
+        "colors": ["#000000", "#2f0036", "#8b00ff"],
+        "skin": 4,
+        "drops": {}
+      },
+      {
+        "name": "Inverticolite",
+        "hp": "30000000000000000",
+        "totalHp": "30000000000000000",
+        "def": "40000000000000",
+        "value": "6e+21",
+        "colors": ["#b6b6b6", "#151515"],
+        "skin": 8,
+        "drops": {}
+      },
+      {
+        "name": "Meutronium",
+        "hp": "100000000000000000",
+        "totalHp": "100000000000000000",
+        "def": "170000000000000",
+        "value": "4e+22",
+        "colors": ["#0023ff", "#7f0002", "#ff9600"],
+        "skin": 5,
+        "drops": {}
+      },
+      {
+        "name": "ZettaWatt Crystal",
+        "hp": "300000000000000000",
+        "totalHp": "300000000000000000",
+        "def": "600000000000000",
+        "value": "2.4000000000000004e+23",
+        "colors": ["#ff0090", "#00ffd7"],
+        "skin": 6,
+        "drops": {}
+      },
+      {
+        "name": "THE GEM",
+        "hp": "3333000000000000000",
+        "totalHp": "3333000000000000000",
+        "def": "9990000000000000",
+        "value": "5.555e+24",
+        "colors": ["#00e7ff", "#005cff", "#0099ff"],
+        "skin": 14,
+        "drops": {}
+      },
+      {
+        "name": "Bone of Infinity",
+        "hp": "12345000000000000000",
+        "totalHp": "12345000000000000000",
+        "def": "27890000000000000",
+        "value": "4.321e+25",
+        "colors": ["#ffffff", "#000000", "#000000"],
+        "skin": 3,
+        "drops": {}
+      },
+      {
+        "name": "Paper of the Gods",
+        "hp": "50000000000000000000",
+        "totalHp": "50000000000000000000",
+        "def": "111000000000000020",
+        "value": "2e+26",
+        "colors": ["#6a6600", "#ffffff", "#ffffff", "#dada00"],
+        "skin": 13,
+        "drops": {}
+      },
+      {
+        "name": "Heavenstone",
+        "hp": "250000000000000000000",
+        "totalHp": "250000000000000000000",
+        "def": "600000000000000000",
+        "value": "2.222e+27",
+        "colors": ["#00cfff", "#fffc6a"],
+        "skin": 9,
+        "drops": {}
+      },
+      {
+        "name": "Holo-Stone",
+        "hp": "1.111e+21",
+        "totalHp": "1.111e+21",
+        "def": "2500000000000000000",
+        "value": "1.9875999999999998e+28",
+        "colors": ["#00b10d", "black"],
+        "skin": 10,
+        "drops": {}
+      },
+      {
+        "name": "Anti-Mud",
+        "hp": "4e+21",
+        "totalHp": "4e+21",
+        "def": "10000000000000000000",
+        "value": "1.23456e+29",
+        "colors": ["#663300", "#1b0d00"],
+        "skin": 0,
+        "drops": {}
+      },
+      {
+        "name": "Quantum Orb",
+        "hp": "1.0101e+22",
+        "totalHp": "1.0101e+22",
+        "def": "22020000000000000000",
+        "value": "5.0555e+29",
+        "colors": ["#00ff00", "#000000", "#163d16"],
+        "skin": 5,
+        "drops": {}
+      },
+      {
+        "name": "Source of Power",
+        "hp": "6e+22",
+        "totalHp": "6e+22",
+        "def": "139999999999999980000",
+        "value": "5.999999999999999e+30",
+        "colors": ["#c3c000", "#fffa64"],
+        "skin": 6,
+        "drops": {}
+      },
+      {
+        "name": "Fractalium",
+        "hp": "5e+23",
+        "totalHp": "5e+23",
+        "def": "1.333e+21",
+        "value": "1.5e+32",
+        "colors": ["#000000", "#0088ff", "#101010"],
+        "skin": 15,
+        "drops": {}
+      },
+      {
+        "name": "Post-Infinity Essence",
+        "hp": "4.444e+24",
+        "totalHp": "4.444e+24",
+        "def": "1.1111e+22",
+        "value": "2.2220000000000004e+33",
+        "colors": ["#000000", "#000000", "#ffffff"],
+        "skin": 4,
+        "drops": {}
+      },
+      {
+        "name": "Unsolvium",
+        "hp": "4.443999999999999e+25",
+        "totalHp": "4.443999999999999e+25",
+        "def": "1.3333000000000002e+23",
+        "value": "9.9999e+34",
+        "colors": ["#000000", "#7dff00", "#003401"],
+        "skin": 7,
+        "drops": {}
+      },
+      {
+        "name": "THE PORTAL",
+        "hp": "1e+27",
+        "totalHp": "1e+27",
+        "def": "1e+25",
+        "value": "1e+37",
+        "colors": ["#ff0389", "#ff0039"],
+        "skin": 16,
+        "drops": {}
+      }
+    ],
+    "specialMineObjects": [
+      {
+        "index": 89,
+        "obj": {
+          "name": "PORTAL TO SPACE",
+          "hp": "1e+43",
+          "totalHp": "1e+43",
+          "def": "5e+40",
+          "value": "1e+61",
+          "colors": ["#5f00eb", "#0007bc"],
+          "skin": 16,
+          "drops": {}
+        }
+      },
+      {
+        "index": 90,
+        "obj": {
+          "name": "Tiny Asteroid",
+          "hp": "2e+43",
+          "totalHp": "2e+43",
+          "def": "6e+40",
+          "value": "3e+61",
+          "colors": ["#151515", "#868488"],
+          "skin": 17,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.001, "amount": 1 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.001, "amount": 1 } }
+        }
+      },
+      {
+        "index": 91,
+        "obj": {
+          "name": "Small Asteroid",
+          "hp": "3.5e+43",
+          "totalHp": "3.5e+43",
+          "def": "1e+41",
+          "value": "7.000000000000001e+61",
+          "colors": ["#151515", "#9f9da2"],
+          "skin": 17,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.002, "amount": 1 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.002, "amount": 1 } }
+        }
+      },
+      {
+        "index": 92,
+        "obj": {
+          "name": "2021DC9",
+          "hp": "5e+43",
+          "totalHp": "5e+43",
+          "def": "1.5e+41",
+          "value": "1.2999999999999998e+62",
+          "colors": ["#151515", "#9f9da2"],
+          "skin": 17,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.003, "amount": 1 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.003, "amount": 1 } }
+        }
+      },
+      {
+        "index": 93,
+        "obj": {
+          "name": "Deimos",
+          "hp": "1.0999999999999999e+44",
+          "totalHp": "1.0999999999999999e+44",
+          "def": "3.21e+41",
+          "value": "3e+62",
+          "colors": ["#151515", "#979797"],
+          "skin": 17,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.001, "amount": 5 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.001, "amount": 5 } }
+        }
+      },
+      {
+        "index": 94,
+        "obj": {
+          "name": "Phobos",
+          "hp": "2.9999999999999996e+44",
+          "totalHp": "2.9999999999999996e+44",
+          "def": "9e+41",
+          "value": "1e+63",
+          "colors": ["#151515", "#928275"],
+          "skin": 18,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.002, "amount": 4 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.002, "amount": 4 } }
+        }
+      },
+      {
+        "index": 95,
+        "obj": {
+          "name": "Hydra",
+          "hp": "4.999999999999999e+44",
+          "totalHp": "4.999999999999999e+44",
+          "def": "1.2e+42",
+          "value": "2e+63",
+          "colors": ["#151515", "#b7b7b7"],
+          "skin": 18,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.004, "amount": 3 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.004, "amount": 3 } }
+        }
+      },
+      {
+        "index": 96,
+        "obj": {
+          "name": "Mimas",
+          "hp": "9e+44",
+          "totalHp": "9e+44",
+          "def": "1.8e+42",
+          "value": "4.5e+63",
+          "colors": ["#151515", "#989898"],
+          "skin": 19,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.005, "amount": 3 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.005, "amount": 3 } }
+        }
+      },
+      {
+        "index": 97,
+        "obj": {
+          "name": "Enceladus",
+          "hp": "2e+45",
+          "totalHp": "2e+45",
+          "def": "5e+42",
+          "value": "1.2e+64",
+          "colors": ["#151515", "#b6bccb"],
+          "skin": 19,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.001, "amount": 25 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.001, "amount": 25 } }
+        }
+      },
+      {
+        "index": 98,
+        "obj": {
+          "name": "Tethys",
+          "hp": "6.000000000000001e+45",
+          "totalHp": "6.000000000000001e+45",
+          "def": "2e+43",
+          "value": "5e+64",
+          "colors": ["#151515", "#b4b4b4"],
+          "skin": 19,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.025, "amount": 1 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.025, "amount": 1 } }
+        }
+      },
+      {
+        "index": 99,
+        "obj": {
+          "name": "Triton",
+          "hp": "2e+46",
+          "totalHp": "2e+46",
+          "def": "6e+43",
+          "value": "2.2199999999999998e+65",
+          "colors": ["#151515", "#c5bac3"],
+          "skin": 19,
+          "cfg": { "drops": { "planetcoin": { "chance": 0.04, "amount": 1 } } },
+          "drops": { "planetcoin": { "chance": 0.04, "amount": 1 } }
+        }
+      },
+      {
+        "index": 100,
+        "obj": {
+          "name": "Pluto",
+          "hp": "5e+46",
+          "totalHp": "5e+46",
+          "def": "1.4999999999999998e+44",
+          "value": "6.000000000000001e+65",
+          "colors": ["#151515", "#a59999"],
+          "skin": 21,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.002, "amount": 25 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.002, "amount": 25 } }
+        }
+      },
+      {
+        "index": 101,
+        "obj": {
+          "name": "The Moon",
+          "hp": "7e+46",
+          "totalHp": "7e+46",
+          "def": "1.9e+44",
+          "value": "1e+66",
+          "colors": ["#151515", "#97928f"],
+          "skin": 20,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.003, "amount": 25 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.003, "amount": 25 } }
+        }
+      },
+      {
+        "index": 102,
+        "obj": {
+          "name": "Mercury",
+          "hp": "1.2e+47",
+          "totalHp": "1.2e+47",
+          "def": "2.4999999999999996e+44",
+          "value": "1.9000000000000001e+66",
+          "colors": ["#151515", "#929093"],
+          "skin": 21,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.005, "amount": 25 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.005, "amount": 25 } }
+        }
+      },
+      {
+        "index": 103,
+        "obj": {
+          "name": "Titan",
+          "hp": "1.5999999999999999e+47",
+          "totalHp": "1.5999999999999999e+47",
+          "def": "3.1999999999999997e+44",
+          "value": "2.7e+66",
+          "colors": ["#151515", "#d6be5f"],
+          "skin": 21,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.006, "amount": 27 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.006, "amount": 27 } }
+        }
+      },
+      {
+        "index": 104,
+        "obj": {
+          "name": "Ganymede",
+          "hp": "2e+47",
+          "totalHp": "2e+47",
+          "def": "4.999999999999999e+44",
+          "value": "3.6e+66",
+          "colors": ["#151515", "#8a7b6c"],
+          "skin": 20,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.007, "amount": 25 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.007, "amount": 25 } }
+        }
+      },
+      {
+        "index": 105,
+        "obj": {
+          "name": "Mars",
+          "hp": "4e+47",
+          "totalHp": "4e+47",
+          "def": "1.2e+45",
+          "value": "8.5e+66",
+          "colors": ["#151515", "#dbe4f3", "#a48f6c", "#f9a75b"],
+          "skin": 22,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.125, "amount": 1 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.125, "amount": 1 } }
+        }
+      },
+      {
+        "index": 106,
+        "obj": {
+          "name": "Venus",
+          "hp": "1.4e+48",
+          "totalHp": "1.4e+48",
+          "def": "4e+45",
+          "value": "4e+67",
+          "colors": ["#151515", "#c8bba1"],
+          "skin": 21,
+          "cfg": { "drops": { "planetcoin": { "chance": 0.16, "amount": 1 } } },
+          "drops": { "planetcoin": { "chance": 0.16, "amount": 1 } }
+        }
+      },
+      {
+        "index": 107,
+        "obj": {
+          "name": "Neptune",
+          "hp": "1e+49",
+          "totalHp": "1e+49",
+          "def": "3.0000000000000004e+46",
+          "value": "4e+68",
+          "colors": ["#151515", "#77b8f2", "#3042a5", "#4167f7"],
+          "skin": 23,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.01, "amount": 20 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.01, "amount": 20 } }
+        }
+      },
+      {
+        "index": 108,
+        "obj": {
+          "name": "Uranus",
+          "hp": "1.5000000000000002e+49",
+          "totalHp": "1.5000000000000002e+49",
+          "def": "4.5e+46",
+          "value": "7e+68",
+          "colors": ["#83a6ac", "#d3f9fa"],
+          "skin": 21,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.001, "amount": 300 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.001, "amount": 300 } }
+        }
+      },
+      {
+        "index": 109,
+        "obj": {
+          "name": "Saturn",
+          "hp": "7e+49",
+          "totalHp": "7e+49",
+          "def": "2e+47",
+          "value": "8e+69",
+          "colors": ["#a0a5aa", "#0f110e", "#c6ae6e", "#e6c47f"],
+          "skin": 24,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.002, "amount": 200 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.002, "amount": 200 } }
+        }
+      },
+      {
+        "index": 110,
+        "obj": {
+          "name": "Jupiter",
+          "hp": "1e+50",
+          "totalHp": "1e+50",
+          "def": "3e+47",
+          "value": "1.2999999999999998e+70",
+          "colors": ["#161616", "#9d7e62", "#a49182", "#b7bcc0"],
+          "skin": 23,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.01, "amount": 60 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.01, "amount": 60 } }
+        }
+      },
+      {
+        "index": 111,
+        "obj": {
+          "name": "TrES-2b",
+          "hp": "2e+50",
+          "totalHp": "2e+50",
+          "def": "5e+47",
+          "value": "2.9999999999999996e+70",
+          "colors": ["#161616", "#8ecd89", "#004c07", "#026f00"],
+          "skin": 23,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.01, "amount": 90 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.01, "amount": 90 } }
+        }
+      },
+      {
+        "index": 112,
+        "obj": {
+          "name": "Kepler-7b",
+          "hp": "5e+50",
+          "totalHp": "5e+50",
+          "def": "1.2499999999999998e+48",
+          "value": "7.5e+70",
+          "colors": ["#161616", "transparent", "#66c172", "#039d00"],
+          "skin": 23,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.01, "amount": 120 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.01, "amount": 120 } }
+        }
+      },
+      {
+        "index": 113,
+        "obj": {
+          "name": "WASP-78b",
+          "hp": "2e+51",
+          "totalHp": "2e+51",
+          "def": "6e+48",
+          "value": "4e+71",
+          "colors": ["#161616", "transparent", "#400012", "#76343b"],
+          "skin": 23,
+          "cfg": { "drops": { "planetcoin": { "chance": 1, "amount": 2 } } },
+          "drops": { "planetcoin": { "chance": 1, "amount": 2 } }
+        }
+      },
+      {
+        "index": 114,
+        "obj": {
+          "name": "WASP-79b",
+          "hp": "7e+51",
+          "totalHp": "7e+51",
+          "def": "2e+49",
+          "value": "1.4000000000000001e+72",
+          "colors": ["#381900", "transparent", "#bd6a38", "#c4917f"],
+          "skin": 23,
+          "cfg": { "drops": { "planetcoin": { "chance": 0.8, "amount": 3 } } },
+          "drops": { "planetcoin": { "chance": 0.8, "amount": 3 } }
+        }
+      },
+      {
+        "index": 124,
+        "obj": {
+          "name": "Hyper-Saturn",
+          "hp": "5e+60",
+          "totalHp": "5e+60",
+          "def": "2e+58",
+          "value": "2.5e+85",
+          "colors": ["#e5ebf0", "#ff6e00", "#ff0097", "#ff0001"],
+          "skin": 24,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.1, "amount": 400 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.1, "amount": 400 } }
+        }
+      },
+      {
+        "index": 134,
+        "obj": {
+          "name": "SUPEREARTH",
+          "hp": "6.66e+69",
+          "totalHp": "6.66e+69",
+          "def": "3.666e+67",
+          "value": "9.9999e+98",
+          "colors": ["#240024", "#d4e2ff", "#b700a1", "#1b0097"],
+          "skin": 22,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.01, "amount": 66666 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.01, "amount": 66666 } }
+        }
+      },
+      {
+        "index": 137,
+        "obj": {
+          "name": "Colossia",
+          "hp": "1e+73",
+          "totalHp": "1e+73",
+          "def": "4e+70",
+          "value": "3e+103",
+          "colors": ["#00074d", "#001eff", "#4da1b7", "#004fe5"],
+          "skin": 24,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.2222, "amount": 7777 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.2222, "amount": 7777 } }
+        }
+      },
+      {
+        "index": 138,
+        "obj": {
+          "name": "Giagantia",
+          "hp": "1e+74",
+          "totalHp": "1e+74",
+          "def": "4e+71",
+          "value": "5e+104",
+          "colors": ["#ff1700", "#ff7e00", "#b70035", "#7a0047"],
+          "skin": 24,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.3333, "amount": 7777 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.3333, "amount": 7777 } }
+        }
+      },
+      {
+        "index": 139,
+        "obj": {
+          "name": "Garagantula",
+          "hp": "1e+75",
+          "totalHp": "1e+75",
+          "def": "4e+72",
+          "value": "8e+105",
+          "colors": ["#4d0043", "#ff1700", "#ffd8da", "#ff00fc"],
+          "skin": 23,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.5555, "amount": 9999 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.5555, "amount": 9999 } }
+        }
+      },
+      {
+        "index": 140,
+        "obj": {
+          "name": "Giagarantula Omega",
+          "hp": "4.999e+76",
+          "totalHp": "4.999e+76",
+          "def": "1.4999e+74",
+          "value": "9.99e+107",
+          "colors": ["#ffe6fc", "#ed00ff", "#f5ff00", "#3100ff"],
+          "skin": 23,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.123456, "amount": 123456 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.123456, "amount": 123456 } }
+        }
+      },
+      {
+        "index": 169,
+        "obj": {
+          "name": "ESSENCE OF WISDOM",
+          "hp": "1e+102",
+          "totalHp": "1e+102",
+          "def": "3.0000000000000004e+99",
+          "value": "1e+146",
+          "colors": ["#00deff", "#f5f8ff", "#0022ff"],
+          "skin": 25,
+          "cfg": { "drops": { "wisdom": { "chance": 0.01, "amount": 1 } } },
+          "drops": { "wisdom": { "chance": 0.01, "amount": 1 } }
+        }
+      },
+      {
+        "index": 170,
+        "obj": {
+          "name": "Tiny Star",
+          "hp": "2e+102",
+          "totalHp": "2e+102",
+          "def": "6.000000000000001e+99",
+          "value": "6e+147",
+          "colors": ["#e35c00", "#ff6700", "#ff914d"],
+          "skin": 26,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 0.4, "amount": 1234560000 } }
+          },
+          "drops": { "planetcoin": { "chance": 0.4, "amount": 1234560000 } }
+        }
+      },
+      {
+        "index": 171,
+        "obj": {
+          "name": "TRAPPIST-1",
+          "hp": "1.5e+103",
+          "totalHp": "1.5e+103",
+          "def": "4.5e+100",
+          "value": "1e+149",
+          "colors": ["#e33c00", "#ff4d00", "#ff7751"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.001, "amount": 1000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.001, "amount": 1000000000000 }
+          }
+        }
+      },
+      {
+        "index": 172,
+        "obj": {
+          "name": "Teide 1",
+          "hp": "1e+104",
+          "totalHp": "1e+104",
+          "def": "3e+101",
+          "value": "9e+149",
+          "colors": ["#bf6700", "#cd7500", "#ff8a00"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.002, "amount": 750000000000 }
+            }
+          },
+          "drops": { "planetcoin": { "chance": 0.002, "amount": 750000000000 } }
+        }
+      },
+      {
+        "index": 173,
+        "obj": {
+          "name": "Sun",
+          "hp": "1.5000000000000002e+105",
+          "totalHp": "1.5000000000000002e+105",
+          "def": "5e+102",
+          "value": "2e+151",
+          "colors": ["#fff200", "#eff000", "#fffb75"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.003, "amount": 750000000000 }
+            }
+          },
+          "drops": { "planetcoin": { "chance": 0.003, "amount": 750000000000 } }
+        }
+      },
+      {
+        "index": 174,
+        "obj": {
+          "name": "Sirius A",
+          "hp": "2e+106",
+          "totalHp": "2e+106",
+          "def": "7e+103",
+          "value": "4e+152",
+          "colors": ["#f1edff", "#d5e4f0", "#ffffff"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.004, "amount": 1000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.004, "amount": 1000000000000 }
+          }
+        }
+      },
+      {
+        "index": 175,
+        "obj": {
+          "name": "Vega",
+          "hp": "9.989999999999998e+106",
+          "totalHp": "9.989999999999998e+106",
+          "def": "2.9989999999999997e+104",
+          "value": "2.5e+153",
+          "colors": ["#869dff", "#8195f0", "#b8c6ff"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.006, "amount": 1000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.006, "amount": 1000000000000 }
+          }
+        }
+      },
+      {
+        "index": 176,
+        "obj": {
+          "name": "Pollux",
+          "hp": "2.9999999999999996e+108",
+          "totalHp": "2.9999999999999996e+108",
+          "def": "9e+105",
+          "value": "7.5e+154",
+          "colors": ["#ffaf86", "#f0995a", "#ffc5a4"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.009, "amount": 1000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.009, "amount": 1000000000000 }
+          }
+        }
+      },
+      {
+        "index": 177,
+        "obj": {
+          "name": "Arcturus",
+          "hp": "5.5e+109",
+          "totalHp": "5.5e+109",
+          "def": "1.5000000000000002e+107",
+          "value": "1e+156",
+          "colors": ["#ff9551", "#f0622d", "#ff9988"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.025, "amount": 1000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.025, "amount": 1000000000000 }
+          }
+        }
+      },
+      {
+        "index": 178,
+        "obj": {
+          "name": "Polaris",
+          "hp": "5e+110",
+          "totalHp": "5e+110",
+          "def": "2e+108",
+          "value": "2e+157",
+          "colors": ["#e5eeff", "#b9f0e8", "#ffffff"],
+          "skin": 26,
+          "cfg": { "drops": { "wisdom": { "chance": 0.1, "amount": 10 } } },
+          "drops": { "wisdom": { "chance": 0.1, "amount": 10 } }
+        }
+      },
+      {
+        "index": 179,
+        "obj": {
+          "name": "Aldebaran",
+          "hp": "6e+111",
+          "totalHp": "6e+111",
+          "def": "1.8e+109",
+          "value": "3.3000000000000003e+157",
+          "colors": ["#fd7a5a", "#ff8968", "#ffe8d8"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.075, "amount": 1000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.075, "amount": 1000000000000 }
+          }
+        }
+      },
+      {
+        "index": 180,
+        "obj": {
+          "name": "Rigel",
+          "hp": "9e+112",
+          "totalHp": "9e+112",
+          "def": "2.7e+110",
+          "value": "8e+158",
+          "colors": ["#e9fdff", "#aad2ea", "#c4f6ff"],
+          "skin": 26,
+          "cfg": { "drops": { "wisdom": { "chance": 0.2, "amount": 20 } } },
+          "drops": { "wisdom": { "chance": 0.2, "amount": 20 } }
+        }
+      },
+      {
+        "index": 181,
+        "obj": {
+          "name": "Deneb",
+          "hp": "2e+114",
+          "totalHp": "2e+114",
+          "def": "5e+111",
+          "value": "3e+160",
+          "colors": ["#e9fdff", "#cedfea", "#c4f6ff"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.2, "amount": 1000000000000 }
+            }
+          },
+          "drops": { "planetcoin": { "chance": 0.2, "amount": 1000000000000 } }
+        }
+      },
+      {
+        "index": 182,
+        "obj": {
+          "name": "Eta Carinae",
+          "hp": "4.4e+115",
+          "totalHp": "4.4e+115",
+          "def": "1.1099999999999999e+113",
+          "value": "5.5e+161",
+          "colors": ["#ace9ff", "#7ec7ea", "#ffffff"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.4, "amount": 1000000000000 }
+            }
+          },
+          "drops": { "planetcoin": { "chance": 0.4, "amount": 1000000000000 } }
+        }
+      },
+      {
+        "index": 183,
+        "obj": {
+          "name": "Pistol Star",
+          "hp": "4e+116",
+          "totalHp": "4e+116",
+          "def": "1e+114",
+          "value": "9e+162",
+          "colors": ["#b1ffe6", "#7eeae1", "#e3ffee"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.6, "amount": 1000000000000 }
+            }
+          },
+          "drops": { "planetcoin": { "chance": 0.6, "amount": 1000000000000 } }
+        }
+      },
+      {
+        "index": 184,
+        "obj": {
+          "name": "KY Cygni",
+          "hp": "5e+117",
+          "totalHp": "5e+117",
+          "def": "1.5e+115",
+          "value": "1.5999999999999999e+164",
+          "colors": ["#ff1300", "#ea0900", "#ff8b8c"],
+          "skin": 26,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 1, "amount": 1000000000000 } }
+          },
+          "drops": { "planetcoin": { "chance": 1, "amount": 1000000000000 } }
+        }
+      },
+      {
+        "index": 185,
+        "obj": {
+          "name": "Antares",
+          "hp": "3e+118",
+          "totalHp": "3e+118",
+          "def": "1.5e+116",
+          "value": "1.5e+165",
+          "colors": ["#ff8500", "#ea4e00", "#ff906f"],
+          "skin": 26,
+          "cfg": {
+            "drops": { "planetcoin": { "chance": 1, "amount": 1400000000000 } }
+          },
+          "drops": { "planetcoin": { "chance": 1, "amount": 1400000000000 } }
+        }
+      },
+      {
+        "index": 186,
+        "obj": {
+          "name": "Betelgeuse",
+          "hp": "5e+119",
+          "totalHp": "5e+119",
+          "def": "1.5e+117",
+          "value": "2.5000000000000004e+166",
+          "colors": ["#ff6300", "#ea6000", "#ffba7a"],
+          "skin": 26,
+          "cfg": { "drops": { "wisdom": { "chance": 1, "amount": 100 } } },
+          "drops": { "wisdom": { "chance": 1, "amount": 100 } }
+        }
+      },
+      {
+        "index": 187,
+        "obj": {
+          "name": "Mu Cephei",
+          "hp": "5e+120",
+          "totalHp": "5e+120",
+          "def": "1.5e+118",
+          "value": "3.4999999999999996e+167",
+          "colors": ["#ff1b00", "#ea5349", "#ff8b77"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.1, "amount": 21474836470000 }
+            }
+          },
+          "drops": { "planetcoin": { "chance": 0.1, "amount": 21474836470000 } }
+        }
+      },
+      {
+        "index": 188,
+        "obj": {
+          "name": "MY Cephei",
+          "hp": "3.3e+121",
+          "totalHp": "3.3e+121",
+          "def": "9.9e+118",
+          "value": "3.5000000000000004e+168",
+          "colors": ["#ff1b00", "#ea2d29", "#ff6656"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.1, "amount": 40000000000000 }
+            }
+          },
+          "drops": { "planetcoin": { "chance": 0.1, "amount": 40000000000000 } }
+        }
+      },
+      {
+        "index": 189,
+        "obj": {
+          "name": "VY Canis Majoris",
+          "hp": "1e+123",
+          "totalHp": "1e+123",
+          "def": "3.0000000000000004e+120",
+          "value": "1.75e+170",
+          "colors": ["#c21400", "#c00b00", "#ff0a00"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.2, "amount": 50000000000000 }
+            }
+          },
+          "drops": { "planetcoin": { "chance": 0.2, "amount": 50000000000000 } }
+        }
+      },
+      {
+        "index": 190,
+        "obj": {
+          "name": "UY Scuti",
+          "hp": "2e+124",
+          "totalHp": "2e+124",
+          "def": "7e+121",
+          "value": "6e+171",
+          "colors": ["#c21400", "#c00b00", "#ff0a00"],
+          "skin": 26,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.3, "amount": 70000000000000 }
+            }
+          },
+          "drops": { "planetcoin": { "chance": 0.3, "amount": 70000000000000 } }
+        }
+      },
+      {
+        "index": 191,
+        "obj": {
+          "name": "Small Star Group",
+          "hp": "2.5e+125",
+          "totalHp": "2.5e+125",
+          "def": "7.5e+122",
+          "value": "1e+173",
+          "colors": ["#c27000", "black"],
+          "skin": 27,
+          "cfg": { "drops": { "wisdom": { "chance": 0.1, "amount": 10000 } } },
+          "drops": { "wisdom": { "chance": 0.1, "amount": 10000 } }
+        }
+      },
+      {
+        "index": 192,
+        "obj": {
+          "name": "Medium Star Group",
+          "hp": "4e+126",
+          "totalHp": "4e+126",
+          "def": "1.6e+124",
+          "value": "2.2e+174",
+          "colors": ["#f6f300", "black"],
+          "skin": 27,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 1, "amount": 100000000000000 }
+            }
+          },
+          "drops": { "planetcoin": { "chance": 1, "amount": 100000000000000 } }
+        }
+      },
+      {
+        "index": 193,
+        "obj": {
+          "name": "Large Star Group",
+          "hp": "5.000000000000001e+127",
+          "totalHp": "5.000000000000001e+127",
+          "def": "2e+125",
+          "value": "3.5000000000000004e+175",
+          "colors": ["#a7f2f6", "black"],
+          "skin": 27,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 1, "amount": 140000000000000 }
+            }
+          },
+          "drops": { "planetcoin": { "chance": 1, "amount": 140000000000000 } }
+        }
+      },
+      {
+        "index": 194,
+        "obj": {
+          "name": "Star Cluster",
+          "hp": "5.999999999999999e+128",
+          "totalHp": "5.999999999999999e+128",
+          "def": "1.8e+126",
+          "value": "4.5e+176",
+          "colors": ["#f68b8d", "black"],
+          "skin": 27,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 1, "amount": 180000000000000 }
+            }
+          },
+          "drops": { "planetcoin": { "chance": 1, "amount": 180000000000000 } }
+        }
+      },
+      {
+        "index": 195,
+        "obj": {
+          "name": "Large Star Cluster",
+          "hp": "1e+130",
+          "totalHp": "1e+130",
+          "def": "3.0000000000000004e+127",
+          "value": "1e+178",
+          "colors": ["#5da7f6", "black"],
+          "skin": 27,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 1, "amount": 300000000000000 }
+            }
+          },
+          "drops": { "planetcoin": { "chance": 1, "amount": 300000000000000 } }
+        }
+      },
+      {
+        "index": 196,
+        "obj": {
+          "name": "Huge Star Cluster",
+          "hp": "2e+131",
+          "totalHp": "2e+131",
+          "def": "6.5e+128",
+          "value": "2.5e+179",
+          "colors": ["#f61807", "black"],
+          "skin": 27,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.333, "amount": 1777700000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.333, "amount": 1777700000000000 }
+          }
+        }
+      },
+      {
+        "index": 197,
+        "obj": {
+          "name": "Small Magellanic Cloud",
+          "hp": "4e+132",
+          "totalHp": "4e+132",
+          "def": "1e+130",
+          "value": "6.5e+180",
+          "colors": ["#adf0f6", "black"],
+          "skin": 30,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.5, "amount": 2500000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.5, "amount": 2500000000000000 }
+          }
+        }
+      },
+      {
+        "index": 198,
+        "obj": {
+          "name": "Large Magellanic Cloud",
+          "hp": "4e+133",
+          "totalHp": "4e+133",
+          "def": "9e+130",
+          "value": "8.5e+181",
+          "colors": ["#9cbbf6", "black"],
+          "skin": 30,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.8, "amount": 2500000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.8, "amount": 2500000000000000 }
+          }
+        }
+      },
+      {
+        "index": 199,
+        "obj": {
+          "name": "Milky Way",
+          "hp": "5.55e+134",
+          "totalHp": "5.55e+134",
+          "def": "2.22e+132",
+          "value": "1.4000000000000001e+183",
+          "colors": ["#f3f600", "#009aff"],
+          "skin": 28,
+          "cfg": { "drops": { "wisdom": { "chance": 1, "amount": 1000000 } } },
+          "drops": { "wisdom": { "chance": 1, "amount": 1000000 } }
+        }
+      },
+      {
+        "index": 200,
+        "obj": {
+          "name": "Andromeda Galaxy",
+          "hp": "4e+135",
+          "totalHp": "4e+135",
+          "def": "1.2e+133",
+          "value": "1.5999999999999999e+184",
+          "colors": ["#f3f600", "#00eaff"],
+          "skin": 28,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.1, "amount": 40000000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.1, "amount": 40000000000000000 }
+          }
+        }
+      },
+      {
+        "index": 201,
+        "obj": {
+          "name": "Sombrero Galaxy",
+          "hp": "4e+136",
+          "totalHp": "4e+136",
+          "def": "1.5e+134",
+          "value": "2.25e+185",
+          "colors": ["#dbdaea", "#f4f2fe", "#5e5c50"],
+          "skin": 29,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.15, "amount": 40000000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.15, "amount": 40000000000000000 }
+          }
+        }
+      },
+      {
+        "index": 202,
+        "obj": {
+          "name": "Tadpole Galaxy",
+          "hp": "7e+137",
+          "totalHp": "7e+137",
+          "def": "2e+135",
+          "value": "5e+186",
+          "colors": ["#b18d7f", "#557da5"],
+          "skin": 28,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.25, "amount": 50000000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.25, "amount": 50000000000000000 }
+          }
+        }
+      },
+      {
+        "index": 203,
+        "obj": {
+          "name": "Condor Galaxy",
+          "hp": "1.5e+139",
+          "totalHp": "1.5e+139",
+          "def": "4.5e+136",
+          "value": "5e+186",
+          "colors": ["#fafafd", "#b3c1d1"],
+          "skin": 28,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.1777, "amount": 122222000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.1777, "amount": 122222000000000000 }
+          }
+        }
+      },
+      {
+        "index": 204,
+        "obj": {
+          "name": "Comet Galaxy",
+          "hp": "3e+140",
+          "totalHp": "3e+140",
+          "def": "9e+137",
+          "value": "1.2e+188",
+          "colors": ["#fffdfc", "#b3c1d1"],
+          "skin": 28,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.3444, "amount": 122222000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.3444, "amount": 122222000000000000 }
+          }
+        }
+      },
+      {
+        "index": 205,
+        "obj": {
+          "name": "Local Group",
+          "hp": "5e+141",
+          "totalHp": "5e+141",
+          "def": "1.7777e+139",
+          "value": "2e+189",
+          "colors": ["#00d4ff", "black"],
+          "skin": 31,
+          "cfg": {
+            "drops": { "wisdom": { "chance": 0.01, "amount": 10000000000 } }
+          },
+          "drops": { "wisdom": { "chance": 0.01, "amount": 10000000000 } }
+        }
+      },
+      {
+        "index": 206,
+        "obj": {
+          "name": "IC 1101",
+          "hp": "3.3999999999999995e+142",
+          "totalHp": "3.3999999999999995e+142",
+          "def": "1.1122199999999998e+140",
+          "value": "2.222e+190",
+          "colors": ["#f6f6f6", "black"],
+          "skin": 30,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.1234, "amount": 777777000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.1234, "amount": 777777000000000000 }
+          }
+        }
+      },
+      {
+        "index": 207,
+        "obj": {
+          "name": "Big Galaxy Group",
+          "hp": "4e+143",
+          "totalHp": "4e+143",
+          "def": "2e+141",
+          "value": "2.9999999999999996e+191",
+          "colors": ["#f6b2f2", "black"],
+          "skin": 31,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.2, "amount": 800000000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.2, "amount": 800000000000000000 }
+          }
+        }
+      },
+      {
+        "index": 208,
+        "obj": {
+          "name": "Small Galaxy Cluster",
+          "hp": "6e+144",
+          "totalHp": "6e+144",
+          "def": "1.8e+142",
+          "value": "5.499999999999999e+192",
+          "colors": ["#6cf1f6", "black"],
+          "skin": 32,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.4, "amount": 800000000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.4, "amount": 800000000000000000 }
+          }
+        }
+      },
+      {
+        "index": 209,
+        "obj": {
+          "name": "Virgo Cluster",
+          "hp": "1.7e+145",
+          "totalHp": "1.7e+145",
+          "def": "5e+142",
+          "value": "1.6999999999999997e+193",
+          "colors": ["#b0d1f6", "black"],
+          "skin": 32,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.4, "amount": 1330000000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.4, "amount": 1330000000000000000 }
+          }
+        }
+      },
+      {
+        "index": 210,
+        "obj": {
+          "name": "Galaxy Supercluster",
+          "hp": "2e+146",
+          "totalHp": "2e+146",
+          "def": "7e+143",
+          "value": "2.25e+194",
+          "colors": ["#009ff6", "black"],
+          "skin": 33,
+          "cfg": {
+            "drops": { "wisdom": { "chance": 0.1, "amount": 1000000000000 } }
+          },
+          "drops": { "wisdom": { "chance": 0.1, "amount": 1000000000000 } }
+        }
+      },
+      {
+        "index": 211,
+        "obj": {
+          "name": "Galaxy Megacluster",
+          "hp": "3.1415926e+147",
+          "totalHp": "3.1415926e+147",
+          "def": "6.283185199999999e+144",
+          "value": "3.5000000000000004e+195",
+          "colors": ["#a775f6", "black"],
+          "skin": 33,
+          "cfg": {
+            "drops": { "wisdom": { "chance": 0.1, "amount": 10000000000000 } }
+          },
+          "drops": { "wisdom": { "chance": 0.1, "amount": 10000000000000 } }
+        }
+      },
+      {
+        "index": 212,
+        "obj": {
+          "name": "Filament",
+          "hp": "9.999899999999998e+148",
+          "totalHp": "9.999899999999998e+148",
+          "def": "9.99999e+146",
+          "value": "9.9999e+196",
+          "colors": ["#f6e400", "#ff00d5"],
+          "skin": 34,
+          "cfg": {
+            "drops": { "wisdom": { "chance": 0.1, "amount": 100000000000000 } }
+          },
+          "drops": { "wisdom": { "chance": 0.1, "amount": 100000000000000 } }
+        }
+      },
+      {
+        "index": 213,
+        "obj": {
+          "name": "Sloan Great Wall",
+          "hp": "9.99999e+149",
+          "totalHp": "9.99999e+149",
+          "def": "9.999e+147",
+          "value": "1.0101e+198",
+          "colors": ["#f6e2c4", "#008f11"],
+          "skin": 34,
+          "cfg": {
+            "drops": {
+              "planetcoin": { "chance": 0.7777, "amount": 22222000000000000000 }
+            }
+          },
+          "drops": {
+            "planetcoin": { "chance": 0.7777, "amount": 22222000000000000000 }
+          }
+        }
+      },
+      {
+        "index": 214,
+        "obj": {
+          "name": "THE UNIVERSE",
+          "hp": "9.9999e+151",
+          "totalHp": "9.9999e+151",
+          "def": "9.999e+150",
+          "value": "9.9999e+199",
+          "colors": ["#000000", "#ff0000", "#00ff00", "#0000ff"],
+          "skin": 35,
+          "cfg": {
+            "drops": { "wisdom": { "chance": 1, "amount": 1000000000000000 } }
+          },
+          "drops": { "wisdom": { "chance": 1, "amount": 1000000000000000 } }
+        }
+      }
+    ],
+    "currentMineObject": {
+      "name": "Mud",
+      "hp": "100",
+      "totalHp": "100",
+      "def": "0",
+      "value": "2",
+      "colors": ["#000000", "#663300"],
+      "skin": 0,
+      "drops": {}
+    },
+    "mineObjectLevel": 0,
+    "highestMineObjectLevel": 0,
+    "upgrades": {
+      "blacksmith": {
+        "name": "Blacksmith",
+        "desc": "Increase the minimum Power of Pickaxes",
+        "level": 0,
+        "icon": "",
+        "maxLevel": null,
+        "img": "upgrades/blacksmith.png",
+        "resource": 0
+      },
+      "blacksmithSkill": {
+        "name": "Blacksmith Skill",
+        "desc": "Increase the minimum Quality of Pickaxes",
+        "level": 0,
+        "icon": "",
+        "maxLevel": null,
+        "img": "upgrades/blacksmithskill.png",
+        "resource": 0
+      },
+      "blacksmithBonus": {
+        "name": "Blacksmith Expertise",
+        "desc": "25% Chance to get a Bonus on Pickaxes (+15% pow per bonus point)",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 10,
+        "img": "upgrades/blacksmithbonus.png",
+        "resource": 0
+      },
+      "gemChance": {
+        "name": "Gem Chance",
+        "desc": "Increase the Chance to get Gems",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 20,
+        "img": "upgrades/gemchance.png",
+        "resource": 0
+      },
+      "activePower": {
+        "name": "Active Power",
+        "desc": "Increase Click Damage",
+        "level": 0,
+        "icon": "",
+        "maxLevel": null,
+        "img": "upgrades/activepower.png",
+        "resource": 0
+      },
+      "idlePower": {
+        "name": "Idle Power",
+        "desc": "Increase Idle Click Damage",
+        "level": 0,
+        "icon": "",
+        "maxLevel": null,
+        "img": "upgrades/idlepower.png",
+        "resource": 0
+      },
+      "idleSpeed": {
+        "name": "Idle Speed",
+        "desc": "Increase Idle Click Speed",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 60,
+        "img": "upgrades/idlespeed.png",
+        "resource": 0
+      },
+      "gemWaster": {
+        "name": "Gem Waster",
+        "desc": "Use more Gems at once to craft better Pickaxes",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 10,
+        "img": "upgrades/gemwaster.png",
+        "resource": 0
+      }
+    },
+    "gemUpgrades": {
+      "blacksmith": {
+        "name": "Blacksmith+",
+        "desc": "Make your blacksmith even stronger",
+        "level": 0,
+        "icon": "",
+        "maxLevel": null,
+        "img": "upgrades/blacksmith.png",
+        "resource": 1
+      },
+      "blacksmithSkill": {
+        "name": "Blacksmith Skill II",
+        "desc": "Pickaxes get a High Quality Boost",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 50,
+        "img": "upgrades/blacksmithskill.png",
+        "resource": 1
+      },
+      "idlePower": {
+        "name": "Idle Power II",
+        "desc": "No more clicking needed! Idle Clicking gets even stronger",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 100,
+        "img": "upgrades/idlepower.png",
+        "resource": 1
+      },
+      "gemWaster": {
+        "name": "Gem Waster+",
+        "desc": "Waste even more Gems! But are they even wasted?",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 5,
+        "img": "upgrades/gemwaster.png",
+        "resource": 1
+      },
+      "gemChance": {
+        "name": "Gem Chance II",
+        "desc": "Increase the Chance to get Gems",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 80,
+        "img": "upgrades/gemchance.png",
+        "resource": 1
+      },
+      "gemMultiply": {
+        "name": "Gem Multiplication",
+        "desc": "You find multiple gems, even though it should be just one",
+        "level": 0,
+        "icon": "",
+        "maxLevel": null,
+        "img": "upgrades/gemmulti.png",
+        "resource": 1
+      },
+      "offlineGems": {
+        "name": "Offline Gems",
+        "desc": "You earn Gems even when you are away",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 15,
+        "img": "upgrades/gemoffline.png",
+        "resource": 1
+      }
+    },
+    "planetCoins": "0",
+    "maxPlanetCoins": "0",
+    "planetCoinUpgrades": {
+      "activePower": {
+        "name": "Active Power",
+        "desc": "Deal click damage relative to your Damage/s",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 10,
+        "img": "upgrades/activepower.png",
+        "resource": 2
+      },
+      "gemMultiply": {
+        "name": "Gem Multiplication Multiplication",
+        "desc": "You find multiple multiple gems, even though there should be just multiple gems",
+        "level": 0,
+        "icon": "",
+        "maxLevel": null,
+        "img": "upgrades/gemmultimulti.png",
+        "resource": 2
+      },
+      "lastObjGems": {
+        "name": "Gem Bonus",
+        "desc": "The highest damageable Object drops more Gems",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 19,
+        "img": "upgrades/gembonus.png",
+        "resource": 2
+      },
+      "gemChance": {
+        "name": "Gem Chance III",
+        "desc": "Increase the Chance to get Gems even more",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 50,
+        "img": "upgrades/gemchance.png",
+        "resource": 2
+      },
+      "offlinePC": {
+        "name": "Offline Planet Coins",
+        "desc": "You earn Planet Coins even when you are away",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 10,
+        "img": "upgrades/pcoffline.png",
+        "resource": 2
+      },
+      "offlineTime": {
+        "name": "Offline Time",
+        "desc": "Increase the max offline time",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 42,
+        "img": "upgrades/offlinetime.png",
+        "resource": 2
+      },
+      "bulkCraft": {
+        "name": "Bulk Crafting",
+        "desc": "Bulk Craft Pickaxes by pressing Shift while crafting",
+        "level": 0,
+        "icon": "",
+        "maxLevel": 99,
+        "img": "upgrades/bulkcraft.png",
+        "resource": 2
+      }
+    },
+    "wisdom": "0",
+    "maxWisdom": "0",
+    "powers": {
+      "data": {
+        "values": ["1", "1", "1", "1", "1"],
+        "names": [
+          "Power of Mining",
+          "Power of Craftsmenship",
+          "Power of Expertise",
+          "Power of Wisdom",
+          "Power of Exquisity"
+        ],
+        "icons": [
+          "pickaxe.png",
+          "upgrades/blacksmith.png",
+          "upgrades/blacksmithskill.png",
+          "wisdom.png",
+          "gem.png"
+        ]
+      },
+      "upgrades": {
+        "powerPowerActive": {
+          "name": "Power Power (Active)",
+          "desc": "Mine to Mine faster! Multiply your Power of Mining with each active click",
+          "level": 0,
+          "icon": "Images/wisdom.png",
+          "maxLevel": null,
+          "img": "upg_placeholder.png",
+          "resource": 3
+        },
+        "powerPowerIdle": {
+          "name": "Power Power (Idle)",
+          "desc": "Learn without doing anything! Multiply your Power of Mining with each idle click",
+          "level": 0,
+          "icon": "Images/wisdom.png",
+          "maxLevel": null,
+          "img": "upg_placeholder.png",
+          "resource": 3
+        },
+        "damageBoost": {
+          "name": "Increasing Damage Boost",
+          "desc": "Become smarter with every Mineral you discover. Deal more Idle Damage depending on highest Mineral reached",
+          "level": 0,
+          "icon": "Images/wisdom.png",
+          "maxLevel": 20,
+          "img": "upg_placeholder.png",
+          "resource": 3
+        },
+        "gemBoostSimple": {
+          "name": "Simple Gem Boost",
+          "desc": "Just Boost Gems",
+          "level": 0,
+          "icon": "Images/wisdom.png",
+          "maxLevel": 10,
+          "img": "upg_placeholder.png",
+          "resource": 3
+        },
+        "damageBoostUpgrades": {
+          "name": "Upgrade Damage Upgrade",
+          "desc": "Deal More Damage depending on the amount of wisdom Upgrades bought",
+          "level": 0,
+          "icon": "Images/wisdom.png",
+          "maxLevel": 10,
+          "img": "upg_placeholder.png",
+          "resource": 3
+        },
+        "powerPowerPower": {
+          "name": "Power Power Power!",
+          "desc": "Learn more as you learn more! Increase the Power of Power Power Upgrades",
+          "level": 0,
+          "icon": "Images/wisdom.png",
+          "maxLevel": null,
+          "img": "upg_placeholder.png",
+          "resource": 3
+        },
+        "powerResetKeep": {
+          "name": "Power Prestige Retainment",
+          "desc": "Keep more of a power when prestiging it",
+          "level": 0,
+          "icon": "Images/wisdom.png",
+          "maxLevel": 10,
+          "img": "upg_placeholder.png",
+          "resource": 3
+        }
+      }
+    },
+    "story": {
+      "page": 0,
+      "scrollY": 0,
+      "highestUnlocked": -1,
+      "notifications": 0,
+      "longGoal1": "1.7976931348623277e+308",
+      "longGoal2": "1.04438888141318e+1233",
+      "chapters": [
+        "Welcome to Idle Mine: Remix!",
+        "The real Adventure begins!",
+        "Mysterious Materials",
+        "It's NOT over",
+        "New Dimensions",
+        "Gone to Space",
+        "Hyperplanets",
+        "The Wisdom Era",
+        "Cosmic Superstructures"
+      ],
+      "milestones": {
+        "gameStart": ["true", "", 0],
+        "firstMud": [
+          "game.highestMineObjectLevel >= 1",
+          "Mine your first piece of Mud",
+          0
+        ],
+        "firstPaper": [
+          "game.highestMineObjectLevel >= 2",
+          "Mine a piece of Paper",
+          0
+        ],
+        "blacksmithUpgrade": [
+          "game.upgrades.blacksmith.level > 0",
+          "Upgrade Your Blacksmith once",
+          0
+        ],
+        "firstSalt": [
+          "game.highestMineObjectLevel >= 3",
+          "Mine a piece of Salt",
+          0
+        ],
+        "firstClay": [
+          "game.highestMineObjectLevel >= 4",
+          "Mine a piece of Clay",
+          0
+        ],
+        "firstStone": [
+          "game.highestMineObjectLevel >= 5",
+          "Mine a piece of Stone",
+          1
+        ],
+        "tenThousand": [
+          "game.highestMoney.gte(10e3)",
+          "Reach 10.000 $ on hand",
+          1
+        ],
+        "firstSpookyBone": ["game.highestMineObjectLevel >= 13", null, 1],
+        "millionaire": ["game.highestMoney.gte(1e6)", null, 1],
+        "preciousStones": [
+          "game.highestMineObjectLevel >= 18",
+          "Reach Emerald",
+          1
+        ],
+        "gemWaster": [
+          "game.upgrades.gemWaster.level >= 1",
+          "Upgrade Gem Waster to Level 1",
+          1
+        ],
+        "unrealStones": ["game.highestMineObjectLevel >= 27", null, 2],
+        "fireEssence": ["game.highestMineObjectLevel >= 33", null, 2],
+        "mysterium": ["game.highestMineObjectLevel >= 35", null, 2],
+        "fiftyTrillion": ["game.highestMoney.gte(50e12)", null, 2],
+        "lightEssence": ["game.highestMineObjectLevel >= 47", null, 2],
+        "hellStone": ["game.highestMineObjectLevel >= 50", null, 2],
+        "hellStoneFinal": ["game.highestMineObjectLevel >= 54", null, 2],
+        "infinitum": ["game.highestMineObjectLevel >= 55", null, 3],
+        "theGem": ["game.highestMineObjectLevel >= 60", null, 3],
+        "gemUpgrades": [
+          "game.highestMineObjectLevel >= 61",
+          "Break THE GEM",
+          3
+        ],
+        "fractalium": ["game.highestMineObjectLevel >= 68", null, 3],
+        "reachPortal": ["game.highestMineObjectLevel >= 71", null, 4],
+        "breakPortal": [
+          "game.highestMineObjectLevel >= 72",
+          "Break through THE PORTAL",
+          4
+        ],
+        "proceduralRealm1": [
+          "game.highestMineObjectLevel >= 81",
+          "Explore the procedural realm further",
+          4
+        ],
+        "reachSpacePortal": [
+          "game.highestMineObjectLevel >= 89",
+          "Reach yet ANOTHER portal...",
+          4
+        ],
+        "breakSpacePortal": [
+          "game.highestMineObjectLevel >= 90",
+          "Open the space portal",
+          5
+        ],
+        "planetcoin": ["game.maxPlanetCoins.gt(0)", "Earn a Planet Coin", 5],
+        "pluto": ["game.highestMineObjectLevel >= 101", null, 5],
+        "theMoon": ["game.highestMineObjectLevel >= 102", null, 5],
+        "mars": ["game.highestMineObjectLevel >= 105", null, 5],
+        "venus": ["game.highestMineObjectLevel >= 106", null, 5],
+        "saturn": ["game.highestMineObjectLevel >= 109", null, 5],
+        "jupiter": ["game.highestMineObjectLevel >= 110", null, 5],
+        "wasp79b": ["game.highestMineObjectLevel >= 114", null, 5],
+        "hyperSaturn": ["game.highestMineObjectLevel >= 124", null, 6],
+        "superEarth": ["game.highestMineObjectLevel >= 134", null, 6],
+        "colossia": ["game.highestMineObjectLevel >= 137", null, 6],
+        "giagantia": ["game.highestMineObjectLevel >= 138", null, 6],
+        "garagantula": ["game.highestMineObjectLevel >= 139", null, 6],
+        "planetOmega": ["game.highestMineObjectLevel >= 140", null, 6],
+        "breakPlanetOmega": ["game.highestMineObjectLevel >= 141", null, 6],
+        "planet160": [
+          "game.highestMineObjectLevel >= 159",
+          "Reach Object #160",
+          6
+        ],
+        "reachWisdomEssence": [
+          "game.highestMineObjectLevel >= 169",
+          "Reach ???",
+          7
+        ],
+        "breakWisdomEssence": [
+          "game.highestMineObjectLevel >= 170",
+          "Break The Wisdom Essence",
+          7
+        ],
+        "miningStars": [
+          "game.highestMineObjectLevel >= 171",
+          "Mine a Tiny Star",
+          7
+        ],
+        "wisdomUpgrade": [
+          "functions.getBoughtUpgrades(game.powers.upgrades) >= 1",
+          "Buy a Wisdom Upgrade",
+          7
+        ],
+        "mineSun": ["game.highestMineObjectLevel >= 174", "Mine The Sun", 7],
+        "minePolaris": ["game.highestMineObjectLevel >= 179", null, 7],
+        "mineBetelgeuse": ["game.highestMineObjectLevel >= 187", null, 7],
+        "mineScuti": ["game.highestMineObjectLevel >= 191", null, 7],
+        "mineStarGroup": ["game.highestMineObjectLevel >= 192", null, 8],
+        "mineSmallGalaxy": ["game.highestMineObjectLevel >= 198", null, 8],
+        "mineMilkyWay": ["game.highestMineObjectLevel >= 200", null, 8],
+        "mineLocalGroup": ["game.highestMineObjectLevel >= 206", null, 8],
+        "mineGalaxyCluster": ["game.highestMineObjectLevel >= 209", null, 8],
+        "mineGalaxySuperCluster": [
+          "game.highestMineObjectLevel >= 211",
+          null,
+          8
+        ],
+        "mineFilament": ["game.highestMineObjectLevel >= 213", null, 8],
+        "reachUniverse": ["game.highestMineObjectLevel >= 214", "Reach ???", 8],
+        "mineUniverse": ["game.highestMineObjectLevel >= 215", null, 8]
+      }
+    },
+    "highlightedUpgrade": null,
+    "settings": {
+      "theme": "light",
+      "tab": "main",
+      "upgradeTab": "money",
+      "numberFormatterIndex": 0,
+      "exportFieldString": "Exported String will appear here...",
+      "showMineObjLevel": false,
+      "showMinCraftDamage": false
+    }
+  }
+}
