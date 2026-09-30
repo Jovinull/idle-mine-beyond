@@ -59715,6 +59715,1264 @@
         }
       ]
     },
+    "hardResetSemantics": {
+      "sourcePaths": [
+        "index.html",
+        "Scripts/Define/functions.js",
+        "Scripts/Define/game.js"
+      ],
+      "controlledSave": {
+        "money": "12345",
+        "gems": "99",
+        "planetCoins": "6",
+        "wisdom": "44",
+        "mineObjectLevel": 80,
+        "highestMineObjectLevel": 90,
+        "story": {
+          "page": 7,
+          "scrollY": 234,
+          "highestUnlocked": 49,
+          "notifications": 4,
+          "longGoal1": "1.7976931348623277e+308",
+          "longGoal2": "1.04438888141318e+1233",
+          "chapters": [
+            "Welcome to Idle Mine: Remix!",
+            "The real Adventure begins!",
+            "Mysterious Materials",
+            "It's NOT over",
+            "New Dimensions",
+            "Gone to Space",
+            "Hyperplanets",
+            "The Wisdom Era",
+            "Cosmic Superstructures"
+          ],
+          "milestones": {
+            "gameStart": ["true", "", 0],
+            "firstMud": [
+              "game.highestMineObjectLevel >= 1",
+              "Mine your first piece of Mud",
+              0
+            ],
+            "firstPaper": [
+              "game.highestMineObjectLevel >= 2",
+              "Mine a piece of Paper",
+              0
+            ],
+            "blacksmithUpgrade": [
+              "game.upgrades.blacksmith.level > 0",
+              "Upgrade Your Blacksmith once",
+              0
+            ],
+            "firstSalt": [
+              "game.highestMineObjectLevel >= 3",
+              "Mine a piece of Salt",
+              0
+            ],
+            "firstClay": [
+              "game.highestMineObjectLevel >= 4",
+              "Mine a piece of Clay",
+              0
+            ],
+            "firstStone": [
+              "game.highestMineObjectLevel >= 5",
+              "Mine a piece of Stone",
+              1
+            ],
+            "tenThousand": [
+              "game.highestMoney.gte(10e3)",
+              "Reach 10.000 $ on hand",
+              1
+            ],
+            "firstSpookyBone": ["game.highestMineObjectLevel >= 13", null, 1],
+            "millionaire": ["game.highestMoney.gte(1e6)", null, 1],
+            "preciousStones": [
+              "game.highestMineObjectLevel >= 18",
+              "Reach Emerald",
+              1
+            ],
+            "gemWaster": [
+              "game.upgrades.gemWaster.level >= 1",
+              "Upgrade Gem Waster to Level 1",
+              1
+            ],
+            "unrealStones": ["game.highestMineObjectLevel >= 27", null, 2],
+            "fireEssence": ["game.highestMineObjectLevel >= 33", null, 2],
+            "mysterium": ["game.highestMineObjectLevel >= 35", null, 2],
+            "fiftyTrillion": ["game.highestMoney.gte(50e12)", null, 2],
+            "lightEssence": ["game.highestMineObjectLevel >= 47", null, 2],
+            "hellStone": ["game.highestMineObjectLevel >= 50", null, 2],
+            "hellStoneFinal": ["game.highestMineObjectLevel >= 54", null, 2],
+            "infinitum": ["game.highestMineObjectLevel >= 55", null, 3],
+            "theGem": ["game.highestMineObjectLevel >= 60", null, 3],
+            "gemUpgrades": [
+              "game.highestMineObjectLevel >= 61",
+              "Break THE GEM",
+              3
+            ],
+            "fractalium": ["game.highestMineObjectLevel >= 68", null, 3],
+            "reachPortal": ["game.highestMineObjectLevel >= 71", null, 4],
+            "breakPortal": [
+              "game.highestMineObjectLevel >= 72",
+              "Break through THE PORTAL",
+              4
+            ],
+            "proceduralRealm1": [
+              "game.highestMineObjectLevel >= 81",
+              "Explore the procedural realm further",
+              4
+            ],
+            "reachSpacePortal": [
+              "game.highestMineObjectLevel >= 89",
+              "Reach yet ANOTHER portal...",
+              4
+            ],
+            "breakSpacePortal": [
+              "game.highestMineObjectLevel >= 90",
+              "Open the space portal",
+              5
+            ],
+            "planetcoin": [
+              "game.maxPlanetCoins.gt(0)",
+              "Earn a Planet Coin",
+              5
+            ],
+            "pluto": ["game.highestMineObjectLevel >= 101", null, 5],
+            "theMoon": ["game.highestMineObjectLevel >= 102", null, 5],
+            "mars": ["game.highestMineObjectLevel >= 105", null, 5],
+            "venus": ["game.highestMineObjectLevel >= 106", null, 5],
+            "saturn": ["game.highestMineObjectLevel >= 109", null, 5],
+            "jupiter": ["game.highestMineObjectLevel >= 110", null, 5],
+            "wasp79b": ["game.highestMineObjectLevel >= 114", null, 5],
+            "hyperSaturn": ["game.highestMineObjectLevel >= 124", null, 6],
+            "superEarth": ["game.highestMineObjectLevel >= 134", null, 6],
+            "colossia": ["game.highestMineObjectLevel >= 137", null, 6],
+            "giagantia": ["game.highestMineObjectLevel >= 138", null, 6],
+            "garagantula": ["game.highestMineObjectLevel >= 139", null, 6],
+            "planetOmega": ["game.highestMineObjectLevel >= 140", null, 6],
+            "breakPlanetOmega": ["game.highestMineObjectLevel >= 141", null, 6],
+            "planet160": [
+              "game.highestMineObjectLevel >= 159",
+              "Reach Object #160",
+              6
+            ],
+            "reachWisdomEssence": [
+              "game.highestMineObjectLevel >= 169",
+              "Reach ???",
+              7
+            ],
+            "breakWisdomEssence": [
+              "game.highestMineObjectLevel >= 170",
+              "Break The Wisdom Essence",
+              7
+            ],
+            "miningStars": [
+              "game.highestMineObjectLevel >= 171",
+              "Mine a Tiny Star",
+              7
+            ],
+            "wisdomUpgrade": [
+              "functions.getBoughtUpgrades(game.powers.upgrades) >= 1",
+              "Buy a Wisdom Upgrade",
+              7
+            ],
+            "mineSun": [
+              "game.highestMineObjectLevel >= 174",
+              "Mine The Sun",
+              7
+            ],
+            "minePolaris": ["game.highestMineObjectLevel >= 179", null, 7],
+            "mineBetelgeuse": ["game.highestMineObjectLevel >= 187", null, 7],
+            "mineScuti": ["game.highestMineObjectLevel >= 191", null, 7],
+            "mineStarGroup": ["game.highestMineObjectLevel >= 192", null, 8],
+            "mineSmallGalaxy": ["game.highestMineObjectLevel >= 198", null, 8],
+            "mineMilkyWay": ["game.highestMineObjectLevel >= 200", null, 8],
+            "mineLocalGroup": ["game.highestMineObjectLevel >= 206", null, 8],
+            "mineGalaxyCluster": [
+              "game.highestMineObjectLevel >= 209",
+              null,
+              8
+            ],
+            "mineGalaxySuperCluster": [
+              "game.highestMineObjectLevel >= 211",
+              null,
+              8
+            ],
+            "mineFilament": ["game.highestMineObjectLevel >= 213", null, 8],
+            "reachUniverse": [
+              "game.highestMineObjectLevel >= 214",
+              "Reach ???",
+              8
+            ],
+            "mineUniverse": ["game.highestMineObjectLevel >= 215", null, 8]
+          }
+        },
+        "settings": {
+          "theme": "dark",
+          "tab": "main",
+          "upgradeTab": "money",
+          "numberFormatterIndex": 0,
+          "exportFieldString": "Exported String will appear here...",
+          "showMineObjLevel": true,
+          "showMinCraftDamage": true
+        },
+        "upgradeLevels": {
+          "blacksmith": 4,
+          "gemChance": 3,
+          "offlineTime": 2,
+          "powerResetKeep": 2
+        },
+        "powerValues": ["64", "32", "16", "8", "4"],
+        "pickaxe": {
+          "name": "Reset Probe Pickaxe",
+          "pow": "100",
+          "quality": "3"
+        }
+      },
+      "cancelled": [
+        {
+          "name": "cancel-first-confirmation",
+          "input": {
+            "confirmationAnswers": [false]
+          },
+          "confirmationPrompts": [
+            "Are you sure you want to ENTIRELY reset your savegame? YOu get no reward.Click 3 more times to confirm"
+          ],
+          "before": {
+            "resources": {
+              "money": {
+                "decimal": "12345",
+                "mantissa": 1.2345,
+                "exponent": 4
+              },
+              "highestMoney": {
+                "decimal": "54321",
+                "mantissa": 5.4321,
+                "exponent": 4
+              },
+              "gems": {
+                "decimal": "99",
+                "mantissa": 9.9,
+                "exponent": 1
+              },
+              "planetCoins": {
+                "decimal": "6",
+                "mantissa": 6,
+                "exponent": 0
+              },
+              "maxPlanetCoins": {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              "wisdom": {
+                "decimal": "44",
+                "mantissa": 4.4,
+                "exponent": 1
+              },
+              "maxWisdom": {
+                "decimal": "50",
+                "mantissa": 5,
+                "exponent": 1
+              }
+            },
+            "mineObject": {
+              "current": 80,
+              "highest": 90,
+              "name": "Evapuzuslite"
+            },
+            "story": {
+              "page": 7,
+              "notifications": 4,
+              "highestUnlocked": 49,
+              "scrollY": 234
+            },
+            "settings": {
+              "tab": "settings",
+              "upgradeTab": "planetcoins",
+              "exportFieldString": "old export text",
+              "theme": "dark",
+              "numberFormatterIndex": 0,
+              "showMineObjLevel": true,
+              "showMinCraftDamage": true
+            },
+            "upgradeLevels": {
+              "blacksmith": 4,
+              "gemChance": 3,
+              "offlineTime": 2,
+              "powerResetKeep": 2
+            },
+            "powers": [
+              {
+                "decimal": "64",
+                "mantissa": 6.4,
+                "exponent": 1
+              },
+              {
+                "decimal": "32",
+                "mantissa": 3.2,
+                "exponent": 1
+              },
+              {
+                "decimal": "16",
+                "mantissa": 1.6,
+                "exponent": 1
+              },
+              {
+                "decimal": "8",
+                "mantissa": 8,
+                "exponent": 0
+              },
+              {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Reset Probe Pickaxe",
+              "power": {
+                "decimal": "100",
+                "mantissa": 1,
+                "exponent": 2
+              },
+              "quality": {
+                "decimal": "3",
+                "mantissa": 3,
+                "exponent": 0
+              },
+              "damage": {
+                "decimal": "300",
+                "mantissa": 3,
+                "exponent": 2
+              }
+            },
+            "usedGemsLevel": 12,
+            "pickStatus": "old pick status",
+            "messageLog": [
+              {
+                "message": "unsaved reset probe"
+              }
+            ],
+            "lastActive": 1704067190000,
+            "timer": {
+              "autoPickaxe": 0.25,
+              "save": 41
+            }
+          },
+          "after": {
+            "resources": {
+              "money": {
+                "decimal": "12345",
+                "mantissa": 1.2345,
+                "exponent": 4
+              },
+              "highestMoney": {
+                "decimal": "54321",
+                "mantissa": 5.4321,
+                "exponent": 4
+              },
+              "gems": {
+                "decimal": "99",
+                "mantissa": 9.9,
+                "exponent": 1
+              },
+              "planetCoins": {
+                "decimal": "6",
+                "mantissa": 6,
+                "exponent": 0
+              },
+              "maxPlanetCoins": {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              "wisdom": {
+                "decimal": "44",
+                "mantissa": 4.4,
+                "exponent": 1
+              },
+              "maxWisdom": {
+                "decimal": "50",
+                "mantissa": 5,
+                "exponent": 1
+              }
+            },
+            "mineObject": {
+              "current": 80,
+              "highest": 90,
+              "name": "Evapuzuslite"
+            },
+            "story": {
+              "page": 7,
+              "notifications": 4,
+              "highestUnlocked": 49,
+              "scrollY": 234
+            },
+            "settings": {
+              "tab": "settings",
+              "upgradeTab": "planetcoins",
+              "exportFieldString": "old export text",
+              "theme": "dark",
+              "numberFormatterIndex": 0,
+              "showMineObjLevel": true,
+              "showMinCraftDamage": true
+            },
+            "upgradeLevels": {
+              "blacksmith": 4,
+              "gemChance": 3,
+              "offlineTime": 2,
+              "powerResetKeep": 2
+            },
+            "powers": [
+              {
+                "decimal": "64",
+                "mantissa": 6.4,
+                "exponent": 1
+              },
+              {
+                "decimal": "32",
+                "mantissa": 3.2,
+                "exponent": 1
+              },
+              {
+                "decimal": "16",
+                "mantissa": 1.6,
+                "exponent": 1
+              },
+              {
+                "decimal": "8",
+                "mantissa": 8,
+                "exponent": 0
+              },
+              {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Reset Probe Pickaxe",
+              "power": {
+                "decimal": "100",
+                "mantissa": 1,
+                "exponent": 2
+              },
+              "quality": {
+                "decimal": "3",
+                "mantissa": 3,
+                "exponent": 0
+              },
+              "damage": {
+                "decimal": "300",
+                "mantissa": 3,
+                "exponent": 2
+              }
+            },
+            "usedGemsLevel": 12,
+            "pickStatus": "old pick status",
+            "messageLog": [
+              {
+                "message": "unsaved reset probe"
+              }
+            ],
+            "lastActive": 1704067190000,
+            "timer": {
+              "autoPickaxe": 0.25,
+              "save": 41
+            }
+          },
+          "storageBefore": [
+            ["unrelated-origin-data", "existing-data"],
+            ["IdleMine", "existing-save"]
+          ],
+          "storageAfter": [
+            ["unrelated-origin-data", "existing-data"],
+            ["IdleMine", "existing-save"]
+          ]
+        },
+        {
+          "name": "cancel-second-confirmation",
+          "input": {
+            "confirmationAnswers": [true, false]
+          },
+          "confirmationPrompts": [
+            "Are you sure you want to ENTIRELY reset your savegame? YOu get no reward.Click 3 more times to confirm",
+            "Are you sure you want to ENTIRELY reset your savegame? YOu get no reward.Click 2 more times to confirm"
+          ],
+          "before": {
+            "resources": {
+              "money": {
+                "decimal": "12345",
+                "mantissa": 1.2345,
+                "exponent": 4
+              },
+              "highestMoney": {
+                "decimal": "54321",
+                "mantissa": 5.4321,
+                "exponent": 4
+              },
+              "gems": {
+                "decimal": "99",
+                "mantissa": 9.9,
+                "exponent": 1
+              },
+              "planetCoins": {
+                "decimal": "6",
+                "mantissa": 6,
+                "exponent": 0
+              },
+              "maxPlanetCoins": {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              "wisdom": {
+                "decimal": "44",
+                "mantissa": 4.4,
+                "exponent": 1
+              },
+              "maxWisdom": {
+                "decimal": "50",
+                "mantissa": 5,
+                "exponent": 1
+              }
+            },
+            "mineObject": {
+              "current": 80,
+              "highest": 90,
+              "name": "Evapuzuslite"
+            },
+            "story": {
+              "page": 7,
+              "notifications": 4,
+              "highestUnlocked": 49,
+              "scrollY": 234
+            },
+            "settings": {
+              "tab": "settings",
+              "upgradeTab": "planetcoins",
+              "exportFieldString": "old export text",
+              "theme": "dark",
+              "numberFormatterIndex": 0,
+              "showMineObjLevel": true,
+              "showMinCraftDamage": true
+            },
+            "upgradeLevels": {
+              "blacksmith": 4,
+              "gemChance": 3,
+              "offlineTime": 2,
+              "powerResetKeep": 2
+            },
+            "powers": [
+              {
+                "decimal": "64",
+                "mantissa": 6.4,
+                "exponent": 1
+              },
+              {
+                "decimal": "32",
+                "mantissa": 3.2,
+                "exponent": 1
+              },
+              {
+                "decimal": "16",
+                "mantissa": 1.6,
+                "exponent": 1
+              },
+              {
+                "decimal": "8",
+                "mantissa": 8,
+                "exponent": 0
+              },
+              {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Reset Probe Pickaxe",
+              "power": {
+                "decimal": "100",
+                "mantissa": 1,
+                "exponent": 2
+              },
+              "quality": {
+                "decimal": "3",
+                "mantissa": 3,
+                "exponent": 0
+              },
+              "damage": {
+                "decimal": "300",
+                "mantissa": 3,
+                "exponent": 2
+              }
+            },
+            "usedGemsLevel": 12,
+            "pickStatus": "old pick status",
+            "messageLog": [
+              {
+                "message": "unsaved reset probe"
+              }
+            ],
+            "lastActive": 1704067190000,
+            "timer": {
+              "autoPickaxe": 0.25,
+              "save": 41
+            }
+          },
+          "after": {
+            "resources": {
+              "money": {
+                "decimal": "12345",
+                "mantissa": 1.2345,
+                "exponent": 4
+              },
+              "highestMoney": {
+                "decimal": "54321",
+                "mantissa": 5.4321,
+                "exponent": 4
+              },
+              "gems": {
+                "decimal": "99",
+                "mantissa": 9.9,
+                "exponent": 1
+              },
+              "planetCoins": {
+                "decimal": "6",
+                "mantissa": 6,
+                "exponent": 0
+              },
+              "maxPlanetCoins": {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              "wisdom": {
+                "decimal": "44",
+                "mantissa": 4.4,
+                "exponent": 1
+              },
+              "maxWisdom": {
+                "decimal": "50",
+                "mantissa": 5,
+                "exponent": 1
+              }
+            },
+            "mineObject": {
+              "current": 80,
+              "highest": 90,
+              "name": "Evapuzuslite"
+            },
+            "story": {
+              "page": 7,
+              "notifications": 4,
+              "highestUnlocked": 49,
+              "scrollY": 234
+            },
+            "settings": {
+              "tab": "settings",
+              "upgradeTab": "planetcoins",
+              "exportFieldString": "old export text",
+              "theme": "dark",
+              "numberFormatterIndex": 0,
+              "showMineObjLevel": true,
+              "showMinCraftDamage": true
+            },
+            "upgradeLevels": {
+              "blacksmith": 4,
+              "gemChance": 3,
+              "offlineTime": 2,
+              "powerResetKeep": 2
+            },
+            "powers": [
+              {
+                "decimal": "64",
+                "mantissa": 6.4,
+                "exponent": 1
+              },
+              {
+                "decimal": "32",
+                "mantissa": 3.2,
+                "exponent": 1
+              },
+              {
+                "decimal": "16",
+                "mantissa": 1.6,
+                "exponent": 1
+              },
+              {
+                "decimal": "8",
+                "mantissa": 8,
+                "exponent": 0
+              },
+              {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Reset Probe Pickaxe",
+              "power": {
+                "decimal": "100",
+                "mantissa": 1,
+                "exponent": 2
+              },
+              "quality": {
+                "decimal": "3",
+                "mantissa": 3,
+                "exponent": 0
+              },
+              "damage": {
+                "decimal": "300",
+                "mantissa": 3,
+                "exponent": 2
+              }
+            },
+            "usedGemsLevel": 12,
+            "pickStatus": "old pick status",
+            "messageLog": [
+              {
+                "message": "unsaved reset probe"
+              }
+            ],
+            "lastActive": 1704067190000,
+            "timer": {
+              "autoPickaxe": 0.25,
+              "save": 41
+            }
+          },
+          "storageBefore": [
+            ["unrelated-origin-data", "existing-data"],
+            ["IdleMine", "existing-save"]
+          ],
+          "storageAfter": [
+            ["unrelated-origin-data", "existing-data"],
+            ["IdleMine", "existing-save"]
+          ]
+        },
+        {
+          "name": "cancel-third-confirmation",
+          "input": {
+            "confirmationAnswers": [true, true, false]
+          },
+          "confirmationPrompts": [
+            "Are you sure you want to ENTIRELY reset your savegame? YOu get no reward.Click 3 more times to confirm",
+            "Are you sure you want to ENTIRELY reset your savegame? YOu get no reward.Click 2 more times to confirm",
+            "Are you sure you want to ENTIRELY reset your savegame? YOu get no reward.Click 1 more times to confirm"
+          ],
+          "before": {
+            "resources": {
+              "money": {
+                "decimal": "12345",
+                "mantissa": 1.2345,
+                "exponent": 4
+              },
+              "highestMoney": {
+                "decimal": "54321",
+                "mantissa": 5.4321,
+                "exponent": 4
+              },
+              "gems": {
+                "decimal": "99",
+                "mantissa": 9.9,
+                "exponent": 1
+              },
+              "planetCoins": {
+                "decimal": "6",
+                "mantissa": 6,
+                "exponent": 0
+              },
+              "maxPlanetCoins": {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              "wisdom": {
+                "decimal": "44",
+                "mantissa": 4.4,
+                "exponent": 1
+              },
+              "maxWisdom": {
+                "decimal": "50",
+                "mantissa": 5,
+                "exponent": 1
+              }
+            },
+            "mineObject": {
+              "current": 80,
+              "highest": 90,
+              "name": "Evapuzuslite"
+            },
+            "story": {
+              "page": 7,
+              "notifications": 4,
+              "highestUnlocked": 49,
+              "scrollY": 234
+            },
+            "settings": {
+              "tab": "settings",
+              "upgradeTab": "planetcoins",
+              "exportFieldString": "old export text",
+              "theme": "dark",
+              "numberFormatterIndex": 0,
+              "showMineObjLevel": true,
+              "showMinCraftDamage": true
+            },
+            "upgradeLevels": {
+              "blacksmith": 4,
+              "gemChance": 3,
+              "offlineTime": 2,
+              "powerResetKeep": 2
+            },
+            "powers": [
+              {
+                "decimal": "64",
+                "mantissa": 6.4,
+                "exponent": 1
+              },
+              {
+                "decimal": "32",
+                "mantissa": 3.2,
+                "exponent": 1
+              },
+              {
+                "decimal": "16",
+                "mantissa": 1.6,
+                "exponent": 1
+              },
+              {
+                "decimal": "8",
+                "mantissa": 8,
+                "exponent": 0
+              },
+              {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Reset Probe Pickaxe",
+              "power": {
+                "decimal": "100",
+                "mantissa": 1,
+                "exponent": 2
+              },
+              "quality": {
+                "decimal": "3",
+                "mantissa": 3,
+                "exponent": 0
+              },
+              "damage": {
+                "decimal": "300",
+                "mantissa": 3,
+                "exponent": 2
+              }
+            },
+            "usedGemsLevel": 12,
+            "pickStatus": "old pick status",
+            "messageLog": [
+              {
+                "message": "unsaved reset probe"
+              }
+            ],
+            "lastActive": 1704067190000,
+            "timer": {
+              "autoPickaxe": 0.25,
+              "save": 41
+            }
+          },
+          "after": {
+            "resources": {
+              "money": {
+                "decimal": "12345",
+                "mantissa": 1.2345,
+                "exponent": 4
+              },
+              "highestMoney": {
+                "decimal": "54321",
+                "mantissa": 5.4321,
+                "exponent": 4
+              },
+              "gems": {
+                "decimal": "99",
+                "mantissa": 9.9,
+                "exponent": 1
+              },
+              "planetCoins": {
+                "decimal": "6",
+                "mantissa": 6,
+                "exponent": 0
+              },
+              "maxPlanetCoins": {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              "wisdom": {
+                "decimal": "44",
+                "mantissa": 4.4,
+                "exponent": 1
+              },
+              "maxWisdom": {
+                "decimal": "50",
+                "mantissa": 5,
+                "exponent": 1
+              }
+            },
+            "mineObject": {
+              "current": 80,
+              "highest": 90,
+              "name": "Evapuzuslite"
+            },
+            "story": {
+              "page": 7,
+              "notifications": 4,
+              "highestUnlocked": 49,
+              "scrollY": 234
+            },
+            "settings": {
+              "tab": "settings",
+              "upgradeTab": "planetcoins",
+              "exportFieldString": "old export text",
+              "theme": "dark",
+              "numberFormatterIndex": 0,
+              "showMineObjLevel": true,
+              "showMinCraftDamage": true
+            },
+            "upgradeLevels": {
+              "blacksmith": 4,
+              "gemChance": 3,
+              "offlineTime": 2,
+              "powerResetKeep": 2
+            },
+            "powers": [
+              {
+                "decimal": "64",
+                "mantissa": 6.4,
+                "exponent": 1
+              },
+              {
+                "decimal": "32",
+                "mantissa": 3.2,
+                "exponent": 1
+              },
+              {
+                "decimal": "16",
+                "mantissa": 1.6,
+                "exponent": 1
+              },
+              {
+                "decimal": "8",
+                "mantissa": 8,
+                "exponent": 0
+              },
+              {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Reset Probe Pickaxe",
+              "power": {
+                "decimal": "100",
+                "mantissa": 1,
+                "exponent": 2
+              },
+              "quality": {
+                "decimal": "3",
+                "mantissa": 3,
+                "exponent": 0
+              },
+              "damage": {
+                "decimal": "300",
+                "mantissa": 3,
+                "exponent": 2
+              }
+            },
+            "usedGemsLevel": 12,
+            "pickStatus": "old pick status",
+            "messageLog": [
+              {
+                "message": "unsaved reset probe"
+              }
+            ],
+            "lastActive": 1704067190000,
+            "timer": {
+              "autoPickaxe": 0.25,
+              "save": 41
+            }
+          },
+          "storageBefore": [
+            ["unrelated-origin-data", "existing-data"],
+            ["IdleMine", "existing-save"]
+          ],
+          "storageAfter": [
+            ["unrelated-origin-data", "existing-data"],
+            ["IdleMine", "existing-save"]
+          ]
+        }
+      ],
+      "confirmed": {
+        "name": "confirm-all-prompts",
+        "input": {
+          "confirmationAnswers": [true, true, true]
+        },
+        "confirmationPrompts": [
+          "Are you sure you want to ENTIRELY reset your savegame? YOu get no reward.Click 3 more times to confirm",
+          "Are you sure you want to ENTIRELY reset your savegame? YOu get no reward.Click 2 more times to confirm",
+          "Are you sure you want to ENTIRELY reset your savegame? YOu get no reward.Click 1 more times to confirm"
+        ],
+        "before": {
+          "resources": {
+            "money": {
+              "decimal": "12345",
+              "mantissa": 1.2345,
+              "exponent": 4
+            },
+            "highestMoney": {
+              "decimal": "54321",
+              "mantissa": 5.4321,
+              "exponent": 4
+            },
+            "gems": {
+              "decimal": "99",
+              "mantissa": 9.9,
+              "exponent": 1
+            },
+            "planetCoins": {
+              "decimal": "6",
+              "mantissa": 6,
+              "exponent": 0
+            },
+            "maxPlanetCoins": {
+              "decimal": "9",
+              "mantissa": 9,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "44",
+              "mantissa": 4.4,
+              "exponent": 1
+            },
+            "maxWisdom": {
+              "decimal": "50",
+              "mantissa": 5,
+              "exponent": 1
+            }
+          },
+          "mineObject": {
+            "current": 80,
+            "highest": 90,
+            "name": "Evapuzuslite"
+          },
+          "story": {
+            "page": 7,
+            "notifications": 4,
+            "highestUnlocked": 49,
+            "scrollY": 234
+          },
+          "settings": {
+            "tab": "settings",
+            "upgradeTab": "planetcoins",
+            "exportFieldString": "old export text",
+            "theme": "dark",
+            "numberFormatterIndex": 0,
+            "showMineObjLevel": true,
+            "showMinCraftDamage": true
+          },
+          "upgradeLevels": {
+            "blacksmith": 4,
+            "gemChance": 3,
+            "offlineTime": 2,
+            "powerResetKeep": 2
+          },
+          "powers": [
+            {
+              "decimal": "64",
+              "mantissa": 6.4,
+              "exponent": 1
+            },
+            {
+              "decimal": "32",
+              "mantissa": 3.2,
+              "exponent": 1
+            },
+            {
+              "decimal": "16",
+              "mantissa": 1.6,
+              "exponent": 1
+            },
+            {
+              "decimal": "8",
+              "mantissa": 8,
+              "exponent": 0
+            },
+            {
+              "decimal": "4",
+              "mantissa": 4,
+              "exponent": 0
+            }
+          ],
+          "pickaxe": {
+            "name": "Reset Probe Pickaxe",
+            "power": {
+              "decimal": "100",
+              "mantissa": 1,
+              "exponent": 2
+            },
+            "quality": {
+              "decimal": "3",
+              "mantissa": 3,
+              "exponent": 0
+            },
+            "damage": {
+              "decimal": "300",
+              "mantissa": 3,
+              "exponent": 2
+            }
+          },
+          "usedGemsLevel": 12,
+          "pickStatus": "old pick status",
+          "messageLog": [
+            {
+              "message": "unsaved reset probe"
+            }
+          ],
+          "lastActive": 1704067190000,
+          "timer": {
+            "autoPickaxe": 0.25,
+            "save": 41
+          }
+        },
+        "after": {
+          "resources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "highestMoney": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "5",
+              "mantissa": 5,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "maxPlanetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "maxWisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "mineObject": {
+            "current": 0,
+            "highest": 0,
+            "name": "Mud"
+          },
+          "story": {
+            "page": 0,
+            "notifications": 0,
+            "highestUnlocked": -1,
+            "scrollY": 0
+          },
+          "settings": {
+            "tab": "settings",
+            "upgradeTab": "planetcoins",
+            "exportFieldString": "old export text",
+            "theme": "light",
+            "numberFormatterIndex": 0,
+            "showMineObjLevel": false,
+            "showMinCraftDamage": false
+          },
+          "upgradeLevels": {
+            "blacksmith": 0,
+            "gemChance": 0,
+            "offlineTime": 0,
+            "powerResetKeep": 0
+          },
+          "powers": [
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          ],
+          "pickaxe": {
+            "name": "Toy Pickaxe",
+            "power": {
+              "decimal": "20",
+              "mantissa": 2,
+              "exponent": 1
+            },
+            "quality": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "damage": {
+              "decimal": "20",
+              "mantissa": 2,
+              "exponent": 1
+            }
+          },
+          "usedGemsLevel": 0,
+          "pickStatus": "old pick status",
+          "messageLog": [],
+          "lastActive": 1704067200000,
+          "timer": {
+            "autoPickaxe": 0.25,
+            "save": 41
+          }
+        },
+        "storageBefore": [
+          ["unrelated-origin-data", "existing-data"],
+          ["IdleMine", "existing-save"]
+        ],
+        "storageAfter": []
+      }
+    },
     "saveExportSemantics": {
       "sourcePaths": [
         "Scripts/Define/functions.js",

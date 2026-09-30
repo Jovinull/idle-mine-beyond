@@ -4891,9 +4891,187 @@ async function capture(reference, dependencies, dependencySnapshots) {
             }
           }
         })();
+        const hardResetSemantics = (() => {
+          const previousConfirm = window.confirm;
+          const previousStorage = Array.from(
+            { length: localStorage.length },
+            (_, index) => {
+              const key = localStorage.key(index);
+              return key === null ? null : [key, localStorage.getItem(key)];
+            },
+          ).filter((entry) => entry !== null);
+          const controlledSave = JSON.parse(window.initialGame);
+          Object.assign(controlledSave, {
+            money: "12345",
+            highestMoney: "54321",
+            gems: "99",
+            planetCoins: "6",
+            maxPlanetCoins: "9",
+            wisdom: "44",
+            maxWisdom: "50",
+            mineObjectLevel: 80,
+            highestMineObjectLevel: 90,
+            lastActive: fixedClock - 10_000,
+          });
+          controlledSave.story = {
+            ...controlledSave.story,
+            page: 7,
+            notifications: 4,
+            highestUnlocked: 49,
+            scrollY: 234,
+          };
+          controlledSave.settings = {
+            ...controlledSave.settings,
+            theme: "dark",
+            showMineObjLevel: true,
+            showMinCraftDamage: true,
+          };
+          controlledSave.upgrades.blacksmith.level = 4;
+          controlledSave.gemUpgrades.gemChance.level = 3;
+          controlledSave.planetCoinUpgrades.offlineTime.level = 2;
+          controlledSave.powers.data.values = ["64", "32", "16", "8", "4"];
+          controlledSave.powers.upgrades.powerResetKeep.level = 2;
+          controlledSave.pickaxe.name = "Reset Probe Pickaxe";
+          controlledSave.pickaxe.pow = "100";
+          controlledSave.pickaxe.quality = "3";
+
+          const storageSnapshot = () =>
+            Array.from({ length: localStorage.length }, (_, index) => {
+              const key = localStorage.key(index);
+              return key === null ? null : [key, localStorage.getItem(key)];
+            }).filter((entry) => entry !== null);
+          const stateSnapshot = () => ({
+            resources: {
+              money: normalizedDecimal(game.money),
+              highestMoney: normalizedDecimal(game.highestMoney),
+              gems: normalizedDecimal(game.gems),
+              planetCoins: normalizedDecimal(game.planetCoins),
+              maxPlanetCoins: normalizedDecimal(game.maxPlanetCoins),
+              wisdom: normalizedDecimal(game.wisdom),
+              maxWisdom: normalizedDecimal(game.maxWisdom),
+            },
+            mineObject: {
+              current: game.mineObjectLevel,
+              highest: game.highestMineObjectLevel,
+              name: game.currentMineObject.name,
+            },
+            story: {
+              page: game.story.page,
+              notifications: game.story.notifications,
+              highestUnlocked: game.story.highestUnlocked,
+              scrollY: game.story.scrollY,
+            },
+            settings: {
+              tab: game.settings.tab,
+              upgradeTab: game.settings.upgradeTab,
+              exportFieldString: game.settings.exportFieldString,
+              theme: game.settings.theme,
+              numberFormatterIndex: game.settings.numberFormatterIndex,
+              showMineObjLevel: game.settings.showMineObjLevel,
+              showMinCraftDamage: game.settings.showMinCraftDamage,
+            },
+            upgradeLevels: {
+              blacksmith: game.upgrades.blacksmith.level,
+              gemChance: game.gemUpgrades.gemChance.level,
+              offlineTime: game.planetCoinUpgrades.offlineTime.level,
+              powerResetKeep: game.powers.upgrades.powerResetKeep.level,
+            },
+            powers: game.powers.data.values.map(normalizedDecimal),
+            pickaxe: {
+              name: game.pickaxe.name,
+              power: normalizedDecimal(game.pickaxe.pow),
+              quality: normalizedDecimal(game.pickaxe.quality),
+              damage: normalizedDecimal(game.pickaxe.getDamage()),
+            },
+            usedGemsLevel: game.usedGemsLevel,
+            pickStatus: game.pickStatus,
+            messageLog: normalize(game.messageLog),
+            lastActive: game.lastActive,
+            timer: { ...game.timer },
+          });
+          const runScenario = (name, confirmationAnswers) => {
+            functions.loadGame(JSON.stringify(controlledSave), false, true);
+            game.settings.tab = "settings";
+            game.settings.upgradeTab = "planetcoins";
+            game.settings.exportFieldString = "old export text";
+            game.messageLog = [{ message: "unsaved reset probe" }];
+            game.usedGemsLevel = 12;
+            game.pickStatus = "old pick status";
+            game.timer.autoPickaxe = 0.25;
+            game.timer.save = 41;
+            localStorage.clear();
+            localStorage.setItem("IdleMine", "existing-save");
+            localStorage.setItem("unrelated-origin-data", "existing-data");
+            const before = stateSnapshot();
+            const storageBefore = storageSnapshot();
+            const confirmationPrompts = [];
+            window.confirm = (message) => {
+              confirmationPrompts.push(message);
+              return (
+                confirmationAnswers[confirmationPrompts.length - 1] ?? false
+              );
+            };
+            functions.hardReset();
+            return {
+              name,
+              input: { confirmationAnswers },
+              confirmationPrompts,
+              before,
+              after: stateSnapshot(),
+              storageBefore,
+              storageAfter: storageSnapshot(),
+            };
+          };
+
+          const cancelled = [
+            runScenario("cancel-first-confirmation", [false]),
+            runScenario("cancel-second-confirmation", [true, false]),
+            runScenario("cancel-third-confirmation", [true, true, false]),
+          ];
+          const confirmed = runScenario("confirm-all-prompts", [
+            true,
+            true,
+            true,
+          ]);
+          window.confirm = previousConfirm;
+          localStorage.clear();
+          for (const [key, value] of previousStorage) {
+            if (value !== null) localStorage.setItem(key, value);
+          }
+          return {
+            sourcePaths: [
+              "index.html",
+              "Scripts/Define/functions.js",
+              "Scripts/Define/game.js",
+            ],
+            controlledSave: {
+              money: controlledSave.money,
+              gems: controlledSave.gems,
+              planetCoins: controlledSave.planetCoins,
+              wisdom: controlledSave.wisdom,
+              mineObjectLevel: controlledSave.mineObjectLevel,
+              highestMineObjectLevel: controlledSave.highestMineObjectLevel,
+              story: controlledSave.story,
+              settings: controlledSave.settings,
+              upgradeLevels: {
+                blacksmith: controlledSave.upgrades.blacksmith.level,
+                gemChance: controlledSave.gemUpgrades.gemChance.level,
+                offlineTime:
+                  controlledSave.planetCoinUpgrades.offlineTime.level,
+                powerResetKeep:
+                  controlledSave.powers.upgrades.powerResetKeep.level,
+              },
+              powerValues: controlledSave.powers.data.values,
+              pickaxe: controlledSave.pickaxe,
+            },
+            cancelled,
+            confirmed,
+          };
+        })();
         return {
           initialState,
           powersTableSemantics,
+          hardResetSemantics,
           initialRates: rates,
           notationOutputs,
           notationSemantics,
