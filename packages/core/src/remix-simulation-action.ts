@@ -41,6 +41,10 @@ import {
   type RemixPowerPrestigeIndex,
 } from "./remix-powers.js";
 import type { RemixSimulationState } from "./remix-simulation-state.js";
+import {
+  changeRemixCraftGemSelection,
+  type RemixCraftGemSelectionDirection,
+} from "./remix-craft-gem-selection.js";
 
 export type RemixMiningSimulationAction =
   { type: "activeClick" } | { type: "idleFrame"; deltaSeconds: number };
@@ -57,6 +61,11 @@ export type RemixUpgradePurchaseSimulationAction = {
 export type RemixPickaxeCraftSimulationAction = {
   type: "craftPickaxe";
   shiftHeld: boolean;
+};
+
+export type RemixCraftGemSelectionSimulationAction = {
+  type: "changeCraftGemLevel";
+  direction: RemixCraftGemSelectionDirection;
 };
 
 export type RemixOfflineLoadSimulationAction = {
@@ -79,6 +88,7 @@ export type RemixSimulationAction =
   | RemixMiningSimulationAction
   | RemixUpgradePurchaseSimulationAction
   | RemixPickaxeCraftSimulationAction
+  | RemixCraftGemSelectionSimulationAction
   | RemixOfflineLoadSimulationAction
   | RemixPowerPrestigeSimulationAction;
 
@@ -99,6 +109,10 @@ export type RemixSimulationActionInput =
       action: RemixPickaxeCraftSimulationAction;
       catalog: RemixMineObjectCatalog;
       random: RemixMiningRandom;
+    }
+  | {
+      state: RemixSimulationState;
+      action: RemixCraftGemSelectionSimulationAction;
     }
   | {
       state: RemixSimulationState;
@@ -131,6 +145,12 @@ export type RemixSimulationActionResult =
     }
   | {
       type: "prestigePower";
+      state: RemixSimulationState;
+      changed: boolean;
+      effects: [];
+    }
+  | {
+      type: "changeCraftGemLevel";
       state: RemixSimulationState;
       changed: boolean;
       effects: [];
@@ -413,6 +433,19 @@ export function performRemixSimulationAction(
 
   if ("clock" in input) {
     return performOfflineLoad(input.state, input.action, input);
+  }
+
+  if (input.action.type === "changeCraftGemLevel") {
+    const state = changeRemixCraftGemSelection(
+      input.state,
+      input.action.direction,
+    );
+    return {
+      type: "changeCraftGemLevel",
+      state,
+      changed: state !== input.state,
+      effects: [],
+    };
   }
 
   if ("catalog" in input) {

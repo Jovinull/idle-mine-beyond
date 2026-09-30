@@ -200,6 +200,9 @@ function actionInput(
   if (action.type === "prestigePower") {
     return performRemixSimulationAction({ state, action });
   }
+  if (action.type === "changeCraftGemLevel") {
+    return performRemixSimulationAction({ state, action });
+  }
   return performRemixSimulationAction({ state, action });
 }
 

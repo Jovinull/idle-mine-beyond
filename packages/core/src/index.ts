@@ -135,6 +135,14 @@ export type {
 } from "./remix-pickaxe-crafting.js";
 export { createInitialRemixSimulationState } from "./remix-simulation-state.js";
 export type { RemixSimulationState } from "./remix-simulation-state.js";
+export {
+  changeRemixCraftGemSelection,
+  getRemixCraftGemSelectionControls,
+} from "./remix-craft-gem-selection.js";
+export type {
+  RemixCraftGemSelectionControls,
+  RemixCraftGemSelectionDirection,
+} from "./remix-craft-gem-selection.js";
 export { createRemixHardResetSimulationState } from "./remix-hard-reset.js";
 export {
   calculateRemixPowerPrestigeEffect,
@@ -154,6 +162,7 @@ export type {
   RemixMiningSimulationAction,
   RemixMiningSimulationActionResult,
   RemixSimulationEffect,
+  RemixCraftGemSelectionSimulationAction,
   RemixPickaxeCraftSimulationAction,
   RemixOfflineLoadSimulationAction,
   RemixPowerPrestigeSimulationAction,

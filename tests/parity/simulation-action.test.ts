@@ -3,6 +3,7 @@ import { expect, it } from "vitest";
 import {
   Decimal,
   createInitialRemixSimulationState,
+  getRemixCraftGemSelectionControls,
   performRemixSimulationAction,
   type RemixMineObjectCatalog,
   type RemixStoryMilestone,
@@ -98,6 +99,17 @@ type PickaxeCraftAttemptCase = {
   eventOrder: string[];
   result: { gems: DecimalSnapshot; pickaxe: PickaxeSnapshot };
 };
+type PickaxeCraftControlCase = {
+  name: string;
+  input: {
+    usedGemsLevel: number;
+    moneyGemWasterLevel: number;
+    gemUpgradeWasterLevel: number;
+  };
+  displayedGemCost: string;
+  gemCost: DecimalSnapshot;
+  buttons: { disabled: boolean; image: string | null }[];
+};
 
 const corpus = JSON.parse(
   await readFile(
@@ -114,7 +126,18 @@ const corpus = JSON.parse(
       cases: SimulationFrameCase[];
     };
     upgradeSemantics: { purchaseSemantics: UpgradePurchaseCase[] };
-    pickaxeCraftingSemantics: { attempts: PickaxeCraftAttemptCase[] };
+    pickaxeCraftingSemantics: {
+      attempts: PickaxeCraftAttemptCase[];
+      craftControls: {
+        controlSourcePaths: string[];
+        controls: PickaxeCraftControlCase[];
+        transitions: {
+          direction: "increase" | "decrease";
+          usedGemsLevel: number;
+          gemCost: DecimalSnapshot;
+        }[];
+      };
+    };
   };
 };
 
@@ -529,4 +552,72 @@ it("composes source pickaxe crafts and each intermediate save snapshot", () => {
   expect(
     bulkReplacement?.saveSnapshots.map(({ pickaxe }) => pickaxe.name),
   ).toEqual(["Bad Mud Pick", "Sturdy Mud Pick"]);
+});
+
+it("matches source Gem Waster craft controls and click transitions", () => {
+  const reference = corpus.data.pickaxeCraftingSemantics.craftControls;
+  expect(reference.controlSourcePaths).toEqual([
+    "index.html",
+    "Scripts/Define/functions.js",
+    "Scripts/Define/game.js",
+  ]);
+
+  for (const scenario of reference.controls) {
+    const state = createInitialRemixSimulationState(
+      corpus.data.mineObjectCatalog,
+    );
+    state.usedGemsLevel = scenario.input.usedGemsLevel;
+    state.upgrades.money.gemWaster = scenario.input.moneyGemWasterLevel;
+    state.upgrades.gems.gemWaster = scenario.input.gemUpgradeWasterLevel;
+    const controls = getRemixCraftGemSelectionControls(state);
+    const buttons = controls.visible
+      ? [
+          {
+            disabled: controls.decreaseDisabled,
+            image: controls.showDecreaseIcon ? "Images/btn_left.png" : null,
+          },
+          {
+            disabled: controls.increaseDisabled,
+            image: controls.showIncreaseIcon ? "Images/btn_right.png" : null,
+          },
+        ]
+      : [];
+
+    expect(
+      {
+        displayedGemCost: controls.gemCost.toNumber().toLocaleString("en-us"),
+        gemCost: controls.gemCost.toString(),
+        buttons,
+      },
+      scenario.name,
+    ).toEqual({
+      displayedGemCost: scenario.displayedGemCost,
+      gemCost: scenario.gemCost.decimal,
+      buttons: scenario.buttons,
+    });
+  }
+
+  const state = createInitialRemixSimulationState(
+    corpus.data.mineObjectCatalog,
+  );
+  state.upgrades.money.gemWaster = 1;
+  state.upgrades.gems.gemWaster = 2;
+  state.usedGemsLevel = 1;
+
+  for (const scenario of reference.transitions) {
+    const result = performRemixSimulationAction({
+      state,
+      action: {
+        type: "changeCraftGemLevel",
+        direction: scenario.direction,
+      },
+    });
+    expect(result.type).toBe("changeCraftGemLevel");
+    expect(result.state.usedGemsLevel).toBe(scenario.usedGemsLevel);
+    expect(
+      getRemixCraftGemSelectionControls(result.state).gemCost.toString(),
+    ).toBe(scenario.gemCost.decimal);
+    expect(result.effects).toEqual([]);
+    Object.assign(state, result.state);
+  }
 });
