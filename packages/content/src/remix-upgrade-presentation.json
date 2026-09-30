@@ -1,0 +1,3267 @@
+{
+  "source": {
+    "name": "Idle Mine: Remix",
+    "url": "https://github.com/veprogames/idle-mine-remix",
+    "commit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+    "capturedOn": "2026-09-29",
+    "files": [
+      "Scripts/Define/game.js",
+      "Scripts/upgrade.js",
+      "Scripts/utils.js",
+      "Scripts/main.js"
+    ],
+    "licenseNotice": "MIT; Copyright (c) 2023 veprogames. See docs/knowledge/sources/licenses/idle-mine-remix-MIT.txt."
+  },
+  "groups": {
+    "money": {
+      "blacksmith": {
+        "name": "Blacksmith",
+        "description": "Increase the minimum Power of Pickaxes",
+        "image": "upgrades/blacksmith.png",
+        "resource": 0,
+        "maxLevel": "Infinity",
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "30", "mantissa": 3, "exponent": 1 },
+            "effect": { "decimal": "20", "mantissa": 2, "exponent": 1 },
+            "levelDisplay": "0",
+            "effectDisplay": "20 → 32",
+            "priceDisplay": "$ 30 "
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "111", "mantissa": 1.11, "exponent": 2 },
+            "effect": { "decimal": "31.8", "mantissa": 3.18, "exponent": 1 },
+            "levelDisplay": "1",
+            "effectDisplay": "32 → 44",
+            "priceDisplay": "$ 111 "
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "193.2", "mantissa": 1.932, "exponent": 2 },
+            "effect": {
+              "decimal": "43.762",
+              "mantissa": 4.3762,
+              "exponent": 1
+            },
+            "levelDisplay": "2",
+            "effectDisplay": "44 → 56",
+            "priceDisplay": "$ 193 "
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "276.84000000000003",
+              "mantissa": 2.7684,
+              "exponent": 2
+            },
+            "effect": {
+              "decimal": "55.90058",
+              "mantissa": 5.590058,
+              "exponent": 1
+            },
+            "levelDisplay": "3",
+            "effectDisplay": "56 → 68",
+            "priceDisplay": "$ 277 "
+          },
+          {
+            "level": 5,
+            "price": {
+              "decimal": "449.64959999999996",
+              "mantissa": 4.496496,
+              "exponent": 2
+            },
+            "effect": {
+              "decimal": "80.772479098",
+              "mantissa": 8.0772479098,
+              "exponent": 1
+            },
+            "levelDisplay": "5",
+            "effectDisplay": "81 → 94",
+            "priceDisplay": "$ 450 "
+          },
+          {
+            "level": 10,
+            "price": {
+              "decimal": "935.7520926719999",
+              "mantissa": 9.35752092672,
+              "exponent": 2
+            },
+            "effect": {
+              "decimal": "147.347273491842",
+              "mantissa": 1.47347273491842,
+              "exponent": 2
+            },
+            "levelDisplay": "10",
+            "effectDisplay": "147 → 162",
+            "priceDisplay": "$ 936 "
+          },
+          {
+            "level": 25,
+            "price": {
+              "decimal": "4736.88649932207",
+              "mantissa": 4.73688649932207,
+              "exponent": 3
+            },
+            "effect": {
+              "decimal": "422.46161320806397",
+              "mantissa": 4.22461613208064,
+              "exponent": 2
+            },
+            "levelDisplay": "25",
+            "effectDisplay": "422 → 448",
+            "priceDisplay": "$ 4,737 "
+          },
+          {
+            "level": 50,
+            "price": {
+              "decimal": "276763.144500064",
+              "mantissa": 2.76763144500064,
+              "exponent": 5
+            },
+            "effect": {
+              "decimal": "1987.15040151639",
+              "mantissa": 1.98715040151639,
+              "exponent": 3
+            },
+            "levelDisplay": "50",
+            "effectDisplay": "1,987 → 2,131",
+            "priceDisplay": "$ 276,763 "
+          },
+          {
+            "level": 100,
+            "price": {
+              "decimal": "2484546735.66043",
+              "mantissa": 2.48454673566043,
+              "exponent": 9
+            },
+            "effect": {
+              "decimal": "111580.815836518",
+              "mantissa": 1.11580815836518,
+              "exponent": 5
+            },
+            "levelDisplay": "100",
+            "effectDisplay": "111,581 → 121,543",
+            "priceDisplay": "$ 2,484,546,736 "
+          }
+        ]
+      },
+      "blacksmithSkill": {
+        "name": "Blacksmith Skill",
+        "description": "Increase the minimum Quality of Pickaxes",
+        "image": "upgrades/blacksmithskill.png",
+        "resource": 0,
+        "maxLevel": "Infinity",
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "80000", "mantissa": 8, "exponent": 4 },
+            "effect": { "decimal": "0.9", "mantissa": 9, "exponent": -1 },
+            "levelDisplay": "0",
+            "effectDisplay": "90% → 95%",
+            "priceDisplay": "$ 80,000 "
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "240000", "mantissa": 2.4, "exponent": 5 },
+            "effect": {
+              "decimal": "0.9500000000000001",
+              "mantissa": 9.5,
+              "exponent": -1
+            },
+            "levelDisplay": "1",
+            "effectDisplay": "95% → 100%",
+            "priceDisplay": "$ 240,000 "
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "720000", "mantissa": 7.2, "exponent": 5 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "2",
+            "effectDisplay": "100% → 105%",
+            "priceDisplay": "$ 720,000 "
+          },
+          {
+            "level": 3,
+            "price": { "decimal": "2160000", "mantissa": 2.16, "exponent": 6 },
+            "effect": { "decimal": "1.05", "mantissa": 1.05, "exponent": 0 },
+            "levelDisplay": "3",
+            "effectDisplay": "105% → 110%",
+            "priceDisplay": "$ 2,160,000 "
+          },
+          {
+            "level": 5,
+            "price": {
+              "decimal": "19440000",
+              "mantissa": 1.9440000000000002,
+              "exponent": 7
+            },
+            "effect": { "decimal": "1.15", "mantissa": 1.15, "exponent": 0 },
+            "levelDisplay": "5",
+            "effectDisplay": "115% → 120%",
+            "priceDisplay": "$ 19,440,000 "
+          },
+          {
+            "level": 10,
+            "price": {
+              "decimal": "4723920000",
+              "mantissa": 4.72392,
+              "exponent": 9
+            },
+            "effect": { "decimal": "1.4", "mantissa": 1.4, "exponent": 0 },
+            "levelDisplay": "10",
+            "effectDisplay": "140% → 145%",
+            "priceDisplay": "$ 4,723,920,000 "
+          },
+          {
+            "level": 25,
+            "price": {
+              "decimal": "67783088755440010",
+              "mantissa": 6.778308875544001,
+              "exponent": 16
+            },
+            "effect": { "decimal": "2.15", "mantissa": 2.15, "exponent": 0 },
+            "levelDisplay": "25",
+            "effectDisplay": "215% → 220%",
+            "priceDisplay": "$ 67.78 Qa "
+          },
+          {
+            "level": 50,
+            "price": {
+              "decimal": "5.743183901534821e+28",
+              "mantissa": 5.743183901534821,
+              "exponent": 28
+            },
+            "effect": { "decimal": "3.4", "mantissa": 3.4, "exponent": 0 },
+            "levelDisplay": "50",
+            "effectDisplay": "340% → 345%",
+            "priceDisplay": "$ 57.43 Oc "
+          },
+          {
+            "level": 100,
+            "price": {
+              "decimal": "4.12302016585609e+52",
+              "mantissa": 4.12302016585609,
+              "exponent": 52
+            },
+            "effect": { "decimal": "5.9", "mantissa": 5.9, "exponent": 0 },
+            "levelDisplay": "100",
+            "effectDisplay": "590% → 595%",
+            "priceDisplay": "$ 41.23 SxDc "
+          }
+        ]
+      },
+      "blacksmithBonus": {
+        "name": "Blacksmith Expertise",
+        "description": "25% Chance to get a Bonus on Pickaxes (+15% pow per bonus point)",
+        "image": "upgrades/blacksmithbonus.png",
+        "resource": 0,
+        "maxLevel": 10,
+        "stochasticEffect": true,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "1000000", "mantissa": 1, "exponent": 6 },
+            "effect": null,
+            "levelDisplay": "0/10",
+            "effectDisplay": "+0 → +1",
+            "priceDisplay": "$ 1,000,000 "
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "5000000", "mantissa": 5, "exponent": 6 },
+            "effect": null,
+            "levelDisplay": "1/10",
+            "effectDisplay": "+1 → +2",
+            "priceDisplay": "$ 5,000,000 "
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "25000000", "mantissa": 2.5, "exponent": 7 },
+            "effect": null,
+            "levelDisplay": "2/10",
+            "effectDisplay": "+2 → +3",
+            "priceDisplay": "$ 25,000,000 "
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "125000000",
+              "mantissa": 1.25,
+              "exponent": 8
+            },
+            "effect": null,
+            "levelDisplay": "3/10",
+            "effectDisplay": "+3 → +4",
+            "priceDisplay": "$ 125,000,000 "
+          },
+          {
+            "level": 9,
+            "price": {
+              "decimal": "1953125000000",
+              "mantissa": 1.953125,
+              "exponent": 12
+            },
+            "effect": null,
+            "levelDisplay": "9/10",
+            "effectDisplay": "+9 → +10",
+            "priceDisplay": "$ 1.95 T "
+          },
+          {
+            "level": 10,
+            "price": {
+              "decimal": "9765625000000",
+              "mantissa": 9.765625,
+              "exponent": 12
+            },
+            "effect": null,
+            "levelDisplay": "10/10",
+            "effectDisplay": "+10",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 11,
+            "price": {
+              "decimal": "48828125000000",
+              "mantissa": 4.8828125,
+              "exponent": 13
+            },
+            "effect": null,
+            "levelDisplay": "11/10",
+            "effectDisplay": "+11 → +12",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "gemChance": {
+        "name": "Gem Chance",
+        "description": "Increase the Chance to get Gems",
+        "image": "upgrades/gemchance.png",
+        "resource": 0,
+        "maxLevel": 20,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "200", "mantissa": 2, "exponent": 2 },
+            "effect": { "decimal": "0.02", "mantissa": 2, "exponent": -2 },
+            "levelDisplay": "0/20",
+            "effectDisplay": "2.0% → 2.4%",
+            "priceDisplay": "$ 200 "
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "500", "mantissa": 5, "exponent": 2 },
+            "effect": { "decimal": "0.024", "mantissa": 2.4, "exponent": -2 },
+            "levelDisplay": "1/20",
+            "effectDisplay": "2.4% → 2.8%",
+            "priceDisplay": "$ 500 "
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "1250", "mantissa": 1.25, "exponent": 3 },
+            "effect": {
+              "decimal": "0.027999999999999997",
+              "mantissa": 2.8,
+              "exponent": -2
+            },
+            "levelDisplay": "2/20",
+            "effectDisplay": "2.8% → 3.2%",
+            "priceDisplay": "$ 1,250 "
+          },
+          {
+            "level": 3,
+            "price": { "decimal": "3125", "mantissa": 3.125, "exponent": 3 },
+            "effect": { "decimal": "0.032", "mantissa": 3.2, "exponent": -2 },
+            "levelDisplay": "3/20",
+            "effectDisplay": "3.2% → 3.6%",
+            "priceDisplay": "$ 3,125 "
+          },
+          {
+            "level": 19,
+            "price": {
+              "decimal": "7275957614.183426",
+              "mantissa": 7.275957614183426,
+              "exponent": 9
+            },
+            "effect": { "decimal": "0.096", "mantissa": 9.6, "exponent": -2 },
+            "levelDisplay": "19/20",
+            "effectDisplay": "9.6% → 10.0%",
+            "priceDisplay": "$ 7,275,957,614 "
+          },
+          {
+            "level": 20,
+            "price": {
+              "decimal": "18189894035.458565",
+              "mantissa": 1.8189894035458565,
+              "exponent": 10
+            },
+            "effect": { "decimal": "0.1", "mantissa": 1, "exponent": -1 },
+            "levelDisplay": "20/20",
+            "effectDisplay": "10.0%",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 21,
+            "price": {
+              "decimal": "45474735088.64641",
+              "mantissa": 4.547473508864641,
+              "exponent": 10
+            },
+            "effect": {
+              "decimal": "0.10400000000000001",
+              "mantissa": 1.04,
+              "exponent": -1
+            },
+            "levelDisplay": "21/20",
+            "effectDisplay": "10.4% → 10.8%",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "activePower": {
+        "name": "Active Power",
+        "description": "Increase Click Damage",
+        "image": "upgrades/activepower.png",
+        "resource": 0,
+        "maxLevel": "Infinity",
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "1000", "mantissa": 1, "exponent": 3 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0",
+            "effectDisplay": "x1.00 → x1.18",
+            "priceDisplay": "$ 1,000 "
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "2000", "mantissa": 2, "exponent": 3 },
+            "effect": {
+              "decimal": "1.1844999999999999",
+              "mantissa": 1.1844999999999999,
+              "exponent": 0
+            },
+            "levelDisplay": "1",
+            "effectDisplay": "x1.18 → x1.38",
+            "priceDisplay": "$ 2,000 "
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "4000", "mantissa": 4, "exponent": 3 },
+            "effect": {
+              "decimal": "1.37917",
+              "mantissa": 1.37917,
+              "exponent": 0
+            },
+            "levelDisplay": "2",
+            "effectDisplay": "x1.38 → x1.58",
+            "priceDisplay": "$ 4,000 "
+          },
+          {
+            "level": 3,
+            "price": { "decimal": "8000", "mantissa": 8, "exponent": 3 },
+            "effect": {
+              "decimal": "1.58445415",
+              "mantissa": 1.58445415,
+              "exponent": 0
+            },
+            "levelDisplay": "3",
+            "effectDisplay": "x1.58 → x1.80",
+            "priceDisplay": "$ 8,000 "
+          },
+          {
+            "level": 5,
+            "price": { "decimal": "32000", "mantissa": 3.2, "exponent": 4 },
+            "effect": {
+              "decimal": "2.028729630025",
+              "mantissa": 2.028729630025,
+              "exponent": 0
+            },
+            "levelDisplay": "5",
+            "effectDisplay": "x2.03 → x2.27",
+            "priceDisplay": "$ 32,000 "
+          },
+          {
+            "level": 10,
+            "price": { "decimal": "1024000", "mantissa": 1.024, "exponent": 6 },
+            "effect": {
+              "decimal": "3.3597909483603057",
+              "mantissa": 3.3597909483603057,
+              "exponent": 0
+            },
+            "levelDisplay": "10",
+            "effectDisplay": "x3.36 → x3.67",
+            "priceDisplay": "$ 1,024,000 "
+          },
+          {
+            "level": 25,
+            "price": {
+              "decimal": "33554432000",
+              "mantissa": 3.3554432,
+              "exponent": 10
+            },
+            "effect": {
+              "decimal": "9.945445165857526",
+              "mantissa": 9.945445165857526,
+              "exponent": 0
+            },
+            "levelDisplay": "25",
+            "effectDisplay": "x9.95 → x10.57",
+            "priceDisplay": "$ 33,554,432,000 "
+          },
+          {
+            "level": 50,
+            "price": {
+              "decimal": "1125899906842624100",
+              "mantissa": 1.125899906842624,
+              "exponent": 18
+            },
+            "effect": {
+              "decimal": "37.263201159010315",
+              "mantissa": 3.7263201159010313,
+              "exponent": 1
+            },
+            "levelDisplay": "50",
+            "effectDisplay": "x37.26 → x39.06",
+            "priceDisplay": "$ 1.13 Qt "
+          },
+          {
+            "level": 100,
+            "price": {
+              "decimal": "1.2676506002282293e+33",
+              "mantissa": 1.2676506002282293,
+              "exponent": 33
+            },
+            "effect": {
+              "decimal": "307.49811169370076",
+              "mantissa": 3.074981116937008,
+              "exponent": 2
+            },
+            "levelDisplay": "100",
+            "effectDisplay": "x307.50 → x319.69",
+            "priceDisplay": "$ 1.27 Dc "
+          }
+        ]
+      },
+      "idlePower": {
+        "name": "Idle Power",
+        "description": "Increase Idle Click Damage",
+        "image": "upgrades/idlepower.png",
+        "resource": 0,
+        "maxLevel": "Infinity",
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "200", "mantissa": 2, "exponent": 2 },
+            "effect": { "decimal": "0.75", "mantissa": 7.5, "exponent": -1 },
+            "levelDisplay": "0",
+            "effectDisplay": "x0.75 → x1.03",
+            "priceDisplay": "$ 200 "
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "400", "mantissa": 4, "exponent": 2 },
+            "effect": { "decimal": "1.03", "mantissa": 1.03, "exponent": 0 },
+            "levelDisplay": "1",
+            "effectDisplay": "x1.03 → x1.33",
+            "priceDisplay": "$ 400 "
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "800", "mantissa": 8, "exponent": 2 },
+            "effect": {
+              "decimal": "1.326125",
+              "mantissa": 1.326125,
+              "exponent": 0
+            },
+            "levelDisplay": "2",
+            "effectDisplay": "x1.33 → x1.64",
+            "priceDisplay": "$ 800 "
+          },
+          {
+            "level": 3,
+            "price": { "decimal": "1600", "mantissa": 1.6, "exponent": 3 },
+            "effect": {
+              "decimal": "1.6390905",
+              "mantissa": 1.6390905,
+              "exponent": 0
+            },
+            "levelDisplay": "3",
+            "effectDisplay": "x1.64 → x1.97",
+            "priceDisplay": "$ 1,600 "
+          },
+          {
+            "level": 5,
+            "price": { "decimal": "6400", "mantissa": 6.4, "exponent": 3 },
+            "effect": {
+              "decimal": "2.3185481486",
+              "mantissa": 2.3185481486,
+              "exponent": 0
+            },
+            "levelDisplay": "5",
+            "effectDisplay": "x2.32 → x2.69",
+            "priceDisplay": "$ 6,400 "
+          },
+          {
+            "level": 10,
+            "price": { "decimal": "204800", "mantissa": 2.048, "exponent": 5 },
+            "effect": {
+              "decimal": "4.367728232868397",
+              "mantissa": 4.367728232868397,
+              "exponent": 0
+            },
+            "levelDisplay": "10",
+            "effectDisplay": "x4.37 → x4.84",
+            "priceDisplay": "$ 204,800 "
+          },
+          {
+            "level": 25,
+            "price": {
+              "decimal": "6710886400",
+              "mantissa": 6.7108864,
+              "exponent": 9
+            },
+            "effect": {
+              "decimal": "14.656445507579512",
+              "mantissa": 1.4656445507579512,
+              "exponent": 1
+            },
+            "levelDisplay": "25",
+            "effectDisplay": "x14.66 → x15.64",
+            "priceDisplay": "$ 6,710,886,400 "
+          },
+          {
+            "level": 50,
+            "price": {
+              "decimal": "225179981368524830",
+              "mantissa": 2.251799813685248,
+              "exponent": 17
+            },
+            "effect": {
+              "decimal": "58.08675474786902",
+              "mantissa": 5.808675474786902,
+              "exponent": 1
+            },
+            "levelDisplay": "50",
+            "effectDisplay": "x58.09 → x60.96",
+            "priceDisplay": "$ 225.18 Qa "
+          },
+          {
+            "level": 100,
+            "price": {
+              "decimal": "2.5353012004564586e+32",
+              "mantissa": 2.5353012004564586,
+              "exponent": 32
+            },
+            "effect": {
+              "decimal": "494.87977350704966",
+              "mantissa": 4.948797735070497,
+              "exponent": 2
+            },
+            "levelDisplay": "100",
+            "effectDisplay": "x494.88 → x514.67",
+            "priceDisplay": "$ 253.53 No "
+          }
+        ]
+      },
+      "idleSpeed": {
+        "name": "Idle Speed",
+        "description": "Increase Idle Click Speed",
+        "image": "upgrades/idlespeed.png",
+        "resource": 0,
+        "maxLevel": 60,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "50", "mantissa": 5, "exponent": 1 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0/60",
+            "effectDisplay": "1.00/s → 1.05/s",
+            "priceDisplay": "$ 50 "
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "110", "mantissa": 1.1, "exponent": 2 },
+            "effect": { "decimal": "1.05", "mantissa": 1.05, "exponent": 0 },
+            "levelDisplay": "1/60",
+            "effectDisplay": "1.05/s → 1.10/s",
+            "priceDisplay": "$ 110 "
+          },
+          {
+            "level": 2,
+            "price": {
+              "decimal": "242",
+              "mantissa": 2.4200000000000004,
+              "exponent": 2
+            },
+            "effect": {
+              "decimal": "1.1025",
+              "mantissa": 1.1025,
+              "exponent": 0
+            },
+            "levelDisplay": "2/60",
+            "effectDisplay": "1.10/s → 1.16/s",
+            "priceDisplay": "$ 242 "
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "532.4000000000002",
+              "mantissa": 5.324000000000002,
+              "exponent": 2
+            },
+            "effect": {
+              "decimal": "1.1576250000000001",
+              "mantissa": 1.1576250000000001,
+              "exponent": 0
+            },
+            "levelDisplay": "3/60",
+            "effectDisplay": "1.16/s → 1.22/s",
+            "priceDisplay": "$ 532 "
+          },
+          {
+            "level": 49,
+            "price": {
+              "decimal": "3003871598214220000",
+              "mantissa": 3.0038715982142197,
+              "exponent": 18
+            },
+            "effect": {
+              "decimal": "10.921333129289238",
+              "mantissa": 1.0921333129289237,
+              "exponent": 1
+            },
+            "levelDisplay": "49/60",
+            "effectDisplay": "10.92/s → 11.47/s",
+            "priceDisplay": "$ 3.00 Qt "
+          },
+          {
+            "level": 50,
+            "price": {
+              "decimal": "6608517516071283000",
+              "mantissa": 6.608517516071283,
+              "exponent": 18
+            },
+            "effect": {
+              "decimal": "11.4673997857537",
+              "mantissa": 1.14673997857537,
+              "exponent": 1
+            },
+            "levelDisplay": "50/60",
+            "effectDisplay": "11.47/s → 12.04/s",
+            "priceDisplay": "$ 6.61 Qt "
+          },
+          {
+            "level": 51,
+            "price": {
+              "decimal": "154808487924479520000",
+              "mantissa": 1.5480848792447952,
+              "exponent": 20
+            },
+            "effect": {
+              "decimal": "12.040769775041387",
+              "mantissa": 1.2040769775041387,
+              "exponent": 1
+            },
+            "levelDisplay": "51/60",
+            "effectDisplay": "12.04/s → 12.64/s",
+            "priceDisplay": "$ 154.81 Qt "
+          },
+          {
+            "level": 59,
+            "price": {
+              "decimal": "1.4038495109699671e+31",
+              "mantissa": 1.4038495109699671,
+              "exponent": 31
+            },
+            "effect": {
+              "decimal": "17.789700851545707",
+              "mantissa": 1.7789700851545707,
+              "exponent": 1
+            },
+            "levelDisplay": "59/60",
+            "effectDisplay": "17.79/s → 18.68/s",
+            "priceDisplay": "$ 14.04 No "
+          },
+          {
+            "level": 60,
+            "price": {
+              "decimal": "3.2886017104178067e+32",
+              "mantissa": 3.2886017104178067,
+              "exponent": 32
+            },
+            "effect": {
+              "decimal": "18.679185894122995",
+              "mantissa": 1.8679185894122994,
+              "exponent": 1
+            },
+            "levelDisplay": "60/60",
+            "effectDisplay": "18.68/s",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 61,
+            "price": {
+              "decimal": "7.70374682275634e+33",
+              "mantissa": 7.70374682275634,
+              "exponent": 33
+            },
+            "effect": {
+              "decimal": "19.613145188829144",
+              "mantissa": 1.9613145188829144,
+              "exponent": 1
+            },
+            "levelDisplay": "61/60",
+            "effectDisplay": "19.61/s → 20.59/s",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "gemWaster": {
+        "name": "Gem Waster",
+        "description": "Use more Gems at once to craft better Pickaxes",
+        "image": "upgrades/gemwaster.png",
+        "resource": 0,
+        "maxLevel": 10,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "90000000", "mantissa": 9, "exponent": 7 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0/10",
+            "effectDisplay": "1 → 3",
+            "priceDisplay": "$ 90,000,000 "
+          },
+          {
+            "level": 1,
+            "price": {
+              "decimal": "180000000000",
+              "mantissa": 1.8,
+              "exponent": 11
+            },
+            "effect": { "decimal": "3", "mantissa": 3, "exponent": 0 },
+            "levelDisplay": "1/10",
+            "effectDisplay": "3 → 10",
+            "priceDisplay": "$ 180,000,000,000 "
+          },
+          {
+            "level": 2,
+            "price": {
+              "decimal": "1.44e+21",
+              "mantissa": 1.44,
+              "exponent": 21
+            },
+            "effect": { "decimal": "10", "mantissa": 1, "exponent": 1 },
+            "levelDisplay": "2/10",
+            "effectDisplay": "10 → 35",
+            "priceDisplay": "$ 1.44 Sx "
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "4.608e+37",
+              "mantissa": 4.608,
+              "exponent": 37
+            },
+            "effect": { "decimal": "35", "mantissa": 3.5, "exponent": 1 },
+            "levelDisplay": "3/10",
+            "effectDisplay": "35 → 118",
+            "priceDisplay": "$ 46.08 UDc "
+          },
+          {
+            "level": 9,
+            "price": {
+              "decimal": "2.1760664753063326e+275",
+              "mantissa": 2.1760664753063326,
+              "exponent": 275
+            },
+            "effect": { "decimal": "46411", "mantissa": 4.6411, "exponent": 4 },
+            "levelDisplay": "9/10",
+            "effectDisplay": "46,411 → 153,157",
+            "priceDisplay": "$ 217.61 Nn "
+          },
+          {
+            "level": 10,
+            "price": {
+              "decimal": "1.1408855402054063e+338",
+              "mantissa": 1.1408855402054063,
+              "exponent": 338
+            },
+            "effect": {
+              "decimal": "153157",
+              "mantissa": 1.53157,
+              "exponent": 5
+            },
+            "levelDisplay": "10/10",
+            "effectDisplay": "153,157",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 11,
+            "price": {
+              "decimal": "2.3926103924128483e+407",
+              "mantissa": 2.3926103924128483,
+              "exponent": 407
+            },
+            "effect": {
+              "decimal": "505421",
+              "mantissa": 5.05421,
+              "exponent": 5
+            },
+            "levelDisplay": "11/10",
+            "effectDisplay": "505,421 → 1,667,889",
+            "priceDisplay": "Max"
+          }
+        ]
+      }
+    },
+    "gems": {
+      "blacksmith": {
+        "name": "Blacksmith+",
+        "description": "Make your blacksmith even stronger",
+        "image": "upgrades/blacksmith.png",
+        "resource": 1,
+        "maxLevel": "Infinity",
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "100", "mantissa": 1, "exponent": 2 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0",
+            "effectDisplay": "x1.00 → x1.08",
+            "priceDisplay": "100 Gems"
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "107", "mantissa": 1.07, "exponent": 2 },
+            "effect": { "decimal": "1.08", "mantissa": 1.08, "exponent": 0 },
+            "levelDisplay": "1",
+            "effectDisplay": "x1.08 → x1.17",
+            "priceDisplay": "107 Gems"
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "114", "mantissa": 1.14, "exponent": 2 },
+            "effect": {
+              "decimal": "1.1664",
+              "mantissa": 1.1664,
+              "exponent": 0
+            },
+            "levelDisplay": "2",
+            "effectDisplay": "x1.17 → x1.26",
+            "priceDisplay": "114 Gems"
+          },
+          {
+            "level": 3,
+            "price": { "decimal": "121", "mantissa": 1.21, "exponent": 2 },
+            "effect": {
+              "decimal": "1.2597120000000002",
+              "mantissa": 1.2597120000000002,
+              "exponent": 0
+            },
+            "levelDisplay": "3",
+            "effectDisplay": "x1.26 → x1.36",
+            "priceDisplay": "121 Gems"
+          },
+          {
+            "level": 5,
+            "price": { "decimal": "135", "mantissa": 1.35, "exponent": 2 },
+            "effect": {
+              "decimal": "1.4693280768000005",
+              "mantissa": 1.4693280768000005,
+              "exponent": 0
+            },
+            "levelDisplay": "5",
+            "effectDisplay": "x1.47 → x1.59",
+            "priceDisplay": "135 Gems"
+          },
+          {
+            "level": 10,
+            "price": { "decimal": "170", "mantissa": 1.7, "exponent": 2 },
+            "effect": {
+              "decimal": "2.158924997272788",
+              "mantissa": 2.158924997272788,
+              "exponent": 0
+            },
+            "levelDisplay": "10",
+            "effectDisplay": "x2.16 → x2.33",
+            "priceDisplay": "170 Gems"
+          },
+          {
+            "level": 24,
+            "price": { "decimal": "268", "mantissa": 2.68, "exponent": 2 },
+            "effect": {
+              "decimal": "6.341180737240117",
+              "mantissa": 6.341180737240117,
+              "exponent": 0
+            },
+            "levelDisplay": "24",
+            "effectDisplay": "x6.34 → x6.85",
+            "priceDisplay": "268 Gems"
+          },
+          {
+            "level": 25,
+            "price": { "decimal": "275", "mantissa": 2.75, "exponent": 2 },
+            "effect": {
+              "decimal": "6.8484751962193275",
+              "mantissa": 6.8484751962193275,
+              "exponent": 0
+            },
+            "levelDisplay": "25",
+            "effectDisplay": "x6.85 → x7.40",
+            "priceDisplay": "275 Gems"
+          },
+          {
+            "level": 26,
+            "price": {
+              "decimal": "289.04999999999995",
+              "mantissa": 2.8904999999999994,
+              "exponent": 2
+            },
+            "effect": {
+              "decimal": "7.396353211916874",
+              "mantissa": 7.396353211916874,
+              "exponent": 0
+            },
+            "levelDisplay": "26",
+            "effectDisplay": "x7.40 → x7.99",
+            "priceDisplay": "289 Gems"
+          },
+          {
+            "level": 50,
+            "price": {
+              "decimal": "834.2748442449682",
+              "mantissa": 8.342748442449682,
+              "exponent": 2
+            },
+            "effect": {
+              "decimal": "46.90161251323134",
+              "mantissa": 4.6901612513231346,
+              "exponent": 1
+            },
+            "levelDisplay": "50",
+            "effectDisplay": "x46.90 → x50.65",
+            "priceDisplay": "834 Gems"
+          },
+          {
+            "level": 100,
+            "price": {
+              "decimal": "5097.765940948782",
+              "mantissa": 5.097765940948783,
+              "exponent": 3
+            },
+            "effect": {
+              "decimal": "2199.7612563413",
+              "mantissa": 2.1997612563413,
+              "exponent": 3
+            },
+            "levelDisplay": "100",
+            "effectDisplay": "x2,200 → x2,376",
+            "priceDisplay": "5,098 Gems"
+          }
+        ]
+      },
+      "blacksmithSkill": {
+        "name": "Blacksmith Skill II",
+        "description": "Pickaxes get a High Quality Boost",
+        "image": "upgrades/blacksmithskill.png",
+        "resource": 1,
+        "maxLevel": 50,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "250", "mantissa": 2.5, "exponent": 2 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0/50",
+            "effectDisplay": "100.0% → 111.2%",
+            "priceDisplay": "250 Gems"
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "280", "mantissa": 2.8, "exponent": 2 },
+            "effect": {
+              "decimal": "1.111921679385002",
+              "mantissa": 1.111921679385002,
+              "exponent": 0
+            },
+            "levelDisplay": "1/50",
+            "effectDisplay": "111.2% → 122.5%",
+            "priceDisplay": "280 Gems"
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "310", "mantissa": 3.1, "exponent": 2 },
+            "effect": {
+              "decimal": "1.225001569067564",
+              "mantissa": 1.225001569067564,
+              "exponent": 0
+            },
+            "levelDisplay": "2/50",
+            "effectDisplay": "122.5% → 133.9%",
+            "priceDisplay": "310 Gems"
+          },
+          {
+            "level": 3,
+            "price": { "decimal": "350", "mantissa": 3.5, "exponent": 2 },
+            "effect": {
+              "decimal": "1.3391534529297504",
+              "mantissa": 1.3391534529297504,
+              "exponent": 0
+            },
+            "levelDisplay": "3/50",
+            "effectDisplay": "133.9% → 145.4%",
+            "priceDisplay": "350 Gems"
+          },
+          {
+            "level": 49,
+            "price": { "decimal": "65000", "mantissa": 6.5, "exponent": 4 },
+            "effect": {
+              "decimal": "7.211662172292825",
+              "mantissa": 7.211662172292825,
+              "exponent": 0
+            },
+            "levelDisplay": "49/50",
+            "effectDisplay": "721.2% → 734.8%",
+            "priceDisplay": "65,000 Gems"
+          },
+          {
+            "level": 50,
+            "price": { "decimal": "72000", "mantissa": 7.2, "exponent": 4 },
+            "effect": {
+              "decimal": "7.347847882138685",
+              "mantissa": 7.347847882138685,
+              "exponent": 0
+            },
+            "levelDisplay": "50/50",
+            "effectDisplay": "734.8%",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 51,
+            "price": { "decimal": "81000", "mantissa": 8.1, "exponent": 4 },
+            "effect": {
+              "decimal": "7.484290555383924",
+              "mantissa": 7.484290555383924,
+              "exponent": 0
+            },
+            "levelDisplay": "51/50",
+            "effectDisplay": "748.4% → 762.1%",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "idlePower": {
+        "name": "Idle Power II",
+        "description": "No more clicking needed! Idle Clicking gets even stronger",
+        "image": "upgrades/idlepower.png",
+        "resource": 1,
+        "maxLevel": 100,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "100", "mantissa": 1, "exponent": 2 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0/100",
+            "effectDisplay": "100.0% → 119.1%",
+            "priceDisplay": "100 Gems"
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "110", "mantissa": 1.1, "exponent": 2 },
+            "effect": {
+              "decimal": "1.191191419909692",
+              "mantissa": 1.191191419909692,
+              "exponent": 0
+            },
+            "levelDisplay": "1/100",
+            "effectDisplay": "119.1% → 138.9%",
+            "priceDisplay": "110 Gems"
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "120", "mantissa": 1.2, "exponent": 2 },
+            "effect": {
+              "decimal": "1.3887826697402006",
+              "mantissa": 1.3887826697402006,
+              "exponent": 0
+            },
+            "levelDisplay": "2/100",
+            "effectDisplay": "138.9% → 159.2%",
+            "priceDisplay": "120 Gems"
+          },
+          {
+            "level": 3,
+            "price": { "decimal": "130", "mantissa": 1.3, "exponent": 2 },
+            "effect": {
+              "decimal": "1.59221043255822",
+              "mantissa": 1.59221043255822,
+              "exponent": 0
+            },
+            "levelDisplay": "3/100",
+            "effectDisplay": "159.2% → 180.1%",
+            "priceDisplay": "130 Gems"
+          },
+          {
+            "level": 99,
+            "price": {
+              "decimal": "1774.899688920626",
+              "mantissa": 1.7748996889206259,
+              "exponent": 3
+            },
+            "effect": {
+              "decimal": "31.783127922330415",
+              "mantissa": 3.1783127922330414,
+              "exponent": 1
+            },
+            "levelDisplay": "99/100",
+            "effectDisplay": "3,178% → 3,216%",
+            "priceDisplay": "1,775 Gems"
+          },
+          {
+            "level": 100,
+            "price": {
+              "decimal": "1809.0950040282712",
+              "mantissa": 1.8090950040282712,
+              "exponent": 3
+            },
+            "effect": {
+              "decimal": "32.160100281114346",
+              "mantissa": 3.2160100281114343,
+              "exponent": 1
+            },
+            "levelDisplay": "100/100",
+            "effectDisplay": "3,216%",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 101,
+            "price": {
+              "decimal": "1843.796735469177",
+              "mantissa": 1.843796735469177,
+              "exponent": 3
+            },
+            "effect": {
+              "decimal": "32.53796359287007",
+              "mantissa": 3.253796359287007,
+              "exponent": 1
+            },
+            "levelDisplay": "101/100",
+            "effectDisplay": "3,254% → 3,292%",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "gemWaster": {
+        "name": "Gem Waster+",
+        "description": "Waste even more Gems! But are they even wasted?",
+        "image": "upgrades/gemwaster.png",
+        "resource": 1,
+        "maxLevel": 5,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "10000", "mantissa": 1, "exponent": 4 },
+            "effect": { "decimal": "0", "mantissa": 0, "exponent": 0 },
+            "levelDisplay": "0/5",
+            "effectDisplay": "+0 Level(s) → +1 Level(s)",
+            "priceDisplay": "10,000 Gems"
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "450000", "mantissa": 4.5, "exponent": 5 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "1/5",
+            "effectDisplay": "+1 Level(s) → +2 Level(s)",
+            "priceDisplay": "450,000 Gems"
+          },
+          {
+            "level": 2,
+            "price": {
+              "decimal": "20250000",
+              "mantissa": 2.025,
+              "exponent": 7
+            },
+            "effect": { "decimal": "2", "mantissa": 2, "exponent": 0 },
+            "levelDisplay": "2/5",
+            "effectDisplay": "+2 Level(s) → +3 Level(s)",
+            "priceDisplay": "20,250,000 Gems"
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "911250000.0000001",
+              "mantissa": 9.1125,
+              "exponent": 8
+            },
+            "effect": { "decimal": "3", "mantissa": 3, "exponent": 0 },
+            "levelDisplay": "3/5",
+            "effectDisplay": "+3 Level(s) → +4 Level(s)",
+            "priceDisplay": "911,250,000 Gems"
+          },
+          {
+            "level": 4,
+            "price": {
+              "decimal": "41006250000",
+              "mantissa": 4.100625,
+              "exponent": 10
+            },
+            "effect": { "decimal": "4", "mantissa": 4, "exponent": 0 },
+            "levelDisplay": "4/5",
+            "effectDisplay": "+4 Level(s) → +5 Level(s)",
+            "priceDisplay": "41,006,250,000 Gems"
+          },
+          {
+            "level": 5,
+            "price": {
+              "decimal": "1845281250000",
+              "mantissa": 1.84528125,
+              "exponent": 12
+            },
+            "effect": { "decimal": "5", "mantissa": 5, "exponent": 0 },
+            "levelDisplay": "5/5",
+            "effectDisplay": "+5 Level(s)",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 6,
+            "price": {
+              "decimal": "83037656250000",
+              "mantissa": 8.303765625,
+              "exponent": 13
+            },
+            "effect": { "decimal": "6", "mantissa": 6, "exponent": 0 },
+            "levelDisplay": "6/5",
+            "effectDisplay": "+6 Level(s) → +7 Level(s)",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "gemChance": {
+        "name": "Gem Chance II",
+        "description": "Increase the Chance to get Gems",
+        "image": "upgrades/gemchance.png",
+        "resource": 1,
+        "maxLevel": 80,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": {
+              "decimal": "185.69685298549516",
+              "mantissa": 1.8569685298549516,
+              "exponent": 2
+            },
+            "effect": { "decimal": "0", "mantissa": 0, "exponent": 0 },
+            "levelDisplay": "0/80",
+            "effectDisplay": "+0.00% → +0.50%",
+            "priceDisplay": "186 Gems"
+          },
+          {
+            "level": 1,
+            "price": {
+              "decimal": "347.84548339668675",
+              "mantissa": 3.4784548339668673,
+              "exponent": 2
+            },
+            "effect": { "decimal": "0.005", "mantissa": 5, "exponent": -3 },
+            "levelDisplay": "1/80",
+            "effectDisplay": "+0.50% → +1.00%",
+            "priceDisplay": "348 Gems"
+          },
+          {
+            "level": 2,
+            "price": {
+              "decimal": "532.2011292953264",
+              "mantissa": 5.322011292953263,
+              "exponent": 2
+            },
+            "effect": { "decimal": "0.01", "mantissa": 1, "exponent": -2 },
+            "levelDisplay": "2/80",
+            "effectDisplay": "+1.00% → +1.50%",
+            "priceDisplay": "532 Gems"
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "734.4113479235103",
+              "mantissa": 7.344113479235103,
+              "exponent": 2
+            },
+            "effect": { "decimal": "0.015", "mantissa": 1.5, "exponent": -2 },
+            "levelDisplay": "3/80",
+            "effectDisplay": "+1.50% → +2.00%",
+            "priceDisplay": "734 Gems"
+          },
+          {
+            "level": 29,
+            "price": {
+              "decimal": "9074.908704529775",
+              "mantissa": 9.074908704529774,
+              "exponent": 3
+            },
+            "effect": {
+              "decimal": "0.145",
+              "mantissa": 1.4499999999999997,
+              "exponent": -1
+            },
+            "levelDisplay": "29/80",
+            "effectDisplay": "+14.50% → +15.00%",
+            "priceDisplay": "9,075 Gems"
+          },
+          {
+            "level": 30,
+            "price": {
+              "decimal": "9472.227113850171",
+              "mantissa": 9.47222711385017,
+              "exponent": 3
+            },
+            "effect": {
+              "decimal": "0.15",
+              "mantissa": 1.4999999999999998,
+              "exponent": -1
+            },
+            "levelDisplay": "30/80",
+            "effectDisplay": "+15.00% → +15.50%",
+            "priceDisplay": "9,472 Gems"
+          },
+          {
+            "level": 31,
+            "price": {
+              "decimal": "11107.998794011426",
+              "mantissa": 1.1107998794011427,
+              "exponent": 4
+            },
+            "effect": {
+              "decimal": "0.155",
+              "mantissa": 1.5499999999999998,
+              "exponent": -1
+            },
+            "levelDisplay": "31/80",
+            "effectDisplay": "+15.50% → +16.00%",
+            "priceDisplay": "11,108 Gems"
+          },
+          {
+            "level": 79,
+            "price": {
+              "decimal": "10597920.068297202",
+              "mantissa": 1.0597920068297202,
+              "exponent": 7
+            },
+            "effect": { "decimal": "0.395", "mantissa": 3.95, "exponent": -1 },
+            "levelDisplay": "79/80",
+            "effectDisplay": "+39.50% → +40.00%",
+            "priceDisplay": "10,597,920 Gems"
+          },
+          {
+            "level": 80,
+            "price": {
+              "decimal": "12120443.500238186",
+              "mantissa": 1.2120443500238185,
+              "exponent": 7
+            },
+            "effect": { "decimal": "0.4", "mantissa": 4, "exponent": -1 },
+            "levelDisplay": "80/80",
+            "effectDisplay": "+40.00%",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 81,
+            "price": {
+              "decimal": "13858921.007217763",
+              "mantissa": 1.3858921007217764,
+              "exponent": 7
+            },
+            "effect": { "decimal": "0.405", "mantissa": 4.05, "exponent": -1 },
+            "levelDisplay": "81/80",
+            "effectDisplay": "+40.50% → +41.00%",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "gemMultiply": {
+        "name": "Gem Multiplication",
+        "description": "You find multiple gems, even though it should be just one",
+        "image": "upgrades/gemmulti.png",
+        "resource": 1,
+        "maxLevel": "Infinity",
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "1000", "mantissa": 1, "exponent": 3 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0",
+            "effectDisplay": "1 each → 2 each",
+            "priceDisplay": "1,000 Gems"
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "2250", "mantissa": 2.25, "exponent": 3 },
+            "effect": { "decimal": "2", "mantissa": 2, "exponent": 0 },
+            "levelDisplay": "1",
+            "effectDisplay": "2 each → 3 each",
+            "priceDisplay": "2,250 Gems"
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "3502.5", "mantissa": 3.5025, "exponent": 3 },
+            "effect": { "decimal": "3", "mantissa": 3, "exponent": 0 },
+            "levelDisplay": "2",
+            "effectDisplay": "3 each → 4 each",
+            "priceDisplay": "3,503 Gems"
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "4757.625",
+              "mantissa": 4.757625,
+              "exponent": 3
+            },
+            "effect": { "decimal": "4", "mantissa": 4, "exponent": 0 },
+            "levelDisplay": "3",
+            "effectDisplay": "4 each → 5 each",
+            "priceDisplay": "4,758 Gems"
+          },
+          {
+            "level": 5,
+            "price": {
+              "decimal": "7276.2815625",
+              "mantissa": 7.2762815625,
+              "exponent": 3
+            },
+            "effect": { "decimal": "6", "mantissa": 6, "exponent": 0 },
+            "levelDisplay": "5",
+            "effectDisplay": "6 each → 7 each",
+            "priceDisplay": "7,276 Gems"
+          },
+          {
+            "level": 10,
+            "price": {
+              "decimal": "13628.894626777399",
+              "mantissa": 1.36288946267774,
+              "exponent": 4
+            },
+            "effect": { "decimal": "12", "mantissa": 1.2, "exponent": 1 },
+            "levelDisplay": "10",
+            "effectDisplay": "12 each → 13 each",
+            "priceDisplay": "13,629 Gems"
+          },
+          {
+            "level": 25,
+            "price": {
+              "decimal": "33386.3549408994",
+              "mantissa": 3.33863549408994,
+              "exponent": 4
+            },
+            "effect": { "decimal": "28", "mantissa": 2.8, "exponent": 1 },
+            "levelDisplay": "25",
+            "effectDisplay": "28 each → 30 each",
+            "priceDisplay": "33,386 Gems"
+          },
+          {
+            "level": 50,
+            "price": {
+              "decimal": "71467.3997857537",
+              "mantissa": 7.14673997857537,
+              "exponent": 4
+            },
+            "effect": { "decimal": "61", "mantissa": 6.1, "exponent": 1 },
+            "levelDisplay": "50",
+            "effectDisplay": "61 each → 63 each",
+            "priceDisplay": "71,467 Gems"
+          },
+          {
+            "level": 100,
+            "price": {
+              "decimal": "251501.257846304",
+              "mantissa": 2.51501257846304,
+              "exponent": 5
+            },
+            "effect": { "decimal": "232", "mantissa": 2.32, "exponent": 2 },
+            "levelDisplay": "100",
+            "effectDisplay": "232 each → 239 each",
+            "priceDisplay": "251,501 Gems"
+          },
+          {
+            "level": 249,
+            "price": {
+              "decimal": "189156835.74752",
+              "mantissa": 1.8915683574752,
+              "exponent": 8
+            },
+            "effect": {
+              "decimal": "189107",
+              "mantissa": 1.89107,
+              "exponent": 5
+            },
+            "levelDisplay": "249",
+            "effectDisplay": "189,107 each → 198,551 each",
+            "priceDisplay": "189,156,836 Gems"
+          },
+          {
+            "level": 250,
+            "price": {
+              "decimal": "198600937.53489602",
+              "mantissa": 1.98600937534896,
+              "exponent": 8
+            },
+            "effect": {
+              "decimal": "198551",
+              "mantissa": 1.98551,
+              "exponent": 5
+            },
+            "levelDisplay": "250",
+            "effectDisplay": "198,551 each → 208,467 each",
+            "priceDisplay": "198,600,938 Gems"
+          },
+          {
+            "level": 251,
+            "price": {
+              "decimal": "212681504.09987298",
+              "mantissa": 2.12681504099873,
+              "exponent": 8
+            },
+            "effect": {
+              "decimal": "208467",
+              "mantissa": 2.08467,
+              "exponent": 5
+            },
+            "levelDisplay": "251",
+            "effectDisplay": "208,467 each → 218,879 each",
+            "priceDisplay": "212,681,504 Gems"
+          },
+          {
+            "level": 999,
+            "price": {
+              "decimal": "2.3533501288854515e+25",
+              "mantissa": 2.3533501288854515,
+              "exponent": 25
+            },
+            "effect": {
+              "decimal": "1.4726846864114214e+21",
+              "mantissa": 1.4726846864114214,
+              "exponent": 21
+            },
+            "levelDisplay": "999",
+            "effectDisplay": "1.47 Sx each → 1.55 Sx each",
+            "priceDisplay": "23.53 Sp Gems"
+          },
+          {
+            "level": 1000,
+            "price": {
+              "decimal": "2.474110273171188e+25",
+              "mantissa": 2.474110273171188,
+              "exponent": 25
+            },
+            "effect": {
+              "decimal": "1.5463189207319925e+21",
+              "mantissa": 1.5463189207319925,
+              "exponent": 21
+            },
+            "levelDisplay": "1000",
+            "effectDisplay": "1.55 Sx each → 1.62 Sx each",
+            "priceDisplay": "24.74 Sp Gems"
+          },
+          {
+            "level": 1001,
+            "price": {
+              "decimal": "2.6270736871289175e+25",
+              "mantissa": 2.6270736871289175,
+              "exponent": 25
+            },
+            "effect": {
+              "decimal": "1.6236348667685923e+21",
+              "mantissa": 1.6236348667685923,
+              "exponent": 21
+            },
+            "levelDisplay": "1001",
+            "effectDisplay": "1.62 Sx each → 1.70 Sx each",
+            "priceDisplay": "26.27 Sp Gems"
+          },
+          {
+            "level": 2499,
+            "price": {
+              "decimal": "6.5837875215802795e+58",
+              "mantissa": 6.5837875215802795,
+              "exponent": 58
+            },
+            "effect": {
+              "decimal": "8.9548512426349e+52",
+              "mantissa": 8.9548512426349,
+              "exponent": 52
+            },
+            "levelDisplay": "2499",
+            "effectDisplay": "89.55 SxDc each → 94.03 SxDc each",
+            "priceDisplay": "65.84 ODc Gems"
+          },
+          {
+            "level": 2500,
+            "price": {
+              "decimal": "6.9203090403082514e+58",
+              "mantissa": 6.9203090403082514,
+              "exponent": 58
+            },
+            "effect": {
+              "decimal": "9.402593804766646e+52",
+              "mantissa": 9.402593804766646,
+              "exponent": 52
+            },
+            "levelDisplay": "2500",
+            "effectDisplay": "94.03 SxDc each → 98.73 SxDc each",
+            "priceDisplay": "69.20 ODc Gems"
+          },
+          {
+            "level": 2501,
+            "price": {
+              "decimal": "7.419507735018357e+58",
+              "mantissa": 7.419507735018357,
+              "exponent": 58
+            },
+            "effect": {
+              "decimal": "9.872723495004978e+52",
+              "mantissa": 9.872723495004978,
+              "exponent": 52
+            },
+            "levelDisplay": "2501",
+            "effectDisplay": "98.73 SxDc each → 103.66 SxDc each",
+            "priceDisplay": "74.20 ODc Gems"
+          },
+          {
+            "level": 9999,
+            "price": {
+              "decimal": "2.0041316180524404e+221",
+              "mantissa": 2.0041316180524404,
+              "exponent": 221
+            },
+            "effect": {
+              "decimal": "7.443914912792492e+211",
+              "mantissa": 7.443914912792492,
+              "exponent": 211
+            },
+            "levelDisplay": "9999",
+            "effectDisplay": "74.44 NSe each → 78.16 NSe each",
+            "priceDisplay": "200.41 DSt Gems"
+          },
+          {
+            "level": 10000,
+            "price": {
+              "decimal": "2.105063060527308e+221",
+              "mantissa": 2.105063060527308,
+              "exponent": 221
+            },
+            "effect": {
+              "decimal": "7.816110658432116e+211",
+              "mantissa": 7.816110658432116,
+              "exponent": 211
+            },
+            "levelDisplay": "10000",
+            "effectDisplay": "78.16 NSe each → 82.07 NSe each",
+            "priceDisplay": "210.51 DSt Gems"
+          },
+          {
+            "level": 10001,
+            "price": {
+              "decimal": "2.215499646846604e+221",
+              "mantissa": 2.215499646846604,
+              "exponent": 221
+            },
+            "effect": {
+              "decimal": "8.206916191353724e+211",
+              "mantissa": 8.206916191353724,
+              "exponent": 211
+            },
+            "levelDisplay": "10001",
+            "effectDisplay": "82.07 NSe each → 86.17 NSe each",
+            "priceDisplay": "221.55 DSt Gems"
+          }
+        ]
+      },
+      "offlineGems": {
+        "name": "Offline Gems",
+        "description": "You earn Gems even when you are away",
+        "image": "upgrades/gemoffline.png",
+        "resource": 1,
+        "maxLevel": 15,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "4444", "mantissa": 4.444, "exponent": 3 },
+            "effect": { "decimal": "0", "mantissa": 0, "exponent": 0 },
+            "levelDisplay": "0/15",
+            "effectDisplay": "0% → 5%",
+            "priceDisplay": "4,444 Gems"
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "17776", "mantissa": 1.7776, "exponent": 4 },
+            "effect": { "decimal": "0.05", "mantissa": 5, "exponent": -2 },
+            "levelDisplay": "1/15",
+            "effectDisplay": "5% → 10%",
+            "priceDisplay": "17,776 Gems"
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "71104", "mantissa": 7.1104, "exponent": 4 },
+            "effect": { "decimal": "0.1", "mantissa": 1, "exponent": -1 },
+            "levelDisplay": "2/15",
+            "effectDisplay": "10% → 15%",
+            "priceDisplay": "71,104 Gems"
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "284416",
+              "mantissa": 2.84416,
+              "exponent": 5
+            },
+            "effect": {
+              "decimal": "0.15000000000000002",
+              "mantissa": 1.5000000000000002,
+              "exponent": -1
+            },
+            "levelDisplay": "3/15",
+            "effectDisplay": "15% → 20%",
+            "priceDisplay": "284,416 Gems"
+          },
+          {
+            "level": 14,
+            "price": {
+              "decimal": "1192927166464",
+              "mantissa": 1.192927166464,
+              "exponent": 12
+            },
+            "effect": {
+              "decimal": "0.7000000000000001",
+              "mantissa": 7,
+              "exponent": -1
+            },
+            "levelDisplay": "14/15",
+            "effectDisplay": "70% → 75%",
+            "priceDisplay": "1.19 T Gems"
+          },
+          {
+            "level": 15,
+            "price": {
+              "decimal": "4771708665856",
+              "mantissa": 4.771708665856,
+              "exponent": 12
+            },
+            "effect": { "decimal": "0.75", "mantissa": 7.5, "exponent": -1 },
+            "levelDisplay": "15/15",
+            "effectDisplay": "75%",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 16,
+            "price": {
+              "decimal": "19086834663424",
+              "mantissa": 1.9086834663424,
+              "exponent": 13
+            },
+            "effect": { "decimal": "0.8", "mantissa": 8, "exponent": -1 },
+            "levelDisplay": "16/15",
+            "effectDisplay": "80% → 85%",
+            "priceDisplay": "Max"
+          }
+        ]
+      }
+    },
+    "planetCoins": {
+      "activePower": {
+        "name": "Active Power",
+        "description": "Deal click damage relative to your Damage/s",
+        "image": "upgrades/activepower.png",
+        "resource": 2,
+        "maxLevel": 10,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "100", "mantissa": 1, "exponent": 2 },
+            "effect": { "decimal": "0", "mantissa": 0, "exponent": 0 },
+            "levelDisplay": "0/10",
+            "effectDisplay": "0% → 1%",
+            "priceDisplay": "100 Planet Coins"
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "1000", "mantissa": 1, "exponent": 3 },
+            "effect": { "decimal": "0.01", "mantissa": 1, "exponent": -2 },
+            "levelDisplay": "1/10",
+            "effectDisplay": "1% → 2%",
+            "priceDisplay": "1,000 Planet Coins"
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "10000", "mantissa": 1, "exponent": 4 },
+            "effect": { "decimal": "0.02", "mantissa": 2, "exponent": -2 },
+            "levelDisplay": "2/10",
+            "effectDisplay": "2% → 3%",
+            "priceDisplay": "10,000 Planet Coins"
+          },
+          {
+            "level": 3,
+            "price": { "decimal": "100000", "mantissa": 1, "exponent": 5 },
+            "effect": { "decimal": "0.03", "mantissa": 3, "exponent": -2 },
+            "levelDisplay": "3/10",
+            "effectDisplay": "3% → 4%",
+            "priceDisplay": "100,000 Planet Coins"
+          },
+          {
+            "level": 9,
+            "price": {
+              "decimal": "100000000000",
+              "mantissa": 1,
+              "exponent": 11
+            },
+            "effect": { "decimal": "0.09", "mantissa": 9, "exponent": -2 },
+            "levelDisplay": "9/10",
+            "effectDisplay": "9% → 10%",
+            "priceDisplay": "100,000,000,000 Planet Coins"
+          },
+          {
+            "level": 10,
+            "price": {
+              "decimal": "1000000000000",
+              "mantissa": 1,
+              "exponent": 12
+            },
+            "effect": { "decimal": "0.1", "mantissa": 1, "exponent": -1 },
+            "levelDisplay": "10/10",
+            "effectDisplay": "10%",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 11,
+            "price": {
+              "decimal": "10000000000000",
+              "mantissa": 1,
+              "exponent": 13
+            },
+            "effect": {
+              "decimal": "0.10999999999999999",
+              "mantissa": 1.0999999999999999,
+              "exponent": -1
+            },
+            "levelDisplay": "11/10",
+            "effectDisplay": "11% → 12%",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "gemMultiply": {
+        "name": "Gem Multiplication Multiplication",
+        "description": "You find multiple multiple gems, even though there should be just multiple gems",
+        "image": "upgrades/gemmultimulti.png",
+        "resource": 2,
+        "maxLevel": "Infinity",
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "100", "mantissa": 1, "exponent": 2 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0",
+            "effectDisplay": "x1.0 → x1.1",
+            "priceDisplay": "100 Planet Coins"
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "777", "mantissa": 7.77, "exponent": 2 },
+            "effect": { "decimal": "1.1", "mantissa": 1.1, "exponent": 0 },
+            "levelDisplay": "1",
+            "effectDisplay": "x1.1 → x1.2",
+            "priceDisplay": "777 Planet Coins"
+          },
+          {
+            "level": 2,
+            "price": {
+              "decimal": "6037.29",
+              "mantissa": 6.03729,
+              "exponent": 3
+            },
+            "effect": { "decimal": "1.2", "mantissa": 1.2, "exponent": 0 },
+            "levelDisplay": "2",
+            "effectDisplay": "x1.2 → x1.3",
+            "priceDisplay": "6,037 Planet Coins"
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "46909.743299999995",
+              "mantissa": 4.6909743299999995,
+              "exponent": 4
+            },
+            "effect": { "decimal": "1.3", "mantissa": 1.3, "exponent": 0 },
+            "levelDisplay": "3",
+            "effectDisplay": "x1.3 → x1.4",
+            "priceDisplay": "46,910 Planet Coins"
+          },
+          {
+            "level": 5,
+            "price": {
+              "decimal": "2832077.2412765687",
+              "mantissa": 2.832077241276569,
+              "exponent": 6
+            },
+            "effect": { "decimal": "1.5", "mantissa": 1.5, "exponent": 0 },
+            "levelDisplay": "5",
+            "effectDisplay": "x1.5 → x1.6",
+            "priceDisplay": "2,832,077 Planet Coins"
+          },
+          {
+            "level": 10,
+            "price": {
+              "decimal": "80206615005.56702",
+              "mantissa": 8.020661500556702,
+              "exponent": 10
+            },
+            "effect": { "decimal": "2", "mantissa": 2, "exponent": 0 },
+            "levelDisplay": "10",
+            "effectDisplay": "x2.0 → x2.1",
+            "priceDisplay": "80,206,615,006 Planet Coins"
+          },
+          {
+            "level": 25,
+            "price": {
+              "decimal": "1.821903918966488e+24",
+              "mantissa": 1.821903918966488,
+              "exponent": 24
+            },
+            "effect": { "decimal": "3.5", "mantissa": 3.5, "exponent": 0 },
+            "levelDisplay": "25",
+            "effectDisplay": "x3.5 → x3.6",
+            "priceDisplay": "1.82 Sp Planet Coins"
+          },
+          {
+            "level": 50,
+            "price": {
+              "decimal": "3.3193338899454474e+46",
+              "mantissa": 3.3193338899454474,
+              "exponent": 46
+            },
+            "effect": { "decimal": "6", "mantissa": 6, "exponent": 0 },
+            "levelDisplay": "50",
+            "effectDisplay": "x6.0 → x6.1",
+            "priceDisplay": "33.19 QaDc Planet Coins"
+          },
+          {
+            "level": 100,
+            "price": {
+              "decimal": "1.1017977472940377e+91",
+              "mantissa": 1.1017977472940377,
+              "exponent": 91
+            },
+            "effect": { "decimal": "11", "mantissa": 1.1, "exponent": 1 },
+            "levelDisplay": "100",
+            "effectDisplay": "x11.0 → x11.1",
+            "priceDisplay": "11.02 NVg Planet Coins"
+          }
+        ]
+      },
+      "lastObjGems": {
+        "name": "Gem Bonus",
+        "description": "The highest damageable Object drops more Gems",
+        "image": "upgrades/gembonus.png",
+        "resource": 2,
+        "maxLevel": 19,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "1000000", "mantissa": 1, "exponent": 6 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0/19",
+            "effectDisplay": "x1.0 → x2.0",
+            "priceDisplay": "1,000,000 Planet Coins"
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "100000000", "mantissa": 1, "exponent": 8 },
+            "effect": { "decimal": "2", "mantissa": 2, "exponent": 0 },
+            "levelDisplay": "1/19",
+            "effectDisplay": "x2.0 → x3.0",
+            "priceDisplay": "100,000,000 Planet Coins"
+          },
+          {
+            "level": 2,
+            "price": {
+              "decimal": "10000000000",
+              "mantissa": 1,
+              "exponent": 10
+            },
+            "effect": { "decimal": "3", "mantissa": 3, "exponent": 0 },
+            "levelDisplay": "2/19",
+            "effectDisplay": "x3.0 → x4.0",
+            "priceDisplay": "10,000,000,000 Planet Coins"
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "1000000000000",
+              "mantissa": 1,
+              "exponent": 12
+            },
+            "effect": { "decimal": "4", "mantissa": 4, "exponent": 0 },
+            "levelDisplay": "3/19",
+            "effectDisplay": "x4.0 → x5.0",
+            "priceDisplay": "1,000,000,000,000 Planet Coins"
+          },
+          {
+            "level": 18,
+            "price": { "decimal": "1e+42", "mantissa": 1, "exponent": 42 },
+            "effect": { "decimal": "19", "mantissa": 1.9, "exponent": 1 },
+            "levelDisplay": "18/19",
+            "effectDisplay": "x19.0 → x20.0",
+            "priceDisplay": "1.00 TDc Planet Coins"
+          },
+          {
+            "level": 19,
+            "price": { "decimal": "1e+44", "mantissa": 1, "exponent": 44 },
+            "effect": { "decimal": "20", "mantissa": 2, "exponent": 1 },
+            "levelDisplay": "19/19",
+            "effectDisplay": "x20.0",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 20,
+            "price": { "decimal": "1e+46", "mantissa": 1, "exponent": 46 },
+            "effect": { "decimal": "21", "mantissa": 2.1, "exponent": 1 },
+            "levelDisplay": "20/19",
+            "effectDisplay": "x21.0 → x22.0",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "gemChance": {
+        "name": "Gem Chance III",
+        "description": "Increase the Chance to get Gems even more",
+        "image": "upgrades/gemchance.png",
+        "resource": 2,
+        "maxLevel": 50,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "1000", "mantissa": 1, "exponent": 3 },
+            "effect": { "decimal": "0", "mantissa": 0, "exponent": 0 },
+            "levelDisplay": "0/50",
+            "effectDisplay": "+0.00% → +1.00%",
+            "priceDisplay": "1,000 Planet Coins"
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "1400", "mantissa": 1.4, "exponent": 3 },
+            "effect": { "decimal": "0.01", "mantissa": 1, "exponent": -2 },
+            "levelDisplay": "1/50",
+            "effectDisplay": "+1.00% → +2.00%",
+            "priceDisplay": "1,400 Planet Coins"
+          },
+          {
+            "level": 2,
+            "price": {
+              "decimal": "1960",
+              "mantissa": 1.9599999999999997,
+              "exponent": 3
+            },
+            "effect": { "decimal": "0.02", "mantissa": 2, "exponent": -2 },
+            "levelDisplay": "2/50",
+            "effectDisplay": "+2.00% → +3.00%",
+            "priceDisplay": "1,960 Planet Coins"
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "2744",
+              "mantissa": 2.7439999999999993,
+              "exponent": 3
+            },
+            "effect": { "decimal": "0.03", "mantissa": 3, "exponent": -2 },
+            "levelDisplay": "3/50",
+            "effectDisplay": "+3.00% → +4.00%",
+            "priceDisplay": "2,744 Planet Coins"
+          },
+          {
+            "level": 49,
+            "price": {
+              "decimal": "14463511599.831648",
+              "mantissa": 1.4463511599831649,
+              "exponent": 10
+            },
+            "effect": {
+              "decimal": "0.49",
+              "mantissa": 4.8999999999999995,
+              "exponent": -1
+            },
+            "levelDisplay": "49/50",
+            "effectDisplay": "+49.00% → +50.00%",
+            "priceDisplay": "14,463,511,600 Planet Coins"
+          },
+          {
+            "level": 50,
+            "price": {
+              "decimal": "20248916239.76431",
+              "mantissa": 2.0248916239764307,
+              "exponent": 10
+            },
+            "effect": { "decimal": "0.5", "mantissa": 5, "exponent": -1 },
+            "levelDisplay": "50/50",
+            "effectDisplay": "+50.00%",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 51,
+            "price": {
+              "decimal": "28348482735.670025",
+              "mantissa": 2.8348482735670024,
+              "exponent": 10
+            },
+            "effect": { "decimal": "0.51", "mantissa": 5.1, "exponent": -1 },
+            "levelDisplay": "51/50",
+            "effectDisplay": "+51.00% → +52.00%",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "offlinePC": {
+        "name": "Offline Planet Coins",
+        "description": "You earn Planet Coins even when you are away",
+        "image": "upgrades/pcoffline.png",
+        "resource": 2,
+        "maxLevel": 10,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "10000", "mantissa": 1, "exponent": 4 },
+            "effect": { "decimal": "0", "mantissa": 0, "exponent": 0 },
+            "levelDisplay": "0/10",
+            "effectDisplay": "0% → 5%",
+            "priceDisplay": "10,000 Planet Coins"
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "100000", "mantissa": 1, "exponent": 5 },
+            "effect": { "decimal": "0.05", "mantissa": 5, "exponent": -2 },
+            "levelDisplay": "1/10",
+            "effectDisplay": "5% → 10%",
+            "priceDisplay": "100,000 Planet Coins"
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "1000000", "mantissa": 1, "exponent": 6 },
+            "effect": { "decimal": "0.1", "mantissa": 1, "exponent": -1 },
+            "levelDisplay": "2/10",
+            "effectDisplay": "10% → 15%",
+            "priceDisplay": "1,000,000 Planet Coins"
+          },
+          {
+            "level": 3,
+            "price": { "decimal": "10000000", "mantissa": 1, "exponent": 7 },
+            "effect": {
+              "decimal": "0.15000000000000002",
+              "mantissa": 1.5000000000000002,
+              "exponent": -1
+            },
+            "levelDisplay": "3/10",
+            "effectDisplay": "15% → 20%",
+            "priceDisplay": "10,000,000 Planet Coins"
+          },
+          {
+            "level": 9,
+            "price": {
+              "decimal": "10000000000000",
+              "mantissa": 1,
+              "exponent": 13
+            },
+            "effect": { "decimal": "0.45", "mantissa": 4.5, "exponent": -1 },
+            "levelDisplay": "9/10",
+            "effectDisplay": "45% → 50%",
+            "priceDisplay": "10.00 T Planet Coins"
+          },
+          {
+            "level": 10,
+            "price": {
+              "decimal": "100000000000000",
+              "mantissa": 1,
+              "exponent": 14
+            },
+            "effect": { "decimal": "0.5", "mantissa": 5, "exponent": -1 },
+            "levelDisplay": "10/10",
+            "effectDisplay": "50%",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 11,
+            "price": {
+              "decimal": "1000000000000000",
+              "mantissa": 1,
+              "exponent": 15
+            },
+            "effect": { "decimal": "0.55", "mantissa": 5.5, "exponent": -1 },
+            "levelDisplay": "11/10",
+            "effectDisplay": "55% → 60%",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "offlineTime": {
+        "name": "Offline Time",
+        "description": "Increase the max offline time",
+        "image": "upgrades/offlinetime.png",
+        "resource": 2,
+        "maxLevel": 42,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "10000", "mantissa": 1, "exponent": 4 },
+            "effect": { "decimal": "0", "mantissa": 0, "exponent": 0 },
+            "levelDisplay": "0/42",
+            "effectDisplay": "+0h → +1h",
+            "priceDisplay": "10,000 Planet Coins"
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "40000", "mantissa": 4, "exponent": 4 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "1/42",
+            "effectDisplay": "+1h → +2h",
+            "priceDisplay": "40,000 Planet Coins"
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "160000", "mantissa": 1.6, "exponent": 5 },
+            "effect": { "decimal": "2", "mantissa": 2, "exponent": 0 },
+            "levelDisplay": "2/42",
+            "effectDisplay": "+2h → +3h",
+            "priceDisplay": "160,000 Planet Coins"
+          },
+          {
+            "level": 3,
+            "price": { "decimal": "640000", "mantissa": 6.4, "exponent": 5 },
+            "effect": { "decimal": "3", "mantissa": 3, "exponent": 0 },
+            "levelDisplay": "3/42",
+            "effectDisplay": "+3h → +4h",
+            "priceDisplay": "640,000 Planet Coins"
+          },
+          {
+            "level": 41,
+            "price": {
+              "decimal": "4.835703278458517e+28",
+              "mantissa": 4.835703278458517,
+              "exponent": 28
+            },
+            "effect": { "decimal": "41", "mantissa": 4.1, "exponent": 1 },
+            "levelDisplay": "41/42",
+            "effectDisplay": "+41h → +42h",
+            "priceDisplay": "48.36 Oc Planet Coins"
+          },
+          {
+            "level": 42,
+            "price": {
+              "decimal": "1.9342813113834065e+29",
+              "mantissa": 1.9342813113834065,
+              "exponent": 29
+            },
+            "effect": { "decimal": "42", "mantissa": 4.2, "exponent": 1 },
+            "levelDisplay": "42/42",
+            "effectDisplay": "+42h",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 43,
+            "price": {
+              "decimal": "7.737125245533626e+29",
+              "mantissa": 7.737125245533626,
+              "exponent": 29
+            },
+            "effect": { "decimal": "43", "mantissa": 4.3, "exponent": 1 },
+            "levelDisplay": "43/42",
+            "effectDisplay": "+43h → +44h",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "bulkCraft": {
+        "name": "Bulk Crafting",
+        "description": "Bulk Craft Pickaxes by pressing Shift while crafting",
+        "image": "upgrades/bulkcraft.png",
+        "resource": 2,
+        "maxLevel": 99,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": {
+              "decimal": "1000000000000",
+              "mantissa": 1,
+              "exponent": 12
+            },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0/99",
+            "effectDisplay": "1 at once → 2 at once",
+            "priceDisplay": "1,000,000,000,000 Planet Coins"
+          },
+          {
+            "level": 1,
+            "price": {
+              "decimal": "10000000000000",
+              "mantissa": 1,
+              "exponent": 13
+            },
+            "effect": { "decimal": "2", "mantissa": 2, "exponent": 0 },
+            "levelDisplay": "1/99",
+            "effectDisplay": "2 at once → 3 at once",
+            "priceDisplay": "10.00 T Planet Coins"
+          },
+          {
+            "level": 2,
+            "price": {
+              "decimal": "100000000000000",
+              "mantissa": 1,
+              "exponent": 14
+            },
+            "effect": { "decimal": "3", "mantissa": 3, "exponent": 0 },
+            "levelDisplay": "2/99",
+            "effectDisplay": "3 at once → 4 at once",
+            "priceDisplay": "100.00 T Planet Coins"
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "1000000000000000",
+              "mantissa": 1,
+              "exponent": 15
+            },
+            "effect": { "decimal": "4", "mantissa": 4, "exponent": 0 },
+            "levelDisplay": "3/99",
+            "effectDisplay": "4 at once → 5 at once",
+            "priceDisplay": "1.00 Qa Planet Coins"
+          },
+          {
+            "level": 98,
+            "price": { "decimal": "1e+110", "mantissa": 1, "exponent": 110 },
+            "effect": { "decimal": "99", "mantissa": 9.9, "exponent": 1 },
+            "levelDisplay": "98/99",
+            "effectDisplay": "99 at once → 100 at once",
+            "priceDisplay": "100.00 QtTg Planet Coins"
+          },
+          {
+            "level": 99,
+            "price": { "decimal": "1e+111", "mantissa": 1, "exponent": 111 },
+            "effect": { "decimal": "100", "mantissa": 1, "exponent": 2 },
+            "levelDisplay": "99/99",
+            "effectDisplay": "100 at once",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 100,
+            "price": { "decimal": "1e+112", "mantissa": 1, "exponent": 112 },
+            "effect": { "decimal": "101", "mantissa": 1.01, "exponent": 2 },
+            "levelDisplay": "100/99",
+            "effectDisplay": "101 at once → 102 at once",
+            "priceDisplay": "Max"
+          }
+        ]
+      }
+    },
+    "wisdom": {
+      "powerPowerActive": {
+        "name": "Power Power (Active)",
+        "description": "Mine to Mine faster! Multiply your Power of Mining with each active click",
+        "image": "upg_placeholder.png",
+        "resource": 3,
+        "maxLevel": "Infinity",
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0",
+            "effectDisplay": "100.0000% → 100.0050%",
+            "priceDisplay": "1 "
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "1000", "mantissa": 1, "exponent": 3 },
+            "effect": {
+              "decimal": "1.00005",
+              "mantissa": 1.00005,
+              "exponent": 0
+            },
+            "levelDisplay": "1",
+            "effectDisplay": "100.0050% → 100.0063%",
+            "priceDisplay": "1,000 "
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "1000000", "mantissa": 1, "exponent": 6 },
+            "effect": {
+              "decimal": "1.0000629960524947",
+              "mantissa": 1.0000629960524947,
+              "exponent": 0
+            },
+            "levelDisplay": "2",
+            "effectDisplay": "100.0063% → 100.0072%",
+            "priceDisplay": "1,000,000 "
+          },
+          {
+            "level": 3,
+            "price": { "decimal": "1000000000", "mantissa": 1, "exponent": 9 },
+            "effect": {
+              "decimal": "1.0000721124785155",
+              "mantissa": 1.0000721124785155,
+              "exponent": 0
+            },
+            "levelDisplay": "3",
+            "effectDisplay": "100.0072% → 100.0079%",
+            "priceDisplay": "1,000,000,000 "
+          },
+          {
+            "level": 5,
+            "price": {
+              "decimal": "1000000000000000",
+              "mantissa": 1,
+              "exponent": 15
+            },
+            "effect": {
+              "decimal": "1.0000854987973338",
+              "mantissa": 1.0000854987973338,
+              "exponent": 0
+            },
+            "levelDisplay": "5",
+            "effectDisplay": "100.0085% → 100.0091%",
+            "priceDisplay": "1.00 Qa "
+          },
+          {
+            "level": 10,
+            "price": { "decimal": "1e+30", "mantissa": 1, "exponent": 30 },
+            "effect": {
+              "decimal": "1.0001077217345016",
+              "mantissa": 1.0001077217345016,
+              "exponent": 0
+            },
+            "levelDisplay": "10",
+            "effectDisplay": "100.0108% → 100.0111%",
+            "priceDisplay": "1.00 No "
+          },
+          {
+            "level": 25,
+            "price": { "decimal": "1e+75", "mantissa": 1, "exponent": 75 },
+            "effect": {
+              "decimal": "1.0001462008869106",
+              "mantissa": 1.0001462008869106,
+              "exponent": 0
+            },
+            "levelDisplay": "25",
+            "effectDisplay": "100.0146% → 100.0148%",
+            "priceDisplay": "1.00 QaVg "
+          },
+          {
+            "level": 49,
+            "price": { "decimal": "1e+147", "mantissa": 1, "exponent": 147 },
+            "effect": {
+              "decimal": "1.0001829652855012",
+              "mantissa": 1.0001829652855012,
+              "exponent": 0
+            },
+            "levelDisplay": "49",
+            "effectDisplay": "100.0183% → 100.0184%",
+            "priceDisplay": "1.00 OQd "
+          },
+          {
+            "level": 50,
+            "price": { "decimal": "1e+150", "mantissa": 1, "exponent": 150 },
+            "effect": {
+              "decimal": "1.000184201574932",
+              "mantissa": 1.000184201574932,
+              "exponent": 0
+            },
+            "levelDisplay": "50",
+            "effectDisplay": "100.0184% → 100.0185%",
+            "priceDisplay": "1.00 NQd "
+          },
+          {
+            "level": 51,
+            "price": {
+              "decimal": "4.4668359215096896e+160",
+              "mantissa": 4.4668359215096896,
+              "exponent": 160
+            },
+            "effect": {
+              "decimal": "1.0001854214884633",
+              "mantissa": 1.0001854214884633,
+              "exponent": 0
+            },
+            "levelDisplay": "51",
+            "effectDisplay": "100.0185% → 100.0187%",
+            "priceDisplay": "44.67 DQi "
+          },
+          {
+            "level": 100,
+            "price": {
+              "decimal": "1.6593413132206454e+3440",
+              "mantissa": 1.6593413132206454,
+              "exponent": 3440
+            },
+            "effect": {
+              "decimal": "1.0002320794416806",
+              "mantissa": 1.0002320794416806,
+              "exponent": 0
+            },
+            "levelDisplay": "100",
+            "effectDisplay": "100.0232% → 100.0233%",
+            "priceDisplay": "165.93 MI-QtQdCe "
+          }
+        ]
+      },
+      "powerPowerIdle": {
+        "name": "Power Power (Idle)",
+        "description": "Learn without doing anything! Multiply your Power of Mining with each idle click",
+        "image": "upg_placeholder.png",
+        "resource": 3,
+        "maxLevel": "Infinity",
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "1000", "mantissa": 1, "exponent": 3 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0",
+            "effectDisplay": "100.0000% → 100.0020%",
+            "priceDisplay": "1,000 "
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "1000000", "mantissa": 1, "exponent": 6 },
+            "effect": {
+              "decimal": "1.00002",
+              "mantissa": 1.00002,
+              "exponent": 0
+            },
+            "levelDisplay": "1",
+            "effectDisplay": "100.0020% → 100.0025%",
+            "priceDisplay": "1,000,000 "
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "1000000000", "mantissa": 1, "exponent": 9 },
+            "effect": {
+              "decimal": "1.0000251984209978",
+              "mantissa": 1.0000251984209978,
+              "exponent": 0
+            },
+            "levelDisplay": "2",
+            "effectDisplay": "100.0025% → 100.0029%",
+            "priceDisplay": "1,000,000,000 "
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "1000000000000",
+              "mantissa": 1,
+              "exponent": 12
+            },
+            "effect": {
+              "decimal": "1.000028844991406",
+              "mantissa": 1.000028844991406,
+              "exponent": 0
+            },
+            "levelDisplay": "3",
+            "effectDisplay": "100.0029% → 100.0032%",
+            "priceDisplay": "1,000,000,000,000 "
+          },
+          {
+            "level": 5,
+            "price": {
+              "decimal": "1000000000000000000",
+              "mantissa": 1,
+              "exponent": 18
+            },
+            "effect": {
+              "decimal": "1.0000341995189335",
+              "mantissa": 1.0000341995189335,
+              "exponent": 0
+            },
+            "levelDisplay": "5",
+            "effectDisplay": "100.0034% → 100.0036%",
+            "priceDisplay": "1.00 Qt "
+          },
+          {
+            "level": 10,
+            "price": { "decimal": "1e+33", "mantissa": 1, "exponent": 33 },
+            "effect": {
+              "decimal": "1.0000430886938005",
+              "mantissa": 1.0000430886938005,
+              "exponent": 0
+            },
+            "levelDisplay": "10",
+            "effectDisplay": "100.0043% → 100.0044%",
+            "priceDisplay": "1.00 Dc "
+          },
+          {
+            "level": 25,
+            "price": { "decimal": "1e+78", "mantissa": 1, "exponent": 78 },
+            "effect": {
+              "decimal": "1.0000584803547643",
+              "mantissa": 1.0000584803547643,
+              "exponent": 0
+            },
+            "levelDisplay": "25",
+            "effectDisplay": "100.0058% → 100.0059%",
+            "priceDisplay": "1.00 QtVg "
+          },
+          {
+            "level": 49,
+            "price": { "decimal": "1e+150", "mantissa": 1, "exponent": 150 },
+            "effect": {
+              "decimal": "1.0000731861142005",
+              "mantissa": 1.0000731861142005,
+              "exponent": 0
+            },
+            "levelDisplay": "49",
+            "effectDisplay": "100.0073% → 100.0074%",
+            "priceDisplay": "1.00 NQd "
+          },
+          {
+            "level": 50,
+            "price": { "decimal": "1e+153", "mantissa": 1, "exponent": 153 },
+            "effect": {
+              "decimal": "1.0000736806299728",
+              "mantissa": 1.0000736806299728,
+              "exponent": 0
+            },
+            "levelDisplay": "50",
+            "effectDisplay": "100.0074% → 100.0074%",
+            "priceDisplay": "1.00 Qi "
+          },
+          {
+            "level": 51,
+            "price": {
+              "decimal": "6.309573444802098e+163",
+              "mantissa": 6.309573444802098,
+              "exponent": 163
+            },
+            "effect": {
+              "decimal": "1.0000741685953853",
+              "mantissa": 1.0000741685953853,
+              "exponent": 0
+            },
+            "levelDisplay": "51",
+            "effectDisplay": "100.0074% → 100.0075%",
+            "priceDisplay": "63.10 TQi "
+          },
+          {
+            "level": 100,
+            "price": {
+              "decimal": "4.189238473296087e+3474",
+              "mantissa": 4.189238473296087,
+              "exponent": 3474
+            },
+            "effect": {
+              "decimal": "1.0000928317766722",
+              "mantissa": 1.0000928317766722,
+              "exponent": 0
+            },
+            "levelDisplay": "100",
+            "effectDisplay": "100.0093% → 100.0093%",
+            "priceDisplay": "4.19 MI-SpQiCe "
+          }
+        ]
+      },
+      "damageBoost": {
+        "name": "Increasing Damage Boost",
+        "description": "Become smarter with every Mineral you discover. Deal more Idle Damage depending on highest Mineral reached",
+        "image": "upg_placeholder.png",
+        "resource": 3,
+        "maxLevel": 20,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": {
+              "decimal": "262144",
+              "mantissa": 2.62144,
+              "exponent": 5
+            },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0/20",
+            "effectDisplay": "x1.00 → x1.08",
+            "priceDisplay": "262,144 "
+          },
+          {
+            "level": 1,
+            "price": {
+              "decimal": "1554944255987.7378",
+              "mantissa": 1.5549442559877378,
+              "exponent": 12
+            },
+            "effect": { "decimal": "1.08", "mantissa": 1.08, "exponent": 0 },
+            "levelDisplay": "1/20",
+            "effectDisplay": "x1.08 → x2.22",
+            "priceDisplay": "1.55 T "
+          },
+          {
+            "level": 2,
+            "price": {
+              "decimal": "4.722366482869646e+21",
+              "mantissa": 4.722366482869646,
+              "exponent": 21
+            },
+            "effect": { "decimal": "2.22", "mantissa": 2.22, "exponent": 0 },
+            "levelDisplay": "2/20",
+            "effectDisplay": "x2.22 → x3.42",
+            "priceDisplay": "4.72 Sx "
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "7.343016637207171e+33",
+              "mantissa": 7.343016637207171,
+              "exponent": 33
+            },
+            "effect": {
+              "decimal": "3.4200000000000004",
+              "mantissa": 3.4200000000000004,
+              "exponent": 0
+            },
+            "levelDisplay": "3/20",
+            "effectDisplay": "x3.42 → x4.68",
+            "priceDisplay": "7.34 Dc "
+          },
+          {
+            "level": 19,
+            "price": {
+              "decimal": "2.477572632802903e+597",
+              "mantissa": 2.477572632802903,
+              "exponent": 597
+            },
+            "effect": {
+              "decimal": "30.78",
+              "mantissa": 3.0780000000000003,
+              "exponent": 1
+            },
+            "levelDisplay": "19/20",
+            "effectDisplay": "x30.78 → x33.00",
+            "priceDisplay": "2.48 ONnCe "
+          },
+          {
+            "level": 20,
+            "price": {
+              "decimal": "4.398762927097642e+655",
+              "mantissa": 4.398762927097642,
+              "exponent": 655
+            },
+            "effect": { "decimal": "33", "mantissa": 3.3, "exponent": 1 },
+            "levelDisplay": "20/20",
+            "effectDisplay": "x33.00",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 21,
+            "price": {
+              "decimal": "3.998569768129224e+716",
+              "mantissa": 3.998569768129224,
+              "exponent": 716
+            },
+            "effect": { "decimal": "35.28", "mantissa": 3.528, "exponent": 1 },
+            "levelDisplay": "21/20",
+            "effectDisplay": "x35.28 → x37.62",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "gemBoostSimple": {
+        "name": "Simple Gem Boost",
+        "description": "Just Boost Gems",
+        "image": "upg_placeholder.png",
+        "resource": 3,
+        "maxLevel": 10,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": {
+              "decimal": "10000000000",
+              "mantissa": 1,
+              "exponent": 10
+            },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0/10",
+            "effectDisplay": "x1 → x1.5",
+            "priceDisplay": "10,000,000,000 "
+          },
+          {
+            "level": 1,
+            "price": {
+              "decimal": "100000000000000000000",
+              "mantissa": 1,
+              "exponent": 20
+            },
+            "effect": { "decimal": "1.5", "mantissa": 1.5, "exponent": 0 },
+            "levelDisplay": "1/10",
+            "effectDisplay": "x1.5 → x2",
+            "priceDisplay": "100.00 Qt "
+          },
+          {
+            "level": 2,
+            "price": {
+              "decimal": "9.418182462037755e+32",
+              "mantissa": 9.418182462037755,
+              "exponent": 32
+            },
+            "effect": { "decimal": "2", "mantissa": 2, "exponent": 0 },
+            "levelDisplay": "2/10",
+            "effectDisplay": "x2 → x2.5",
+            "priceDisplay": "941.82 No "
+          },
+          {
+            "level": 3,
+            "price": {
+              "decimal": "2.354659903582603e+47",
+              "mantissa": 2.354659903582603,
+              "exponent": 47
+            },
+            "effect": { "decimal": "2.5", "mantissa": 2.5, "exponent": 0 },
+            "levelDisplay": "3/10",
+            "effectDisplay": "x2.5 → x3",
+            "priceDisplay": "235.47 QaDc "
+          },
+          {
+            "level": 9,
+            "price": {
+              "decimal": "4.635554083293704e+149",
+              "mantissa": 4.635554083293704,
+              "exponent": 149
+            },
+            "effect": { "decimal": "5.5", "mantissa": 5.5, "exponent": 0 },
+            "levelDisplay": "9/10",
+            "effectDisplay": "x5.5 → x6",
+            "priceDisplay": "463.56 OQd "
+          },
+          {
+            "level": 10,
+            "price": {
+              "decimal": "3.0854552082205484e+168",
+              "mantissa": 3.0854552082205484,
+              "exponent": 168
+            },
+            "effect": { "decimal": "6", "mantissa": 6, "exponent": 0 },
+            "levelDisplay": "10/10",
+            "effectDisplay": "x6",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 11,
+            "price": {
+              "decimal": "4.935933298415726e+187",
+              "mantissa": 4.935933298415726,
+              "exponent": 187
+            },
+            "effect": { "decimal": "6.5", "mantissa": 6.5, "exponent": 0 },
+            "levelDisplay": "11/10",
+            "effectDisplay": "x6.5 → x7",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "damageBoostUpgrades": {
+        "name": "Upgrade Damage Upgrade",
+        "description": "Deal More Damage depending on the amount of wisdom Upgrades bought",
+        "image": "upg_placeholder.png",
+        "resource": 3,
+        "maxLevel": 10,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "1e+50", "mantissa": 1, "exponent": 50 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0/10",
+            "effectDisplay": "x1.00 → x1.00",
+            "priceDisplay": "100.00 QtDc "
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "1e+75", "mantissa": 1, "exponent": 75 },
+            "effect": { "decimal": "1.05", "mantissa": 1.05, "exponent": 0 },
+            "levelDisplay": "1/10",
+            "effectDisplay": "x1.05 → x1.10",
+            "priceDisplay": "1.00 QaVg "
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "1e+100", "mantissa": 1, "exponent": 100 },
+            "effect": {
+              "decimal": "1.2100000000000002",
+              "mantissa": 1.2100000000000002,
+              "exponent": 0
+            },
+            "levelDisplay": "2/10",
+            "effectDisplay": "x1.21 → x1.32",
+            "priceDisplay": "10.00 DTg "
+          },
+          {
+            "level": 3,
+            "price": { "decimal": "1e+125", "mantissa": 1, "exponent": 125 },
+            "effect": {
+              "decimal": "1.5208749999999998",
+              "mantissa": 1.5208749999999998,
+              "exponent": 0
+            },
+            "levelDisplay": "3/10",
+            "effectDisplay": "x1.52 → x1.73",
+            "priceDisplay": "100.00 Qd "
+          },
+          {
+            "level": 9,
+            "price": { "decimal": "1e+275", "mantissa": 1, "exponent": 275 },
+            "effect": {
+              "decimal": "28.334269484119133",
+              "mantissa": 2.8334269484119132,
+              "exponent": 1
+            },
+            "levelDisplay": "9/10",
+            "effectDisplay": "x28.33 → x38.44",
+            "priceDisplay": "100.00 Nn "
+          },
+          {
+            "level": 10,
+            "price": { "decimal": "1e+300", "mantissa": 1, "exponent": 300 },
+            "effect": {
+              "decimal": "57.6650390625",
+              "mantissa": 5.76650390625,
+              "exponent": 1
+            },
+            "levelDisplay": "10/10",
+            "effectDisplay": "x57.67",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 11,
+            "price": { "decimal": "1e+325", "mantissa": 1, "exponent": 325 },
+            "effect": {
+              "decimal": "124.06482859572677",
+              "mantissa": 1.2406482859572676,
+              "exponent": 2
+            },
+            "levelDisplay": "11/10",
+            "effectDisplay": "x124.06 → x175.92",
+            "priceDisplay": "Max"
+          }
+        ]
+      },
+      "powerPowerPower": {
+        "name": "Power Power Power!",
+        "description": "Learn more as you learn more! Increase the Power of Power Power Upgrades",
+        "image": "upg_placeholder.png",
+        "resource": 3,
+        "maxLevel": "Infinity",
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "1e+100", "mantissa": 1, "exponent": 100 },
+            "effect": { "decimal": "1", "mantissa": 1, "exponent": 0 },
+            "levelDisplay": "0",
+            "effectDisplay": "x1.00 → x1.03",
+            "priceDisplay": "10.00 DTg "
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "1e+110", "mantissa": 1, "exponent": 110 },
+            "effect": { "decimal": "1.03", "mantissa": 1.03, "exponent": 0 },
+            "levelDisplay": "1",
+            "effectDisplay": "x1.03 → x1.06",
+            "priceDisplay": "100.00 QtTg "
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "1e+140", "mantissa": 1, "exponent": 140 },
+            "effect": { "decimal": "1.06", "mantissa": 1.06, "exponent": 0 },
+            "levelDisplay": "2",
+            "effectDisplay": "x1.06 → x1.09",
+            "priceDisplay": "100.00 QtQd "
+          },
+          {
+            "level": 3,
+            "price": { "decimal": "1e+190", "mantissa": 1, "exponent": 190 },
+            "effect": { "decimal": "1.09", "mantissa": 1.09, "exponent": 0 },
+            "levelDisplay": "3",
+            "effectDisplay": "x1.09 → x1.12",
+            "priceDisplay": "10.00 DSe "
+          },
+          {
+            "level": 5,
+            "price": { "decimal": "1e+350", "mantissa": 1, "exponent": 350 },
+            "effect": { "decimal": "1.15", "mantissa": 1.15, "exponent": 0 },
+            "levelDisplay": "5",
+            "effectDisplay": "x1.15 → x1.18",
+            "priceDisplay": "100.00 QtDcCe "
+          },
+          {
+            "level": 9,
+            "price": { "decimal": "1e+910", "mantissa": 1, "exponent": 910 },
+            "effect": { "decimal": "1.27", "mantissa": 1.27, "exponent": 0 },
+            "levelDisplay": "9",
+            "effectDisplay": "x1.27 → x1.30",
+            "priceDisplay": "10.00 DTc "
+          },
+          {
+            "level": 10,
+            "price": { "decimal": "1e+1100", "mantissa": 1, "exponent": 1100 },
+            "effect": { "decimal": "1.3", "mantissa": 1.3, "exponent": 0 },
+            "levelDisplay": "10",
+            "effectDisplay": "x1.30 → x1.33",
+            "priceDisplay": "100.00 QtSeTc "
+          },
+          {
+            "level": 11,
+            "price": { "decimal": "1e+1310", "mantissa": 1, "exponent": 1310 },
+            "effect": { "decimal": "1.33", "mantissa": 1.33, "exponent": 0 },
+            "levelDisplay": "11",
+            "effectDisplay": "x1.33 → x1.36",
+            "priceDisplay": "100.00 QtTgQe "
+          },
+          {
+            "level": 25,
+            "price": {
+              "decimal": "1e+95250",
+              "mantissa": 1,
+              "exponent": 95250
+            },
+            "effect": { "decimal": "1.75", "mantissa": 1.75, "exponent": 0 },
+            "levelDisplay": "25",
+            "effectDisplay": "x1.75 → x1.78",
+            "priceDisplay": "1.00 UTgMI-NQdSi "
+          },
+          {
+            "level": 50,
+            "price": {
+              "decimal": "1e+1004000",
+              "mantissa": 1,
+              "exponent": 1004000
+            },
+            "effect": { "decimal": "2.5", "mantissa": 2.5, "exponent": 0 },
+            "levelDisplay": "50",
+            "effectDisplay": "x2.50 → x2.53",
+            "priceDisplay": "100.00 QaTgTcMI-QtSeSc "
+          },
+          {
+            "level": 100,
+            "price": {
+              "decimal": "1e+9009000",
+              "mantissa": 1,
+              "exponent": 9009000
+            },
+            "effect": { "decimal": "4", "mantissa": 4, "exponent": 0 },
+            "levelDisplay": "100",
+            "effectDisplay": "x4.00 → x4.03",
+            "priceDisplay": "1.00 TMC-DMI-NNnNe "
+          }
+        ]
+      },
+      "powerResetKeep": {
+        "name": "Power Prestige Retainment",
+        "description": "Keep more of a power when prestiging it",
+        "image": "upg_placeholder.png",
+        "resource": 3,
+        "maxLevel": 10,
+        "stochasticEffect": false,
+        "samples": [
+          {
+            "level": 0,
+            "price": { "decimal": "1e+25", "mantissa": 1, "exponent": 25 },
+            "effect": { "decimal": "0.5", "mantissa": 5, "exponent": -1 },
+            "levelDisplay": "0/10",
+            "effectDisplay": "x^0.50 → x^0.55",
+            "priceDisplay": "10.00 Sp "
+          },
+          {
+            "level": 1,
+            "price": { "decimal": "1e+50", "mantissa": 1, "exponent": 50 },
+            "effect": { "decimal": "0.55", "mantissa": 5.5, "exponent": -1 },
+            "levelDisplay": "1/10",
+            "effectDisplay": "x^0.55 → x^0.60",
+            "priceDisplay": "100.00 QtDc "
+          },
+          {
+            "level": 2,
+            "price": { "decimal": "1e+125", "mantissa": 1, "exponent": 125 },
+            "effect": {
+              "decimal": "0.595",
+              "mantissa": 5.949999999999999,
+              "exponent": -1
+            },
+            "levelDisplay": "2/10",
+            "effectDisplay": "x^0.60 → x^0.64",
+            "priceDisplay": "100.00 Qd "
+          },
+          {
+            "level": 3,
+            "price": { "decimal": "1e+250", "mantissa": 1, "exponent": 250 },
+            "effect": {
+              "decimal": "0.6355",
+              "mantissa": 6.3549999999999995,
+              "exponent": -1
+            },
+            "levelDisplay": "3/10",
+            "effectDisplay": "x^0.64 → x^0.67",
+            "priceDisplay": "10.00 DOg "
+          },
+          {
+            "level": 9,
+            "price": { "decimal": "1e+2050", "mantissa": 1, "exponent": 2050 },
+            "effect": {
+              "decimal": "0.8062897554999999",
+              "mantissa": 8.062897555,
+              "exponent": -1
+            },
+            "levelDisplay": "9/10",
+            "effectDisplay": "x^0.81 → x^0.83",
+            "priceDisplay": "10.00 DOgSc "
+          },
+          {
+            "level": 10,
+            "price": { "decimal": "1e+2525", "mantissa": 1, "exponent": 2525 },
+            "effect": {
+              "decimal": "0.82566077995",
+              "mantissa": 8.2566077995,
+              "exponent": -1
+            },
+            "levelDisplay": "10/10",
+            "effectDisplay": "x^0.83",
+            "priceDisplay": "Max"
+          },
+          {
+            "level": 11,
+            "price": { "decimal": "1e+3050", "mantissa": 1, "exponent": 3050 },
+            "effect": {
+              "decimal": "0.8430947019549999",
+              "mantissa": 8.430947019549999,
+              "exponent": -1
+            },
+            "levelDisplay": "11/10",
+            "effectDisplay": "x^0.84 → x^0.86",
+            "priceDisplay": "Max"
+          }
+        ]
+      }
+    }
+  }
+}
