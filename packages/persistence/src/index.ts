@@ -28,6 +28,11 @@ export type {
   RemixBeyondSaveConfirmationEffect,
   RemixBeyondSaveStorageAdapter,
 } from "./remix-beyond-save-storage.js";
+export { loadRemixBeyondSaveIntoState } from "./remix-beyond-save-load.js";
+export type {
+  LoadRemixBeyondSaveIntoStateResult,
+  RemixBeyondSaveLoadEffect,
+} from "./remix-beyond-save-load.js";
 export { importRemixLegacySaveToBeyond } from "./remix-legacy-save-import.js";
 export type {
   ImportRemixLegacySaveToBeyondResult,

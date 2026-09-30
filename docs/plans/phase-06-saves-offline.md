@@ -1,6 +1,6 @@
 # Phase 6 — Saves and offline behavior
 
-Status: Planned after Phase 1. Current-save decoding, field application, pure offline-load orchestration, the strict Beyond v1 schema, legacy migration, and a backup-aware browser storage adapter are established prerequisites. Native storage, app wiring, UI, and future schema migrations remain future work.
+Status: Planned after Phase 1. Current-save decoding, field application, legacy migration, Beyond v1 storage/recovery, and v1 offline-load coordination are implemented prerequisites. Native storage, app startup/action wiring, UI, and future schema migrations remain future work.
 
 ## Outcome
 
@@ -8,7 +8,7 @@ Import legacy Remix saves into a versioned Beyond format, preserve recovery opti
 
 ## Entry evidence
 
-Legacy fields, encodings, defaults, missing fields, and offline caps are partially fixture-backed. A captured offline load migrates into Beyond v1 with the source effect order; schema validation, backup retention, invalid-primary recovery, and unknown-version refusal are tested.
+Legacy fields, encodings, defaults, missing fields, and offline caps are partially fixture-backed. Captured legacy import and Beyond v1 reload use the pinned offline outcome/effect-order fixture; schema validation, backup retention, invalid-primary recovery, and unknown-version refusal are tested.
 
 ## Validation
 
