@@ -29,6 +29,7 @@ RNG, clock/time, persistence, and platform integrations are explicit interfaces 
 | tests/e2e            | Browser workflows                                                                                                         |
 | tests/visual         | Screenshot baselines and diffs                                                                                            |
 | docs/knowledge       | Canonical project knowledge and evidence                                                                                  |
+| art/beyond           | Unshipped Beyond art pack (post-parity), mirrors the Remix Images tree; verified by the asset check                       |
 | scripts              | Reproducible repository operations                                                                                        |
 | .agents/skills       | Project-local Codex Skills                                                                                                |
 | .research            | Ignored, disposable, read-only upstream checkouts                                                                         |

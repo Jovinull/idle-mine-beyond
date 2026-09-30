@@ -25,6 +25,7 @@ See [criticisms and reports](criticisms-and-reports.md) for the research context
 
 - New story, content beyond existing procedural boundaries, post-Universe progression, challenges, new resources, and balance changes.
 - Richer visual effects while preserving the original presentation as a reference or mode.
+- Offer the redrawn [Beyond art pack](../../art/beyond/README.md) (mine-object atlas, UI icons, logos) as an opt-in art mode, keeping the unmodified Remix images as the default compatibility presentation. It follows the Remix atlas and image contract, so adoption is an image base-path switch, validated by the existing Story and Mining screenshot baselines in Remix mode.
 
 ## Gate
 

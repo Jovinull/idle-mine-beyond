@@ -98,3 +98,19 @@ The `storyTabSemantics` corpus field captures four `changeTab()` state/timer cas
 ## Pickaxe crafting implementation provenance
 
 `packages/core/src/remix-pickaxe-crafting.ts` and `packages/formatting` independently implement the pinned `Scripts/pickaxe.js`, `Scripts/utils.js`, `Scripts/Define/game.js`, and `Scripts/Define/functions.js` behavior. The `pickaxeCraftingSemantics` field contains controlled numeric outputs and synthetic transaction scenarios from the pinned browser runtime; no upstream JavaScript, player save, or artwork was copied. Generated names and source text remain derived behavior/content and carry the upstream MIT and inherited-material rights caveats recorded above.
+
+## Beyond art pack
+
+`art/beyond/` holds original Beyond artwork: a mine-object atlas, 24 UI icons, and two logos, at 1x and 2x, plus preview sheets. It is **not shipped**. It lives outside `apps/web/static`, and `scripts/check-beyond-art.mjs` fails if product source references it while its manifest status is `not-shipped`. Adopting it is a post-parity proposal and needs an approved behavioral exception first.
+
+| Field               | Record                                                                                                                                                                                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Item                | `art/beyond/Images/**`, `art/beyond/Images@2x/**`, `art/beyond/preview/*.png`                                                                                                                                                                                |
+| Origin              | Project-authored SVG drawing code in the local `idle-mine-beyond-art` lab, rasterized in headless Chromium. The lab commit is recorded in `art/beyond/manifest.json`.                                                                                        |
+| Relationship        | Newly drawn; no AI image generation, and no Remix pixels in any file. The Remix revision in the manifest was referenced only as a compatibility contract (file names, sizes, atlas layout, per-skin layer roles, object colors) and for side-by-side review. |
+| License/permission  | Project-owned artwork. The Montserrat Regular glyphs rendered into icon labels and logos are used under SIL OFL 1.1; the notice is adjacent to the copied font in `apps/web/static/fonts/montserrat`.                                                        |
+| Notice              | No Remix notice is needed for the pixels. Game names written on the art, such as "Idle Mine", remain under the brand caveat in the watch items above.                                                                                                        |
+| Product destination | None yet. A future opt-in art mode would serve `art/beyond/Images` in place of `apps/web/static/Images`.                                                                                                                                                     |
+| Decision            | Recorded 2026-09-30 as a pre-release project asset. Shipping stays gated by the behavioral-exception process and the distribution gate above.                                                                                                                |
+
+The lab repository is local and has no remote yet. Until it is published, the manifest's per-file SHA-256 values are the durable record of the approved outputs, and the drawing code is the only way to regenerate them.

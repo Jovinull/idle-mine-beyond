@@ -1,0 +1,460 @@
+{
+  "name": "Idle Mine Beyond art pack",
+  "status": "not-shipped",
+  "generator": {
+    "repository": "idle-mine-beyond-art (local art lab)",
+    "commit": "8e15d89c563c91dba441d3bca197bdc83a293a58",
+    "method": "Hand-authored SVG drawing code rasterized in headless Chromium; no AI image generation and no Remix pixels in any file.",
+    "fonts": [
+      "Montserrat Regular (SIL OFL 1.1), rendered into icon labels and logos from apps/web/static/fonts/montserrat"
+    ]
+  },
+  "reference": {
+    "repository": "https://github.com/veprogames/idle-mine-remix",
+    "commit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+    "use": "File names, image sizes, atlas layout, per-skin layer roles and object colors were used as the contract; Remix images were only compared against and are not copied into this pack."
+  },
+  "atlas": {
+    "path": "Images/stone_new.png",
+    "layers": 4,
+    "rows": 40,
+    "cell": [256, 256],
+    "art": [256, 224],
+    "drawnSkins": 36,
+    "emptyRows": [36, 37, 38, 39]
+  },
+  "files": [
+    {
+      "path": "Images@2x/btn_left.png",
+      "width": 256,
+      "height": 256,
+      "scale": 2,
+      "replaces": "Images/btn_left.png",
+      "sha256": "CEA39FDAB55FAAF2E9C8694ADFBB587416A1D7BFD3CB0F147EBD2E9C30177E32"
+    },
+    {
+      "path": "Images@2x/btn_right.png",
+      "width": 256,
+      "height": 256,
+      "scale": 2,
+      "replaces": "Images/btn_right.png",
+      "sha256": "D5E450ACA7345136B56CA4983EE5CABF850B0349462104012BD25C9D6A6C06A1"
+    },
+    {
+      "path": "Images@2x/gem.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/gem.png",
+      "sha256": "61202AC305C8EE8244AEBA33BB2318541368E1EEEEF79491196D9F9B215C5E33"
+    },
+    {
+      "path": "Images@2x/money.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/money.png",
+      "sha256": "3470B400485A786815B4DA60D0FA70545A70C511E33D5A38C6E00DCF933AAAAB"
+    },
+    {
+      "path": "Images@2x/pickaxe.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/pickaxe.png",
+      "sha256": "5ACBE8666516BD6A8336E18FEF974C1F9A4D05F349CD3A6E7671A147CCDF136A"
+    },
+    {
+      "path": "Images@2x/planetcoin.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/planetcoin.png",
+      "sha256": "FE1A5061CE9E211852BB86208E5B21F4223D6AFE5AA6753BD6BEB4F67E3E898B"
+    },
+    {
+      "path": "Images@2x/settings.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/settings.png",
+      "sha256": "52D21BE5FB3B20EFE8EFA83AB0E6F891CD021B70445B8E2EBDE3D683437F4ED3"
+    },
+    {
+      "path": "Images@2x/stone_new.png",
+      "width": 2048,
+      "height": 20480,
+      "scale": 2,
+      "replaces": "Images/stone_new.png",
+      "sha256": "89DA873EE5BD4F10AA160ADB84D33BC3B7F7B699E53543C038B0C70DB283EBFF"
+    },
+    {
+      "path": "Images@2x/story.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/story.png",
+      "sha256": "4FF73388F1FAF342E50075749314726C7C223EC9108785A7C060FD2ECFBE0B81"
+    },
+    {
+      "path": "Images@2x/upgrades/activepower.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/upgrades/activepower.png",
+      "sha256": "72709E23A81DB4016E66115A4E705721C087EDA4B67120E204CBB074AF3B2704"
+    },
+    {
+      "path": "Images@2x/upgrades/blacksmith.png",
+      "width": 256,
+      "height": 256,
+      "scale": 2,
+      "replaces": "Images/upgrades/blacksmith.png",
+      "sha256": "D68708DBBFCF0BFB8E41DDD5D38CA60BA0AD0B6EB948BA9B1F4A4B7334829611"
+    },
+    {
+      "path": "Images@2x/upgrades/blacksmithbonus.png",
+      "width": 256,
+      "height": 256,
+      "scale": 2,
+      "replaces": "Images/upgrades/blacksmithbonus.png",
+      "sha256": "070F1C0B22919ED3445334772553EF00E8BA71BDF725B0636C0DAD8659E9D095"
+    },
+    {
+      "path": "Images@2x/upgrades/blacksmithskill.png",
+      "width": 256,
+      "height": 256,
+      "scale": 2,
+      "replaces": "Images/upgrades/blacksmithskill.png",
+      "sha256": "73D762271114284003C433FABCE70EB952B1C21D717B658F0BBEA8164748DAC1"
+    },
+    {
+      "path": "Images@2x/upgrades/bulkcraft.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/upgrades/bulkcraft.png",
+      "sha256": "5C996CE49F597E3C3015179246888B4DE7C9B8188FBA8D80BD528F3D7D9BC77A"
+    },
+    {
+      "path": "Images@2x/upgrades/gembonus.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/upgrades/gembonus.png",
+      "sha256": "CC29F52AC3B50174759582E9B26B08E864547B9522375B163C24A3D58542D62F"
+    },
+    {
+      "path": "Images@2x/upgrades/gemchance.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/upgrades/gemchance.png",
+      "sha256": "412D9F902A3EF6641556C1F8731DD5D3C591090B31ABB28C286EE396B013735E"
+    },
+    {
+      "path": "Images@2x/upgrades/gemmulti.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/upgrades/gemmulti.png",
+      "sha256": "34C77E283CDB942E29F9B1C8B49B1C387A20EA9D3386622BC8042F7E4BC5871B"
+    },
+    {
+      "path": "Images@2x/upgrades/gemmultimulti.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/upgrades/gemmultimulti.png",
+      "sha256": "AC555C02582B522A6BC65619AEC374911FE33FB2FAE1DA384A7B7C328D434C90"
+    },
+    {
+      "path": "Images@2x/upgrades/gemoffline.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/upgrades/gemoffline.png",
+      "sha256": "F549E438B4431502E1B01B89B9CA836577EAB81C288001B9F56924F7531E8276"
+    },
+    {
+      "path": "Images@2x/upgrades/gemwaster.png",
+      "width": 256,
+      "height": 256,
+      "scale": 2,
+      "replaces": "Images/upgrades/gemwaster.png",
+      "sha256": "F45C8A92F83B03DC38810E6A65C34BC32C509FFD5E40D271EF73AA23EC6D9EBC"
+    },
+    {
+      "path": "Images@2x/upgrades/idlepower.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/upgrades/idlepower.png",
+      "sha256": "131EAABE9C2BA4726F7861B0273744967938C32FF60324AFB3BA8E9BE78F9930"
+    },
+    {
+      "path": "Images@2x/upgrades/idlespeed.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/upgrades/idlespeed.png",
+      "sha256": "222E41CCA758B82A7290076E979B03A2D3DE8C9C8CD3DB85D398971A05A7A1EF"
+    },
+    {
+      "path": "Images@2x/upgrades/offlinetime.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/upgrades/offlinetime.png",
+      "sha256": "E8773D73A9D4BB27C758AA0180ABE83E3942E6868C026F8E8FE390D77B5888F7"
+    },
+    {
+      "path": "Images@2x/upgrades/pcoffline.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/upgrades/pcoffline.png",
+      "sha256": "DD72C34100347867901EAE8599BCFDC8670FC00DE6A4C64555A966B4FFD9E11F"
+    },
+    {
+      "path": "Images@2x/wisdom.png",
+      "width": 384,
+      "height": 384,
+      "scale": 2,
+      "replaces": "Images/wisdom.png",
+      "sha256": "51C46D9352DEB2AF11F111A30747B2C3B48A724A26D4C4D8CFA7227B3AFE5D80"
+    },
+    {
+      "path": "Images/btn_left.png",
+      "width": 128,
+      "height": 128,
+      "scale": 1,
+      "replaces": "Images/btn_left.png",
+      "sha256": "53B1343A43D3B89D234394D52FBE40F4E405BC97D28FEBCDAE140B01BEB44EE9"
+    },
+    {
+      "path": "Images/btn_right.png",
+      "width": 128,
+      "height": 128,
+      "scale": 1,
+      "replaces": "Images/btn_right.png",
+      "sha256": "1EA4338CC536C96228A59ECDAB24DB83C46CD53E2FFB8E7A4C98CD5AA75C7E8E"
+    },
+    {
+      "path": "Images/gem.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/gem.png",
+      "sha256": "79CF02927BA3B9325A321A7006CC68A2C7B46930BAF64C74B9DA4A76109C8EA5"
+    },
+    {
+      "path": "Images/logo_wide.png",
+      "width": 1400,
+      "height": 800,
+      "scale": 1,
+      "replaces": "Images/logo_crazygames.png",
+      "sha256": "32F35D3E5DF6A605D091880A6E83CBF1EF878E8CE2B3C4C21BB5F2DAEBA74903"
+    },
+    {
+      "path": "Images/logo.png",
+      "width": 500,
+      "height": 400,
+      "scale": 1,
+      "replaces": "Images/logo.png",
+      "sha256": "928E5A777352EF274282747C0B0F7259D860CC2DB19B50883E881F3F6E81B36D"
+    },
+    {
+      "path": "Images/money.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/money.png",
+      "sha256": "A559BF4C399B63F7BDCD1EB485DCB02EEAC894287185313D58892E57A9608CAC"
+    },
+    {
+      "path": "Images/pickaxe.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/pickaxe.png",
+      "sha256": "AFA226FA4F68BD96498786E8F1FBA938F0998961175E31AF2513F72F32B28FAB"
+    },
+    {
+      "path": "Images/planetcoin.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/planetcoin.png",
+      "sha256": "BD976CC62F8F5DA772405C4B964A1F28CF59D7A47864C3F82287A6C827236A2B"
+    },
+    {
+      "path": "Images/settings.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/settings.png",
+      "sha256": "A12346AED7376860B6FC5ACFA91C81370D892AA0920633B677ECA3C0E8220018"
+    },
+    {
+      "path": "Images/stone_new.png",
+      "width": 1024,
+      "height": 10240,
+      "scale": 1,
+      "replaces": "Images/stone_new.png",
+      "sha256": "46A4633F2E6129767E4D6894B839955FC94EFC2285BB785E9B8EC86D11F9DF86"
+    },
+    {
+      "path": "Images/story.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/story.png",
+      "sha256": "8B1729292CC68CE83BA6C708FB8242C7F0CBE8CCD9B775C72382A6FA66C05687"
+    },
+    {
+      "path": "Images/upgrades/activepower.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/upgrades/activepower.png",
+      "sha256": "C915CE6A954B66E900458DA2525441B2D9596214F16F7DB513A700696AAB4295"
+    },
+    {
+      "path": "Images/upgrades/blacksmith.png",
+      "width": 128,
+      "height": 128,
+      "scale": 1,
+      "replaces": "Images/upgrades/blacksmith.png",
+      "sha256": "F49B253DD07F2C3448480D13C9F8D010F659CB455509448606B847CA0AE9B360"
+    },
+    {
+      "path": "Images/upgrades/blacksmithbonus.png",
+      "width": 128,
+      "height": 128,
+      "scale": 1,
+      "replaces": "Images/upgrades/blacksmithbonus.png",
+      "sha256": "5496EE11CEA275D06A4F84DCA066EE48F4E14292E29A1E080818FE853CA6B65E"
+    },
+    {
+      "path": "Images/upgrades/blacksmithskill.png",
+      "width": 128,
+      "height": 128,
+      "scale": 1,
+      "replaces": "Images/upgrades/blacksmithskill.png",
+      "sha256": "7FBCC5EDCD65B0B310C2B6D09FCE29B5CA2E1FEB505F54E7AC4F4824C4E1BD7A"
+    },
+    {
+      "path": "Images/upgrades/bulkcraft.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/upgrades/bulkcraft.png",
+      "sha256": "AAC0DB06B502F3C97670893AA5799E1E92BF24D93F243D70AD3E3F5A18EF53B4"
+    },
+    {
+      "path": "Images/upgrades/gembonus.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/upgrades/gembonus.png",
+      "sha256": "6088D06E8F6A7AE37A278D34E4CC6444A2D6F81DF6ABA1AB1B6F6D82C013D972"
+    },
+    {
+      "path": "Images/upgrades/gemchance.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/upgrades/gemchance.png",
+      "sha256": "F44E23AB7D4E0F8D0FBE6A70144D06328C0948305B67CD6872514E95478B8D3D"
+    },
+    {
+      "path": "Images/upgrades/gemmulti.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/upgrades/gemmulti.png",
+      "sha256": "373450C295CD28711582FFD33B252B9171EC5EA06B93BD893D37BE3306183202"
+    },
+    {
+      "path": "Images/upgrades/gemmultimulti.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/upgrades/gemmultimulti.png",
+      "sha256": "98B058C93FE071CCF97430EC4D2DF8386EC5AD93DA4AB9C19C15F929C014177B"
+    },
+    {
+      "path": "Images/upgrades/gemoffline.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/upgrades/gemoffline.png",
+      "sha256": "FEC8FF82F4714144E71C0EE2ADEF9EE5739DC9D5A5E0DD8993DDFEFD3D28E59A"
+    },
+    {
+      "path": "Images/upgrades/gemwaster.png",
+      "width": 128,
+      "height": 128,
+      "scale": 1,
+      "replaces": "Images/upgrades/gemwaster.png",
+      "sha256": "08A43DCF1753740282070E3CD94B5FD59519E0C59B4A08CFBB53756ED44C623E"
+    },
+    {
+      "path": "Images/upgrades/idlepower.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/upgrades/idlepower.png",
+      "sha256": "BDBBD31136D1F78E01A28D245742E7E71FFBB2BE3287AEA91C5B3BD4A7C6425B"
+    },
+    {
+      "path": "Images/upgrades/idlespeed.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/upgrades/idlespeed.png",
+      "sha256": "E80A01B0BAB0403E259C89DACC19F67C3F59D43F435F092CA88087CF395AEB48"
+    },
+    {
+      "path": "Images/upgrades/offlinetime.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/upgrades/offlinetime.png",
+      "sha256": "412E488868800BDA0363D667177F53A47DE496CFA43DA1E348F132893F351FDF"
+    },
+    {
+      "path": "Images/upgrades/pcoffline.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/upgrades/pcoffline.png",
+      "sha256": "28C446043413036EDE03536A8A250B5A56DD8815E3C565CA2A9D6662DCB496CF"
+    },
+    {
+      "path": "Images/wisdom.png",
+      "width": 192,
+      "height": 192,
+      "scale": 1,
+      "replaces": "Images/wisdom.png",
+      "sha256": "87CEF2E4E03904A700AFCCA0AA91EE9B89A7199ABE37B3EE853A2337B404A52A"
+    },
+    {
+      "path": "preview/skins.png",
+      "width": 1208,
+      "height": 1292,
+      "scale": 1,
+      "replaces": null,
+      "sha256": "9FD0E9CE0C18975FAE91FBC2B017E1155D9ADD4AC4171E0DF55AF2282D5C2B0B"
+    },
+    {
+      "path": "preview/ui.png",
+      "width": 2504,
+      "height": 232,
+      "scale": 1,
+      "replaces": null,
+      "sha256": "5099B786A5A1FEFE756E1A509E7C20EE43740508AD8012E7255AC551E2E0AA6F"
+    }
+  ]
+}
