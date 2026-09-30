@@ -56701,6 +56701,1002 @@
           "mineObjectLevel": 0
         }
       ],
+      "fieldApplicationErrors": [
+        {
+          "name": "json-null-root",
+          "inputJson": "null",
+          "encoded": "bnVsbA==",
+          "thrownErrorName": "TypeError",
+          "stateAfter": {
+            "money": {
+              "decimal": "77",
+              "mantissa": 7.7,
+              "exponent": 1
+            },
+            "mineObjectLevel": 3,
+            "highestMineObjectLevel": 3,
+            "story": {
+              "page": 7,
+              "notifications": 8,
+              "highestUnlocked": 9,
+              "scrollY": 10
+            },
+            "settings": {
+              "theme": "dark",
+              "numberFormatterIndex": 2
+            },
+            "upgradeLevels": {
+              "moneyIdleSpeed": 11,
+              "gemOfflineGems": 12,
+              "planetOfflinePC": 13,
+              "wisdomPowerPowerActive": 14
+            },
+            "powers": [
+              {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Probe Sentinel",
+              "power": {
+                "decimal": "23",
+                "mantissa": 2.3,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "null-story-after-resources",
+          "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":null}",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0FudWxsJTI1N0Q=",
+          "thrownErrorName": "TypeError",
+          "stateAfter": {
+            "money": {
+              "decimal": "123",
+              "mantissa": 1.23,
+              "exponent": 2
+            },
+            "mineObjectLevel": 4,
+            "highestMineObjectLevel": 9,
+            "story": {
+              "page": 7,
+              "notifications": 8,
+              "highestUnlocked": 9,
+              "scrollY": 10
+            },
+            "settings": {
+              "theme": "dark",
+              "numberFormatterIndex": 2
+            },
+            "upgradeLevels": {
+              "moneyIdleSpeed": 11,
+              "gemOfflineGems": 12,
+              "planetOfflinePC": 13,
+              "wisdomPowerPowerActive": 14
+            },
+            "powers": [
+              {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Probe Sentinel",
+              "power": {
+                "decimal": "23",
+                "mantissa": 2.3,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "null-settings-after-story",
+          "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"settings\":null}",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJzZXR0aW5ncyUyNTIyJTI1M0FudWxsJTI1N0Q=",
+          "thrownErrorName": "TypeError",
+          "stateAfter": {
+            "money": {
+              "decimal": "123",
+              "mantissa": 1.23,
+              "exponent": 2
+            },
+            "mineObjectLevel": 4,
+            "highestMineObjectLevel": 9,
+            "story": {
+              "page": 2,
+              "notifications": 3,
+              "highestUnlocked": 5,
+              "scrollY": 6
+            },
+            "settings": {
+              "theme": "dark",
+              "numberFormatterIndex": 2
+            },
+            "upgradeLevels": {
+              "moneyIdleSpeed": 11,
+              "gemOfflineGems": 12,
+              "planetOfflinePC": 13,
+              "wisdomPowerPowerActive": 14
+            },
+            "powers": [
+              {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Probe Sentinel",
+              "power": {
+                "decimal": "23",
+                "mantissa": 2.3,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "null-upgrades-after-settings",
+          "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"settings\":{\"numberFormatterIndex\":0,\"theme\":\"light\",\"showMineObjLevel\":false,\"showMinCraftDamage\":false},\"upgrades\":null}",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJzZXR0aW5ncyUyNTIyJTI1M0ElMjU3QiUyNTIybnVtYmVyRm9ybWF0dGVySW5kZXglMjUyMiUyNTNBMCUyNTJDJTI1MjJ0aGVtZSUyNTIyJTI1M0ElMjUyMmxpZ2h0JTI1MjIlMjUyQyUyNTIyc2hvd01pbmVPYmpMZXZlbCUyNTIyJTI1M0FmYWxzZSUyNTJDJTI1MjJzaG93TWluQ3JhZnREYW1hZ2UlMjUyMiUyNTNBZmFsc2UlMjU3RCUyNTJDJTI1MjJ1cGdyYWRlcyUyNTIyJTI1M0FudWxsJTI1N0Q=",
+          "thrownErrorName": "TypeError",
+          "stateAfter": {
+            "money": {
+              "decimal": "123",
+              "mantissa": 1.23,
+              "exponent": 2
+            },
+            "mineObjectLevel": 4,
+            "highestMineObjectLevel": 9,
+            "story": {
+              "page": 2,
+              "notifications": 3,
+              "highestUnlocked": 5,
+              "scrollY": 6
+            },
+            "settings": {
+              "theme": "light",
+              "numberFormatterIndex": 0
+            },
+            "upgradeLevels": {
+              "moneyIdleSpeed": 11,
+              "gemOfflineGems": 12,
+              "planetOfflinePC": 13,
+              "wisdomPowerPowerActive": 14
+            },
+            "powers": [
+              {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Probe Sentinel",
+              "power": {
+                "decimal": "23",
+                "mantissa": 2.3,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "unknown-upgrade-key",
+          "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"upgrades\":{\"retiredUpgrade\":{\"level\":1}}}",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJ1cGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIycmV0aXJlZFVwZ3JhZGUlMjUyMiUyNTNBJTI1N0IlMjUyMmxldmVsJTI1MjIlMjUzQTElMjU3RCUyNTdEJTI1N0Q=",
+          "thrownErrorName": "TypeError",
+          "stateAfter": {
+            "money": {
+              "decimal": "123",
+              "mantissa": 1.23,
+              "exponent": 2
+            },
+            "mineObjectLevel": 4,
+            "highestMineObjectLevel": 9,
+            "story": {
+              "page": 2,
+              "notifications": 3,
+              "highestUnlocked": 5,
+              "scrollY": 6
+            },
+            "settings": {
+              "theme": "dark",
+              "numberFormatterIndex": 2
+            },
+            "upgradeLevels": {
+              "moneyIdleSpeed": 11,
+              "gemOfflineGems": 12,
+              "planetOfflinePC": 13,
+              "wisdomPowerPowerActive": 14
+            },
+            "powers": [
+              {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Probe Sentinel",
+              "power": {
+                "decimal": "23",
+                "mantissa": 2.3,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "null-gem-upgrade-entry",
+          "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"upgrades\":{\"idleSpeed\":{\"level\":6}},\"gemUpgrades\":{\"offlineGems\":null}}",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJ1cGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIyaWRsZVNwZWVkJTI1MjIlMjUzQSUyNTdCJTI1MjJsZXZlbCUyNTIyJTI1M0E2JTI1N0QlMjU3RCUyNTJDJTI1MjJnZW1VcGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIyb2ZmbGluZUdlbXMlMjUyMiUyNTNBbnVsbCUyNTdEJTI1N0Q=",
+          "thrownErrorName": "TypeError",
+          "stateAfter": {
+            "money": {
+              "decimal": "123",
+              "mantissa": 1.23,
+              "exponent": 2
+            },
+            "mineObjectLevel": 4,
+            "highestMineObjectLevel": 9,
+            "story": {
+              "page": 2,
+              "notifications": 3,
+              "highestUnlocked": 5,
+              "scrollY": 6
+            },
+            "settings": {
+              "theme": "dark",
+              "numberFormatterIndex": 2
+            },
+            "upgradeLevels": {
+              "moneyIdleSpeed": 6,
+              "gemOfflineGems": 12,
+              "planetOfflinePC": 13,
+              "wisdomPowerPowerActive": 14
+            },
+            "powers": [
+              {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Probe Sentinel",
+              "power": {
+                "decimal": "23",
+                "mantissa": 2.3,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "null-planet-coin-group",
+          "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"gemUpgrades\":{\"offlineGems\":{\"level\":4}},\"planetCoinUpgrades\":null}",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJnZW1VcGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIyb2ZmbGluZUdlbXMlMjUyMiUyNTNBJTI1N0IlMjUyMmxldmVsJTI1MjIlMjUzQTQlMjU3RCUyNTdEJTI1MkMlMjUyMnBsYW5ldENvaW5VcGdyYWRlcyUyNTIyJTI1M0FudWxsJTI1N0Q=",
+          "thrownErrorName": "TypeError",
+          "stateAfter": {
+            "money": {
+              "decimal": "123",
+              "mantissa": 1.23,
+              "exponent": 2
+            },
+            "mineObjectLevel": 4,
+            "highestMineObjectLevel": 9,
+            "story": {
+              "page": 2,
+              "notifications": 3,
+              "highestUnlocked": 5,
+              "scrollY": 6
+            },
+            "settings": {
+              "theme": "dark",
+              "numberFormatterIndex": 2
+            },
+            "upgradeLevels": {
+              "moneyIdleSpeed": 11,
+              "gemOfflineGems": 4,
+              "planetOfflinePC": 13,
+              "wisdomPowerPowerActive": 14
+            },
+            "powers": [
+              {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Probe Sentinel",
+              "power": {
+                "decimal": "23",
+                "mantissa": 2.3,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "null-planet-coin-upgrade-entry",
+          "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"gemUpgrades\":{\"offlineGems\":{\"level\":4}},\"planetCoinUpgrades\":{\"offlinePC\":null}}",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJnZW1VcGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIyb2ZmbGluZUdlbXMlMjUyMiUyNTNBJTI1N0IlMjUyMmxldmVsJTI1MjIlMjUzQTQlMjU3RCUyNTdEJTI1MkMlMjUyMnBsYW5ldENvaW5VcGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIyb2ZmbGluZVBDJTI1MjIlMjUzQW51bGwlMjU3RCUyNTdE",
+          "thrownErrorName": "TypeError",
+          "stateAfter": {
+            "money": {
+              "decimal": "123",
+              "mantissa": 1.23,
+              "exponent": 2
+            },
+            "mineObjectLevel": 4,
+            "highestMineObjectLevel": 9,
+            "story": {
+              "page": 2,
+              "notifications": 3,
+              "highestUnlocked": 5,
+              "scrollY": 6
+            },
+            "settings": {
+              "theme": "dark",
+              "numberFormatterIndex": 2
+            },
+            "upgradeLevels": {
+              "moneyIdleSpeed": 11,
+              "gemOfflineGems": 4,
+              "planetOfflinePC": 13,
+              "wisdomPowerPowerActive": 14
+            },
+            "powers": [
+              {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Probe Sentinel",
+              "power": {
+                "decimal": "23",
+                "mantissa": 2.3,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "null-powers-values",
+          "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"powers\":{\"data\":{\"values\":null},\"upgrades\":{}}}",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJwb3dlcnMlMjUyMiUyNTNBJTI1N0IlMjUyMmRhdGElMjUyMiUyNTNBJTI1N0IlMjUyMnZhbHVlcyUyNTIyJTI1M0FudWxsJTI1N0QlMjUyQyUyNTIydXBncmFkZXMlMjUyMiUyNTNBJTI1N0IlMjU3RCUyNTdEJTI1N0Q=",
+          "thrownErrorName": "TypeError",
+          "stateAfter": {
+            "money": {
+              "decimal": "123",
+              "mantissa": 1.23,
+              "exponent": 2
+            },
+            "mineObjectLevel": 4,
+            "highestMineObjectLevel": 9,
+            "story": {
+              "page": 2,
+              "notifications": 3,
+              "highestUnlocked": 5,
+              "scrollY": 6
+            },
+            "settings": {
+              "theme": "dark",
+              "numberFormatterIndex": 2
+            },
+            "upgradeLevels": {
+              "moneyIdleSpeed": 11,
+              "gemOfflineGems": 0,
+              "planetOfflinePC": 0,
+              "wisdomPowerPowerActive": 14
+            },
+            "powers": [
+              {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Probe Sentinel",
+              "power": {
+                "decimal": "23",
+                "mantissa": 2.3,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "null-powers-group",
+          "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"powers\":null}",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJwb3dlcnMlMjUyMiUyNTNBbnVsbCUyNTdE",
+          "thrownErrorName": "TypeError",
+          "stateAfter": {
+            "money": {
+              "decimal": "123",
+              "mantissa": 1.23,
+              "exponent": 2
+            },
+            "mineObjectLevel": 4,
+            "highestMineObjectLevel": 9,
+            "story": {
+              "page": 2,
+              "notifications": 3,
+              "highestUnlocked": 5,
+              "scrollY": 6
+            },
+            "settings": {
+              "theme": "dark",
+              "numberFormatterIndex": 2
+            },
+            "upgradeLevels": {
+              "moneyIdleSpeed": 11,
+              "gemOfflineGems": 0,
+              "planetOfflinePC": 0,
+              "wisdomPowerPowerActive": 14
+            },
+            "powers": [
+              {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Probe Sentinel",
+              "power": {
+                "decimal": "23",
+                "mantissa": 2.3,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "null-powers-data-group",
+          "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"powers\":{\"data\":null,\"upgrades\":{}}}",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJwb3dlcnMlMjUyMiUyNTNBJTI1N0IlMjUyMmRhdGElMjUyMiUyNTNBbnVsbCUyNTJDJTI1MjJ1cGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTdEJTI1N0QlMjU3RA==",
+          "thrownErrorName": "TypeError",
+          "stateAfter": {
+            "money": {
+              "decimal": "123",
+              "mantissa": 1.23,
+              "exponent": 2
+            },
+            "mineObjectLevel": 4,
+            "highestMineObjectLevel": 9,
+            "story": {
+              "page": 2,
+              "notifications": 3,
+              "highestUnlocked": 5,
+              "scrollY": 6
+            },
+            "settings": {
+              "theme": "dark",
+              "numberFormatterIndex": 2
+            },
+            "upgradeLevels": {
+              "moneyIdleSpeed": 11,
+              "gemOfflineGems": 0,
+              "planetOfflinePC": 0,
+              "wisdomPowerPowerActive": 14
+            },
+            "powers": [
+              {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Probe Sentinel",
+              "power": {
+                "decimal": "23",
+                "mantissa": 2.3,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "null-powers-upgrade-group-after-values",
+          "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"powers\":{\"data\":{\"values\":[\"2\"]},\"upgrades\":null}}",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJwb3dlcnMlMjUyMiUyNTNBJTI1N0IlMjUyMmRhdGElMjUyMiUyNTNBJTI1N0IlMjUyMnZhbHVlcyUyNTIyJTI1M0ElMjU1QiUyNTIyMiUyNTIyJTI1NUQlMjU3RCUyNTJDJTI1MjJ1cGdyYWRlcyUyNTIyJTI1M0FudWxsJTI1N0QlMjU3RA==",
+          "thrownErrorName": "TypeError",
+          "stateAfter": {
+            "money": {
+              "decimal": "123",
+              "mantissa": 1.23,
+              "exponent": 2
+            },
+            "mineObjectLevel": 4,
+            "highestMineObjectLevel": 9,
+            "story": {
+              "page": 2,
+              "notifications": 3,
+              "highestUnlocked": 5,
+              "scrollY": 6
+            },
+            "settings": {
+              "theme": "dark",
+              "numberFormatterIndex": 2
+            },
+            "upgradeLevels": {
+              "moneyIdleSpeed": 11,
+              "gemOfflineGems": 0,
+              "planetOfflinePC": 0,
+              "wisdomPowerPowerActive": 14
+            },
+            "powers": [
+              {
+                "decimal": "2",
+                "mantissa": 2,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Probe Sentinel",
+              "power": {
+                "decimal": "23",
+                "mantissa": 2.3,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "null-power-upgrade-entry-after-values",
+          "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"powers\":{\"data\":{\"values\":[\"3\"]},\"upgrades\":{\"powerPowerActive\":null}}}",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJwb3dlcnMlMjUyMiUyNTNBJTI1N0IlMjUyMmRhdGElMjUyMiUyNTNBJTI1N0IlMjUyMnZhbHVlcyUyNTIyJTI1M0ElMjU1QiUyNTIyMyUyNTIyJTI1NUQlMjU3RCUyNTJDJTI1MjJ1cGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIycG93ZXJQb3dlckFjdGl2ZSUyNTIyJTI1M0FudWxsJTI1N0QlMjU3RCUyNTdE",
+          "thrownErrorName": "TypeError",
+          "stateAfter": {
+            "money": {
+              "decimal": "123",
+              "mantissa": 1.23,
+              "exponent": 2
+            },
+            "mineObjectLevel": 4,
+            "highestMineObjectLevel": 9,
+            "story": {
+              "page": 2,
+              "notifications": 3,
+              "highestUnlocked": 5,
+              "scrollY": 6
+            },
+            "settings": {
+              "theme": "dark",
+              "numberFormatterIndex": 2
+            },
+            "upgradeLevels": {
+              "moneyIdleSpeed": 11,
+              "gemOfflineGems": 0,
+              "planetOfflinePC": 0,
+              "wisdomPowerPowerActive": 14
+            },
+            "powers": [
+              {
+                "decimal": "3",
+                "mantissa": 3,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Probe Sentinel",
+              "power": {
+                "decimal": "23",
+                "mantissa": 2.3,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "null-pickaxe-after-groups",
+          "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"pickaxe\":null}",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJwaWNrYXhlJTI1MjIlMjUzQW51bGwlMjU3RA==",
+          "thrownErrorName": "TypeError",
+          "stateAfter": {
+            "money": {
+              "decimal": "123",
+              "mantissa": 1.23,
+              "exponent": 2
+            },
+            "mineObjectLevel": 4,
+            "highestMineObjectLevel": 9,
+            "story": {
+              "page": 2,
+              "notifications": 3,
+              "highestUnlocked": 5,
+              "scrollY": 6
+            },
+            "settings": {
+              "theme": "dark",
+              "numberFormatterIndex": 2
+            },
+            "upgradeLevels": {
+              "moneyIdleSpeed": 11,
+              "gemOfflineGems": 0,
+              "planetOfflinePC": 0,
+              "wisdomPowerPowerActive": 14
+            },
+            "powers": [
+              {
+                "decimal": "9",
+                "mantissa": 9,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              }
+            ],
+            "pickaxe": {
+              "name": "Probe Sentinel",
+              "power": {
+                "decimal": "23",
+                "mantissa": 2.3,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "4",
+                "mantissa": 4,
+                "exponent": 0
+              }
+            }
+          }
+        }
+      ],
       "unicodePickaxeRoundTrip": {
         "sourceName": "Probe — Å Ω →",
         "importedName": "Probe â Ã Î© â",

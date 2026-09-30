@@ -2515,6 +2515,193 @@ async function capture(reference, dependencies, dependencySnapshots) {
               functions.loadGame(window.initialGame, false, true);
             }
 
+            const storySentinel = {
+              page: 7,
+              notifications: 8,
+              highestUnlocked: 9,
+              scrollY: 10,
+            };
+            const malformedApplicationBase = () => ({
+              money: "123",
+              highestMoney: "130",
+              gems: "8",
+              planetCoins: "2",
+              maxPlanetCoins: "3",
+              wisdom: "4",
+              maxWisdom: "5",
+              mineObjectLevel: 4,
+              highestMineObjectLevel: 9,
+              story: {
+                page: 2,
+                notifications: 3,
+                highestUnlocked: 5,
+                scrollY: 6,
+              },
+            });
+            const malformedApplicationScenarios = [
+              { name: "json-null-root", input: null },
+              {
+                name: "null-story-after-resources",
+                input: { ...malformedApplicationBase(), story: null },
+              },
+              {
+                name: "null-settings-after-story",
+                input: { ...malformedApplicationBase(), settings: null },
+              },
+              {
+                name: "null-upgrades-after-settings",
+                input: {
+                  ...malformedApplicationBase(),
+                  settings: {
+                    numberFormatterIndex: 0,
+                    theme: "light",
+                    showMineObjLevel: false,
+                    showMinCraftDamage: false,
+                  },
+                  upgrades: null,
+                },
+              },
+              {
+                name: "unknown-upgrade-key",
+                input: {
+                  ...malformedApplicationBase(),
+                  upgrades: { retiredUpgrade: { level: 1 } },
+                },
+              },
+              {
+                name: "null-gem-upgrade-entry",
+                input: {
+                  ...malformedApplicationBase(),
+                  upgrades: { idleSpeed: { level: 6 } },
+                  gemUpgrades: { offlineGems: null },
+                },
+              },
+              {
+                name: "null-planet-coin-group",
+                input: {
+                  ...malformedApplicationBase(),
+                  gemUpgrades: { offlineGems: { level: 4 } },
+                  planetCoinUpgrades: null,
+                },
+              },
+              {
+                name: "null-planet-coin-upgrade-entry",
+                input: {
+                  ...malformedApplicationBase(),
+                  gemUpgrades: { offlineGems: { level: 4 } },
+                  planetCoinUpgrades: { offlinePC: null },
+                },
+              },
+              {
+                name: "null-powers-values",
+                input: {
+                  ...malformedApplicationBase(),
+                  powers: { data: { values: null }, upgrades: {} },
+                },
+              },
+              {
+                name: "null-powers-group",
+                input: { ...malformedApplicationBase(), powers: null },
+              },
+              {
+                name: "null-powers-data-group",
+                input: {
+                  ...malformedApplicationBase(),
+                  powers: { data: null, upgrades: {} },
+                },
+              },
+              {
+                name: "null-powers-upgrade-group-after-values",
+                input: {
+                  ...malformedApplicationBase(),
+                  powers: { data: { values: ["2"] }, upgrades: null },
+                },
+              },
+              {
+                name: "null-power-upgrade-entry-after-values",
+                input: {
+                  ...malformedApplicationBase(),
+                  powers: {
+                    data: { values: ["3"] },
+                    upgrades: { [powerUpgradeKey]: null },
+                  },
+                },
+              },
+              {
+                name: "null-pickaxe-after-groups",
+                input: { ...malformedApplicationBase(), pickaxe: null },
+              },
+            ];
+            let fieldApplicationErrors;
+            try {
+              fieldApplicationErrors = malformedApplicationScenarios.map(
+                (scenario) => {
+                  functions.loadGame(window.initialGame, false, true);
+                  game.money = new Decimal(77);
+                  game.mineObjectLevel = 3;
+                  game.highestMineObjectLevel = 3;
+                  Object.assign(game.story, storySentinel);
+                  game.settings.theme = "dark";
+                  game.settings.numberFormatterIndex = 2;
+                  game.upgrades.idleSpeed.level = 11;
+                  game.gemUpgrades.offlineGems.level = 12;
+                  game.planetCoinUpgrades.offlinePC.level = 13;
+                  game.powers.data.values[0] = new Decimal(9);
+                  game.powers.upgrades[powerUpgradeKey].level = 14;
+                  game.pickaxe.name = "Probe Sentinel";
+                  game.pickaxe.pow = new Decimal(23);
+                  game.pickaxe.quality = new Decimal(4);
+
+                  const inputJson = JSON.stringify(scenario.input);
+                  const encoded = encodeProbeSave(scenario.input);
+                  let thrownErrorName = null;
+                  try {
+                    functions.loadGame(encoded, undefined, true);
+                  } catch (error) {
+                    thrownErrorName = error.name;
+                  }
+                  return {
+                    name: scenario.name,
+                    inputJson,
+                    encoded,
+                    thrownErrorName,
+                    stateAfter: {
+                      money: normalizedDecimal(game.money),
+                      mineObjectLevel: game.mineObjectLevel,
+                      highestMineObjectLevel: game.highestMineObjectLevel,
+                      story: {
+                        page: game.story.page,
+                        notifications: game.story.notifications,
+                        highestUnlocked: game.story.highestUnlocked,
+                        scrollY: game.story.scrollY,
+                      },
+                      settings: {
+                        theme: game.settings.theme,
+                        numberFormatterIndex:
+                          game.settings.numberFormatterIndex,
+                      },
+                      upgradeLevels: {
+                        moneyIdleSpeed: game.upgrades.idleSpeed.level,
+                        gemOfflineGems: game.gemUpgrades.offlineGems.level,
+                        planetOfflinePC:
+                          game.planetCoinUpgrades.offlinePC.level,
+                        wisdomPowerPowerActive:
+                          game.powers.upgrades[powerUpgradeKey].level,
+                      },
+                      powers: game.powers.data.values.map(normalizedDecimal),
+                      pickaxe: {
+                        name: game.pickaxe.name,
+                        power: normalizedDecimal(game.pickaxe.pow),
+                        quality: normalizedDecimal(game.pickaxe.quality),
+                      },
+                    },
+                  };
+                },
+              );
+            } finally {
+              functions.loadGame(window.initialGame, false, true);
+            }
+
             const variantJson = JSON.stringify({
               money: "5",
               story: { page: 3 },
@@ -2642,6 +2829,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
               codecVectors,
               base64Variants,
               loadErrors,
+              fieldApplicationErrors,
               unicodePickaxeRoundTrip,
             };
           } finally {
@@ -5667,6 +5855,8 @@ async function main() {
     expected.data.saveSemantics?.codecVectors.length ?? 0;
   const saveLoadErrorCount =
     expected.data.saveSemantics?.loadErrors.length ?? 0;
+  const saveFieldApplicationErrorCount =
+    expected.data.saveSemantics?.fieldApplicationErrors.length ?? 0;
   const saveApplicationCount = expected.data.saveApplicationSemantics ? 1 : 0;
   const saveOfflineApplicationCount = expected.data
     .saveOfflineApplicationSemantics
@@ -5675,7 +5865,7 @@ async function main() {
   const saveExportVariantCount =
     expected.data.saveExportSemantics?.variants?.length ?? 0;
   process.stdout.write(
-    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases / ${miningHitCaseCount} mining-hit cases / ${updateFrameCaseCount} update-frame cases / ${simulationFrameCaseCount} composed simulation-frame cases / ${storySemantics.chapters.length} story chapters / ${storySemantics.milestones.length} milestones / ${storyBoundarySampleCount} condition-boundary samples / ${storySemantics.notificationScenarios.length} notification scenarios / ${storySemantics.notificationSequence.length} sequenced notification stages / ${storyMineLevelObjectiveCount} mine-level objective outputs / ${storyNotationObjectiveCount} notation-dependent objective outputs / ${payUSDebtCaseCount} debt-interaction cases / ${storyTabCaseCount} story-tab cases / ${offlineScenarioCount} offline-progression cases / ${offlineRateCompositionScenarioCount} live-rate offline-load cases / ${saveCodecVectorCount} save codec vectors / ${saveLoadErrorCount} load error branches / ${saveApplicationCount} complete save-application captures / ${saveOfflineApplicationCount} composed save/offline-load captures / ${saveExportVariantCount} full-save export variants).\n`,
+    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases / ${miningHitCaseCount} mining-hit cases / ${updateFrameCaseCount} update-frame cases / ${simulationFrameCaseCount} composed simulation-frame cases / ${storySemantics.chapters.length} story chapters / ${storySemantics.milestones.length} milestones / ${storyBoundarySampleCount} condition-boundary samples / ${storySemantics.notificationScenarios.length} notification scenarios / ${storySemantics.notificationSequence.length} sequenced notification stages / ${storyMineLevelObjectiveCount} mine-level objective outputs / ${storyNotationObjectiveCount} notation-dependent objective outputs / ${payUSDebtCaseCount} debt-interaction cases / ${storyTabCaseCount} story-tab cases / ${offlineScenarioCount} offline-progression cases / ${offlineRateCompositionScenarioCount} live-rate offline-load cases / ${saveCodecVectorCount} save codec vectors / ${saveLoadErrorCount} decode/load error branches / ${saveFieldApplicationErrorCount} malformed field-application cases / ${saveApplicationCount} complete save-application captures / ${saveOfflineApplicationCount} composed save/offline-load captures / ${saveExportVariantCount} full-save export variants).\n`,
   );
 }
 

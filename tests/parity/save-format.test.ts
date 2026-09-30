@@ -59,6 +59,29 @@ const corpus = JSON.parse(
           quality: { decimal: string };
         };
       };
+      fieldApplicationErrors: {
+        name: string;
+        inputJson: string;
+        thrownErrorName: string | null;
+        stateAfter: {
+          money: { decimal: string };
+          mineObjectLevel: number;
+          story: {
+            page: number;
+            notifications: number;
+            highestUnlocked: number;
+            scrollY: number;
+          };
+          settings: { theme: string; numberFormatterIndex: number };
+          upgradeLevels: Record<string, number>;
+          powers: { decimal: string }[];
+          pickaxe: {
+            name: string;
+            power: { decimal: string };
+            quality: { decimal: string };
+          };
+        };
+      }[];
       unicodePickaxeRoundTrip: {
         sourceName: string;
         importedName: string;
@@ -266,4 +289,104 @@ it("preserves the observed Unicode corruption and partial-save defaults", () => 
     power: { decimal: "123" },
     quality: { decimal: "4" },
   });
+});
+
+it("captures partial Remix field application before malformed saves throw", () => {
+  const samples = save.fieldApplicationErrors;
+  expect(samples.map(({ name }) => name)).toEqual([
+    "json-null-root",
+    "null-story-after-resources",
+    "null-settings-after-story",
+    "null-upgrades-after-settings",
+    "unknown-upgrade-key",
+    "null-gem-upgrade-entry",
+    "null-planet-coin-group",
+    "null-planet-coin-upgrade-entry",
+    "null-powers-values",
+    "null-powers-group",
+    "null-powers-data-group",
+    "null-powers-upgrade-group-after-values",
+    "null-power-upgrade-entry-after-values",
+    "null-pickaxe-after-groups",
+  ]);
+  expect(samples.map(({ thrownErrorName }) => thrownErrorName)).toEqual(
+    Array.from({ length: 14 }, () => "TypeError"),
+  );
+  const byName = Object.fromEntries(
+    samples.map((sample) => [sample.name, sample]),
+  );
+
+  expect(byName["json-null-root"]?.stateAfter).toMatchObject({
+    money: { decimal: "77" },
+    mineObjectLevel: 3,
+    story: { page: 7, notifications: 8 },
+    settings: { theme: "dark", numberFormatterIndex: 2 },
+    upgradeLevels: {
+      moneyIdleSpeed: 11,
+      gemOfflineGems: 12,
+      planetOfflinePC: 13,
+      wisdomPowerPowerActive: 14,
+    },
+    pickaxe: { name: "Probe Sentinel", power: { decimal: "23" } },
+  });
+  expect(byName["null-story-after-resources"]?.stateAfter).toMatchObject({
+    money: { decimal: "123" },
+    mineObjectLevel: 4,
+    story: { page: 7, notifications: 8 },
+  });
+  expect(byName["null-settings-after-story"]?.stateAfter).toMatchObject({
+    money: { decimal: "123" },
+    story: { page: 2, notifications: 3, highestUnlocked: 5, scrollY: 6 },
+    settings: { theme: "dark", numberFormatterIndex: 2 },
+  });
+  expect(byName["null-upgrades-after-settings"]?.stateAfter).toMatchObject({
+    settings: { theme: "light", numberFormatterIndex: 0 },
+    upgradeLevels: {
+      moneyIdleSpeed: 11,
+      gemOfflineGems: 12,
+      planetOfflinePC: 13,
+    },
+  });
+  expect(byName["unknown-upgrade-key"]?.stateAfter).toMatchObject({
+    settings: { theme: "dark", numberFormatterIndex: 2 },
+    upgradeLevels: {
+      moneyIdleSpeed: 11,
+      gemOfflineGems: 12,
+      planetOfflinePC: 13,
+    },
+  });
+  expect(byName["null-gem-upgrade-entry"]?.stateAfter).toMatchObject({
+    upgradeLevels: { moneyIdleSpeed: 6, gemOfflineGems: 12 },
+  });
+  expect(byName["null-planet-coin-group"]?.stateAfter).toMatchObject({
+    upgradeLevels: { gemOfflineGems: 4, planetOfflinePC: 13 },
+  });
+  expect(byName["null-planet-coin-upgrade-entry"]?.stateAfter).toMatchObject({
+    upgradeLevels: { gemOfflineGems: 4, planetOfflinePC: 13 },
+  });
+  for (const name of [
+    "null-powers-group",
+    "null-powers-data-group",
+    "null-powers-upgrade-group-after-values",
+    "null-power-upgrade-entry-after-values",
+  ]) {
+    expect(byName[name]?.stateAfter.upgradeLevels).toMatchObject({
+      gemOfflineGems: 0,
+      planetOfflinePC: 0,
+    });
+  }
+  expect(
+    byName["null-powers-upgrade-group-after-values"]?.stateAfter.powers[0],
+  ).toMatchObject({ decimal: "2" });
+  expect(
+    byName["null-power-upgrade-entry-after-values"]?.stateAfter.powers[0],
+  ).toMatchObject({ decimal: "3" });
+  for (const name of ["null-powers-values", "null-pickaxe-after-groups"]) {
+    expect(byName[name]?.stateAfter.upgradeLevels).toMatchObject({
+      gemOfflineGems: 0,
+      planetOfflinePC: 0,
+      wisdomPowerPowerActive: 14,
+    });
+    expect(byName[name]?.stateAfter.pickaxe.name).toBe("Probe Sentinel");
+  }
 });
