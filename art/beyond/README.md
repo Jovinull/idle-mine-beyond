@@ -34,6 +34,10 @@ The art is drawn by hand-written SVG code in a separate art lab, then rasterized
 - a served Remix image lacks a 1x or 2x counterpart;
 - product source under `apps/` or `packages/` references `art/beyond` while the manifest status is `not-shipped`.
 
+## Local preview
+
+`pnpm art:preview` builds the web app and serves it at http://127.0.0.1:4174. Requests under `/Images/` are answered from this pack when it has the file, and everything else comes from the normal build. It is a local tool only: product code and the shipped build are unchanged. Use `--no-build` to reuse the last build and `--port` to pick another port. The preview runs on its own origin, so it has its own browser save.
+
 ## Regenerating
 
 The pack is rebuilt from the art lab (`idle-mine-beyond-art`) with `node tools/game-pack.mjs`. The tool refuses uncommitted lab sources, records the lab commit in the manifest, and rewrites only `Images/`, `Images@2x/`, `preview/`, and `manifest.json`.
