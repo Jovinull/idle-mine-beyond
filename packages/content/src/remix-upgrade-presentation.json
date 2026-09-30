@@ -8,9 +8,28 @@
       "Scripts/Define/game.js",
       "Scripts/upgrade.js",
       "Scripts/utils.js",
-      "Scripts/main.js"
+      "Scripts/main.js",
+      "Scripts/Components/powers-table.js",
+      "Scripts/Components/upgrade-standalone.js"
     ],
     "licenseNotice": "MIT; Copyright (c) 2023 veprogames. See docs/knowledge/sources/licenses/idle-mine-remix-MIT.txt."
+  },
+  "powers": {
+    "names": [
+      "Power of Mining",
+      "Power of Craftsmenship",
+      "Power of Expertise",
+      "Power of Wisdom",
+      "Power of Exquisity"
+    ],
+    "icons": [
+      "pickaxe.png",
+      "upgrades/blacksmith.png",
+      "upgrades/blacksmithskill.png",
+      "wisdom.png",
+      "gem.png"
+    ],
+    "unlockAtHighestMineObjectLevel": 170
   },
   "groups": {
     "money": {

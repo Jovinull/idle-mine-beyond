@@ -14,9 +14,16 @@ const targetPath = path.join(
 );
 const corpus = JSON.parse(await readFile(corpusPath, "utf8"));
 const semantics = corpus.data.upgradeSemantics;
+const powerSemantics = corpus.data.powersTableSemantics;
 
 if (
   corpus.metadata.sourceCommit !== "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21" ||
+  powerSemantics?.names?.length !== 5 ||
+  powerSemantics?.icons?.length !== 5 ||
+  !powerSemantics.unlock.some(
+    ({ highestMineObjectLevel, unlocked }) =>
+      highestMineObjectLevel === 170 && unlocked,
+  ) ||
   Object.values(semantics.groups).reduce(
     (total, group) => total + Object.keys(group).length,
     0,
@@ -52,8 +59,17 @@ const output = await format(
       url: corpus.metadata.sourceUrl,
       commit: corpus.metadata.sourceCommit,
       capturedOn: corpus.metadata.capturedOn,
-      files: semantics.sourcePaths,
+      files: [
+        ...semantics.sourcePaths,
+        "Scripts/Components/powers-table.js",
+        "Scripts/Components/upgrade-standalone.js",
+      ],
       licenseNotice: corpus.metadata.licenseNotice,
+    },
+    powers: {
+      names: powerSemantics.names,
+      icons: powerSemantics.icons,
+      unlockAtHighestMineObjectLevel: 170,
     },
     groups: Object.fromEntries(
       Object.entries(semantics.groups).map(([groupName, group]) => [
