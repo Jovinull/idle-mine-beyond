@@ -229,6 +229,14 @@ async function capture(reference, dependencies, dependencySnapshots) {
         const functions = window.functions;
         const app = window.app;
         const Decimal = window.Decimal;
+        const freshLegacySave = (() => {
+          const json = JSON.stringify(game);
+          return {
+            object: JSON.parse(json),
+            encoded: functions.getSaveString(),
+            json,
+          };
+        })();
         const safeNumber = (value) => {
           if (Number.isNaN(value)) return "NaN";
           if (value === Infinity) return "Infinity";
@@ -1727,6 +1735,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
         })();
         let saveApplicationSemantics;
         let saveOfflineApplicationSemantics;
+        let saveExportSemantics;
         const saveSemantics = (() => {
           const originalTab = game.settings.tab;
           const originalFormatter = game.numberFormatter;
@@ -1750,6 +1759,36 @@ async function capture(reference, dependencies, dependencySnapshots) {
           }
           const decoded = unescape(decodeURIComponent(atob(saveString)));
           const saveObject = JSON.parse(decoded);
+          const serializableShape = (value) => {
+            if (value === null) return { type: "null" };
+            if (Array.isArray(value)) {
+              const shapes = new Map();
+              for (const item of value) {
+                const shape = serializableShape(item);
+                const key = JSON.stringify(shape);
+                const existing = shapes.get(key);
+                if (existing) existing.count += 1;
+                else shapes.set(key, { count: 1, shape });
+              }
+              return {
+                type: "array",
+                length: value.length,
+                elementShapes: [...shapes.values()],
+              };
+            }
+            if (typeof value === "object") {
+              return {
+                type: "object",
+                fields: Object.fromEntries(
+                  Object.keys(value).map((key) => [
+                    key,
+                    serializableShape(value[key]),
+                  ]),
+                ),
+              };
+            }
+            return { type: typeof value };
+          };
           const decimalFields = [
             "money",
             "highestMoney",
@@ -1879,6 +1918,171 @@ async function capture(reference, dependencies, dependencySnapshots) {
               },
               pickaxe: { name: "Probe Pickaxe", pow: "123", quality: "4" },
             };
+            functions.loadGame(
+              encodeProbeSave(fieldApplicationInput),
+              undefined,
+              true,
+            );
+            const controlledFullSaveJson = JSON.stringify(game);
+            const controlledFullSaveEncoded = functions.getSaveString();
+            const captureExportVariant = (name, configure) => {
+              functions.loadGame(window.initialGame, false, true);
+              game.timer = { autoPickaxe: 0, save: 0 };
+              game.usedGemsLevel = 0;
+              game.pickStatus = "";
+              game.messageLog = [];
+              game.settings.tab = "settings";
+              game.settings.upgradeTab = "money";
+              const inputJson = configure();
+              const json = JSON.stringify(game);
+              return {
+                name,
+                object: JSON.parse(json),
+                encoded: functions.getSaveString(),
+                json,
+                ...(typeof inputJson === "string" ? { inputJson } : {}),
+              };
+            };
+            const allUpgradeLevels = (upgrades, firstLevel) =>
+              Object.fromEntries(
+                Object.keys(upgrades).map((key, index) => [
+                  key,
+                  { level: firstLevel + index },
+                ]),
+              );
+            const captureLoadedVariant = (name, configure) =>
+              captureExportVariant(name, () => {
+                game.settings.tab = "powers";
+                game.settings.upgradeTab = "planetcoins";
+                const input = JSON.parse(JSON.stringify(game));
+                configure(input);
+                const inputJson = JSON.stringify(input);
+                functions.loadGame(encodeProbeSave(input), undefined, true);
+                return inputJson;
+              });
+            const setSerializedUpgradeLevels = (upgrades, firstLevel) => {
+              Object.keys(upgrades).forEach((key, index) => {
+                upgrades[key].level = firstLevel + index;
+              });
+            };
+            const saveExportVariants = [
+              captureExportVariant("generated-wisdom-drop-215", () => {
+                game.mineObjectLevel = 215;
+                game.highestMineObjectLevel = 215;
+                game.currentMineObject = functions.getMineObject(215);
+              }),
+              captureExportVariant("generated-planet-coin-drop-216", () => {
+                game.mineObjectLevel = 216;
+                game.highestMineObjectLevel = 216;
+                game.currentMineObject = functions.getMineObject(216);
+              }),
+              captureExportVariant("generated-first-after-base-72", () => {
+                game.mineObjectLevel = 72;
+                game.highestMineObjectLevel = 72;
+                game.currentMineObject = functions.getMineObject(72);
+              }),
+              captureExportVariant("generated-first-after-anchor-125", () => {
+                game.mineObjectLevel = 125;
+                game.highestMineObjectLevel = 125;
+                game.currentMineObject = functions.getMineObject(125);
+              }),
+              captureExportVariant("generated-late-universe-244", () => {
+                game.mineObjectLevel = 244;
+                game.highestMineObjectLevel = 244;
+                game.currentMineObject = functions.getMineObject(244);
+              }),
+              captureExportVariant("message-log-cap", () => {
+                for (let index = 1; index <= 7; index++) {
+                  functions.logMessage(
+                    `Export probe ${index}`,
+                    index % 2 === 0 ? "#222222" : "#111111",
+                  );
+                }
+              }),
+              captureLoadedVariant("settings-and-notation-only", (input) => {
+                input.settings.theme = "dark";
+                input.settings.numberFormatterIndex = 12;
+                input.settings.showMineObjLevel = true;
+                input.settings.showMinCraftDamage = true;
+              }),
+              captureLoadedVariant("money-upgrades-only", (input) => {
+                setSerializedUpgradeLevels(input.upgrades, 2);
+              }),
+              captureLoadedVariant("gem-upgrades-only", (input) => {
+                setSerializedUpgradeLevels(input.gemUpgrades, 3);
+              }),
+              captureLoadedVariant("planet-coin-upgrades-only", (input) => {
+                setSerializedUpgradeLevels(input.planetCoinUpgrades, 4);
+              }),
+              captureLoadedVariant("wisdom-upgrades-only", (input) => {
+                setSerializedUpgradeLevels(input.powers.upgrades, 5);
+              }),
+              captureExportVariant("varied-settings-and-all-upgrades", () => {
+                game.settings.tab = "powers";
+                game.settings.upgradeTab = "planetcoins";
+                const input = {
+                  money: "314159.265",
+                  highestMoney: "271828.18",
+                  gems: "12345",
+                  planetCoins: "6789",
+                  maxPlanetCoins: "7890",
+                  wisdom: "9876",
+                  maxWisdom: "10987",
+                  mineObjectLevel: 0,
+                  highestMineObjectLevel: 0,
+                  lastActive: 1700000000000,
+                  story: {
+                    page: 8,
+                    notifications: 3,
+                    highestUnlocked: 60,
+                    scrollY: 777,
+                  },
+                  settings: {
+                    tab: "story",
+                    upgradeTab: "money",
+                    numberFormatterIndex: 39,
+                    theme: "dark",
+                    showMineObjLevel: true,
+                    showMinCraftDamage: true,
+                  },
+                  upgrades: allUpgradeLevels(game.upgrades, 2),
+                  gemUpgrades: allUpgradeLevels(game.gemUpgrades, 3),
+                  planetCoinUpgrades: allUpgradeLevels(
+                    game.planetCoinUpgrades,
+                    4,
+                  ),
+                  powers: {
+                    data: { values: ["11", "13", "17", "19", "23"] },
+                    upgrades: allUpgradeLevels(game.powers.upgrades, 5),
+                  },
+                  pickaxe: {
+                    name: "Deep export probe",
+                    pow: "456",
+                    quality: "7.5",
+                  },
+                };
+                const inputJson = JSON.stringify(input);
+                functions.loadGame(encodeProbeSave(input), undefined, true);
+                return inputJson;
+              }),
+            ];
+            saveExportSemantics = {
+              sourcePaths: [
+                "Scripts/Define/functions.js",
+                "Scripts/Define/game.js",
+                "Scripts/mineobject.js",
+                "Scripts/upgrade.js",
+              ],
+              fresh: freshLegacySave,
+              controlled: {
+                object: JSON.parse(controlledFullSaveJson),
+                encoded: controlledFullSaveEncoded,
+                json: controlledFullSaveJson,
+              },
+              variants: saveExportVariants,
+            };
+            game.settings.tab = "settings";
+            game.settings.upgradeTab = "money";
             functions.loadGame(
               encodeProbeSave(fieldApplicationInput),
               undefined,
@@ -2381,6 +2585,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
               currentShape: {
                 versionFieldPresent: Object.hasOwn(saveObject, "version"),
                 topLevelKeys: Object.keys(saveObject),
+                serializableShape: serializableShape(saveObject),
                 decimalFields: Object.fromEntries(
                   decimalFields.map((key) => [
                     key,
@@ -4703,6 +4908,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           payUSDebtSemantics,
           offlineProgressionSemantics,
           saveSemantics,
+          saveExportSemantics,
           saveApplicationSemantics,
           saveOfflineApplicationSemantics,
           storyTabSemantics,
@@ -4716,6 +4922,48 @@ async function capture(reference, dependencies, dependencySnapshots) {
       },
       { selectedPostUniverseIds: postUniverseIds, fixedClock },
     );
+
+    for (const name of ["fresh", "controlled"]) {
+      const snapshot = data.saveExportSemantics[name];
+      const objectJson = JSON.stringify(snapshot.object);
+      if (objectJson !== snapshot.json) {
+        throw new Error(`${name} full save object changed during capture.`);
+      }
+      snapshot.jsonUtf8Bytes = Buffer.byteLength(snapshot.json, "utf8");
+      snapshot.jsonSha256 = sha256(snapshot.json);
+      snapshot.saveStringAsciiBytes = snapshot.encoded.length;
+      snapshot.saveStringSha256 = sha256(snapshot.encoded);
+      delete snapshot.encoded;
+      delete snapshot.json;
+    }
+    for (const snapshot of data.saveExportSemantics.variants) {
+      const objectJson = JSON.stringify(snapshot.object);
+      if (objectJson !== snapshot.json) {
+        throw new Error(
+          `${snapshot.name} full save object changed during capture.`,
+        );
+      }
+      snapshot.changedFields = Object.keys(
+        data.saveExportSemantics.fresh.object,
+      ).filter(
+        (key) =>
+          JSON.stringify(snapshot.object[key]) !==
+          JSON.stringify(data.saveExportSemantics.fresh.object[key]),
+      );
+      snapshot.mineObjectLevel = snapshot.object.mineObjectLevel;
+      snapshot.highestMineObjectLevel = snapshot.object.highestMineObjectLevel;
+      snapshot.lastActive = snapshot.object.lastActive;
+      snapshot.currentMineObject = snapshot.object.currentMineObject;
+      snapshot.messageLog = snapshot.object.messageLog;
+      snapshot.settings = snapshot.object.settings;
+      snapshot.jsonUtf8Bytes = Buffer.byteLength(snapshot.json, "utf8");
+      snapshot.jsonSha256 = sha256(snapshot.json);
+      snapshot.saveStringAsciiBytes = snapshot.encoded.length;
+      snapshot.saveStringSha256 = sha256(snapshot.encoded);
+      delete snapshot.object;
+      delete snapshot.encoded;
+      delete snapshot.json;
+    }
 
     const clockSamples = await page.evaluate(() => ({
       lastActive: window.game.lastActive,
@@ -5013,8 +5261,10 @@ async function main() {
     .saveOfflineApplicationSemantics
     ? 1
     : 0;
+  const saveExportVariantCount =
+    expected.data.saveExportSemantics?.variants?.length ?? 0;
   process.stdout.write(
-    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases / ${miningHitCaseCount} mining-hit cases / ${updateFrameCaseCount} update-frame cases / ${simulationFrameCaseCount} composed simulation-frame cases / ${storySemantics.chapters.length} story chapters / ${storySemantics.milestones.length} milestones / ${storyBoundarySampleCount} condition-boundary samples / ${storySemantics.notificationScenarios.length} notification scenarios / ${storySemantics.notificationSequence.length} sequenced notification stages / ${storyMineLevelObjectiveCount} mine-level objective outputs / ${storyNotationObjectiveCount} notation-dependent objective outputs / ${payUSDebtCaseCount} debt-interaction cases / ${storyTabCaseCount} story-tab cases / ${offlineScenarioCount} offline-progression cases / ${offlineRateCompositionScenarioCount} live-rate offline-load cases / ${saveCodecVectorCount} save codec vectors / ${saveLoadErrorCount} load error branches / ${saveApplicationCount} complete save-application captures / ${saveOfflineApplicationCount} composed save/offline-load captures).\n`,
+    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases / ${miningHitCaseCount} mining-hit cases / ${updateFrameCaseCount} update-frame cases / ${simulationFrameCaseCount} composed simulation-frame cases / ${storySemantics.chapters.length} story chapters / ${storySemantics.milestones.length} milestones / ${storyBoundarySampleCount} condition-boundary samples / ${storySemantics.notificationScenarios.length} notification scenarios / ${storySemantics.notificationSequence.length} sequenced notification stages / ${storyMineLevelObjectiveCount} mine-level objective outputs / ${storyNotationObjectiveCount} notation-dependent objective outputs / ${payUSDebtCaseCount} debt-interaction cases / ${storyTabCaseCount} story-tab cases / ${offlineScenarioCount} offline-progression cases / ${offlineRateCompositionScenarioCount} live-rate offline-load cases / ${saveCodecVectorCount} save codec vectors / ${saveLoadErrorCount} load error branches / ${saveApplicationCount} complete save-application captures / ${saveOfflineApplicationCount} composed save/offline-load captures / ${saveExportVariantCount} full-save export variants).\n`,
   );
 }
 
