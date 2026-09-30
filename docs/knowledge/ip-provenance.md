@@ -99,6 +99,10 @@ The `storyTabSemantics` corpus field captures four `changeTab()` state/timer cas
 
 `packages/core/src/remix-pickaxe-crafting.ts` and `packages/formatting` independently implement the pinned `Scripts/pickaxe.js`, `Scripts/utils.js`, `Scripts/Define/game.js`, and `Scripts/Define/functions.js` behavior. The `pickaxeCraftingSemantics` field contains controlled numeric outputs and synthetic transaction scenarios from the pinned browser runtime; no upstream JavaScript, player save, or artwork was copied. Generated names and source text remain derived behavior/content and carry the upstream MIT and inherited-material rights caveats recorded above.
 
+## Project site
+
+`apps/site` is a project-authored website. It republishes the game's static files from `apps/web/static` (the unmodified Remix images and atlas, the Remix MIT notice, and the Montserrat and Work Sans fonts with their OFL notices) and mounts the unmodified game build at `/play/`. Its wiki shows source-derived names, numbers, and Story text from `packages/content`, rendered by the same code as the game, and credits Crovie, veprogames, and AD Notations with links to the notices. `apps/site/static/og.png` is a screenshot of the site's own home page, so it contains the Remix Mud sprite. The site adds no new third-party material. Public deployment falls under the distribution gate above.
+
 ## Beyond art pack
 
 `art/beyond/` holds original Beyond artwork: a mine-object atlas, 24 UI icons, and two logos, at 1x and 2x, plus preview sheets. It is **not shipped**. It lives outside `apps/web/static`, and `scripts/check-beyond-art.mjs` fails if product source references it while its manifest status is `not-shipped`. Adopting it is a post-parity proposal and needs an approved behavioral exception first.

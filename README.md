@@ -23,6 +23,19 @@ For a first browser run, install Playwright's Chromium with `pnpm exec playwrigh
 
 Useful focused commands include `pnpm test:unit`, `pnpm test:parity`, `pnpm test:e2e`, `pnpm test:reference`, `pnpm content:check`, `pnpm content:sync`, `pnpm build`, `pnpm research:setup`, and `pnpm native:check`. `pnpm test:reference` launches the pinned Remix checkout read-only with hash-pinned runtime dependencies and checks the tracked oracle corpus. `pnpm content:sync` derives the reviewed product catalog from that oracle; `pnpm content:check` confirms the tracked catalog is reproducible. See `pnpm run` and the canonical [project status](docs/knowledge/project-status.md) for scope.
 
+## Project site
+
+`apps/site` is the project website: a landing page, a wiki generated from the game's own data and code, and the game itself at `/play/`. Every page is prerendered to static files.
+
+```sh
+pnpm site:dev       # develop the site (the game is not mounted at /play/ here)
+pnpm site:build     # full static site in apps/site/build, game included
+pnpm site:preview   # serve that build at http://127.0.0.1:4175/
+pnpm test:site      # browser tests against the built site
+```
+
+`pnpm site:og` refreshes the social preview image from the built home page. Set `VITE_SITE_URL` to the public origin when building for a deployment. See the [project site plan](docs/plans/project-site.md) and [ADR 0011](docs/knowledge/decisions/0011-project-site.md).
+
 ## Project memory and references
 
 - [`docs/knowledge/README.md`](docs/knowledge/README.md) indexes the durable project knowledge.

@@ -14,3 +14,4 @@ Use an ADR for a durable choice likely to be revisited. Keep records short and a
 | [0008](0008-notation-compatibility.md)       | Keep number-formatting compatibility separate and use Remix's notation dependency |
 | [0009](0009-versioned-save-storage.md)       | Keep versioned persistence behind adapters with backup recovery                   |
 | [0010](0010-native-save-storage.md)          | Store native Beyond save slots under Tauri app data with a narrow command bridge  |
+| [0011](0011-project-site.md)                 | Prerendered SvelteKit site with a generated wiki and the game at /play/           |

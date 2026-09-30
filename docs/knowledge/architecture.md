@@ -18,6 +18,7 @@ RNG, clock/time, persistence, and platform integrations are explicit interfaces 
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | apps/web             | SvelteKit static SPA shell, UI, browser adapters                                                                          |
 | apps/native          | Tauri 2 shell and native/platform integration only                                                                        |
+| apps/site            | Prerendered project site: landing page, generated wiki, and the game mounted at /play/                                    |
 | packages/core        | Platform-independent simulation, source-backed rate formulas, and compatibility math facade                               |
 | packages/formatting  | Source-compatible number display and notation adapters                                                                    |
 | packages/content     | Extracted Remix content definitions, separate from engine behavior                                                        |
