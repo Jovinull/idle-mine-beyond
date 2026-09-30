@@ -2609,6 +2609,20 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 },
               },
               {
+                name: "null-money-upgrade-entry",
+                input: {
+                  ...malformedApplicationBase(),
+                  upgrades: { idleSpeed: null },
+                },
+              },
+              {
+                name: "null-gem-upgrade-group",
+                input: {
+                  ...malformedApplicationBase(),
+                  gemUpgrades: null,
+                },
+              },
+              {
                 name: "null-gem-upgrade-entry",
                 input: {
                   ...malformedApplicationBase(),

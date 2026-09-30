@@ -299,6 +299,8 @@ it("captures partial Remix field application before malformed saves throw", () =
     "null-settings-after-story",
     "null-upgrades-after-settings",
     "unknown-upgrade-key",
+    "null-money-upgrade-entry",
+    "null-gem-upgrade-group",
     "null-gem-upgrade-entry",
     "null-planet-coin-group",
     "null-planet-coin-upgrade-entry",
@@ -310,7 +312,7 @@ it("captures partial Remix field application before malformed saves throw", () =
     "null-pickaxe-after-groups",
   ]);
   expect(samples.map(({ thrownErrorName }) => thrownErrorName)).toEqual(
-    Array.from({ length: 14 }, () => "TypeError"),
+    Array.from({ length: 16 }, () => "TypeError"),
   );
   const byName = Object.fromEntries(
     samples.map((sample) => [sample.name, sample]),
@@ -349,6 +351,20 @@ it("captures partial Remix field application before malformed saves throw", () =
   });
   expect(byName["unknown-upgrade-key"]?.stateAfter).toMatchObject({
     settings: { theme: "dark", numberFormatterIndex: 2 },
+    upgradeLevels: {
+      moneyIdleSpeed: 11,
+      gemOfflineGems: 12,
+      planetOfflinePC: 13,
+    },
+  });
+  expect(byName["null-money-upgrade-entry"]?.stateAfter).toMatchObject({
+    upgradeLevels: {
+      moneyIdleSpeed: 11,
+      gemOfflineGems: 12,
+      planetOfflinePC: 13,
+    },
+  });
+  expect(byName["null-gem-upgrade-group"]?.stateAfter).toMatchObject({
     upgradeLevels: {
       moneyIdleSpeed: 11,
       gemOfflineGems: 12,
