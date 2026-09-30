@@ -710,6 +710,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
             (formatter) => formatter.name,
           ),
           selectedNumberFormatter: game.numberFormatter.name,
+          minimumCraftDamage: normalizedDecimal(functions.getMinCraftDamage()),
           upgrades: {
             money: snapshotUpgradeFamily(game.upgrades),
             gems: snapshotUpgradeFamily(game.gemUpgrades),
@@ -4061,12 +4062,17 @@ async function capture(reference, dependencies, dependencySnapshots) {
                             effect: stochasticEffect
                               ? null
                               : normalizedDecimal(upgrade.getEffect(level)),
+                            levelDisplay: upgrade.getLevelDisplay(),
+                            effectDisplay: upgrade.getEffectDisplay(),
+                            priceDisplay: upgrade.getPriceDisplay(),
                           };
                         });
                       return [
                         key,
                         {
                           name: upgrade.name,
+                          description: upgrade.desc,
+                          image: upgrade.img,
                           resource: upgrade.resource,
                           maxLevel:
                             maxLevel === Infinity ? "Infinity" : maxLevel,

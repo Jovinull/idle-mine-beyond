@@ -22,6 +22,14 @@ const fixture = JSON.parse(
   data: {
     initialState: {
       numberFormatters: string[];
+      minimumCraftDamage: DecimalValue;
+      settings: {
+        theme: string;
+        tab: string;
+        numberFormatterIndex: number;
+        showMineObjLevel: boolean;
+        showMinCraftDamage: boolean;
+      };
       progress: {
         mineObjectLevel: number;
         mineObjectCount: number;
@@ -153,6 +161,16 @@ it("records independently observed starting values and reference outputs", () =>
     activeDamage: { decimal: "20" },
     idleDamage: { decimal: "15" },
     moneyPerClick: { decimal: "0.4" },
+  });
+  expect(fixture.data.initialState).toMatchObject({
+    minimumCraftDamage: { decimal: "18" },
+    settings: {
+      theme: "light",
+      tab: "main",
+      numberFormatterIndex: 0,
+      showMineObjLevel: false,
+      showMinCraftDamage: false,
+    },
   });
   expect(fixture.data.notationOutputs.length).toBeGreaterThanOrEqual(6);
 });
