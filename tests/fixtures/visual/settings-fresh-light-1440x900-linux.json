@@ -1,0 +1,41 @@
+{
+  "repository": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": [
+    "index.html",
+    "main.css",
+    "Themes/dark.css",
+    "Images/social/youtube.png",
+    "Images/social/cook1eegames.png",
+    "Images/social/wiki.png"
+  ],
+  "browserName": "Chromium",
+  "browserVersion": "153.0.8010.12",
+  "playwrightVersion": "1.63.0",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "browserColorScheme": "light",
+  "gameTheme": "light",
+  "locale": "en-US",
+  "timezoneId": "UTC",
+  "clockMs": 1704067200000,
+  "state": {
+    "tab": "settings",
+    "mineObjectLevel": 0,
+    "currentObjectName": "Mud",
+    "money": "0",
+    "gems": "5",
+    "storyNotifications": 1,
+    "numberFormatterIndex": 0,
+    "showMineObjLevel": false,
+    "showMinCraftDamage": false,
+    "exportFieldString": "Exported String will appear here..."
+  },
+  "captureNote": "The capture sets one Story notification in memory to match the fresh Beyond route after its first simulated idle frame; it does not persist the reference save.",
+  "screenshotSha256": "9e7f142a56cc59a5d4bb1477f1ef7ea5c3330f6c2bec46467ea0fe86cfedaa86",
+  "capturedOn": "2026-09-30",
+  "screenshotPath": "tests/fixtures/visual/settings-fresh-light-1440x900-linux.png"
+}

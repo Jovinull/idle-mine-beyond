@@ -1,0 +1,44 @@
+{
+  "source": {
+    "name": "Idle Mine: Remix",
+    "repository": "https://github.com/veprogames/idle-mine-remix",
+    "commit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+    "files": [
+      "index.html",
+      "main.css",
+      "Scripts/Define/functions.js",
+      "Scripts/Define/game.js"
+    ],
+    "assets": ["Images/btn_left.png", "Images/btn_right.png", "Images/gem.png"],
+    "fonts": ["fonts/worksans/WorkSans-Regular.woff2"]
+  },
+  "capturedOn": "2026-09-30",
+  "captureMethod": "read-only local source checkout served to Playwright by scripts/capture-remix-mining-screen.mjs",
+  "browser": "Chromium 153.0.8010.12",
+  "playwright": "1.63.0",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "theme": "light",
+  "state": {
+    "moneyGemWasterLevel": 1,
+    "gemUpgradeWasterLevel": 2,
+    "usedGemsLevel": 1,
+    "displayedGemCost": "3"
+  },
+  "crop": {
+    "width": 738,
+    "height": 56
+  },
+  "referenceScreenshot": {
+    "path": "craft-selector-light-1440x900-linux.png",
+    "sha256": "7cc120f40c1f1de8d1b527e0f6d0e89176860f89452a67e58f9f448c314f3272",
+    "bytes": 6829
+  },
+  "pointerPosition": {
+    "x": 0,
+    "y": 0
+  },
+  "notes": "The control row layout is 738x55 CSS pixels; the element screenshot rounds its crop to 738x56 device pixels. Beyond and source crop screenshots matched exactly with the pointer outside the controls. This is a control-only visual fixture, not a full-screen baseline."
+}

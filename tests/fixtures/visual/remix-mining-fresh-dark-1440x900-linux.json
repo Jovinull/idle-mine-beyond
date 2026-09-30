@@ -1,0 +1,191 @@
+{
+  "repository": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": ["index.html", "main.css", "Scripts/Define/game.js"],
+  "browserName": "Chromium",
+  "browserVersion": "153.0.8010.12",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "browserColorScheme": "light",
+  "gameTheme": "dark",
+  "locale": "en-US",
+  "timezoneId": "UTC",
+  "clockMs": 1704067200000,
+  "state": {
+    "tab": "main",
+    "theme": "dark",
+    "mineObjectLevel": 0,
+    "currentObjectName": "Mud",
+    "money": "0",
+    "gems": "5",
+    "notificationCount": 1,
+    "measurements": {
+      "header": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 72
+        },
+        "display": "flex",
+        "position": "static",
+        "margin": "0px",
+        "padding": "9px",
+        "font": "18px \"Work Sans\", sans-serif",
+        "color": "rgb(193, 193, 193)",
+        "backgroundColor": "rgb(33, 33, 33)",
+        "overflow": "visible"
+      },
+      "main": {
+        "rect": {
+          "x": 0,
+          "y": 72,
+          "width": 1440,
+          "height": 756
+        },
+        "display": "block",
+        "position": "static",
+        "margin": "0px",
+        "padding": "0px",
+        "font": "18px \"Work Sans\", sans-serif",
+        "color": "rgb(193, 193, 193)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "overflow": "visible"
+      },
+      "article.main": {
+        "rect": {
+          "x": 0,
+          "y": 72,
+          "width": 1440,
+          "height": 691.75
+        },
+        "display": "grid",
+        "position": "static",
+        "margin": "0px",
+        "padding": "27px",
+        "font": "18px \"Work Sans\", sans-serif",
+        "color": "rgb(193, 193, 193)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "overflow": "visible"
+      },
+      ".mineobject": {
+        "rect": {
+          "x": 27,
+          "y": 99,
+          "width": 648,
+          "height": 405
+        },
+        "display": "grid",
+        "position": "static",
+        "margin": "0px",
+        "padding": "0px",
+        "font": "25.2px \"Work Sans\", sans-serif",
+        "color": "rgb(193, 193, 193)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "overflow": "visible"
+      },
+      "canvas.mine-object": {
+        "rect": {
+          "x": 264.609375,
+          "y": 99,
+          "width": 172.78125,
+          "height": 151.1875
+        },
+        "display": "inline",
+        "position": "static",
+        "margin": "0px",
+        "padding": "0px",
+        "font": "25.2px \"Work Sans\", sans-serif",
+        "color": "rgb(193, 193, 193)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "overflow": "clip"
+      },
+      ".upgradelist-wrapper": {
+        "rect": {
+          "x": 675,
+          "y": 99,
+          "width": 738,
+          "height": 249.625
+        },
+        "display": "flex",
+        "position": "static",
+        "margin": "0px",
+        "padding": "0px",
+        "font": "18px \"Work Sans\", sans-serif",
+        "color": "rgb(193, 193, 193)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "overflow": "visible"
+      },
+      ".stats": {
+        "rect": {
+          "x": 27,
+          "y": 536,
+          "width": 648,
+          "height": 200.75
+        },
+        "display": "flex",
+        "position": "static",
+        "margin": "32px 0px 0px",
+        "padding": "16px",
+        "font": "14.4px \"Work Sans\", sans-serif",
+        "color": "rgb(193, 193, 193)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "overflow": "visible"
+      },
+      ".messagelog": {
+        "rect": {
+          "x": 691,
+          "y": 560,
+          "width": 706,
+          "height": 103.59375
+        },
+        "display": "block",
+        "position": "static",
+        "margin": "0px 16px",
+        "padding": "4px",
+        "font": "14.4px \"Work Sans\", sans-serif",
+        "color": "rgb(193, 193, 193)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "overflow": "auto scroll"
+      },
+      ".craft-pickaxe": {
+        "rect": {
+          "x": 675,
+          "y": 679.59375,
+          "width": 738,
+          "height": 51.390625
+        },
+        "display": "flex",
+        "position": "static",
+        "margin": "16px 0px 0px",
+        "padding": "0px",
+        "font": "18px \"Work Sans\", sans-serif",
+        "color": "rgb(193, 193, 193)",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "overflow": "visible"
+      },
+      "footer": {
+        "rect": {
+          "x": 0,
+          "y": 828,
+          "width": 1440,
+          "height": 72
+        },
+        "display": "flex",
+        "position": "static",
+        "margin": "0px",
+        "padding": "9px",
+        "font": "18px \"Work Sans\", sans-serif",
+        "color": "rgb(193, 193, 193)",
+        "backgroundColor": "rgb(33, 33, 33)",
+        "overflow": "visible"
+      }
+    }
+  },
+  "screenshotSha256": "35faf54534537e28cbc416fe4cb97b291c9a7af48bd0e078f9180a93dfe7ffce",
+  "capturedOn": "2026-09-30",
+  "screenshotPath": "tests/fixtures/visual/remix-mining-fresh-dark-1440x900-linux.png"
+}

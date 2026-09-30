@@ -1,9 +1,13 @@
 import { defineConfig, devices } from "@playwright/test";
 import { getChromiumLaunchOptions } from "./scripts/playwright-browser.mjs";
 
+// Chromium rasterizes text differently on Linux, so Linux compares against
+// Remix screenshots captured on Linux; Windows keeps the reviewed baselines.
+const visualBaselineSuffix = process.platform === "linux" ? "-linux" : "";
+
 export default defineConfig({
   testDir: "./tests/e2e",
-  snapshotPathTemplate: "{testDir}/../fixtures/visual/{arg}{ext}",
+  snapshotPathTemplate: `{testDir}/../fixtures/visual/{arg}${visualBaselineSuffix}{ext}`,
   fullyParallel: true,
   workers: 2,
   forbidOnly: Boolean(process.env.CI),

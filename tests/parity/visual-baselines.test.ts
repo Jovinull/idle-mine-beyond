@@ -9,7 +9,16 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
   const sidecars = (await readdir(visualDirectory))
     .filter((name) => name.endsWith(".json"))
     .sort();
-  expect(sidecars).toHaveLength(23);
+  // Each reviewed Windows baseline has a Linux capture of the same source state.
+  const windowsSidecars = sidecars.filter(
+    (name) => !name.endsWith("-linux.json"),
+  );
+  expect(windowsSidecars).toHaveLength(23);
+  expect(sidecars.filter((name) => name.endsWith("-linux.json"))).toEqual(
+    windowsSidecars
+      .map((name) => name.replace(/\.json$/, "-linux.json"))
+      .sort(),
+  );
 
   for (const sidecarName of sidecars) {
     const metadata = JSON.parse(
@@ -44,5 +53,22 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
     if (metadata.beyondScreenshotSha256 !== undefined) {
       expect(metadata.beyondScreenshotSha256).toBe(expectedSha256);
     }
+  }
+
+  // Linux captures must come from the same source state; only rendered
+  // measurements may differ with the platform's text rasterization.
+  const readState = async (name: string) => {
+    const { state } = JSON.parse(
+      await readFile(new URL(name, visualDirectory), "utf8"),
+    ) as { state?: Record<string, unknown> };
+    const sourceState = { ...state };
+    delete sourceState["measurements"];
+    return sourceState;
+  };
+  for (const windowsName of windowsSidecars) {
+    const linuxName = windowsName.replace(/\.json$/, "-linux.json");
+    expect(await readState(linuxName), `${linuxName} source state`).toEqual(
+      await readState(windowsName),
+    );
   }
 });

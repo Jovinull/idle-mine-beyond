@@ -29,18 +29,33 @@ if (mode !== "--check" && mode !== "--write") {
   );
 }
 
+// Chromium rasterizes text differently per OS. Windows keeps the reviewed
+// baselines; Linux (CI) compares against Remix captures made on Linux.
+const visualBaselineSuffix =
+  { linux: "-linux", win32: "" }[process.platform] ?? null;
+
+if (visualBaselineSuffix === null) {
+  throw new Error(
+    `No Remix visual baselines are recorded for ${process.platform}.`,
+  );
+}
+
 function sha256(contents) {
   return createHash("sha256").update(contents).digest("hex");
 }
 
-function baselinePaths(theme) {
-  const basename = `remix-mining-fresh-${theme}-1440x900`;
+function baselinePaths(basename) {
+  const fixture = `${basename}${visualBaselineSuffix}`;
   return {
-    image: path.join(root, `tests/fixtures/visual/${basename}.png`),
-    metadata: path.join(root, `tests/fixtures/visual/${basename}.json`),
-    researchImage: path.join(outputDirectory, `${basename}.png`),
-    researchMetadata: path.join(outputDirectory, `${basename}.json`),
+    image: path.join(root, `tests/fixtures/visual/${fixture}.png`),
+    metadata: path.join(root, `tests/fixtures/visual/${fixture}.json`),
+    researchImage: path.join(outputDirectory, `${fixture}.png`),
+    researchMetadata: path.join(outputDirectory, `${fixture}.json`),
   };
+}
+
+function relativeToRoot(filePath) {
+  return path.relative(root, filePath).replaceAll("\\", "/");
 }
 
 function mimeType(filePath) {
@@ -158,6 +173,109 @@ function startReadOnlyServer(sourceRoot) {
       resolve({ server, url: `http://127.0.0.1:${address.port}/index.html` });
     });
   });
+}
+
+/**
+ * Captures the Mining craft row in the reviewed Gem Waster state: Money and
+ * Gem Gem Waster levels 1 and 2, then one increase click to selected level 1.
+ */
+async function captureCraftSelector(page, browser, reference) {
+  await page.evaluate(() => window.functions.setTheme("light"));
+  await page.waitForFunction(
+    () =>
+      document.querySelector("#css_theme")?.getAttribute("href") ===
+        "Themes/light.css" &&
+      getComputedStyle(document.body).backgroundColor === "rgb(250, 250, 250)",
+  );
+  const state = await page.evaluate(async () => {
+    const game = window.game;
+    const functions = window.functions;
+    game.gems = new window.Decimal(1000);
+    game.upgrades.gemWaster.level = 1;
+    game.gemUpgrades.gemWaster.level = 2;
+    game.usedGemsLevel = 0;
+    game.settings.showMinCraftDamage = false;
+    await window.app.$nextTick();
+    document
+      .querySelectorAll(".craft-pickaxe > button.level-change")[1]
+      ?.click();
+    await window.app.$nextTick();
+    return {
+      moneyGemWasterLevel: game.upgrades.gemWaster.level,
+      gemUpgradeWasterLevel: game.gemUpgrades.gemWaster.level,
+      usedGemsLevel: game.usedGemsLevel,
+      displayedGemCost: functions.formatThousands(functions.getUsedGems()),
+    };
+  });
+  await page.mouse.move(0, 0);
+  await page.evaluate(() => document.fonts.ready);
+  const screenshot = await page
+    .locator(".craft-pickaxe")
+    .screenshot({ animations: "disabled" });
+  const screenshotSha256 = sha256(screenshot);
+  const paths = baselinePaths("craft-selector-light-1440x900");
+  await mkdir(outputDirectory, { recursive: true });
+  await writeFile(paths.researchImage, screenshot);
+
+  if (mode === "--write") {
+    const templatePath = await readFile(paths.metadata, "utf8")
+      .then(() => paths.metadata)
+      .catch(() =>
+        path.join(
+          root,
+          "tests/fixtures/visual/craft-selector-light-1440x900.json",
+        ),
+      );
+    const template = JSON.parse(await readFile(templatePath, "utf8"));
+    const metadata = {
+      ...template,
+      capturedOn: new Date().toISOString().slice(0, 10),
+      captureMethod:
+        "read-only local source checkout served to Playwright by scripts/capture-remix-mining-screen.mjs",
+      browser: `Chromium ${browser.version()}`,
+      state,
+      crop: {
+        width: screenshot.readUInt32BE(16),
+        height: screenshot.readUInt32BE(20),
+      },
+      referenceScreenshot: {
+        path: path.basename(paths.image),
+        sha256: screenshotSha256,
+        bytes: screenshot.length,
+      },
+    };
+    if (template.beyondScreenshotSha256 !== screenshotSha256) {
+      delete metadata.beyondScreenshotSha256;
+    }
+    await writeFile(paths.image, screenshot);
+    await writeFile(
+      paths.metadata,
+      `${JSON.stringify(metadata, null, 2)}\n`,
+      "utf8",
+    );
+  } else {
+    const [baseline, baselineMetadata] = await Promise.all([
+      readFile(paths.image),
+      readFile(paths.metadata, "utf8").then(JSON.parse),
+    ]);
+    const expectedSha256 = baselineMetadata.referenceScreenshot?.sha256;
+    if (
+      screenshotSha256 !== expectedSha256 ||
+      sha256(baseline) !== expectedSha256
+    ) {
+      throw new Error(
+        `Pinned craft selector SHA-256 ${screenshotSha256} differs from the reviewed baseline ${expectedSha256}. Review the runtime and capture before updating the visual fixture.`,
+      );
+    }
+    if (JSON.stringify(state) !== JSON.stringify(baselineMetadata.state)) {
+      throw new Error(
+        `Pinned craft selector state ${JSON.stringify(state)} differs from the reviewed visual metadata.`,
+      );
+    }
+  }
+  process.stdout.write(
+    `${mode === "--write" ? "Wrote" : "Verified"} pinned Remix craft selector at ${reference.pinnedCommit} in Chromium ${browser.version()}; SHA-256 ${screenshotSha256}.\n${relativeToRoot(paths.researchImage)}\n`,
+  );
 }
 
 async function main() {
@@ -313,7 +431,7 @@ async function main() {
       });
       const screenshot = await page.screenshot({ fullPage: false });
       await mkdir(outputDirectory, { recursive: true });
-      const paths = baselinePaths(theme);
+      const paths = baselinePaths(`remix-mining-fresh-${theme}-1440x900`);
       await writeFile(paths.researchImage, screenshot);
       const metadata = {
         repository: reference.canonicalUrl,
@@ -385,6 +503,8 @@ async function main() {
         `${mode === "--write" ? "Wrote" : "Verified"} pinned Remix fresh Mining ${theme} screen at ${reference.pinnedCommit} in Chromium ${browser.version()}; SHA-256 ${metadata.screenshotSha256}.\n${path.relative(root, paths.researchImage).replaceAll("\\", "/")}\n`,
       );
     }
+
+    await captureCraftSelector(page, browser, reference);
   } finally {
     await browser?.close();
     await new Promise((resolve) => server.close(resolve));
