@@ -25,6 +25,11 @@
   user-select: none;
 }
 
+body[data-theme="dark"] .story-panel-host {
+  background: #363636;
+  color: #c1c1c1;
+}
+
 .story-panel-host :is(h1, h2, h3, h4, h5, h6) {
   margin: 0;
   font-family: Montserrat, sans-serif;
@@ -86,6 +91,10 @@
   font-style: italic;
 }
 
+body[data-theme="dark"] .story-panel-host .story-quote span {
+  color: #c1c1c1;
+}
+
 .story-panel-host .chapter-control {
   display: flex;
   width: 100%;
@@ -106,7 +115,6 @@
 }
 
 .story-panel-host .chapter-control button {
-  padding: 0;
   border: 0;
   background: transparent;
   font-size: 110%;

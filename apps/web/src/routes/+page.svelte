@@ -795,7 +795,7 @@
               />
               <h2>{simulation.currentObject.name}</h2>
               <p data-mine-object-hp>
-                {formatNumber(simulation.currentObject.hp)}
+                HP: {formatNumber(simulation.currentObject.hp)}
               </p>
               <p>D: {formatNumber(simulation.currentObject.defense)}</p>
               <p style="margin: 0;">
@@ -859,7 +859,10 @@
 
           <div class="stats">
             <div>
-              <p>{simulation.pickaxe.name}</p>
+              <p>
+                <img class="inline" src="/Images/pickaxe.png" alt="pickaxe" />
+                {simulation.pickaxe.name}
+              </p>
               <p>P: {formatNumber(simulation.pickaxe.power)}</p>
               <p>Q: {formatPercent(simulation.pickaxe.quality, 0)}</p>
               <p>Base Dmg: {formatNumber(miningRates?.pickaxeDamage ?? 0)}</p>
@@ -1013,8 +1016,10 @@
     <button
       data-game-tab="mining"
       aria-pressed={appState?.settings.tab === "main"}
-      onclick={() => changeTab("main")}>Mining</button
+      onclick={() => changeTab("main")}
     >
+      <img class="inline" src="/Images/pickaxe.png" alt="pickaxe" /> Mining
+    </button>
     {#if simulation && isRemixPowersUnlocked(simulation.highestMineObjectLevel)}
       <button
         data-game-tab="powers"
@@ -1026,20 +1031,26 @@
     {/if}
     <button
       data-game-tab="story"
+      class="story-tab"
       aria-pressed={appState?.settings.tab === "story"}
       onclick={() => changeTab("story")}
     >
       {#if simulation && simulation.story.notifications > 0}
         <span class="notification">{simulation.story.notifications}</span>
       {/if}
-      Story
+      <img
+        class="inline"
+        class:notification={simulation && simulation.story.notifications > 0}
+        src="/Images/story.png"
+        alt="pickaxe"
+      /> Story
     </button>
     <button
       data-game-tab="settings"
       aria-pressed={appState?.settings.tab === "settings"}
       onclick={() => changeTab("settings")}
     >
-      <img class="inline" src="/Images/settings.png" alt="" /> Settings
+      <img class="inline" src="/Images/settings.png" alt="options" /> Settings
     </button>
   </footer>
 </div>
@@ -1110,7 +1121,7 @@
 
   header h1,
   header span {
-    flex: 1;
+    flex-grow: 1;
     font-size: 4vh;
   }
 
@@ -1168,7 +1179,7 @@
     margin: 0 0.2em;
   }
 
-  .inline-resource img[src$="wisdom.png"] {
+  img[src$="wisdom.png"] {
     animation: wisdom-resource-rotate 1s linear infinite;
   }
 
@@ -1341,15 +1352,32 @@
     background: rgb(222, 222, 222);
   }
 
-  .notification {
-    display: inline-grid;
+  .story-tab {
+    position: relative;
+  }
+
+  .story-tab img.notification {
+    margin-right: 0.9rem;
+  }
+
+  .story-tab span.notification {
+    position: absolute;
+    left: 1.5rem;
+    bottom: 0.2rem;
     min-width: 2vh;
     height: 2vh;
-    place-items: center;
-    border-radius: 50%;
-    background: red;
-    color: #fff;
+    padding: 0.17vh;
+    border-radius: 100%;
+    background-color: red;
+    color: white;
     font-size: 1.9vh;
+  }
+
+  footer button img,
+  footer button span {
+    padding: 0;
+    margin: 0;
+    margin-right: 0.5rem;
   }
 
   .session-message {

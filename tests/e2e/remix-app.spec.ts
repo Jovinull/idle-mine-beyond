@@ -113,10 +113,10 @@ test("connects the persistent game session to mining and the Story tab", async (
   await expect(
     page.getByRole("heading", { name: "Idle Mine: Remix" }),
   ).toBeVisible();
-  await expect(page.locator("[data-mine-object-hp]")).toHaveText("100");
+  await expect(page.locator("[data-mine-object-hp]")).toHaveText("HP: 100");
 
   await page.locator("canvas.mine-object[data-damageable='true']").click();
-  await expect(page.locator("[data-mine-object-hp]")).toHaveText("80");
+  await expect(page.locator("[data-mine-object-hp]")).toHaveText("HP: 80");
 
   const moneyUpgrades = page.locator('[data-upgrade-group="money"]');
   await expect(moneyUpgrades).toHaveCount(8);
@@ -131,7 +131,11 @@ test("connects the persistent game session to mining and the Story tab", async (
   await expect(blacksmithDetails).toContainText("$ 30");
 
   const storyTab = page.locator("[data-game-tab='story']");
-  await expect(storyTab.locator(".notification")).toBeVisible();
+  await expect(storyTab.locator("span.notification")).toBeVisible();
+  await expect(storyTab.locator("img.notification")).toHaveAttribute(
+    "src",
+    "/Images/story.png",
+  );
   await storyTab.click();
   await expect(page.locator(".chapter-control h3")).toHaveText(
     story.freshGame.chapterHeading,
@@ -140,7 +144,8 @@ test("connects the persistent game session to mining and the Story tab", async (
     "innerHTML",
     story.freshGame.objectiveHtml,
   );
-  await expect(storyTab.locator(".notification")).toHaveCount(0);
+  await expect(storyTab.locator("span.notification")).toHaveCount(0);
+  await expect(storyTab.locator("img.notification")).toHaveCount(0);
 
   await page.locator("[data-story-action='increaseStoryPage']").click();
   await expect(page.locator(".chapter-control h3")).toHaveText(
@@ -213,11 +218,11 @@ test("refreshes Story notifications from loaded progress and clears them on entr
   await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
 
   const storyTab = page.locator("[data-game-tab='story']");
-  await expect(storyTab.locator(".notification")).toHaveText(
+  await expect(storyTab.locator("span.notification")).toHaveText(
     String(notificationScenario.after.notifications),
   );
   await storyTab.click();
-  await expect(storyTab.locator(".notification")).toHaveCount(0);
+  await expect(storyTab.locator("span.notification")).toHaveCount(0);
   await expect(page.locator(".story-milestones")).toContainText(
     "You mined your first piece of",
   );
@@ -311,7 +316,7 @@ test("updates Story notifications after an actual idle mining break", async ({
   await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
 
   const storyTab = page.locator("[data-game-tab='story']");
-  await expect(storyTab.locator(".notification")).toHaveText(
+  await expect(storyTab.locator("span.notification")).toHaveText(
     String(initialNotification.after.notifications),
   );
   await page.evaluate(() => {
@@ -324,13 +329,13 @@ test("updates Story notifications after an actual idle mining break", async ({
     testWindow.__idleMineStoryTestNow += 2_000;
   });
 
-  await expect(storyTab.locator(".notification")).toHaveText(
+  await expect(storyTab.locator("span.notification")).toHaveText(
     String(idleBreak.result.story.notifications),
   );
   expect(idleBreak.result.highestMineObjectLevel).toBe(1);
   expect(idleBreak.result.story.highestUnlocked).toBe(1);
   await storyTab.click();
-  await expect(storyTab.locator(".notification")).toHaveCount(0);
+  await expect(storyTab.locator("span.notification")).toHaveCount(0);
   await expect(
     page.locator('.story-milestones [data-story-milestone-key="firstMud"]'),
   ).toBeVisible();

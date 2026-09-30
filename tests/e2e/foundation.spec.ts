@@ -15,7 +15,7 @@ test("serves the connected Remix session and fresh mine object", async ({
   await expect(
     page.getByRole("heading", { name: "Idle Mine: Remix" }),
   ).toBeVisible();
-  await expect(page.locator("[data-mine-object-hp]")).toHaveText("100");
+  await expect(page.locator("[data-mine-object-hp]")).toHaveText("HP: 100");
   await expect(page.locator("canvas.mine-object")).toHaveAttribute(
     "data-rendered",
     "true",

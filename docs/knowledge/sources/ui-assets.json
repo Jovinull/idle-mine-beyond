@@ -48,6 +48,11 @@
       "sha256": "CE9941FDA25994E7EA3AAE4556822860DBA5DD10C6F4119BAE90143C3A55380E"
     },
     {
+      "source": "Images/story.png",
+      "destination": "apps/web/static/Images/story.png",
+      "sha256": "591100BB90D21F577168935AE07E037ADED40BC61B8EF8DADAF8CFBE9FDE600C"
+    },
+    {
       "source": "Images/wisdom.png",
       "destination": "apps/web/static/Images/wisdom.png",
       "sha256": "FF1CBF7DC1E05FFAA7C2314C8CFED8229AC2A33033D5F87B452196A952B587E2"
