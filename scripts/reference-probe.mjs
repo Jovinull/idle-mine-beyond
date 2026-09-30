@@ -841,6 +841,18 @@ async function capture(reference, dependencies, dependencySnapshots) {
               values: ["1e6", "1", "1", "1", "1"],
             },
             {
+              name: "craftsmanship-power-advances-expertise",
+              index: 1,
+              powerResetKeepLevel: 4,
+              values: ["1", "1e6", "1", "1", "1"],
+            },
+            {
+              name: "expertise-power-advances-wisdom",
+              index: 2,
+              powerResetKeepLevel: 4,
+              values: ["1", "1", "1e6", "1", "1"],
+            },
+            {
               name: "wisdom-prestige-uses-logarithmic-target",
               index: 3,
               powerResetKeepLevel: 4,

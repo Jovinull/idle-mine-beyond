@@ -59590,6 +59590,130 @@
           ]
         },
         {
+          "name": "craftsmanship-power-advances-expertise",
+          "input": {
+            "index": 1,
+            "powerResetKeepLevel": 4,
+            "values": ["1", "1e6", "1", "1", "1"]
+          },
+          "before": [
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1000000",
+              "mantissa": 1,
+              "exponent": 6
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          ],
+          "after": [
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "10757.218745734002",
+              "mantissa": 1.0757218745734003,
+              "exponent": 4
+            },
+            {
+              "decimal": "15.84893192461114",
+              "mantissa": 1.584893192461114,
+              "exponent": 1
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          ]
+        },
+        {
+          "name": "expertise-power-advances-wisdom",
+          "input": {
+            "index": 2,
+            "powerResetKeepLevel": 4,
+            "values": ["1", "1", "1e6", "1", "1"]
+          },
+          "before": [
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1000000",
+              "mantissa": 1,
+              "exponent": 6
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          ],
+          "after": [
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            {
+              "decimal": "10757.218745734002",
+              "mantissa": 1.0757218745734003,
+              "exponent": 4
+            },
+            {
+              "decimal": "7.943282347242813",
+              "mantissa": 7.943282347242813,
+              "exponent": 0
+            },
+            {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          ]
+        },
+        {
           "name": "wisdom-prestige-uses-logarithmic-target",
           "input": {
             "index": 3,
