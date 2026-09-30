@@ -265,20 +265,34 @@ async function captureStory(
           return {
             properties: {
               alignItems: style.alignItems,
+              backgroundColor: style.backgroundColor,
+              border: style.border,
               borderBottom: style.borderBottom,
               borderTop: style.borderTop,
+              boxSizing: style.boxSizing,
               color: style.color,
               display: style.display,
               fontFamily: style.fontFamily,
               fontSize: style.fontSize,
               fontStyle: style.fontStyle,
               height: style.height,
+              left: style.left,
               margin: style.margin,
               marginLeft: style.marginLeft,
+              outline: style.outline,
               overflowY: style.overflowY,
               overscrollBehaviorY: style.overscrollBehaviorY,
               padding: style.padding,
+              paddingBottom: style.paddingBottom,
+              paddingLeft: style.paddingLeft,
+              paddingRight: style.paddingRight,
               paddingTop: style.paddingTop,
+              position: style.position,
+              right: style.right,
+              textAlign: style.textAlign,
+              top: style.top,
+              bottom: style.bottom,
+              transform: style.transform,
               width: style.width,
               zIndex: style.zIndex,
             },
@@ -411,6 +425,15 @@ async function captureStory(
               milestone: readComputed(".story-milestones > div"),
               chapterControl: readComputed(".chapter-control"),
               chapterHeading: readComputed(".chapter-control h3"),
+              chapterPreviousButton: readComputed(
+                ".chapter-control button:first-of-type",
+              ),
+              chapterNextButton: readComputed(
+                ".chapter-control button:last-of-type",
+              ),
+              chapterNextImage: readComputed(
+                ".chapter-control button:last-of-type img",
+              ),
               quote: readComputed(".story-quote"),
               quoteText: readComputed(".story-quote span"),
               mineObjectCanvas: readComputed(
@@ -503,6 +526,10 @@ async function captureStory(
         await page.evaluate(async (pageNumber) => {
           window.game.story.page = pageNumber;
           await new Promise((resolve) => window.app.$nextTick(resolve));
+          for (const animation of document.getAnimations()) {
+            animation.pause();
+            animation.currentTime = 0;
+          }
         }, pageIndex);
         await page.waitForTimeout(40);
         await page.screenshot({
@@ -511,6 +538,105 @@ async function captureStory(
             `all-unlocked-page-${pageIndex}.png`,
           ),
           fullPage: true,
+        });
+      }
+      await page.evaluate(() => window.functions.setTheme("dark"));
+      await page.waitForTimeout(100);
+      const themeProbe = await page.evaluate(() => ({
+        href: document.querySelector("#css_theme")?.getAttribute("href"),
+        bodyBackground: getComputedStyle(document.body).backgroundColor,
+        gameTheme: window.game.settings.theme,
+      }));
+      if (
+        themeProbe.href !== "Themes/dark.css" ||
+        themeProbe.bodyBackground !== "rgb(54, 54, 54)" ||
+        themeProbe.gameTheme !== "dark"
+      ) {
+        throw new Error(
+          `Remix dark theme failed to load for the Story screenshot: ${JSON.stringify(themeProbe)}.`,
+        );
+      }
+      await page.evaluate(async () => {
+        window.game.story.page = 0;
+        await new Promise((resolve) => window.app.$nextTick(resolve));
+        const scroller = document.querySelector(".story-milestones");
+        if (!scroller) throw new Error("Story scroller was not rendered.");
+        scroller.scrollTop = 249;
+        for (const animation of document.getAnimations()) {
+          animation.pause();
+          animation.currentTime = 0;
+        }
+      });
+      const storyScroll = await page.evaluate(() => {
+        const scroller = document.querySelector(".story-milestones");
+        return scroller
+          ? {
+              page: window.game.story.page,
+              tab: window.game.settings.tab,
+              clientHeight: scroller.clientHeight,
+              scrollHeight: scroller.scrollHeight,
+              scrollTop: scroller.scrollTop,
+            }
+          : null;
+      });
+      if (storyScroll?.scrollTop !== 249) {
+        throw new Error(
+          `Dark Story screenshot requires 249px scroll; received ${JSON.stringify(storyScroll)}.`,
+        );
+      }
+      await page.mouse.move(viewport.width - 1, viewport.height - 1);
+      await page.screenshot({
+        path: path.join(
+          outputDirectory,
+          "story-all-unlocked-page-0-dark-1440x900.png",
+        ),
+        fullPage: false,
+      });
+      await page.reload({ waitUntil: "load" });
+      await page.waitForFunction(
+        "Boolean(window.game && window.functions && window.app?.$el)",
+      );
+      await page.waitForFunction("window.imgLoaded === true");
+      await page.evaluate(() => document.fonts.ready);
+      for (const theme of ["light", "dark"]) {
+        await page.evaluate((selectedTheme) => {
+          window.game.settings.tab = "settings";
+          window.game.story.notifications = 1;
+          window.functions.setTheme(selectedTheme);
+        }, theme);
+        await page.waitForTimeout(100);
+        const expectedBodyColor =
+          theme === "dark" ? "rgb(54, 54, 54)" : "rgb(250, 250, 250)";
+        const settingsTheme = await page.evaluate(() => ({
+          bodyBackground: getComputedStyle(document.body).backgroundColor,
+          gameTheme: window.game.settings.theme,
+          tab: window.game.settings.tab,
+          storyNotifications: window.game.story.notifications,
+        }));
+        if (
+          settingsTheme.bodyBackground !== expectedBodyColor ||
+          settingsTheme.gameTheme !== theme ||
+          settingsTheme.tab !== "settings" ||
+          settingsTheme.storyNotifications !== 1
+        ) {
+          throw new Error(
+            `Remix ${theme} Settings screenshot reached the wrong source state: ${JSON.stringify(settingsTheme)}.`,
+          );
+        }
+        await page.evaluate(async () => {
+          await new Promise((resolve) => window.app.$nextTick(resolve));
+          for (const animation of document.getAnimations()) {
+            animation.pause();
+            animation.currentTime = 0;
+          }
+        });
+        await page.mouse.move(viewport.width - 1, viewport.height - 1);
+        await page.screenshot({
+          path: path.join(
+            outputDirectory,
+            `settings-fresh-${theme}-1440x900.png`,
+          ),
+          fullPage: false,
         });
       }
     }
