@@ -1,5 +1,6 @@
 import {
   performRemixSimulationAction,
+  createRemixHardResetSimulationState,
   type RemixMineObjectCatalog,
   type RemixMiningRandom,
   type RemixOfflineClock,
@@ -10,17 +11,25 @@ import {
 } from "@idle-mine-beyond/core";
 import { createInitialRemixSimulationState } from "@idle-mine-beyond/core";
 import {
+  formatRemixPickaxeCraftFeedback,
+  type NotationFormatter,
+} from "@idle-mine-beyond/formatting";
+import {
   createInitialRemixLegacySaveApplicationState,
   createRemixLegacySaveExportData,
   encodeRemixLegacySave,
+  importRemixBeyondRecoveryFile,
   importRemixLegacySaveToBeyond,
   loadRemixBeyondSaveIntoState,
   persistRemixBeyondSave,
   type ImportRemixLegacySaveToBeyondResult,
+  type ImportRemixBeyondRecoveryFileResult,
   type PersistRemixBeyondSaveResult,
   type RemixBeyondSaveConfirmationEffect,
   type RemixBeyondSaveStorageAdapter,
+  type RemixLegacySaveLogMessage,
   type RemixLegacySaveApplicationState,
+  type RemixLegacySaveTemplate,
 } from "@idle-mine-beyond/persistence";
 
 export type RemixWebSessionEffect =
@@ -31,7 +40,8 @@ export type RemixWebSessionEffect =
       readonly color: string;
     };
 
-export type RemixWebSessionSource = "fresh" | "legacy" | "primary" | "backup";
+export type RemixWebSessionSource =
+  "fresh" | "legacy" | "primary" | "backup" | "recoveryFile";
 
 type SaveFailure = Exclude<PersistRemixBeyondSaveResult, { status: "saved" }>;
 
@@ -124,6 +134,84 @@ export type RemixWebSessionImportResult =
       readonly initialization: RemixWebSessionInitialization;
     };
 
+export type RemixWebSessionRecoveryResult =
+  | {
+      readonly status: "recovered";
+      readonly state: RemixLegacySaveApplicationState;
+      readonly result: Extract<
+        ImportRemixLegacySaveToBeyondResult,
+        { status: "imported" }
+      >;
+    }
+  | {
+      readonly status: "legacyLoadFailed";
+      readonly result: Extract<
+        ImportRemixLegacySaveToBeyondResult,
+        { status: "legacyLoadFailed" }
+      >;
+    }
+  | {
+      readonly status: "persistenceFailed";
+      readonly result: Extract<
+        ImportRemixLegacySaveToBeyondResult,
+        { status: "persistenceFailed" }
+      >;
+    }
+  | {
+      readonly status: "notRecoverable";
+      readonly initialization: RemixWebSessionInitialization;
+    };
+
+export type RemixWebSessionBeyondRecoveryResult =
+  | {
+      readonly status: "recovered";
+      readonly state: RemixLegacySaveApplicationState;
+      readonly result: Extract<
+        ImportRemixBeyondRecoveryFileResult,
+        { status: "recovered" }
+      >;
+    }
+  | {
+      readonly status: "fileRejected";
+      readonly result: Extract<
+        ImportRemixBeyondRecoveryFileResult,
+        { status: "fileRejected" }
+      >["result"];
+    }
+  | {
+      readonly status: "persistenceFailed";
+      readonly result: Extract<
+        ImportRemixBeyondRecoveryFileResult,
+        { status: "persistenceFailed" }
+      >;
+    }
+  | {
+      readonly status: "notRecoverable";
+      readonly initialization: RemixWebSessionInitialization;
+    };
+
+export type RemixWebSessionHardResetResult =
+  | {
+      readonly status: "reset";
+      readonly state: RemixLegacySaveApplicationState;
+      readonly confirmationPrompts: readonly string[];
+    }
+  | {
+      readonly status: "cancelled";
+      readonly state: RemixLegacySaveApplicationState;
+      readonly confirmationPrompts: readonly string[];
+    }
+  | {
+      readonly status: "storageFailed";
+      readonly state: RemixLegacySaveApplicationState;
+      readonly message: string;
+      readonly confirmationPrompts: readonly string[];
+    }
+  | {
+      readonly status: "recoveryRequired";
+      readonly initialization: RemixWebSessionInitialization;
+    };
+
 export interface RemixWebGameSession {
   initialize(): Promise<RemixWebSessionInitialization>;
   getState(): RemixLegacySaveApplicationState | undefined;
@@ -134,20 +222,33 @@ export interface RemixWebGameSession {
     ) => RemixLegacySaveApplicationState,
   ): Promise<RemixWebSessionStateUpdateResult>;
   saveNow(): Promise<RemixWebSessionSaveResult>;
-  exportLegacySave(): Promise<RemixWebSessionExportResult>;
+  exportLegacySave(
+    messageLog?: readonly RemixLegacySaveLogMessage[],
+  ): Promise<RemixWebSessionExportResult>;
   importLegacySave(saveString: string): Promise<RemixWebSessionImportResult>;
+  recoverLegacySave(saveString: string): Promise<RemixWebSessionRecoveryResult>;
+  recoverBeyondSaveFile(
+    serialized: string,
+  ): Promise<RemixWebSessionBeyondRecoveryResult>;
+  hardReset(
+    confirm: (message: string) => boolean | Promise<boolean>,
+  ): Promise<RemixWebSessionHardResetResult>;
 }
 
 export interface CreateRemixWebGameSessionInput {
   readonly catalog: RemixMineObjectCatalog;
+  readonly legacySaveTemplate: RemixLegacySaveTemplate;
   readonly storyMilestones: readonly RemixStoryMilestone[];
+  readonly initialGameTimestampMs: number;
   readonly random: RemixMiningRandom;
   readonly clock: RemixOfflineClock;
   readonly storage: RemixBeyondSaveStorageAdapter;
+  readonly clearAllStorage: () => void | Promise<void>;
   readonly readLegacySave: () => string | null | Promise<string | null>;
   readonly resolveNumberFormatter: (
     index: number,
   ) => RemixOfflineNumberFormatter;
+  readonly resolveNotationFormatter: (index: number) => NotationFormatter;
   readonly dispatchEffect: (
     effect: RemixWebSessionEffect,
   ) => void | Promise<void>;
@@ -315,6 +416,33 @@ export function createRemixWebGameSession(
       current.settings.numberFormatterIndex,
       input,
     );
+    const orderedEffects =
+      result.type === "craftPickaxe"
+        ? (() => {
+            const formatter = input.resolveNotationFormatter(
+              current.settings.numberFormatterIndex,
+            );
+            let saveEffectIndex = 0;
+            return result.events.flatMap((event) => {
+              if (event.type === "save") {
+                const saveEffect = result.effects[saveEffectIndex++];
+                if (!saveEffect) {
+                  throw new Error(
+                    "Pickaxe craft save event has no matching snapshot.",
+                  );
+                }
+                return [saveEffect];
+              }
+              const feedback = formatRemixPickaxeCraftFeedback(
+                event,
+                formatter,
+              );
+              return feedback === null
+                ? []
+                : [{ type: "logMessage" as const, ...feedback }];
+            });
+          })()
+        : result.effects;
     let nextState: RemixLegacySaveApplicationState = {
       ...current,
       simulation: result.state,
@@ -327,7 +455,7 @@ export function createRemixWebGameSession(
       effects.push(effect);
     };
 
-    for (const effect of result.effects) {
+    for (const effect of orderedEffects) {
       if (effect.type === "logMessage") {
         await dispatchEffect(effect);
         continue;
@@ -448,7 +576,9 @@ export function createRemixWebGameSession(
     return task;
   }
 
-  function exportLegacySave(): Promise<RemixWebSessionExportResult> {
+  function exportLegacySave(
+    messageLog: readonly RemixLegacySaveLogMessage[] = [],
+  ): Promise<RemixWebSessionExportResult> {
     const task = actionQueue.then(async () => {
       const initialized = await initialize();
       if (initialized.status !== "ready") {
@@ -464,6 +594,8 @@ export function createRemixWebGameSession(
         createRemixLegacySaveExportData(
           current,
           current.simulation.lastActiveMs ?? input.clock.now(),
+          input.legacySaveTemplate,
+          messageLog,
         ),
       );
       state = {
@@ -518,6 +650,174 @@ export function createRemixWebGameSession(
     return task;
   }
 
+  function recoverLegacySave(
+    saveString: string,
+  ): Promise<RemixWebSessionRecoveryResult> {
+    const task = actionQueue.then(async () => {
+      const initialized = await initialize();
+      if (initialized.status !== "recoveryRequired") {
+        return {
+          status: "notRecoverable" as const,
+          initialization: initialized,
+        };
+      }
+
+      const effects: RemixWebSessionEffect[] = [];
+      const result = await importRemixLegacySaveToBeyond({
+        load: {
+          state: initialApplicationState(input.catalog),
+          saveString,
+          catalog: input.catalog,
+          clock: input.clock,
+          resolveNumberFormatter: input.resolveNumberFormatter,
+        },
+        storage: input.storage,
+        dispatchEffect(effect) {
+          effects.push(effect);
+        },
+      });
+
+      if (result.status === "legacyLoadFailed") {
+        return { status: "legacyLoadFailed" as const, result };
+      }
+      if (result.status === "persistenceFailed") {
+        return { status: "persistenceFailed" as const, result };
+      }
+
+      state = result.loaded.state;
+      initialization = Promise.resolve({
+        status: "ready",
+        source: "legacy",
+        state,
+      });
+      for (const effect of effects) await input.dispatchEffect(effect);
+
+      return { status: "recovered" as const, state, result };
+    });
+    actionQueue = task.then(
+      () => undefined,
+      () => undefined,
+    );
+    return task;
+  }
+
+  function recoverBeyondSaveFile(
+    serialized: string,
+  ): Promise<RemixWebSessionBeyondRecoveryResult> {
+    const task = actionQueue.then(async () => {
+      const initialized = await initialize();
+      if (initialized.status !== "recoveryRequired") {
+        return {
+          status: "notRecoverable" as const,
+          initialization: initialized,
+        };
+      }
+
+      const effects: RemixWebSessionEffect[] = [];
+      const result = await importRemixBeyondRecoveryFile({
+        serialized,
+        catalog: input.catalog,
+        clock: input.clock,
+        resolveNumberFormatter: input.resolveNumberFormatter,
+        storage: input.storage,
+        dispatchEffect(effect) {
+          effects.push(effect);
+        },
+      });
+      if (result.status === "fileRejected") {
+        return { status: "fileRejected" as const, result: result.result };
+      }
+      if (result.status === "persistenceFailed") {
+        return { status: "persistenceFailed" as const, result };
+      }
+
+      state = result.state;
+      initialization = Promise.resolve({
+        status: "ready",
+        source: "recoveryFile",
+        state,
+      });
+      for (const effect of effects) await input.dispatchEffect(effect);
+      return { status: "recovered" as const, state, result };
+    });
+    actionQueue = task.then(
+      () => undefined,
+      () => undefined,
+    );
+    return task;
+  }
+
+  function hardReset(
+    confirm: (message: string) => boolean | Promise<boolean>,
+  ): Promise<RemixWebSessionHardResetResult> {
+    const task = actionQueue.then(async () => {
+      const initialized = await initialize();
+      if (initialized.status !== "ready") {
+        return {
+          status: "recoveryRequired" as const,
+          initialization: initialized,
+        };
+      }
+      const current = state;
+      if (!current) throw new Error("Ready session has no application state.");
+
+      const confirmationPrompts: string[] = [];
+      for (let remaining = 3; remaining > 0; remaining -= 1) {
+        const message =
+          "Are you sure you want to ENTIRELY reset your savegame? YOu get no reward." +
+          `Click ${remaining} more times to confirm`;
+        confirmationPrompts.push(message);
+        if (!(await confirm(message))) {
+          return {
+            status: "cancelled" as const,
+            state: current,
+            confirmationPrompts,
+          };
+        }
+      }
+
+      try {
+        await input.clearAllStorage();
+      } catch (error) {
+        return {
+          status: "storageFailed" as const,
+          state: current,
+          message: error instanceof Error ? error.message : String(error),
+          confirmationPrompts,
+        };
+      }
+
+      const initial = initialApplicationState(input.catalog);
+      const resetState: RemixLegacySaveApplicationState = {
+        ...initial,
+        simulation: createRemixHardResetSimulationState(
+          current.simulation,
+          input.catalog,
+          input.initialGameTimestampMs,
+        ),
+        storyScrollY: 0,
+        settings: {
+          ...initial.settings,
+          tab: current.settings.tab,
+          upgradeTab: current.settings.upgradeTab,
+          exportFieldString: current.settings.exportFieldString,
+        },
+      };
+      state = resetState;
+      await input.dispatchEffect({ type: "setTheme", theme: "light" });
+      return {
+        status: "reset" as const,
+        state: resetState,
+        confirmationPrompts,
+      };
+    });
+    actionQueue = task.then(
+      () => undefined,
+      () => undefined,
+    );
+    return task;
+  }
+
   return {
     initialize,
     getState: () => state,
@@ -526,5 +826,8 @@ export function createRemixWebGameSession(
     saveNow,
     exportLegacySave,
     importLegacySave,
+    recoverLegacySave,
+    recoverBeyondSaveFile,
+    hardReset,
   };
 }

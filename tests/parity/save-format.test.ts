@@ -1,5 +1,14 @@
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { expect, it } from "vitest";
+import { encodeRemixLegacySave } from "../../packages/persistence/src/index.js";
+
+type SerializableShape = {
+  type: string;
+  fields?: Record<string, SerializableShape>;
+  length?: number;
+  elementShapes?: readonly { count: number; shape: SerializableShape }[];
+};
 
 const corpus = JSON.parse(
   await readFile(
@@ -28,6 +37,8 @@ const corpus = JSON.parse(
         topLevelKeys: string[];
         decimalFields: Record<string, { type: string; value: string }>;
         collectionLengths: Record<string, number>;
+        nestedKeys: Record<string, readonly string[]>;
+        serializableShape: SerializableShape;
         omittedUpgradeFunctions: { price: boolean; effect: boolean };
       };
       missingOptionalGroups: {
@@ -54,7 +65,20 @@ const corpus = JSON.parse(
         preserved: boolean;
       };
     };
+    saveExportSemantics: {
+      sourcePaths: string[];
+      fresh: LegacySaveExportSnapshot;
+      controlled: LegacySaveExportSnapshot;
+    };
   };
+};
+
+type LegacySaveExportSnapshot = {
+  object: Record<string, unknown>;
+  jsonUtf8Bytes: number;
+  jsonSha256: string;
+  saveStringAsciiBytes: number;
+  saveStringSha256: string;
 };
 
 const save = corpus.data.saveSemantics;
@@ -99,6 +123,99 @@ it("captures the pinned versionless save shape and encoding order", () => {
     effect: true,
   });
   expect(save.encoding.base64AlphabetOnly).toBe(true);
+});
+
+it("describes every enumerable field in the serialized Remix game object", () => {
+  const shape = save.currentShape.serializableShape;
+  expect(shape.type).toBe("object");
+
+  const fields = shape.fields ?? {};
+  expect(Object.keys(fields)).toEqual(save.currentShape.topLevelKeys);
+  const arrays: Record<string, SerializableShape | undefined> = {
+    numberFormatters: fields["numberFormatters"],
+    mineObjects: fields["mineObjects"],
+    specialMineObjects: fields["specialMineObjects"],
+    powersValues: fields["powers"]?.fields?.["data"]?.fields?.["values"],
+    messageLog: fields["messageLog"],
+  };
+  for (const [key, length] of Object.entries(
+    save.currentShape.collectionLengths,
+  )) {
+    const arrayShape = arrays[key];
+    expect(arrayShape, `${key} should have a shape entry`).toBeDefined();
+    expect(arrayShape).toMatchObject({ type: "array", length });
+    expect(
+      arrayShape?.elementShapes?.reduce((sum, entry) => sum + entry.count, 0),
+    ).toBe(length);
+  }
+
+  for (const group of [
+    "settings",
+    "story",
+    "upgrades",
+    "gemUpgrades",
+    "planetCoinUpgrades",
+    "powers",
+    "pickaxe",
+  ]) {
+    expect(Object.keys(fields[group]?.fields ?? {})).toEqual(
+      save.currentShape.nestedKeys[group],
+    );
+  }
+  expect(Object.keys(fields["powers"]?.fields?.["data"]?.fields ?? {})).toEqual(
+    save.currentShape.nestedKeys["powersData"],
+  );
+});
+
+it("captures full legacy save objects and exact encoded bytes", () => {
+  const snapshots = corpus.data.saveExportSemantics;
+  expect(snapshots.sourcePaths).toEqual([
+    "Scripts/Define/functions.js",
+    "Scripts/Define/game.js",
+    "Scripts/mineobject.js",
+    "Scripts/upgrade.js",
+  ]);
+
+  for (const snapshot of [snapshots.fresh, snapshots.controlled]) {
+    const json = JSON.stringify(snapshot.object);
+    const encoded = encodeRemixLegacySave(snapshot.object);
+    expect(Buffer.byteLength(json, "utf8")).toBe(snapshot.jsonUtf8Bytes);
+    expect(createHash("sha256").update(json).digest("hex")).toBe(
+      snapshot.jsonSha256,
+    );
+    expect(encoded).toMatch(/^[A-Za-z0-9+/]*={0,2}$/);
+    expect(encoded).toHaveLength(snapshot.saveStringAsciiBytes);
+    expect(createHash("sha256").update(encoded).digest("hex")).toBe(
+      snapshot.saveStringSha256,
+    );
+    expect(JSON.parse(json)).toEqual(snapshot.object);
+  }
+
+  expect(Object.keys(snapshots.fresh.object)).toEqual(
+    corpus.data.saveSemantics.currentShape.topLevelKeys,
+  );
+  expect(snapshots.fresh.object).toMatchObject({
+    money: "0",
+    gems: "5",
+    mineObjectLevel: 0,
+    highestMineObjectLevel: 0,
+    currentMineObject: { name: "Mud" },
+    settings: { theme: "light", numberFormatterIndex: 0 },
+  });
+  expect(snapshots.controlled.object).toMatchObject({
+    money: "123.50000000000001",
+    gems: "23",
+    mineObjectLevel: 3,
+    highestMineObjectLevel: 8,
+    currentMineObject: { name: "Clay" },
+    pickaxe: { name: "Probe Pickaxe", pow: "123", quality: "4" },
+    story: { page: 2, notifications: 4, highestUnlocked: 17, scrollY: 123 },
+    settings: {
+      tab: "settings",
+      numberFormatterIndex: 3,
+      theme: "dark",
+    },
+  });
 });
 
 it("preserves the observed Unicode corruption and partial-save defaults", () => {

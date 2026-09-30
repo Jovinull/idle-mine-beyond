@@ -67,7 +67,11 @@ export type {
   RemixLegacySaveSettings,
 } from "./remix-legacy-save-application.js";
 export { loadRemixLegacySaveIntoState } from "./remix-legacy-save-load.js";
-export { createRemixLegacySaveExportData } from "./remix-legacy-save-export.js";
+export {
+  createRemixLegacySaveExportData,
+  type RemixLegacySaveLogMessage,
+  type RemixLegacySaveTemplate,
+} from "./remix-legacy-save-export.js";
 export type {
   LoadRemixLegacySaveInput,
   LoadRemixLegacySaveResult,

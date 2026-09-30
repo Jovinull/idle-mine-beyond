@@ -14,6 +14,7 @@ type LegacyDecimalValue = DecimalSource | null;
 type LegacyUpgradeGroup = Record<string, { level?: number }>;
 
 export interface RemixLegacySaveData {
+  [key: string]: unknown;
   money?: LegacyDecimalValue;
   highestMoney?: LegacyDecimalValue;
   gems?: LegacyDecimalValue;

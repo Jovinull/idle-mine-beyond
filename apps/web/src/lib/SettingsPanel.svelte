@@ -13,6 +13,7 @@
     onExportFieldStringChange: (value: string) => void;
     onExport: () => void;
     onImport: (value: string) => void;
+    onHardReset: () => void;
     error: string;
   };
 
@@ -26,6 +27,7 @@
     onExportFieldStringChange,
     onExport,
     onImport,
+    onHardReset,
     error,
   }: Props = $props();
 
@@ -89,6 +91,7 @@
   <button data-settings-import onclick={() => onImport(exportFieldString)}
     >Import (from Text Field)</button
   >
+  <button data-settings-hard-reset onclick={onHardReset}>Hard Reset</button>
   <br />
   <p>
     Note: The Game won't save if cookies and browser storage are disabled.

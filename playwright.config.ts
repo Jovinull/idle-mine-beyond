@@ -3,6 +3,7 @@ import { getChromiumLaunchOptions } from "./scripts/playwright-browser.mjs";
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  snapshotPathTemplate: "{testDir}/../fixtures/visual/{arg}{ext}",
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,

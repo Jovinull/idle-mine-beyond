@@ -4,8 +4,9 @@
     Decimal,
     calculateRemixPickaxeCraft,
     calculateRemixMiningRates,
-    calculateRemixUpgradeEffect,
+    getRemixCraftGemSelectionControls,
     getRemixMineObject,
+    isRemixPowersUnlocked,
     resolveRemixMiningInput,
     transitionRemixStoryTab,
     type DecimalSource,
@@ -14,14 +15,18 @@
     type RemixStoryConditionState,
     type RemixStoryInteractionEffect,
     type RemixStoryMilestone,
+    type RemixPowerPrestigeIndex,
+    type RemixUpgradeKey,
     type RemixUpgradeContext,
   } from "@idle-mine-beyond/core";
   import mineObjectContent from "@idle-mine-beyond/content/remix-mine-content";
+  import legacySaveTemplateContent from "@idle-mine-beyond/content/remix-legacy-save-template";
   import storyMilestoneContent from "@idle-mine-beyond/content/remix-story-milestones";
   import {
     createRemixFormatters,
     formatNumber as formatRemixNumber,
     formatPercent as formatRemixPercent,
+    formatThousands,
     type NotationFormatter,
   } from "@idle-mine-beyond/formatting";
   import type { RemixLegacySaveApplicationState } from "@idle-mine-beyond/persistence";
@@ -29,15 +34,24 @@
   import StoryPanel from "$lib/StoryPanel.svelte";
   import SettingsPanel from "$lib/SettingsPanel.svelte";
   import UpgradePanel from "$lib/UpgradePanel.svelte";
+  import PowersPanel from "$lib/PowersPanel.svelte";
   import {
     createRemixWebGameSession,
     type RemixWebGameSession,
     type RemixWebSessionEffect,
   } from "$lib/platform/remix-game-session.js";
   import {
+    clearBrowserRemixStorage,
     createBrowserRemixSaveStorage,
     readBrowserRemixLegacySave,
+    readRemixRecoveryData,
   } from "$lib/platform/remix-save-storage.js";
+  import {
+    clearTauriRemixSaveStorage,
+    createTauriRemixSaveStorage,
+    getRemixTauriInvoke,
+    type RemixTauriWindow,
+  } from "$lib/platform/remix-tauri-save-storage.js";
 
   type SessionStatus = "loading" | "ready" | "recovery" | "error";
   type StoryLogEffect = Extract<
@@ -55,11 +69,22 @@
   let gameSession: RemixWebGameSession | undefined;
   let sessionStatus = $state<SessionStatus>("loading");
   let recoveryMessage = $state("");
+  let recoveryActionMessage = $state("");
+  let recoverySaveString = $state("");
+  let recoveryBeyondFileText = $state("");
+  let recoveryBeyondFileName = $state("");
+  let recoveryBundleText = $state("");
+  let recoveryCopyAcknowledged = $state(false);
   let actionError = $state("");
   let messages = $state<DisplayMessage[]>([]);
   let pressedKeys = $state<string[]>([]);
+  let resumeAnimation: (() => void) | undefined;
+  let recoveryReader: (() => Promise<string>) | undefined;
 
   const simulation = $derived(appState?.simulation);
+  const craftGemSelection = $derived.by(() =>
+    simulation ? getRemixCraftGemSelectionControls(simulation) : undefined,
+  );
   const selectedNotation = $derived.by<NotationFormatter>(() => {
     const index = appState?.settings.numberFormatterIndex ?? 0;
     return formatters[index] ?? formatters[0]!;
@@ -92,14 +117,8 @@
       },
       highestMineObjectLevel: simulation.highestMineObjectLevel,
     };
-    const gems = calculateRemixUpgradeEffect(
-      "money",
-      "gemWaster",
-      simulation.usedGemsLevel,
-      context,
-    );
     return calculateRemixPickaxeCraft({
-      gems,
+      gems: craftGemSelection?.gemCost ?? 1,
       context,
       mode: { kind: "minimum" },
     }).damage;
@@ -216,7 +235,7 @@
     if (!gameSession) return;
     actionError = "";
     try {
-      const result = await gameSession.exportLegacySave();
+      const result = await gameSession.exportLegacySave(messages);
       if (result.status === "recoveryRequired") {
         sessionStatus = "recovery";
         recoveryMessage =
@@ -264,16 +283,143 @@
     }
   }
 
+  async function hardResetCurrentSave() {
+    if (!gameSession) return;
+    actionError = "";
+    try {
+      const result = await gameSession.hardReset((message) =>
+        window.confirm(message),
+      );
+      if (result.status === "recoveryRequired") {
+        sessionStatus = "recovery";
+        recoveryMessage =
+          result.initialization.status === "recoveryRequired"
+            ? result.initialization.reason
+            : "The save could not be loaded safely.";
+      } else if (result.status === "reset") {
+        appState = result.state;
+        messages = [];
+      } else if (result.status === "storageFailed") {
+        actionError = `Hard Reset failed: ${result.message}`;
+      }
+    } catch (error) {
+      actionError = error instanceof Error ? error.message : String(error);
+    }
+  }
+
+  async function exportRecoveryData() {
+    try {
+      if (!recoveryReader) throw new Error("Save storage is not ready.");
+      recoveryBundleText = await recoveryReader();
+      const blob = new Blob([recoveryBundleText], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `idle-mine-beyond-recovery-${new Date()
+        .toISOString()
+        .replaceAll(":", "-")}.json`;
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 0);
+      recoveryActionMessage =
+        "Recovery data was prepared for download. Keep a copy before replacing a damaged save.";
+    } catch (error) {
+      recoveryActionMessage = `Could not read recovery data: ${error instanceof Error ? error.message : String(error)}`;
+    }
+  }
+
+  async function recoverFromLegacySave() {
+    if (!gameSession || !recoveryCopyAcknowledged) return;
+    recoveryActionMessage = "";
+    try {
+      const result = await gameSession.recoverLegacySave(recoverySaveString);
+      if (result.status === "recovered") {
+        appState = result.state;
+        sessionStatus = "ready";
+        recoveryMessage = "";
+        recoveryActionMessage = "Legacy Remix save recovered and stored.";
+        document.body.dataset.theme = result.state.settings.theme;
+        resumeAnimation?.();
+      } else if (result.status === "legacyLoadFailed") {
+        recoveryActionMessage =
+          "The pasted Remix save could not be decoded or loaded. Stored save data was not replaced.";
+      } else if (result.status === "persistenceFailed") {
+        recoveryActionMessage = `The save loaded, but could not be stored (${result.result.persistence.status}). The recovery screen remains open.`;
+      } else {
+        recoveryActionMessage =
+          "This session is no longer in a recoverable startup state. Reload the page and try again.";
+      }
+    } catch (error) {
+      recoveryActionMessage =
+        error instanceof Error ? error.message : String(error);
+    }
+  }
+
+  async function readBeyondRecoveryFile(event: Event) {
+    const file = (event.currentTarget as HTMLInputElement).files?.[0];
+    recoveryBeyondFileText = "";
+    recoveryBeyondFileName = "";
+    if (!file) return;
+    try {
+      recoveryBeyondFileText = await file.text();
+      recoveryBeyondFileName = file.name;
+      recoveryActionMessage = `Selected recovery file: ${file.name}`;
+    } catch (error) {
+      recoveryActionMessage = `Could not read recovery file: ${error instanceof Error ? error.message : String(error)}`;
+    }
+  }
+
+  async function recoverFromBeyondFile() {
+    if (!gameSession || !recoveryCopyAcknowledged || !recoveryBeyondFileText) {
+      return;
+    }
+    recoveryActionMessage = "";
+    try {
+      const result = await gameSession.recoverBeyondSaveFile(
+        recoveryBeyondFileText,
+      );
+      if (result.status === "recovered") {
+        appState = result.state;
+        sessionStatus = "ready";
+        recoveryMessage = "";
+        recoveryActionMessage = `Beyond save recovered from ${recoveryBeyondFileName || "the selected file"}.`;
+        document.body.dataset.theme = result.state.settings.theme;
+        resumeAnimation?.();
+      } else if (result.status === "fileRejected") {
+        const detail =
+          result.result.status === "unsupportedVersion"
+            ? `Unsupported ${result.result.source} version.`
+            : result.result.status === "empty"
+              ? "The recovery bundle contains no Beyond save."
+              : result.result.message;
+        recoveryActionMessage = `The Beyond recovery file was rejected: ${detail} Stored data was not replaced.`;
+      } else if (result.status === "persistenceFailed") {
+        recoveryActionMessage = `The save was valid, but could not be stored (${result.result.persistence.status}). The recovery screen remains open.`;
+      } else {
+        recoveryActionMessage =
+          "This session is no longer in a recoverable startup state. Reload the page and try again.";
+      }
+    } catch (error) {
+      recoveryActionMessage =
+        error instanceof Error ? error.message : String(error);
+    }
+  }
+
+  function pushLegacyMessage(effect: { message: string; color: string }) {
+    messages = [effect, ...messages].slice(0, 6);
+  }
+
   function dispatchEffect(effect: RemixWebSessionEffect) {
     if (effect.type === "setTheme") {
       document.body.dataset.theme = effect.theme;
       return;
     }
-    messages = [...messages, { message: effect.message, color: effect.color }];
+    pushLegacyMessage(effect);
   }
 
   function pushStoryLog(effect: StoryLogEffect) {
-    messages = [...messages, { message: effect.message, color: effect.color }];
+    pushLegacyMessage(effect);
   }
 
   function onKeyDown(event: KeyboardEvent) {
@@ -289,7 +435,9 @@
     pressedKeys = pressedKeys.filter((key) => key !== event.key);
   }
 
-  async function changeTab(targetTab: "main" | "story" | "settings") {
+  async function changeTab(
+    targetTab: "main" | "story" | "settings" | "powers",
+  ) {
     const current = appState;
     if (!current || !gameSession) return;
     const scroller = document.querySelector<HTMLElement>(".story-milestones");
@@ -343,6 +491,22 @@
     }));
   }
 
+  async function prestigePower(index: RemixPowerPrestigeIndex) {
+    await dispatch({ type: "prestigePower", index });
+  }
+
+  async function buyWisdomUpgrade(
+    key: RemixUpgradeKey<"wisdom">,
+    amount: 1 | 10 | 100,
+  ) {
+    await dispatch({
+      type: "upgradePurchase",
+      group: "wisdom",
+      key,
+      operation: { method: "buyN", count: amount, align: true },
+    });
+  }
+
   async function changeMineObject(delta: -1 | 1) {
     await updateApplicationState((state) => {
       const nextLevel = state.simulation.mineObjectLevel + delta;
@@ -367,6 +531,7 @@
     let disposed = false;
     let animationFrame = 0;
     const clock = { now: () => Date.now() };
+    const initialGameTimestampMs = clock.now();
     // Remix initializes deltaTimeNew and deltaTimeOld before onCreate().
     clock.now();
     let deltaTimeOld = clock.now();
@@ -374,13 +539,35 @@
     const handleEffect = (effect: RemixWebSessionEffect) => {
       if (!disposed) dispatchEffect(effect);
     };
+    const tauriInvoke = getRemixTauriInvoke(window as RemixTauriWindow);
+    const saveStorage = tauriInvoke
+      ? createTauriRemixSaveStorage(tauriInvoke)
+      : createBrowserRemixSaveStorage();
+    recoveryReader = async () =>
+      JSON.stringify(
+        await readRemixRecoveryData({
+          storage: saveStorage,
+          readLegacySave: readBrowserRemixLegacySave,
+        }),
+        null,
+        2,
+      );
     const handleBlur = () => (pressedKeys = []);
     gameSession = createRemixWebGameSession({
       catalog,
+      legacySaveTemplate: legacySaveTemplateContent.template as Record<
+        string,
+        unknown
+      >,
       storyMilestones,
+      initialGameTimestampMs,
       random: { nextDouble: () => Math.random() },
       clock,
-      storage: createBrowserRemixSaveStorage(),
+      storage: saveStorage,
+      async clearAllStorage() {
+        if (tauriInvoke) await clearTauriRemixSaveStorage(tauriInvoke);
+        clearBrowserRemixStorage();
+      },
       readLegacySave: readBrowserRemixLegacySave,
       resolveNumberFormatter(index) {
         const formatter = formatters[index];
@@ -391,6 +578,15 @@
         }
         return (value, precision, limit, below1000) =>
           formatRemixNumber(value, formatter, precision, limit, below1000);
+      },
+      resolveNotationFormatter(index) {
+        const formatter = formatters[index];
+        if (!formatter) {
+          throw new RangeError(
+            `Unknown Remix number formatter index ${index}.`,
+          );
+        }
+        return formatter;
       },
       dispatchEffect: handleEffect,
     });
@@ -404,6 +600,9 @@
       const deltaSeconds = (deltaTimeNew - deltaTimeOld) / 1000;
       deltaTimeOld = clock.now();
       await dispatch({ type: "idleFrame", deltaSeconds });
+      if (!disposed) animationFrame = window.requestAnimationFrame(runFrame);
+    };
+    resumeAnimation = () => {
       if (!disposed) animationFrame = window.requestAnimationFrame(runFrame);
     };
 
@@ -422,7 +621,7 @@
           actionError = `Save failed: ${result.saveFailure.status}`;
         }
         document.body.dataset.theme = result.state.settings.theme;
-        animationFrame = window.requestAnimationFrame(runFrame);
+        resumeAnimation?.();
       } catch (error) {
         sessionStatus = "error";
         recoveryMessage =
@@ -433,6 +632,7 @@
 
     return () => {
       disposed = true;
+      resumeAnimation = undefined;
       window.cancelAnimationFrame(animationFrame);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
@@ -479,6 +679,55 @@
       <section class="session-message" role="alert">
         <h2>Save needs attention</h2>
         <p>{recoveryMessage}</p>
+        <p>
+          Export a copy of the stored save slots before attempting recovery. The
+          export reads data only and does not modify storage.
+        </p>
+        <button data-recovery-export onclick={exportRecoveryData}
+          >Download recovery data</button
+        >
+        {#if recoveryBundleText}
+          <textarea
+            data-recovery-bundle
+            aria-label="Recovery data bundle"
+            readonly
+            value={recoveryBundleText}></textarea>
+          <label>
+            <input
+              data-recovery-acknowledgement
+              type="checkbox"
+              bind:checked={recoveryCopyAcknowledged}
+            />
+            I saved a copy of the recovery data before continuing.
+          </label>
+          <label for="recovery-beyond-file">Beyond recovery file</label>
+          <input
+            id="recovery-beyond-file"
+            data-recovery-beyond-file
+            type="file"
+            accept="application/json,.json"
+            onchange={readBeyondRecoveryFile}
+          />
+          <button
+            data-recovery-beyond-import
+            disabled={!recoveryCopyAcknowledged || !recoveryBeyondFileText}
+            onclick={recoverFromBeyondFile}>Recover from Beyond file</button
+          >
+          <label for="recovery-legacy-save">Legacy Remix save</label>
+          <textarea
+            id="recovery-legacy-save"
+            data-recovery-legacy-save
+            bind:value={recoverySaveString}
+            placeholder="Paste an exported Remix save here"></textarea>
+          <button
+            data-recovery-import
+            disabled={!recoveryCopyAcknowledged || !recoverySaveString.trim()}
+            onclick={recoverFromLegacySave}>Recover from Remix save</button
+          >
+        {/if}
+        {#if recoveryActionMessage}
+          <p data-recovery-result role="status">{recoveryActionMessage}</p>
+        {/if}
       </section>
     {:else if appState && simulation}
       {#if appState.settings.tab === "story"}
@@ -504,7 +753,18 @@
             }))}
           onExport={exportCurrentSave}
           onImport={importCurrentSave}
+          onHardReset={hardResetCurrentSave}
           error={actionError}
+        />
+      {:else if appState.settings.tab === "powers"}
+        <PowersPanel
+          {simulation}
+          powerValueExtras={appState.powerValueExtras}
+          {selectedNotation}
+          {pressedKeys}
+          {formatNumber}
+          onPrestige={prestigePower}
+          onUpgrade={buyWisdomUpgrade}
         />
       {:else}
         <article class="main">
@@ -662,6 +922,27 @@
               {/each}
             </div>
             <div class="craft-pickaxe">
+              {#if craftGemSelection?.visible}
+                <button
+                  class="level-change"
+                  data-craft-gem-level="decrease"
+                  aria-label="Use fewer Gems for the next Pickaxe"
+                  disabled={craftGemSelection.decreaseDisabled}
+                  onclick={() =>
+                    void dispatch({
+                      type: "changeCraftGemLevel",
+                      direction: "decrease",
+                    })}
+                >
+                  {#if craftGemSelection.showDecreaseIcon}
+                    <img
+                      class="left level-change"
+                      src="/Images/btn_left.png"
+                      alt=""
+                    />
+                  {/if}
+                </button>
+              {/if}
               <button
                 data-craft-pickaxe
                 onclick={() =>
@@ -683,13 +964,41 @@
                     )}</span
                   >
                 {/if}
-                <span class="inline-resource">
-                  <img class="inline" src="/Images/gem.png" alt="Gems" />1
+                <span class="inline-resource" data-craft-gem-cost>
+                  <img
+                    class="inline"
+                    src="/Images/gem.png"
+                    alt="Gems"
+                  />{formatThousands(
+                    craftGemSelection?.gemCost ?? 1,
+                    selectedNotation,
+                  )}
                   {#if pressedKeys.includes("Shift") && simulation.upgrades.planetCoins.bulkCraft > 0}
                     &nbsp;x {simulation.upgrades.planetCoins.bulkCraft + 1}
                   {/if}
                 </span>
               </button>
+              {#if craftGemSelection?.visible}
+                <button
+                  class="level-change"
+                  data-craft-gem-level="increase"
+                  aria-label="Use more Gems for the next Pickaxe"
+                  disabled={craftGemSelection.increaseDisabled}
+                  onclick={() =>
+                    void dispatch({
+                      type: "changeCraftGemLevel",
+                      direction: "increase",
+                    })}
+                >
+                  {#if craftGemSelection.showIncreaseIcon}
+                    <img
+                      class="right level-change"
+                      src="/Images/btn_right.png"
+                      alt=""
+                    />
+                  {/if}
+                </button>
+              {/if}
             </div>
             {#if actionError}
               <p role="alert" class="action-error">{actionError}</p>
@@ -706,6 +1015,15 @@
       aria-pressed={appState?.settings.tab === "main"}
       onclick={() => changeTab("main")}>Mining</button
     >
+    {#if simulation && isRemixPowersUnlocked(simulation.highestMineObjectLevel)}
+      <button
+        data-game-tab="powers"
+        aria-pressed={appState?.settings.tab === "powers"}
+        onclick={() => changeTab("powers")}
+      >
+        <img class="inline" src="/Images/wisdom.png" alt="powers" /> Powers
+      </button>
+    {/if}
     <button
       data-game-tab="story"
       aria-pressed={appState?.settings.tab === "story"}
@@ -967,6 +1285,39 @@
 
   .craft-pickaxe button {
     margin: 0 1rem;
+  }
+
+  .craft-pickaxe button.level-change {
+    min-width: 3.75rem;
+    background-color: transparent;
+  }
+
+  .craft-pickaxe img.level-change {
+    height: 3rem;
+    transition:
+      filter 200ms,
+      transform 200ms;
+  }
+
+  .craft-pickaxe img.left {
+    transform-origin: left;
+  }
+
+  .craft-pickaxe img.right {
+    transform-origin: right;
+  }
+
+  .craft-pickaxe img.level-change:hover {
+    transform: scaleX(0.85);
+  }
+
+  .craft-pickaxe img.level-change:active {
+    transform: scaleX(0.7);
+    filter: brightness(0.9);
+  }
+
+  :global(body[data-theme="dark"]) .craft-pickaxe button.level-change:hover {
+    background-color: transparent !important;
   }
 
   footer {

@@ -21,7 +21,10 @@ import {
   type RemixLegacySaveApplicationState,
   type LoadRemixLegacySaveInput,
 } from "../../packages/persistence/src/index.js";
-import { createBrowserRemixSaveStorage } from "../../apps/web/src/lib/platform/remix-save-storage.js";
+import {
+  createBrowserRemixSaveStorage,
+  readBrowserRemixRecoveryData,
+} from "../../apps/web/src/lib/platform/remix-save-storage.js";
 
 const corpus = JSON.parse(
   await readFile(
@@ -346,6 +349,31 @@ it("keeps browser primary and backup keys separate from the Remix key", async ()
   expect(values.get(REMIX_BEYOND_PRIMARY_SAVE_KEY)).toBe("primary-v1");
   expect(values.get(REMIX_BEYOND_BACKUP_SAVE_KEY)).toBe("backup-v1");
   expect(values.has("IdleMine")).toBe(false);
+});
+
+it("exports every browser save slot without modifying any slot", () => {
+  const values = new Map<string, string>([
+    [REMIX_BEYOND_PRIMARY_SAVE_KEY, "damaged-primary"],
+    [REMIX_BEYOND_BACKUP_SAVE_KEY, "damaged-backup"],
+    ["IdleMine", "legacy-save"],
+  ]);
+  const before = new Map(values);
+  const recoveryData = readBrowserRemixRecoveryData({
+    getItem(key) {
+      return values.get(key) ?? null;
+    },
+  });
+
+  expect(recoveryData).toEqual({
+    format: "idle-mine-beyond-recovery",
+    version: 1,
+    saves: {
+      beyondPrimary: "damaged-primary",
+      beyondBackup: "damaged-backup",
+      remixLegacy: "legacy-save",
+    },
+  });
+  expect(values).toEqual(before);
 });
 
 it("imports the captured legacy save in source effect order into Beyond v1", async () => {

@@ -38,6 +38,11 @@
       "sha256": "8AC5F142EEC59844EE607241D982DEF2ADA9AD93CC443F7B38D3CD7B77492EFF"
     },
     {
+      "source": "Images/pickaxe.png",
+      "destination": "apps/web/static/Images/pickaxe.png",
+      "sha256": "D735B71AE574CCDE948C65EFBB115AF698780A7ACF1DBE6B8176741B060331A0"
+    },
+    {
       "source": "Images/settings.png",
       "destination": "apps/web/static/Images/settings.png",
       "sha256": "CE9941FDA25994E7EA3AAE4556822860DBA5DD10C6F4119BAE90143C3A55380E"
