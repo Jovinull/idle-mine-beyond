@@ -56713,9 +56713,136 @@
         "Scripts/utils.js",
         "Scripts/Define/game.js",
         "Scripts/Define/functions.js",
-        "Scripts/mineobject.js"
+        "Scripts/mineobject.js",
+        "index.html",
+        "main.css"
       ],
       "randomSource": "Math.random",
+      "craftControls": {
+        "controlSourcePaths": [
+          "index.html",
+          "Scripts/Define/functions.js",
+          "Scripts/Define/game.js"
+        ],
+        "controls": [
+          {
+            "name": "gem-waster-not-owned",
+            "input": {
+              "usedGemsLevel": 0,
+              "moneyGemWasterLevel": 0,
+              "gemUpgradeWasterLevel": 2
+            },
+            "displayedGemCost": "1",
+            "gemCost": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "buttons": []
+          },
+          {
+            "name": "minimum-selected-level",
+            "input": {
+              "usedGemsLevel": 0,
+              "moneyGemWasterLevel": 1,
+              "gemUpgradeWasterLevel": 2
+            },
+            "displayedGemCost": "1",
+            "gemCost": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            },
+            "buttons": [
+              {
+                "disabled": true,
+                "image": null
+              },
+              {
+                "disabled": false,
+                "image": "Images/btn_right.png"
+              }
+            ]
+          },
+          {
+            "name": "interior-selected-level",
+            "input": {
+              "usedGemsLevel": 1,
+              "moneyGemWasterLevel": 1,
+              "gemUpgradeWasterLevel": 2
+            },
+            "displayedGemCost": "3",
+            "gemCost": {
+              "decimal": "3",
+              "mantissa": 3,
+              "exponent": 0
+            },
+            "buttons": [
+              {
+                "disabled": false,
+                "image": "Images/btn_left.png"
+              },
+              {
+                "disabled": false,
+                "image": "Images/btn_right.png"
+              }
+            ]
+          },
+          {
+            "name": "maximum-selected-level",
+            "input": {
+              "usedGemsLevel": 3,
+              "moneyGemWasterLevel": 1,
+              "gemUpgradeWasterLevel": 2
+            },
+            "displayedGemCost": "35",
+            "gemCost": {
+              "decimal": "35",
+              "mantissa": 3.5,
+              "exponent": 1
+            },
+            "buttons": [
+              {
+                "disabled": false,
+                "image": "Images/btn_left.png"
+              },
+              {
+                "disabled": true,
+                "image": null
+              }
+            ]
+          }
+        ],
+        "transitions": [
+          {
+            "direction": "increase",
+            "usedGemsLevel": 2,
+            "gemCost": {
+              "decimal": "10",
+              "mantissa": 1,
+              "exponent": 1
+            }
+          },
+          {
+            "direction": "decrease",
+            "usedGemsLevel": 1,
+            "gemCost": {
+              "decimal": "3",
+              "mantissa": 3,
+              "exponent": 0
+            }
+          },
+          {
+            "direction": "decrease",
+            "usedGemsLevel": 0,
+            "gemCost": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          }
+        ]
+      },
       "crafts": [
         {
           "name": "baseline-object-name",

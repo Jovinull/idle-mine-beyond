@@ -224,7 +224,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
     }
 
     const data = await page.evaluate(
-      ({ selectedPostUniverseIds, fixedClock }) => {
+      async ({ selectedPostUniverseIds, fixedClock }) => {
         const game = window.game;
         const functions = window.functions;
         const app = window.app;
@@ -4479,7 +4479,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
             }
           }
         })();
-        const pickaxeCraftingSemantics = (() => {
+        const pickaxeCraftingSemantics = await (async () => {
           const upgradeGroups = {
             money: game.upgrades,
             gems: game.gemUpgrades,
@@ -4529,6 +4529,88 @@ async function capture(reference, dependencies, dependencySnapshots) {
               }
             }
           };
+          const controlScenarios = [
+            {
+              name: "gem-waster-not-owned",
+              usedGemsLevel: 0,
+              highestMineObjectLevel: 0,
+              powers: ["1", "1", "1", "1", "1"],
+              upgradeLevels: { gems: { gemWaster: 2 } },
+            },
+            {
+              name: "minimum-selected-level",
+              usedGemsLevel: 0,
+              highestMineObjectLevel: 0,
+              powers: ["1", "1", "1", "1", "1"],
+              upgradeLevels: {
+                money: { gemWaster: 1 },
+                gems: { gemWaster: 2 },
+              },
+            },
+            {
+              name: "interior-selected-level",
+              usedGemsLevel: 1,
+              highestMineObjectLevel: 0,
+              powers: ["1", "1", "1", "1", "1"],
+              upgradeLevels: {
+                money: { gemWaster: 1 },
+                gems: { gemWaster: 2 },
+              },
+            },
+            {
+              name: "maximum-selected-level",
+              usedGemsLevel: 3,
+              highestMineObjectLevel: 0,
+              powers: ["1", "1", "1", "1", "1"],
+              upgradeLevels: {
+                money: { gemWaster: 1 },
+                gems: { gemWaster: 2 },
+              },
+            },
+          ];
+          const craftControls = [];
+          for (const scenario of controlScenarios) {
+            setState(scenario);
+            app.$forceUpdate();
+            await Vue.nextTick();
+            const buttons = Array.from(
+              document.querySelectorAll(".craft-pickaxe > button.level-change"),
+            );
+            const gemText = document.querySelector(
+              ".craft-pickaxe > button:not(.level-change) .inline-resource",
+            );
+            craftControls.push({
+              name: scenario.name,
+              input: {
+                usedGemsLevel: game.usedGemsLevel,
+                moneyGemWasterLevel: game.upgrades.gemWaster.level,
+                gemUpgradeWasterLevel: game.gemUpgrades.gemWaster.level,
+              },
+              displayedGemCost: gemText?.textContent?.trim() ?? null,
+              gemCost: normalizedDecimal(functions.getUsedGems()),
+              buttons: buttons.map((button) => ({
+                disabled: button.disabled,
+                image: button.querySelector("img")?.getAttribute("src") ?? null,
+              })),
+            });
+          }
+          setState(controlScenarios[2]);
+          app.$forceUpdate();
+          await Vue.nextTick();
+          const controlTransitions = [];
+          for (const direction of ["increase", "decrease", "decrease"]) {
+            const index = direction === "decrease" ? 0 : 1;
+            const levelButtons = document.querySelectorAll(
+              ".craft-pickaxe > button.level-change",
+            );
+            levelButtons[index]?.click();
+            await Vue.nextTick();
+            controlTransitions.push({
+              direction,
+              usedGemsLevel: game.usedGemsLevel,
+              gemCost: normalizedDecimal(functions.getUsedGems()),
+            });
+          }
           const randomCases = [
             {
               name: "baseline-object-name",
@@ -4864,8 +4946,19 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 "Scripts/Define/game.js",
                 "Scripts/Define/functions.js",
                 "Scripts/mineobject.js",
+                "index.html",
+                "main.css",
               ],
               randomSource: "Math.random",
+              craftControls: {
+                controlSourcePaths: [
+                  "index.html",
+                  "Scripts/Define/functions.js",
+                  "Scripts/Define/game.js",
+                ],
+                controls: craftControls,
+                transitions: controlTransitions,
+              },
               crafts,
               deterministic: {
                 input: deterministic,
