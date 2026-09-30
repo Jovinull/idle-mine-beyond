@@ -232,6 +232,18 @@ importers:
 
   apps/native: {}
 
+  apps/site:
+    dependencies:
+      '@idle-mine-beyond/content':
+        specifier: workspace:*
+        version: link:../../packages/content
+      '@idle-mine-beyond/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@idle-mine-beyond/formatting':
+        specifier: workspace:*
+        version: link:../../packages/formatting
+
   apps/web:
     dependencies:
       '@idle-mine-beyond/content':

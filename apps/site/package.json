@@ -1,0 +1,16 @@
+{
+  "name": "@idle-mine-beyond/site",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+  },
+  "dependencies": {
+    "@idle-mine-beyond/content": "workspace:*",
+    "@idle-mine-beyond/core": "workspace:*",
+    "@idle-mine-beyond/formatting": "workspace:*"
+  }
+}

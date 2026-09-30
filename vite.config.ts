@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 export default defineConfig({
   resolve: {
     alias: {
+      // The project site imports the game's renderer modules through $game.
+      $game: fileURLToPath(new URL("./apps/web/src/lib", import.meta.url)),
       "break_infinity.js/break_infinity": fileURLToPath(
         new URL(
           "./packages/formatting/src/ad-notations-decimal-bridge.ts",
@@ -18,7 +20,11 @@ export default defineConfig({
         extends: true,
         test: {
           name: "unit",
-          include: ["tests/unit/**/*.test.ts", "packages/**/*.test.ts"],
+          include: [
+            "tests/unit/**/*.test.ts",
+            "packages/**/*.test.ts",
+            "apps/site/src/**/*.test.ts",
+          ],
           environment: "node",
         },
       },

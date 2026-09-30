@@ -1,0 +1,323 @@
+/* Idle Mine Beyond site: design tokens and base styles.
+   The fonts are the game's own (Montserrat for display, Work Sans for text). */
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/montserrat/Montserrat-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Work Sans";
+  src: url("/fonts/worksans/WorkSans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-display: "Montserrat", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Work Sans", "Segoe UI", system-ui, sans-serif;
+  --font-story: "Times New Roman", Times, serif;
+
+  --bg: #f5f4ef;
+  --bg-raised: #ffffff;
+  --bg-sunken: #ebe9e2;
+  --line: #dcd9cf;
+  --line-strong: #c4c0b3;
+  --text: #1c1b18;
+  --text-muted: #5c5950;
+  --text-faint: #858176;
+  --accent: #a8441a;
+  --accent-fill: #b84a1b;
+  --accent-on: #ffffff;
+  --accent-soft: #f3e3d8;
+  --focus: #1f6feb;
+
+  --money: #2b8a3e;
+  --gem: #0b7fb3;
+  --planet: #2f4fc4;
+  --wisdom: #0e7c7b;
+
+  --stage: #fafafa;
+  --stage-line: #e4e2da;
+
+  --radius: 6px;
+  --radius-lg: 10px;
+  --shadow: 0 1px 2px rgb(28 27 24 / 6%), 0 4px 16px rgb(28 27 24 / 6%);
+  --measure: 68ch;
+  --page: 1180px;
+  --gutter: clamp(1rem, 4vw, 2rem);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #181816;
+    --bg-raised: #222220;
+    --bg-sunken: #121211;
+    --line: #34332f;
+    --line-strong: #4a4842;
+    --text: #ecebe6;
+    --text-muted: #b0ada3;
+    --text-faint: #86837a;
+    --accent: #f0935a;
+    --accent-fill: #e2793a;
+    --accent-on: #1a0f08;
+    --accent-soft: #3a2518;
+    --focus: #6ea8ff;
+    --money: #5bc26d;
+    --gem: #4cc0ef;
+    --planet: #8ea3ff;
+    --wisdom: #4fc9c7;
+    --stage: #363636;
+    --stage-line: #454545;
+    --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 6px 20px rgb(0 0 0 / 25%);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #181816;
+  --bg-raised: #222220;
+  --bg-sunken: #121211;
+  --line: #34332f;
+  --line-strong: #4a4842;
+  --text: #ecebe6;
+  --text-muted: #b0ada3;
+  --text-faint: #86837a;
+  --accent: #f0935a;
+  --accent-fill: #e2793a;
+  --accent-on: #1a0f08;
+  --accent-soft: #3a2518;
+  --focus: #6ea8ff;
+  --money: #5bc26d;
+  --gem: #4cc0ef;
+  --planet: #8ea3ff;
+  --wisdom: #4fc9c7;
+  --stage: #363636;
+  --stage-line: #454545;
+  --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 6px 20px rgb(0 0 0 / 25%);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.5em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  letter-spacing: -0.025em;
+}
+
+h2 {
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  letter-spacing: -0.02em;
+}
+
+h3 {
+  font-size: 1.3rem;
+}
+
+h4 {
+  font-size: 1.05rem;
+}
+
+p {
+  margin: 0 0 1em;
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+img,
+canvas {
+  max-width: 100%;
+}
+
+code,
+kbd {
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 0.9em;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.05em 0.35em;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 2.5rem 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+th {
+  font-weight: 400;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom-color: var(--line-strong);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  z-index: 100;
+  background: var(--bg-raised);
+  color: var(--text);
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+.container {
+  width: min(100% - 2 * var(--gutter), var(--page));
+  margin-inline: auto;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.9rem;
+}
+
+.lede {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  max-width: var(--measure);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--bg-raised);
+  color: var(--text);
+  font: inherit;
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 120ms,
+    border-color 120ms,
+    transform 120ms;
+}
+
+.button:hover {
+  border-color: var(--text-faint);
+  text-decoration: none;
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button.primary {
+  background: var(--accent-fill);
+  border-color: var(--accent-fill);
+  color: var(--accent-on);
+}
+
+.button.primary:hover {
+  filter: brightness(1.06);
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
