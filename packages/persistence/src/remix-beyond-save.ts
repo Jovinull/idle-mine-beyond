@@ -251,7 +251,7 @@ export function restoreRemixBeyondSave(
     },
     autoPickaxeTimer: persisted.autoPickaxeTimer,
     saveTimer: persisted.saveTimer,
-    powersUnlocked: persisted.powersUnlocked,
+    powersUnlocked: persisted.highestMineObjectLevel >= 170,
     usedGemsLevel: persisted.usedGemsLevel,
     ...(persisted.lastActiveMs === undefined
       ? {}

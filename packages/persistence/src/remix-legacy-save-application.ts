@@ -173,6 +173,8 @@ export function applyRemixLegacySaveFields(
   const { save } = input;
   const effects: RemixLegacySaveApplicationEffect[] = [];
   let simulation = input.state.simulation;
+  const mineObjectLevel = loadValue(save.mineObjectLevel, 0);
+  const highestMineObjectLevel = loadValue(save.highestMineObjectLevel, 0);
 
   simulation = {
     ...simulation,
@@ -185,8 +187,9 @@ export function applyRemixLegacySaveFields(
       wisdom: loadDecimal(save.wisdom),
       maxWisdom: loadDecimal(save.maxWisdom),
     },
-    mineObjectLevel: loadValue(save.mineObjectLevel, 0),
-    highestMineObjectLevel: loadValue(save.highestMineObjectLevel, 0),
+    mineObjectLevel,
+    highestMineObjectLevel,
+    powersUnlocked: highestMineObjectLevel >= 170,
   };
   simulation = {
     ...simulation,
