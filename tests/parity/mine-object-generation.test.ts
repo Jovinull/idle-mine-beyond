@@ -126,11 +126,14 @@ function withoutNodeSensitiveChanceBoundaries(
   });
 }
 
-it("matches every captured fixed, special, and generated mine object", () => {
+it("matches captured mine objects continuously through generated ID 768", () => {
   expect(catalogFile.source.commit).toBe(corpus.metadata.sourceCommit);
   expect(catalog.base).toHaveLength(72);
   expect(catalog.special).toHaveLength(78);
   expect(catalog.dictionaryEnglish).toHaveLength(498);
+  expect(
+    corpus.data.objects.filter(({ id }) => id <= 768).map(({ id }) => id),
+  ).toEqual(Array.from({ length: 769 }, (_, id) => id));
   // Math.sin differs by a few ulps between Node and the pinned Chromium
   // runtime for these chance values. The browser E2E test checks them exactly.
   expect(

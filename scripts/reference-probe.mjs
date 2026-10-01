@@ -307,7 +307,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           "maxWisdom",
         ];
         const objectIds = [
-          ...Array.from({ length: 513 }, (_, id) => id),
+          ...Array.from({ length: 769 }, (_, id) => id),
           ...selectedPostUniverseIds,
         ];
         const uniqueObjectIds = [...new Set(objectIds)].sort((a, b) => a - b);

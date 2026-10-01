@@ -126,7 +126,7 @@ it("records the complete indexed mine-object range and high-ID oracle probes", (
     "Copyright (c) 2023 veprogames",
   );
   expect(fixture.data.objects.map((object) => object.id)).toEqual([
-    ...Array.from({ length: 513 }, (_, id) => id),
+    ...Array.from({ length: 769 }, (_, id) => id),
     1_000,
     10_000,
     1_000_000,
