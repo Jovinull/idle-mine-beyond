@@ -105,25 +105,19 @@ test("the game runs at /play/ with the shared assets", async ({ page }) => {
   expect(failed).toEqual([]);
 });
 
-test("the notation table keeps its scrollbars and labels in view", async ({
-  page,
-}) => {
+test("the notation table fits without sideways scrolling", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/wiki/notations/");
-  const wrap = page.getByRole("region", { name: "Notation examples" });
-  await wrap.scrollIntoViewIfNeeded();
-  const box = (await wrap.boundingBox())!;
-  expect(box.height).toBeLessThanOrEqual(800);
-  expect(
-    await wrap.evaluate((element) => element.scrollWidth > element.clientWidth),
-  ).toBe(true);
-
-  await wrap.evaluate((element) => {
-    element.scrollTop = 600;
-    element.scrollLeft = 400;
-  });
-  const header = (await wrap.locator("thead th").first().boundingBox())!;
-  const name = (await wrap.locator("tbody th").nth(20).boundingBox())!;
-  expect(Math.abs(header.y - box.y)).toBeLessThan(3);
-  expect(Math.abs(name.x - box.x)).toBeLessThan(3);
+  const table = page.locator("table");
+  await expect(table.locator("tbody tr")).toHaveCount(40);
+  const fits = await table.evaluate(
+    (element) => element.scrollWidth <= element.parentElement!.clientWidth,
+  );
+  expect(fits).toBe(true);
+  const overflow = await page.evaluate(
+    () =>
+      document.documentElement.scrollWidth -
+      document.documentElement.clientWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(1);
 });

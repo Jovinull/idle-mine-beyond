@@ -1,24 +1,17 @@
 <script lang="ts">
-  import { Decimal } from "@idle-mine-beyond/core";
   import { formatNumber } from "@idle-mine-beyond/formatting";
   import Seo from "$lib/components/Seo.svelte";
   import { formatters, notation, setNotation } from "$lib/notation.svelte";
 
-  const samples = ["1234.5", "1e6", "4.2e15", "1e33", "1.8e308", "1e1000"];
-  let custom = $state("123456789");
+  // Three sizes are enough to show how each notation behaves.
+  const samples = [
+    { value: "123456789", label: "123,456,789" },
+    { value: "4.2e15", label: "4.2e15" },
+    { value: "1e1000", label: "1e1000" },
+  ];
 
-  const customValue = $derived.by(() => {
-    try {
-      const value = new Decimal(custom.trim().replaceAll(",", ""));
-      return Number.isNaN(value.mantissa) ? null : value;
-    } catch {
-      return null;
-    }
-  });
-
-  function show(value: string | Decimal, index: number): string {
-    const formatter = formatters[index]!;
-    return formatNumber(value, formatter, 2, "1e12");
+  function show(value: string, index: number): string {
+    return formatNumber(value, formatters[index]!, 2, "1e12");
   }
 </script>
 
@@ -32,135 +25,59 @@
   <h1>{formatters.length} ways to write a big number</h1>
   <p class="lede">
     Settings lets you pick how numbers are written. These are all of them, in
-    the game's order, run through the same formatting code. Click a row to use
+    the game's order, run through the same formatting code. Click a name to use
     it across this wiki.
   </p>
 </header>
 
-<label class="custom">
-  <span>Try your own number</span>
-  <input bind:value={custom} autocomplete="off" spellcheck="false" />
-  {#if !customValue}<small>Use a number like 1e50 or 123456.</small>{/if}
-</label>
-
-<p class="hint">
-  The table scrolls on its own; notation names and column headers stay in view.
-</p>
-
-<!-- Scrollable regions must be keyboard-focusable so the table can be scrolled without a mouse. -->
-<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-<div
-  class="table-wrap"
-  role="region"
-  aria-label="Notation examples"
-  tabindex="0"
->
-  <table>
-    <thead>
-      <tr>
-        <th scope="col">Notation</th>
-        {#if customValue}<th scope="col">Yours</th>{/if}
-        {#each samples as sample (sample)}
-          <th scope="col">{sample}</th>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Notation</th>
+      {#each samples as sample (sample.value)}
+        <th scope="col">{sample.label}</th>
+      {/each}
+    </tr>
+  </thead>
+  <tbody>
+    {#each formatters as formatter, index (formatter.name)}
+      <tr class:selected={notation.index === index}>
+        <th scope="row">
+          <button type="button" onclick={() => setNotation(index)}>
+            {formatter.name}
+          </button>
+          {#if index === 0}<small>default</small>{/if}
+        </th>
+        {#each samples as sample (sample.value)}
+          <td data-label={sample.label}>{show(sample.value, index)}</td>
         {/each}
       </tr>
-    </thead>
-    <tbody>
-      {#each formatters as formatter, index (formatter.name)}
-        <tr class:selected={notation.index === index}>
-          <th scope="row">
-            <button type="button" onclick={() => setNotation(index)}>
-              {formatter.name}
-            </button>
-            {#if index === 0}<small>default</small>{/if}
-          </th>
-          {#if customValue}<td>{show(customValue, index)}</td>{/if}
-          {#each samples as sample (sample)}
-            <td>{show(sample, index)}</td>
-          {/each}
-        </tr>
-      {/each}
-    </tbody>
-  </table>
-</div>
+    {/each}
+  </tbody>
+</table>
 
 <style>
   .page-head {
     margin-bottom: 1.5rem;
   }
 
-  .custom {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem 0.9rem;
-    margin-bottom: 1.5rem;
-    color: var(--text-muted);
-  }
-
-  .custom input {
-    font: inherit;
-    width: 14rem;
-    padding: 0.45rem 0.65rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--line-strong);
-    background: var(--bg-raised);
-    color: var(--text);
-  }
-
-  .hint {
-    font-size: 0.9rem;
-    color: var(--text-faint);
-    margin-bottom: 0.6rem;
-  }
-
-  /* A capped height keeps both scrollbars on screen; the header row and the
-     name column stay pinned while the examples scroll. */
-  .table-wrap {
-    overflow: auto;
-    max-height: min(75vh, 48rem);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-lg);
-    background: var(--bg-raised);
-  }
-
-  thead th {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background: var(--bg-raised);
-    box-shadow: inset 0 -1px 0 var(--line-strong);
-    white-space: nowrap;
-  }
-
-  thead th:first-child,
-  tbody th[scope="row"] {
-    position: sticky;
-    left: 0;
-    background: var(--bg-raised);
-    box-shadow: inset -1px 0 0 var(--line);
-  }
-
-  thead th:first-child {
-    z-index: 3;
-    box-shadow:
-      inset 0 -1px 0 var(--line-strong),
-      inset -1px 0 0 var(--line);
-  }
-
-  tbody th[scope="row"] {
-    z-index: 1;
-  }
-
   table {
+    table-layout: fixed;
     font-size: 0.93rem;
+  }
+
+  th[scope="col"]:first-child {
+    width: 13rem;
+  }
+
+  td {
+    overflow-wrap: anywhere;
   }
 
   th[scope="row"] {
     text-transform: none;
     letter-spacing: 0;
     font-size: 0.95rem;
-    white-space: nowrap;
     color: var(--text);
     border-bottom-color: var(--line);
   }
@@ -185,15 +102,50 @@
     font-size: 0.75rem;
   }
 
-  td {
-    white-space: nowrap;
-    max-width: 18rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  tr.selected {
+    background: var(--accent-soft);
   }
 
-  tr.selected td,
-  tr.selected th[scope="row"] {
-    background: var(--accent-soft);
+  /* On phones each notation becomes a small card with its three values. */
+  @media (max-width: 640px) {
+    thead {
+      display: none;
+    }
+
+    table,
+    tbody,
+    tr,
+    th[scope="row"],
+    td {
+      display: block;
+      width: auto;
+    }
+
+    tr {
+      padding: 0.7rem 0.2rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th[scope="row"],
+    td {
+      border: 0;
+      padding: 0.15rem 0.5rem;
+    }
+
+    th[scope="row"] {
+      font-family: var(--font-display);
+      margin-bottom: 0.25rem;
+    }
+
+    td {
+      display: grid;
+      grid-template-columns: 7.5rem 1fr;
+      gap: 0.75rem;
+    }
+
+    td::before {
+      content: attr(data-label);
+      color: var(--text-faint);
+    }
   }
 </style>

@@ -12,6 +12,7 @@ test("pages fit the phone width without horizontal scrolling", async ({
     "/wiki/objects/61/",
     "/wiki/upgrades/money/",
     "/wiki/story/chapter-3/",
+    "/wiki/notations/",
     "/about/",
   ]) {
     await page.goto(path);
