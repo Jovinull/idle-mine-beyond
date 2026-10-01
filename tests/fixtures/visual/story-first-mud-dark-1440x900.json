@@ -1,0 +1,44 @@
+{
+  "repository": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": [
+    "index.html",
+    "main.css",
+    "Themes/dark.css",
+    "Scripts/main.js",
+    "Scripts/Components/mine-object.js"
+  ],
+  "browserName": "Chromium",
+  "browserVersion": "153.0.8010.12",
+  "playwrightVersion": "1.63.0",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "browserColorScheme": "light",
+  "gameTheme": "dark",
+  "locale": "en-US",
+  "timezoneId": "UTC",
+  "clockMs": 1704067200000,
+  "randomSeed": 7454,
+  "state": {
+    "scenario": "first-mud-after-story-tab-entry",
+    "tab": "story",
+    "page": 0,
+    "notifications": 0,
+    "highestUnlocked": 1,
+    "mineObjectLevel": 0,
+    "highestMineObjectLevel": 1,
+    "currentObjectName": "Mud",
+    "currentObjectHp": "100",
+    "money": "2",
+    "gems": "5",
+    "scrollTop": 0,
+    "visibleMilestones": ["gameStart", "firstMud"],
+    "nextObjective": "Mine a piece of Paper"
+  },
+  "screenshotSha256": "3671e25c2b28f6ea7f563d688b516a01d78c4b73ce34064586b8709997fdc457",
+  "screenshotPath": "tests/fixtures/visual/story-first-mud-dark-1440x900.png",
+  "captureNote": "Five real mine-canvas clicks break the fresh Mud object; the source update function refreshes Story notifications; entering Story clears notifications before both theme screenshots."
+}

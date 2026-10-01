@@ -185,6 +185,2507 @@ function startReadOnlyServer(sourceRoot) {
   });
 }
 
+async function captureFirstMudProgression(page, captureScreenshots) {
+  await page.reload({ waitUntil: "load" });
+  await page.waitForFunction(
+    "Boolean(window.game && window.functions && window.app?.$el)",
+  );
+  await page.waitForFunction("window.imgLoaded === true");
+  await page.evaluate(() => document.fonts.ready);
+  const firstMudCanvas = page.locator("canvas.mine-object").first();
+  for (let hit = 0; hit < 5; hit += 1) await firstMudCanvas.click();
+  const miningState = await page.evaluate(() => {
+    window.update();
+    return {
+      highestMineObjectLevel: window.game.highestMineObjectLevel,
+      mineObjectLevel: window.game.mineObjectLevel,
+      currentObjectName: window.game.currentMineObject.name,
+      currentObjectHp: window.game.currentMineObject.hp.toString(),
+      money: window.game.money.toString(),
+      gems: window.game.gems.toString(),
+      storyHighestUnlocked: window.game.story.highestUnlocked,
+      storyNotifications: window.game.story.notifications,
+      firstMudUnlocked: window.functions.storyUnlocked("firstMud"),
+    };
+  });
+  if (
+    miningState.highestMineObjectLevel !== 1 ||
+    miningState.mineObjectLevel !== 0 ||
+    miningState.currentObjectName !== "Mud" ||
+    miningState.currentObjectHp !== "100" ||
+    miningState.money !== "2" ||
+    miningState.gems !== "5" ||
+    miningState.storyHighestUnlocked !== 1 ||
+    miningState.storyNotifications !== 2 ||
+    !miningState.firstMudUnlocked
+  ) {
+    throw new Error(
+      "Remix first-Mud progression did not reach the expected state: " +
+        JSON.stringify(miningState),
+    );
+  }
+
+  await page.locator("button.story-tab").click();
+  await page.waitForTimeout(60);
+  const storyStates = [];
+  const screenshotMetrics = [];
+  for (const theme of ["light", "dark"]) {
+    await page.evaluate((selectedTheme) => {
+      window.functions.setTheme(selectedTheme);
+    }, theme);
+    await page.waitForTimeout(100);
+    const storyState = await page.evaluate(() => {
+      const scroller = document.querySelector(".story-milestones");
+      if (!scroller)
+        throw new Error("First-Mud Story scroller did not render.");
+      return {
+        tab: window.game.settings.tab,
+        theme: window.game.settings.theme,
+        page: window.game.story.page,
+        notifications: window.game.story.notifications,
+        highestUnlocked: window.game.story.highestUnlocked,
+        mineObjectLevel: window.game.mineObjectLevel,
+        highestMineObjectLevel: window.game.highestMineObjectLevel,
+        currentObjectName: window.game.currentMineObject.name,
+        currentObjectHp: window.game.currentMineObject.hp.toString(),
+        money: window.game.money.toString(),
+        gems: window.game.gems.toString(),
+        scrollTop: scroller.scrollTop,
+        visibleMilestones: ["gameStart", "firstMud"].filter((key) =>
+          window.functions.storyDisplayed(key),
+        ),
+        nextObjective: window.functions.getNextStoryText(),
+        bodyBackground: getComputedStyle(document.body).backgroundColor,
+      };
+    });
+    const expectedBodyColor =
+      theme === "dark" ? "rgb(54, 54, 54)" : "rgb(250, 250, 250)";
+    if (
+      storyState.tab !== "story" ||
+      storyState.theme !== theme ||
+      storyState.page !== 0 ||
+      storyState.notifications !== 0 ||
+      storyState.highestUnlocked !== 1 ||
+      storyState.mineObjectLevel !== 0 ||
+      storyState.highestMineObjectLevel !== 1 ||
+      storyState.currentObjectName !== "Mud" ||
+      storyState.currentObjectHp !== "100" ||
+      storyState.money !== "2" ||
+      storyState.gems !== "5" ||
+      storyState.scrollTop !== 0 ||
+      JSON.stringify(storyState.visibleMilestones) !==
+        JSON.stringify(["gameStart", "firstMud"]) ||
+      storyState.nextObjective !== "Mine a piece of Paper" ||
+      storyState.bodyBackground !== expectedBodyColor
+    ) {
+      throw new Error(
+        `Remix first-Mud Story screenshot reached the wrong state: ${JSON.stringify(storyState)}.`,
+      );
+    }
+    storyStates.push(storyState);
+    if (!captureScreenshots) continue;
+
+    await page.evaluate(async () => {
+      await new Promise((resolve) => window.app.$nextTick(resolve));
+      for (const animation of document.getAnimations()) {
+        animation.pause();
+        animation.currentTime = 0;
+      }
+    });
+    await page.mouse.move(viewport.width - 1, viewport.height - 1);
+    const screenshot = `story-first-mud-${theme}-1440x900.png`;
+    await page.screenshot({
+      path: path.join(outputDirectory, screenshot),
+      fullPage: false,
+    });
+    screenshotMetrics.push({ ...storyState, screenshot });
+  }
+
+  const capture = {
+    scenario: "fresh-game-five-active-hits-source-update-story-tab-entry",
+    activeCanvasClicks: 5,
+    sourceUpdateInvoked: true,
+    miningState,
+    storyStates,
+  };
+  if (captureScreenshots) {
+    await writeFile(
+      path.join(outputDirectory, "story-first-mud-visual-metrics.json"),
+      JSON.stringify(
+        {
+          miningState,
+          captureNote:
+            "Five real mine-canvas clicks break the fresh Mud object; the source update function refreshes Story notifications; entering Story clears notifications before both theme screenshots.",
+          screenshots: screenshotMetrics,
+        },
+        null,
+        2,
+      ) + "\n",
+      "utf8",
+    );
+  }
+  return capture;
+}
+
+async function captureFirstPaperProgression(page, captureScreenshots) {
+  await page.locator("footer > button").first().click();
+  await page.locator("button.changemineobj").nth(1).click();
+  const miningSetup = await page.evaluate(() => ({
+    mineObjectLevel: window.game.mineObjectLevel,
+    highestMineObjectLevel: window.game.highestMineObjectLevel,
+    currentObjectName: window.game.currentMineObject.name,
+    currentObjectHp: window.game.currentMineObject.hp.toString(),
+    currentObjectTotalHp: window.game.currentMineObject.totalHp.toString(),
+    activeDamage: window.functions.getActiveDamage().toString(),
+    money: window.game.money.toString(),
+    gems: window.game.gems.toString(),
+    storyHighestUnlocked: window.game.story.highestUnlocked,
+    storyNotifications: window.game.story.notifications,
+  }));
+  const hitsToBreak = Math.ceil(
+    Number(miningSetup.currentObjectTotalHp) / Number(miningSetup.activeDamage),
+  );
+  if (
+    miningSetup.mineObjectLevel !== 1 ||
+    miningSetup.highestMineObjectLevel !== 1 ||
+    miningSetup.currentObjectName !== "Paper" ||
+    miningSetup.currentObjectHp !== "400" ||
+    miningSetup.currentObjectTotalHp !== "400" ||
+    miningSetup.activeDamage !== "17" ||
+    miningSetup.money !== "2" ||
+    miningSetup.gems !== "5" ||
+    miningSetup.storyHighestUnlocked !== 1 ||
+    miningSetup.storyNotifications !== 0 ||
+    hitsToBreak !== 24
+  ) {
+    throw new Error(
+      "Remix did not reach the expected first-Paper mining state: " +
+        JSON.stringify({ ...miningSetup, hitsToBreak }),
+    );
+  }
+
+  const paperCanvas = page.locator("canvas.mine-object").first();
+  for (let hit = 0; hit < hitsToBreak; hit += 1) await paperCanvas.click();
+  const miningState = await page.evaluate(() => {
+    window.update();
+    return {
+      mineObjectLevel: window.game.mineObjectLevel,
+      highestMineObjectLevel: window.game.highestMineObjectLevel,
+      currentObjectName: window.game.currentMineObject.name,
+      currentObjectHp: window.game.currentMineObject.hp.toString(),
+      money: window.game.money.toString(),
+      gems: window.game.gems.toString(),
+      storyHighestUnlocked: window.game.story.highestUnlocked,
+      storyNotifications: window.game.story.notifications,
+      firstPaperUnlocked: window.functions.storyUnlocked("firstPaper"),
+    };
+  });
+  if (
+    miningState.mineObjectLevel !== 1 ||
+    miningState.highestMineObjectLevel !== 2 ||
+    miningState.currentObjectName !== "Paper" ||
+    miningState.currentObjectHp !== "400" ||
+    miningState.money !== "12" ||
+    miningState.gems !== "5" ||
+    miningState.storyHighestUnlocked !== 2 ||
+    miningState.storyNotifications !== 1 ||
+    !miningState.firstPaperUnlocked
+  ) {
+    throw new Error(
+      "Remix first-Paper progression did not reach the expected state: " +
+        JSON.stringify(miningState),
+    );
+  }
+
+  await page.locator("button.story-tab").click();
+  await page.waitForTimeout(60);
+  const storyStates = [];
+  const screenshotMetrics = [];
+  for (const theme of ["light", "dark"]) {
+    await page.evaluate((selectedTheme) => {
+      window.functions.setTheme(selectedTheme);
+    }, theme);
+    await page.waitForTimeout(100);
+    const storyState = await page.evaluate(() => {
+      const scroller = document.querySelector(".story-milestones");
+      if (!scroller)
+        throw new Error("First-Paper Story scroller did not render.");
+      return {
+        tab: window.game.settings.tab,
+        theme: window.game.settings.theme,
+        page: window.game.story.page,
+        notifications: window.game.story.notifications,
+        highestUnlocked: window.game.story.highestUnlocked,
+        mineObjectLevel: window.game.mineObjectLevel,
+        highestMineObjectLevel: window.game.highestMineObjectLevel,
+        currentObjectName: window.game.currentMineObject.name,
+        currentObjectHp: window.game.currentMineObject.hp.toString(),
+        money: window.game.money.toString(),
+        gems: window.game.gems.toString(),
+        scrollTop: scroller.scrollTop,
+        visibleMilestones: ["gameStart", "firstMud", "firstPaper"].filter(
+          (key) => window.functions.storyDisplayed(key),
+        ),
+        nextObjective: window.functions.getNextStoryText(),
+        bodyBackground: getComputedStyle(document.body).backgroundColor,
+      };
+    });
+    const expectedBodyColor =
+      theme === "dark" ? "rgb(54, 54, 54)" : "rgb(250, 250, 250)";
+    if (
+      storyState.tab !== "story" ||
+      storyState.theme !== theme ||
+      storyState.page !== 0 ||
+      storyState.notifications !== 0 ||
+      storyState.highestUnlocked !== 2 ||
+      storyState.mineObjectLevel !== 1 ||
+      storyState.highestMineObjectLevel !== 2 ||
+      storyState.currentObjectName !== "Paper" ||
+      storyState.currentObjectHp !== "400" ||
+      storyState.money !== "12" ||
+      storyState.gems !== "5" ||
+      storyState.scrollTop !== 0 ||
+      JSON.stringify(storyState.visibleMilestones) !==
+        JSON.stringify(["gameStart", "firstMud", "firstPaper"]) ||
+      storyState.nextObjective !== "Upgrade Your Blacksmith once" ||
+      storyState.bodyBackground !== expectedBodyColor
+    ) {
+      throw new Error(
+        `Remix first-Paper Story screenshot reached the wrong state: ${JSON.stringify(storyState)}.`,
+      );
+    }
+    storyStates.push(storyState);
+    if (!captureScreenshots) continue;
+
+    await page.evaluate(async () => {
+      await new Promise((resolve) => window.app.$nextTick(resolve));
+      for (const animation of document.getAnimations()) {
+        animation.pause();
+        animation.currentTime = 0;
+      }
+    });
+    await page.mouse.move(viewport.width - 1, viewport.height - 1);
+    const screenshot = `story-first-paper-${theme}-1440x900.png`;
+    await page.screenshot({
+      path: path.join(outputDirectory, screenshot),
+      fullPage: false,
+    });
+    screenshotMetrics.push({ ...storyState, screenshot });
+  }
+
+  const capture = {
+    scenario:
+      "fresh-game-first-mud-story-entry-next-object-24-paper-hits-story-entry",
+    mineObjectId: 1,
+    activeDamage: "17",
+    activeCanvasClicks: 24,
+    miningSetup,
+    miningState,
+    storyStates,
+  };
+  if (captureScreenshots) {
+    await writeFile(
+      path.join(outputDirectory, "story-first-paper-visual-metrics.json"),
+      JSON.stringify(
+        {
+          miningSetup,
+          miningState,
+          captureNote:
+            "After the captured first-Mud Story entry, select the next mine object (Paper), click its source canvas the pinned 24 times at 17 damage per hit, run the source update to refresh notifications, then enter Story before both theme screenshots.",
+          screenshots: screenshotMetrics,
+        },
+        null,
+        2,
+      ) + "\n",
+      "utf8",
+    );
+  }
+  return capture;
+}
+
+async function captureFirstBlacksmithProgression(page, captureScreenshots) {
+  await page.locator("footer > button").first().click();
+  await page.locator("button.changemineobj").nth(1).click();
+  const miningSetup = await page.evaluate(() => ({
+    mineObjectLevel: window.game.mineObjectLevel,
+    highestMineObjectLevel: window.game.highestMineObjectLevel,
+    currentObjectName: window.game.currentMineObject.name,
+    currentObjectHp: window.game.currentMineObject.hp.toString(),
+    currentObjectTotalHp: window.game.currentMineObject.totalHp.toString(),
+    currentObjectDefense: window.game.currentMineObject.def.toString(),
+    currentObjectValue: window.game.currentMineObject.value.toString(),
+    activeDamage: window.functions.getActiveDamage().toString(),
+    money: window.game.money.toString(),
+    gems: window.game.gems.toString(),
+    blacksmithLevel: window.game.upgrades.blacksmith.level,
+    blacksmithPrice: window.game.upgrades.blacksmith.currentPrice().toString(),
+    storyHighestUnlocked: window.game.story.highestUnlocked,
+    storyNotifications: window.game.story.notifications,
+  }));
+  const hitsToBreak = Math.ceil(
+    Number(miningSetup.currentObjectTotalHp) / Number(miningSetup.activeDamage),
+  );
+  if (
+    miningSetup.mineObjectLevel !== 2 ||
+    miningSetup.highestMineObjectLevel !== 2 ||
+    miningSetup.currentObjectName !== "Salt" ||
+    miningSetup.currentObjectHp !== "700" ||
+    miningSetup.currentObjectTotalHp !== "700" ||
+    miningSetup.currentObjectDefense !== "15" ||
+    miningSetup.currentObjectValue !== "22" ||
+    miningSetup.activeDamage !== "5" ||
+    miningSetup.money !== "12" ||
+    miningSetup.gems !== "5" ||
+    miningSetup.blacksmithLevel !== 0 ||
+    miningSetup.blacksmithPrice !== "30" ||
+    miningSetup.storyHighestUnlocked !== 2 ||
+    miningSetup.storyNotifications !== 0 ||
+    hitsToBreak !== 140
+  ) {
+    throw new Error(
+      "Remix did not reach the expected first-Salt mining state: " +
+        JSON.stringify({ ...miningSetup, hitsToBreak }),
+    );
+  }
+
+  const saltCanvas = page.locator("canvas.mine-object").first();
+  for (let hit = 0; hit < hitsToBreak; hit += 1) await saltCanvas.click();
+  const saltMiningState = await page.evaluate(() => {
+    window.update();
+    return {
+      mineObjectLevel: window.game.mineObjectLevel,
+      highestMineObjectLevel: window.game.highestMineObjectLevel,
+      currentObjectName: window.game.currentMineObject.name,
+      currentObjectHp: window.game.currentMineObject.hp.toString(),
+      money: window.game.money.toString(),
+      gems: window.game.gems.toString(),
+      storyHighestUnlocked: window.game.story.highestUnlocked,
+      storyNotifications: window.game.story.notifications,
+      firstSaltUnlocked: window.functions.storyUnlocked("firstSalt"),
+      blacksmithUpgradeUnlocked:
+        window.functions.storyUnlocked("blacksmithUpgrade"),
+      nextObjective: window.functions.getNextStoryText(),
+    };
+  });
+  if (
+    saltMiningState.mineObjectLevel !== 2 ||
+    saltMiningState.highestMineObjectLevel !== 3 ||
+    saltMiningState.currentObjectName !== "Salt" ||
+    saltMiningState.currentObjectHp !== "700" ||
+    saltMiningState.money !== "34" ||
+    saltMiningState.gems !== "5" ||
+    saltMiningState.storyHighestUnlocked !== 4 ||
+    saltMiningState.storyNotifications !== 1 ||
+    !saltMiningState.firstSaltUnlocked ||
+    saltMiningState.blacksmithUpgradeUnlocked ||
+    saltMiningState.nextObjective !== "Upgrade Your Blacksmith once"
+  ) {
+    throw new Error(
+      "Remix first-Salt progression did not reach the expected state: " +
+        JSON.stringify(saltMiningState),
+    );
+  }
+
+  const blacksmithCard = page
+    .locator(".upgradelist .upgrade")
+    .filter({ has: page.locator('img[src="Images/upgrades/blacksmith.png"]') });
+  if ((await blacksmithCard.count()) !== 1) {
+    throw new Error("Remix did not render exactly one Money Blacksmith card.");
+  }
+  await blacksmithCard.click();
+  await page.waitForFunction("window.game.upgrades.blacksmith.level === 1");
+  const purchaseState = await page.evaluate(() => {
+    window.update();
+    return {
+      mineObjectLevel: window.game.mineObjectLevel,
+      highestMineObjectLevel: window.game.highestMineObjectLevel,
+      currentObjectName: window.game.currentMineObject.name,
+      currentObjectHp: window.game.currentMineObject.hp.toString(),
+      money: window.game.money.toString(),
+      gems: window.game.gems.toString(),
+      blacksmithLevel: window.game.upgrades.blacksmith.level,
+      storyHighestUnlocked: window.game.story.highestUnlocked,
+      storyNotifications: window.game.story.notifications,
+      blacksmithUpgradeUnlocked:
+        window.functions.storyUnlocked("blacksmithUpgrade"),
+      firstSaltUnlocked: window.functions.storyUnlocked("firstSalt"),
+      nextObjective: window.functions.getNextStoryText(),
+    };
+  });
+  if (
+    purchaseState.mineObjectLevel !== 2 ||
+    purchaseState.highestMineObjectLevel !== 3 ||
+    purchaseState.currentObjectName !== "Salt" ||
+    purchaseState.currentObjectHp !== "700" ||
+    purchaseState.money !== "4" ||
+    purchaseState.gems !== "5" ||
+    purchaseState.blacksmithLevel !== 1 ||
+    purchaseState.storyHighestUnlocked !== 4 ||
+    purchaseState.storyNotifications !== 1 ||
+    !purchaseState.blacksmithUpgradeUnlocked ||
+    !purchaseState.firstSaltUnlocked ||
+    purchaseState.nextObjective !== "Mine a piece of Clay"
+  ) {
+    throw new Error(
+      "Remix Blacksmith purchase did not reach the expected Story state: " +
+        JSON.stringify(purchaseState),
+    );
+  }
+
+  await page.locator("button.story-tab").click();
+  await page.waitForTimeout(60);
+  const storyStates = [];
+  const screenshotMetrics = [];
+  for (const theme of ["light", "dark"]) {
+    await page.evaluate((selectedTheme) => {
+      window.functions.setTheme(selectedTheme);
+    }, theme);
+    await page.waitForTimeout(100);
+    const storyState = await page.evaluate(() => {
+      const scroller = document.querySelector(".story-milestones");
+      if (!scroller)
+        throw new Error("Blacksmith Story scroller did not render.");
+      return {
+        tab: window.game.settings.tab,
+        theme: window.game.settings.theme,
+        page: window.game.story.page,
+        notifications: window.game.story.notifications,
+        highestUnlocked: window.game.story.highestUnlocked,
+        mineObjectLevel: window.game.mineObjectLevel,
+        highestMineObjectLevel: window.game.highestMineObjectLevel,
+        currentObjectName: window.game.currentMineObject.name,
+        currentObjectHp: window.game.currentMineObject.hp.toString(),
+        money: window.game.money.toString(),
+        gems: window.game.gems.toString(),
+        blacksmithLevel: window.game.upgrades.blacksmith.level,
+        scrollTop: scroller.scrollTop,
+        visibleMilestones: [
+          "gameStart",
+          "firstMud",
+          "firstPaper",
+          "blacksmithUpgrade",
+          "firstSalt",
+        ].filter((key) => window.functions.storyDisplayed(key)),
+        nextObjective: window.functions.getNextStoryText(),
+        bodyBackground: getComputedStyle(document.body).backgroundColor,
+      };
+    });
+    const expectedBodyColor =
+      theme === "dark" ? "rgb(54, 54, 54)" : "rgb(250, 250, 250)";
+    if (
+      storyState.tab !== "story" ||
+      storyState.theme !== theme ||
+      storyState.page !== 0 ||
+      storyState.notifications !== 0 ||
+      storyState.highestUnlocked !== 4 ||
+      storyState.mineObjectLevel !== 2 ||
+      storyState.highestMineObjectLevel !== 3 ||
+      storyState.currentObjectName !== "Salt" ||
+      storyState.currentObjectHp !== "700" ||
+      storyState.money !== "4" ||
+      storyState.gems !== "5" ||
+      storyState.blacksmithLevel !== 1 ||
+      storyState.scrollTop !== 0 ||
+      JSON.stringify(storyState.visibleMilestones) !==
+        JSON.stringify([
+          "gameStart",
+          "firstMud",
+          "firstPaper",
+          "blacksmithUpgrade",
+          "firstSalt",
+        ]) ||
+      storyState.nextObjective !== "Mine a piece of Clay" ||
+      storyState.bodyBackground !== expectedBodyColor
+    ) {
+      throw new Error(
+        `Remix Blacksmith Story screenshot reached the wrong state: ${JSON.stringify(storyState)}.`,
+      );
+    }
+    storyStates.push(storyState);
+    if (!captureScreenshots) continue;
+
+    await page.evaluate(async () => {
+      await new Promise((resolve) => window.app.$nextTick(resolve));
+      for (const animation of document.getAnimations()) {
+        animation.pause();
+        animation.currentTime = 0;
+      }
+    });
+    await page.mouse.move(viewport.width - 1, viewport.height - 1);
+    const screenshot = `story-first-blacksmith-${theme}-1440x900.png`;
+    await page.screenshot({
+      path: path.join(outputDirectory, screenshot),
+      fullPage: false,
+    });
+    screenshotMetrics.push({ ...storyState, screenshot });
+  }
+
+  const capture = {
+    scenario:
+      "fresh-game-first-mud-paper-salt-140-hits-blacksmith-purchase-story-entry",
+    mineObjectId: 2,
+    activeDamage: "5",
+    activeCanvasClicks: 140,
+    miningSetup,
+    saltMiningState,
+    purchaseState,
+    storyStates,
+  };
+  if (captureScreenshots) {
+    await writeFile(
+      path.join(outputDirectory, "story-first-blacksmith-visual-metrics.json"),
+      JSON.stringify(
+        {
+          miningSetup,
+          saltMiningState,
+          purchaseState,
+          captureNote:
+            "After the captured first-Mud and first-Paper interactions, select Salt, click its source canvas 140 times at 5 damage per hit, run the source update, then buy the affordable 30-Money Blacksmith once. The salt milestone advances the notification high-water past blacksmithUpgrade; the later true Blacksmith condition is visible but adds no new notification. Enter Story before both theme screenshots.",
+          screenshots: screenshotMetrics,
+        },
+        null,
+        2,
+      ) + "\n",
+      "utf8",
+    );
+  }
+  return capture;
+}
+
+async function captureFirstClayProgression(page, captureScreenshots) {
+  await page.locator("footer > button").first().click();
+  await page.locator("button.changemineobj").nth(1).click();
+  const miningSetup = await page.evaluate(() => ({
+    mineObjectLevel: window.game.mineObjectLevel,
+    highestMineObjectLevel: window.game.highestMineObjectLevel,
+    currentObjectName: window.game.currentMineObject.name,
+    currentObjectHp: window.game.currentMineObject.hp.toString(),
+    currentObjectTotalHp: window.game.currentMineObject.totalHp.toString(),
+    currentObjectDefense: window.game.currentMineObject.def.toString(),
+    pickaxeName: window.game.pickaxe.name,
+    pickaxePower: window.game.pickaxe.pow.toString(),
+    pickaxeQuality: window.game.pickaxe.quality.toString(),
+    pickaxeDamage: window.game.pickaxe.getDamage().toString(),
+    activeDamage: window.functions.getActiveDamage().toString(),
+    money: window.game.money.toString(),
+    gems: window.game.gems.toString(),
+    blacksmithLevel: window.game.upgrades.blacksmith.level,
+    usedGems: window.functions.getUsedGems().toString(),
+    storyHighestUnlocked: window.game.story.highestUnlocked,
+    storyNotifications: window.game.story.notifications,
+  }));
+  if (
+    miningSetup.mineObjectLevel !== 3 ||
+    miningSetup.highestMineObjectLevel !== 3 ||
+    miningSetup.currentObjectName !== "Clay" ||
+    miningSetup.currentObjectHp !== "1400" ||
+    miningSetup.currentObjectTotalHp !== "1400" ||
+    miningSetup.currentObjectDefense !== "35" ||
+    miningSetup.pickaxeDamage !== "20" ||
+    miningSetup.activeDamage !== "0" ||
+    miningSetup.money !== "4" ||
+    miningSetup.gems !== "5" ||
+    miningSetup.blacksmithLevel !== 1 ||
+    miningSetup.usedGems !== "1" ||
+    miningSetup.storyHighestUnlocked !== 4 ||
+    miningSetup.storyNotifications !== 0
+  ) {
+    throw new Error(
+      "Remix did not reach the expected first-Clay pre-craft state: " +
+        JSON.stringify(miningSetup),
+    );
+  }
+
+  const craftButton = page.locator(".craft-pickaxe > button");
+  if ((await craftButton.count()) !== 1) {
+    throw new Error("Remix did not render its single-Gem craft control.");
+  }
+  const craftAttempts = [];
+  for (let attempt = 1; attempt <= Number(miningSetup.gems); attempt += 1) {
+    const gemsBefore = await page.evaluate(() => window.game.gems.toString());
+    await craftButton.click();
+    await page.evaluate(
+      () => new Promise((resolve) => window.app.$nextTick(resolve)),
+    );
+    const outcome = await page.evaluate(() => ({
+      mineObjectLevel: window.game.mineObjectLevel,
+      currentObjectName: window.game.currentMineObject.name,
+      currentObjectHp: window.game.currentMineObject.hp.toString(),
+      pickaxeName: window.game.pickaxe.name,
+      pickaxePower: window.game.pickaxe.pow.toString(),
+      pickaxeQuality: window.game.pickaxe.quality.toString(),
+      pickaxeDamage: window.game.pickaxe.getDamage().toString(),
+      activeDamage: window.functions.getActiveDamage().toString(),
+      money: window.game.money.toString(),
+      gems: window.game.gems.toString(),
+      blacksmithLevel: window.game.upgrades.blacksmith.level,
+      miningStatsText:
+        document.querySelector(".stats")?.innerText.replace(/\r/g, "") ?? null,
+      recentMessages: window.game.messageLog
+        .slice(0, 3)
+        .map(({ message }) => message),
+    }));
+    if (Number(outcome.gems) !== Number(gemsBefore) - 1) {
+      throw new Error(
+        `Remix craft attempt ${attempt} did not consume exactly one Gem: ` +
+          JSON.stringify({ gemsBefore, outcome }),
+      );
+    }
+    craftAttempts.push({ attempt, gemsBefore, ...outcome });
+    if (Number(outcome.activeDamage) > 0) break;
+  }
+  const craftState = craftAttempts.at(-1);
+  if (!craftState)
+    throw new Error("Remix produced no first-Clay craft attempt.");
+  if (
+    craftState.mineObjectLevel !== 3 ||
+    craftState.currentObjectName !== "Clay" ||
+    craftState.currentObjectHp !== "1400" ||
+    Number(craftState.pickaxeDamage) <= Number(miningSetup.pickaxeDamage) ||
+    Number(craftState.activeDamage) <= 0 ||
+    craftState.money !== "4" ||
+    craftState.blacksmithLevel !== 1 ||
+    !craftState.recentMessages.some((message) =>
+      message.startsWith('Got a new Pickaxe! "'),
+    )
+  ) {
+    throw new Error(
+      "Remix first-Clay crafts did not yield a damageable pickaxe: " +
+        JSON.stringify({ craftAttempts, craftState }),
+    );
+  }
+
+  const hitsToBreak = Math.ceil(
+    Number(miningSetup.currentObjectTotalHp) / Number(craftState.activeDamage),
+  );
+  if (!Number.isSafeInteger(hitsToBreak) || hitsToBreak <= 0) {
+    throw new Error(
+      `Remix first-Clay craft produced an invalid hit count: ${hitsToBreak}.`,
+    );
+  }
+  const clayCanvas = page.locator("canvas.mine-object").first();
+  await clayCanvas.click();
+  const clayFirstHitState = await page.evaluate(() => ({
+    currentObjectName: window.game.currentMineObject.name,
+    currentObjectHp: window.game.currentMineObject.hp.toString(),
+    currentObjectHpText:
+      document.querySelector(".mineobject > div > p")?.textContent?.trim() ??
+      null,
+    activeDamage: window.functions.getActiveDamage().toString(),
+  }));
+  if (
+    clayFirstHitState.currentObjectName !== "Clay" ||
+    Number(clayFirstHitState.currentObjectHp) >= 1400 ||
+    clayFirstHitState.currentObjectHpText === null ||
+    clayFirstHitState.activeDamage !== craftState.activeDamage
+  ) {
+    throw new Error(
+      "Remix did not apply the captured positive Clay damage on the first hit: " +
+        JSON.stringify({ clayFirstHitState, craftState }),
+    );
+  }
+  for (let hit = 1; hit < hitsToBreak; hit += 1) await clayCanvas.click();
+  const clayMiningState = await page.evaluate(() => {
+    window.update();
+    return {
+      mineObjectLevel: window.game.mineObjectLevel,
+      highestMineObjectLevel: window.game.highestMineObjectLevel,
+      currentObjectName: window.game.currentMineObject.name,
+      currentObjectHp: window.game.currentMineObject.hp.toString(),
+      money: window.game.money.toString(),
+      gems: window.game.gems.toString(),
+      blacksmithLevel: window.game.upgrades.blacksmith.level,
+      storyHighestUnlocked: window.game.story.highestUnlocked,
+      storyNotifications: window.game.story.notifications,
+      firstClayUnlocked: window.functions.storyUnlocked("firstClay"),
+      firstStoneUnlocked: window.functions.storyUnlocked("firstStone"),
+      nextObjective: window.functions.getNextStoryText(),
+    };
+  });
+  if (
+    clayMiningState.mineObjectLevel !== 3 ||
+    clayMiningState.highestMineObjectLevel !== 4 ||
+    clayMiningState.currentObjectName !== "Clay" ||
+    clayMiningState.currentObjectHp !== "1400" ||
+    clayMiningState.money !== "54" ||
+    Number(clayMiningState.gems) < Number(craftState.gems) ||
+    clayMiningState.blacksmithLevel !== 1 ||
+    clayMiningState.storyHighestUnlocked !== 5 ||
+    clayMiningState.storyNotifications !== 1 ||
+    !clayMiningState.firstClayUnlocked ||
+    clayMiningState.firstStoneUnlocked ||
+    clayMiningState.nextObjective !== "Mine a piece of Stone"
+  ) {
+    throw new Error(
+      "Remix first-Clay progression did not reach the expected state: " +
+        JSON.stringify({ ...clayMiningState, hitsToBreak }),
+    );
+  }
+
+  await page.locator("button.story-tab").click();
+  await page.waitForTimeout(60);
+  const storyStates = [];
+  const screenshotMetrics = [];
+  for (const theme of ["light", "dark"]) {
+    await page.evaluate((selectedTheme) => {
+      window.functions.setTheme(selectedTheme);
+    }, theme);
+    await page.waitForTimeout(100);
+    const storyState = await page.evaluate(() => {
+      const scroller = document.querySelector(".story-milestones");
+      if (!scroller)
+        throw new Error("First-Clay Story scroller did not render.");
+      return {
+        tab: window.game.settings.tab,
+        theme: window.game.settings.theme,
+        page: window.game.story.page,
+        notifications: window.game.story.notifications,
+        highestUnlocked: window.game.story.highestUnlocked,
+        mineObjectLevel: window.game.mineObjectLevel,
+        highestMineObjectLevel: window.game.highestMineObjectLevel,
+        currentObjectName: window.game.currentMineObject.name,
+        currentObjectHp: window.game.currentMineObject.hp.toString(),
+        money: window.game.money.toString(),
+        gems: window.game.gems.toString(),
+        pickaxeName: window.game.pickaxe.name,
+        pickaxePower: window.game.pickaxe.pow.toString(),
+        pickaxeQuality: window.game.pickaxe.quality.toString(),
+        pickaxeDamage: window.game.pickaxe.getDamage().toString(),
+        blacksmithLevel: window.game.upgrades.blacksmith.level,
+        scrollTop: scroller.scrollTop,
+        visibleMilestones: [
+          "gameStart",
+          "firstMud",
+          "firstPaper",
+          "blacksmithUpgrade",
+          "firstSalt",
+          "firstClay",
+        ].filter((key) => window.functions.storyDisplayed(key)),
+        nextObjective: window.functions.getNextStoryText(),
+        bodyBackground: getComputedStyle(document.body).backgroundColor,
+      };
+    });
+    const expectedBodyColor =
+      theme === "dark" ? "rgb(54, 54, 54)" : "rgb(250, 250, 250)";
+    if (
+      storyState.tab !== "story" ||
+      storyState.theme !== theme ||
+      storyState.page !== 0 ||
+      storyState.notifications !== 0 ||
+      storyState.highestUnlocked !== 5 ||
+      storyState.mineObjectLevel !== 3 ||
+      storyState.highestMineObjectLevel !== 4 ||
+      storyState.currentObjectName !== "Clay" ||
+      storyState.currentObjectHp !== "1400" ||
+      storyState.money !== "54" ||
+      storyState.blacksmithLevel !== 1 ||
+      storyState.scrollTop !== 0 ||
+      JSON.stringify(storyState.visibleMilestones) !==
+        JSON.stringify([
+          "gameStart",
+          "firstMud",
+          "firstPaper",
+          "blacksmithUpgrade",
+          "firstSalt",
+          "firstClay",
+        ]) ||
+      storyState.nextObjective !== "Mine a piece of Stone" ||
+      storyState.bodyBackground !== expectedBodyColor
+    ) {
+      throw new Error(
+        `Remix first-Clay Story screenshot reached the wrong state: ${JSON.stringify(storyState)}.`,
+      );
+    }
+    storyStates.push(storyState);
+    if (!captureScreenshots) continue;
+
+    await page.evaluate(async () => {
+      await new Promise((resolve) => window.app.$nextTick(resolve));
+      for (const animation of document.getAnimations()) {
+        animation.pause();
+        animation.currentTime = 0;
+      }
+    });
+    await page.mouse.move(viewport.width - 1, viewport.height - 1);
+    const screenshot = `story-first-clay-${theme}-1440x900.png`;
+    await page.screenshot({
+      path: path.join(outputDirectory, screenshot),
+      fullPage: false,
+    });
+    screenshotMetrics.push({ ...storyState, screenshot });
+  }
+
+  const capture = {
+    scenario:
+      "fresh-game-first-mud-paper-salt-blacksmith-craft-clay-story-entry",
+    mineObjectId: 3,
+    miningSetup,
+    craftAttempts,
+    craftState,
+    activeDamage: craftState.activeDamage,
+    activeCanvasClicks: hitsToBreak,
+    clayFirstHitState,
+    clayMiningState,
+    storyStates,
+  };
+  if (captureScreenshots) {
+    await writeFile(
+      path.join(outputDirectory, "story-first-clay-visual-metrics.json"),
+      JSON.stringify(
+        {
+          miningSetup,
+          craftAttempts,
+          craftState,
+          activeCanvasClicks: hitsToBreak,
+          clayFirstHitState,
+          clayMiningState,
+          captureNote:
+            "After the pinned natural first-Blacksmith route, select Clay and confirm the Toy Pickaxe cannot damage its 35 defense. Use Remix's single-Gem craft control repeatedly with the fixed source RNG until the current pickaxe deals positive damage to Clay; every attempt, including a better replacement that still cannot damage the ore, is recorded. Click Clay until it breaks, invoke the source update loop, and enter Story before capturing both themes.",
+          screenshots: screenshotMetrics,
+        },
+        null,
+        2,
+      ) + "\n",
+      "utf8",
+    );
+  }
+  return capture;
+}
+
+async function captureFirstStoneProgression(page, captureScreenshots) {
+  await page.locator("footer > button").first().click();
+  const clayMiningSetup = await page.evaluate(() => ({
+    mineObjectLevel: window.game.mineObjectLevel,
+    highestMineObjectLevel: window.game.highestMineObjectLevel,
+    currentObjectName: window.game.currentMineObject.name,
+    currentObjectHp: window.game.currentMineObject.hp.toString(),
+    currentObjectTotalHp: window.game.currentMineObject.totalHp.toString(),
+    currentObjectValue: window.game.currentMineObject.value.toString(),
+    activeDamage: window.functions.getActiveDamage().toString(),
+    money: window.game.money.toString(),
+    gems: window.game.gems.toString(),
+    blacksmithLevel: window.game.upgrades.blacksmith.level,
+    blacksmithPrice: window.game.upgrades.blacksmith.currentPrice().toString(),
+    storyHighestUnlocked: window.game.story.highestUnlocked,
+    storyNotifications: window.game.story.notifications,
+  }));
+  if (
+    clayMiningSetup.mineObjectLevel !== 3 ||
+    clayMiningSetup.highestMineObjectLevel !== 4 ||
+    clayMiningSetup.currentObjectName !== "Clay" ||
+    clayMiningSetup.currentObjectHp !== "1400" ||
+    clayMiningSetup.currentObjectTotalHp !== "1400" ||
+    clayMiningSetup.currentObjectValue !== "50" ||
+    clayMiningSetup.activeDamage !== "26.802070465340503" ||
+    clayMiningSetup.money !== "54" ||
+    clayMiningSetup.gems !== "3" ||
+    clayMiningSetup.blacksmithLevel !== 1 ||
+    clayMiningSetup.blacksmithPrice !== "111" ||
+    clayMiningSetup.storyHighestUnlocked !== 5 ||
+    clayMiningSetup.storyNotifications !== 0
+  ) {
+    throw new Error(
+      "Remix did not reach the expected repeated-Clay state for first Stone: " +
+        JSON.stringify(clayMiningSetup),
+    );
+  }
+
+  const clayHitsToBreak = Math.ceil(
+    Number(clayMiningSetup.currentObjectTotalHp) /
+      Number(clayMiningSetup.activeDamage),
+  );
+  const clayBreaksNeeded = Math.ceil(
+    (Number(clayMiningSetup.blacksmithPrice) - Number(clayMiningSetup.money)) /
+      Number(clayMiningSetup.currentObjectValue),
+  );
+  if (clayHitsToBreak !== 53 || clayBreaksNeeded !== 2) {
+    throw new Error(
+      "Remix first-Stone funding route changed unexpectedly: " +
+        JSON.stringify({ clayHitsToBreak, clayBreaksNeeded }),
+    );
+  }
+
+  const gemFarm = await page.evaluate(
+    ({ activeHitsPerClay, startingMoney, startingGems, targetGems }) => {
+      const gemDrops = [];
+      let breaks = 0;
+      for (; breaks < 1_000 && Number(window.game.gems) < targetGems;) {
+        const gemsBefore = Number(window.game.gems);
+        for (let hit = 0; hit < activeHitsPerClay; hit += 1) {
+          window.functions.clickMineObject();
+        }
+        window.update();
+        breaks += 1;
+        const gemsAfter = Number(window.game.gems);
+        if (gemsAfter > gemsBefore) {
+          gemDrops.push({
+            breakNumber: breaks,
+            gemsBefore: String(gemsBefore),
+            gemsAfter: String(gemsAfter),
+          });
+        }
+      }
+      return {
+        targetGems,
+        breaks,
+        activeHitsPerClay,
+        activeHits: breaks * activeHitsPerClay,
+        startingMoney,
+        endingMoney: window.game.money.toString(),
+        startingGems,
+        endingGems: window.game.gems.toString(),
+        gemDrops,
+        mineObjectLevel: window.game.mineObjectLevel,
+        highestMineObjectLevel: window.game.highestMineObjectLevel,
+        currentObjectName: window.game.currentMineObject.name,
+        currentObjectHp: window.game.currentMineObject.hp.toString(),
+        storyHighestUnlocked: window.game.story.highestUnlocked,
+        storyNotifications: window.game.story.notifications,
+      };
+    },
+    {
+      activeHitsPerClay: clayHitsToBreak,
+      startingMoney: clayMiningSetup.money,
+      startingGems: clayMiningSetup.gems,
+      targetGems: 6,
+    },
+  );
+  if (
+    gemFarm.breaks < clayBreaksNeeded ||
+    Number(gemFarm.endingGems) < gemFarm.targetGems ||
+    gemFarm.mineObjectLevel !== 3 ||
+    gemFarm.highestMineObjectLevel !== 4 ||
+    gemFarm.currentObjectName !== "Clay" ||
+    gemFarm.currentObjectHp !== "1400" ||
+    Number(gemFarm.endingMoney) !==
+      Number(clayMiningSetup.money) +
+        Number(clayMiningSetup.currentObjectValue) * gemFarm.breaks ||
+    gemFarm.storyHighestUnlocked !== 5 ||
+    gemFarm.storyNotifications !== 0
+  ) {
+    throw new Error(
+      "Remix Clay Gem farming did not reach the controlled first-Stone setup: " +
+        JSON.stringify(gemFarm),
+    );
+  }
+
+  await page.locator("button.changemineobj").nth(1).click();
+  const stoneSetup = await page.evaluate(() => ({
+    mineObjectLevel: window.game.mineObjectLevel,
+    highestMineObjectLevel: window.game.highestMineObjectLevel,
+    currentObjectName: window.game.currentMineObject.name,
+    currentObjectHp: window.game.currentMineObject.hp.toString(),
+    currentObjectTotalHp: window.game.currentMineObject.totalHp.toString(),
+    currentObjectDefense: window.game.currentMineObject.def.toString(),
+    currentObjectValue: window.game.currentMineObject.value.toString(),
+    pickaxeName: window.game.pickaxe.name,
+    pickaxeDamage: window.game.pickaxe.getDamage().toString(),
+    activeDamage: window.functions.getActiveDamage().toString(),
+    money: window.game.money.toString(),
+    gems: window.game.gems.toString(),
+    blacksmithLevel: window.game.upgrades.blacksmith.level,
+    blacksmithPrice: window.game.upgrades.blacksmith.currentPrice().toString(),
+    storyHighestUnlocked: window.game.story.highestUnlocked,
+    storyNotifications: window.game.story.notifications,
+  }));
+  if (
+    stoneSetup.mineObjectLevel !== 4 ||
+    stoneSetup.highestMineObjectLevel !== 4 ||
+    stoneSetup.currentObjectName !== "Rock" ||
+    stoneSetup.currentObjectHp !== "2200" ||
+    stoneSetup.currentObjectTotalHp !== "2200" ||
+    stoneSetup.currentObjectDefense !== "90" ||
+    stoneSetup.currentObjectValue !== "120" ||
+    stoneSetup.pickaxeDamage !== "61.80207046534054" ||
+    stoneSetup.activeDamage !== "0" ||
+    stoneSetup.money !== gemFarm.endingMoney ||
+    stoneSetup.gems !== gemFarm.endingGems ||
+    stoneSetup.blacksmithLevel !== 1 ||
+    stoneSetup.blacksmithPrice !== "111" ||
+    stoneSetup.storyHighestUnlocked !== 5 ||
+    stoneSetup.storyNotifications !== 0
+  ) {
+    throw new Error(
+      "Remix did not reach the expected first-Stone Rock state: " +
+        JSON.stringify(stoneSetup),
+    );
+  }
+
+  const blacksmithCard = page
+    .locator(".upgradelist .upgrade")
+    .filter({ has: page.locator('img[src="Images/upgrades/blacksmith.png"]') });
+  if ((await blacksmithCard.count()) !== 1) {
+    throw new Error(
+      "Remix did not render one Blacksmith upgrade card at Rock.",
+    );
+  }
+  await blacksmithCard.click();
+  await page.waitForFunction("window.game.upgrades.blacksmith.level === 2");
+  const blacksmithPurchaseState = await page.evaluate(() => {
+    window.update();
+    return {
+      mineObjectLevel: window.game.mineObjectLevel,
+      highestMineObjectLevel: window.game.highestMineObjectLevel,
+      currentObjectName: window.game.currentMineObject.name,
+      currentObjectHp: window.game.currentMineObject.hp.toString(),
+      money: window.game.money.toString(),
+      gems: window.game.gems.toString(),
+      blacksmithLevel: window.game.upgrades.blacksmith.level,
+      blacksmithPrice: window.game.upgrades.blacksmith
+        .currentPrice()
+        .toString(),
+      storyHighestUnlocked: window.game.story.highestUnlocked,
+      storyNotifications: window.game.story.notifications,
+      firstStoneUnlocked: window.functions.storyUnlocked("firstStone"),
+    };
+  });
+  if (
+    blacksmithPurchaseState.mineObjectLevel !== 4 ||
+    blacksmithPurchaseState.highestMineObjectLevel !== 4 ||
+    blacksmithPurchaseState.currentObjectName !== "Rock" ||
+    blacksmithPurchaseState.currentObjectHp !== "2200" ||
+    blacksmithPurchaseState.money !==
+      String(
+        Number(gemFarm.endingMoney) - Number(stoneSetup.blacksmithPrice),
+      ) ||
+    blacksmithPurchaseState.blacksmithLevel !== 2 ||
+    blacksmithPurchaseState.storyHighestUnlocked !== 5 ||
+    blacksmithPurchaseState.storyNotifications !== 0 ||
+    blacksmithPurchaseState.firstStoneUnlocked
+  ) {
+    throw new Error(
+      "Remix second Blacksmith purchase changed the wrong first-Stone state: " +
+        JSON.stringify(blacksmithPurchaseState),
+    );
+  }
+
+  const craftButton = page.locator(".craft-pickaxe > button");
+  if ((await craftButton.count()) !== 1) {
+    throw new Error(
+      "Remix did not render its single-Gem craft control at Rock.",
+    );
+  }
+  const craftAttempts = [];
+  for (
+    let attempt = 1;
+    attempt <= Number(blacksmithPurchaseState.gems);
+    attempt += 1
+  ) {
+    const gemsBefore = await page.evaluate(() => window.game.gems.toString());
+    await craftButton.click();
+    await page.evaluate(
+      () => new Promise((resolve) => window.app.$nextTick(resolve)),
+    );
+    const outcome = await page.evaluate(() => ({
+      mineObjectLevel: window.game.mineObjectLevel,
+      currentObjectName: window.game.currentMineObject.name,
+      currentObjectHp: window.game.currentMineObject.hp.toString(),
+      pickaxeName: window.game.pickaxe.name,
+      pickaxePower: window.game.pickaxe.pow.toString(),
+      pickaxeQuality: window.game.pickaxe.quality.toString(),
+      pickaxeDamage: window.game.pickaxe.getDamage().toString(),
+      activeDamage: window.functions.getActiveDamage().toString(),
+      miningStatsText:
+        document.querySelector(".stats")?.innerText.replace(/\r/g, "") ?? null,
+      money: window.game.money.toString(),
+      gems: window.game.gems.toString(),
+      blacksmithLevel: window.game.upgrades.blacksmith.level,
+      recentMessages: window.game.messageLog
+        .slice(0, 3)
+        .map(({ message }) => message),
+    }));
+    if (Number(outcome.gems) !== Number(gemsBefore) - 1) {
+      throw new Error(
+        `Remix Rock craft attempt ${attempt} did not consume one Gem: ` +
+          JSON.stringify({ gemsBefore, outcome }),
+      );
+    }
+    craftAttempts.push({ attempt, gemsBefore, ...outcome });
+    if (Number(outcome.activeDamage) > 0) break;
+  }
+  const craftState = craftAttempts.at(-1);
+  if (
+    !craftState ||
+    craftState.mineObjectLevel !== 4 ||
+    craftState.currentObjectName !== "Rock" ||
+    craftState.currentObjectHp !== "2200" ||
+    Number(craftState.activeDamage) <= 0 ||
+    craftState.money !== blacksmithPurchaseState.money ||
+    craftState.blacksmithLevel !== 2 ||
+    !craftState.recentMessages.some((message) =>
+      message.startsWith('Got a new Pickaxe! "'),
+    )
+  ) {
+    throw new Error(
+      "Remix Blacksmith 2 crafts did not yield a Rock-damaging pickaxe: " +
+        JSON.stringify({ craftAttempts, craftState }),
+    );
+  }
+
+  const hitsToBreak = Math.ceil(
+    Number(stoneSetup.currentObjectTotalHp) / Number(craftState.activeDamage),
+  );
+  if (!Number.isSafeInteger(hitsToBreak) || hitsToBreak <= 0) {
+    throw new Error(
+      `Remix Rock craft produced an invalid hit count: ${hitsToBreak}.`,
+    );
+  }
+  const rockCanvas = page.locator("canvas.mine-object").first();
+  await rockCanvas.click();
+  const rockFirstHitState = await page.evaluate(() => ({
+    currentObjectName: window.game.currentMineObject.name,
+    currentObjectHp: window.game.currentMineObject.hp.toString(),
+    currentObjectHpText:
+      document.querySelector(".mineobject > div > p")?.textContent?.trim() ??
+      null,
+    activeDamage: window.functions.getActiveDamage().toString(),
+  }));
+  if (
+    rockFirstHitState.currentObjectName !== "Rock" ||
+    Number(rockFirstHitState.currentObjectHp) >= 2200 ||
+    rockFirstHitState.currentObjectHpText === null ||
+    rockFirstHitState.activeDamage !== craftState.activeDamage
+  ) {
+    throw new Error(
+      "Remix did not apply the captured positive Rock damage on the first hit: " +
+        JSON.stringify({ rockFirstHitState, craftState }),
+    );
+  }
+  for (let hit = 1; hit < hitsToBreak; hit += 1) await rockCanvas.click();
+  const rockMiningState = await page.evaluate(() => {
+    window.update();
+    return {
+      mineObjectLevel: window.game.mineObjectLevel,
+      highestMineObjectLevel: window.game.highestMineObjectLevel,
+      currentObjectName: window.game.currentMineObject.name,
+      currentObjectHp: window.game.currentMineObject.hp.toString(),
+      money: window.game.money.toString(),
+      gems: window.game.gems.toString(),
+      blacksmithLevel: window.game.upgrades.blacksmith.level,
+      storyHighestUnlocked: window.game.story.highestUnlocked,
+      storyNotifications: window.game.story.notifications,
+      firstStoneUnlocked: window.functions.storyUnlocked("firstStone"),
+      nextObjective: window.functions.getNextStoryText(),
+      maxStoryPage: window.functions.getMaxStoryPage(),
+      sourceStoryPage: window.game.story.page,
+    };
+  });
+  if (
+    rockMiningState.mineObjectLevel !== 4 ||
+    rockMiningState.highestMineObjectLevel !== 5 ||
+    rockMiningState.currentObjectName !== "Rock" ||
+    rockMiningState.currentObjectHp !== "2200" ||
+    rockMiningState.money !==
+      String(
+        Number(blacksmithPurchaseState.money) +
+          Number(stoneSetup.currentObjectValue),
+      ) ||
+    Number(rockMiningState.gems) < Number(craftState.gems) ||
+    rockMiningState.blacksmithLevel !== 2 ||
+    rockMiningState.storyHighestUnlocked < 6 ||
+    rockMiningState.storyNotifications < 1 ||
+    !rockMiningState.firstStoneUnlocked ||
+    rockMiningState.maxStoryPage !== 1 ||
+    rockMiningState.sourceStoryPage !== 0
+  ) {
+    throw new Error(
+      "Remix first-Stone progression did not reach the expected state: " +
+        JSON.stringify({ ...rockMiningState, hitsToBreak }),
+    );
+  }
+
+  await page.locator("button.story-tab").click();
+  await page.waitForTimeout(60);
+  await page.locator(".chapter-control button").nth(1).click();
+  await page.waitForTimeout(60);
+  const storyStates = [];
+  const screenshotMetrics = [];
+  for (const theme of ["light", "dark"]) {
+    await page.evaluate((selectedTheme) => {
+      window.functions.setTheme(selectedTheme);
+    }, theme);
+    await page.waitForTimeout(100);
+    const storyState = await page.evaluate(() => {
+      const scroller = document.querySelector(".story-milestones");
+      if (!scroller)
+        throw new Error("First-Stone Story scroller did not render.");
+      return {
+        tab: window.game.settings.tab,
+        theme: window.game.settings.theme,
+        page: window.game.story.page,
+        notifications: window.game.story.notifications,
+        highestUnlocked: window.game.story.highestUnlocked,
+        maxStoryPage: window.functions.getMaxStoryPage(),
+        mineObjectLevel: window.game.mineObjectLevel,
+        highestMineObjectLevel: window.game.highestMineObjectLevel,
+        currentObjectName: window.game.currentMineObject.name,
+        currentObjectHp: window.game.currentMineObject.hp.toString(),
+        money: window.game.money.toString(),
+        gems: window.game.gems.toString(),
+        pickaxeName: window.game.pickaxe.name,
+        pickaxePower: window.game.pickaxe.pow.toString(),
+        pickaxeQuality: window.game.pickaxe.quality.toString(),
+        pickaxeDamage: window.game.pickaxe.getDamage().toString(),
+        blacksmithLevel: window.game.upgrades.blacksmith.level,
+        scrollTop: scroller.scrollTop,
+        visibleMilestones: [
+          "firstStone",
+          "tenThousand",
+          "firstSpookyBone",
+        ].filter((key) => window.functions.storyDisplayed(key)),
+        nextObjective: window.functions.getNextStoryText(),
+        bodyBackground: getComputedStyle(document.body).backgroundColor,
+        chapterHeading:
+          document.querySelector(".chapter-control h3")?.textContent ?? null,
+      };
+    });
+    const expectedBodyColor =
+      theme === "dark" ? "rgb(54, 54, 54)" : "rgb(250, 250, 250)";
+    if (
+      storyState.tab !== "story" ||
+      storyState.theme !== theme ||
+      storyState.page !== 1 ||
+      storyState.notifications !== 0 ||
+      storyState.highestUnlocked !== rockMiningState.storyHighestUnlocked ||
+      storyState.maxStoryPage !== 1 ||
+      storyState.mineObjectLevel !== 4 ||
+      storyState.highestMineObjectLevel !== 5 ||
+      storyState.currentObjectName !== "Rock" ||
+      storyState.currentObjectHp !== "2200" ||
+      storyState.money !== rockMiningState.money ||
+      storyState.blacksmithLevel !== 2 ||
+      storyState.scrollTop !== 0 ||
+      JSON.stringify(storyState.visibleMilestones) !==
+        JSON.stringify([
+          "firstStone",
+          ...(Number(rockMiningState.money) >= 10_000 ? ["tenThousand"] : []),
+        ]) ||
+      storyState.nextObjective !== rockMiningState.nextObjective ||
+      storyState.chapterHeading !== "Chapter 2: The real Adventure begins!" ||
+      storyState.bodyBackground !== expectedBodyColor
+    ) {
+      throw new Error(
+        `Remix first-Stone Story screenshot reached the wrong state: ${JSON.stringify(storyState)}.`,
+      );
+    }
+    storyStates.push(storyState);
+    if (!captureScreenshots) continue;
+
+    await page.evaluate(async () => {
+      await new Promise((resolve) => window.app.$nextTick(resolve));
+      for (const animation of document.getAnimations()) {
+        animation.pause();
+        animation.currentTime = 0;
+      }
+    });
+    await page.mouse.move(viewport.width - 1, viewport.height - 1);
+    const screenshot = `story-first-stone-${theme}-1440x900.png`;
+    await page.screenshot({
+      path: path.join(outputDirectory, screenshot),
+      fullPage: false,
+    });
+    screenshotMetrics.push({ ...storyState, screenshot });
+  }
+
+  const capture = {
+    scenario:
+      "first-clay-repeat-until-six-gems-blacksmith-level-two-random-craft-first-stone",
+    clayMiningSetup,
+    clayHitsToBreak,
+    clayBreaksNeeded,
+    gemFarm,
+    stoneSetup,
+    blacksmithPurchaseState,
+    craftAttempts,
+    craftState,
+    activeDamage: craftState.activeDamage,
+    activeCanvasClicks: hitsToBreak,
+    rockFirstHitState,
+    rockMiningState,
+    storyStates,
+  };
+  if (captureScreenshots) {
+    await writeFile(
+      path.join(outputDirectory, "story-first-stone-visual-metrics.json"),
+      JSON.stringify(
+        {
+          clayMiningSetup,
+          clayHitsToBreak,
+          clayBreaksNeeded,
+          gemFarm,
+          stoneSetup,
+          blacksmithPurchaseState,
+          craftAttempts,
+          craftState,
+          activeCanvasClicks: hitsToBreak,
+          rockFirstHitState,
+          rockMiningState,
+          captureNote:
+            "Continue from the pinned first-Clay Story state, invoke the canonical active-click function against Clay until the source Gem balance reaches six (recording each random drop), select source object ID 4 (Rock), buy Blacksmith level 2, and use one-Gem crafts with the fixed RNG until Rock takes positive damage. Break Rock, run source update, enter Story, navigate to chapter 2, and capture the firstStone view in both themes.",
+          screenshots: screenshotMetrics,
+        },
+        null,
+        2,
+      ) + "\n",
+      "utf8",
+    );
+  }
+  return capture;
+}
+
+async function captureTenThousandProgression(
+  page,
+  captureScreenshots,
+  firstStoneProgression,
+) {
+  await page.locator("footer > button").first().click();
+  const miningSetup = await page.evaluate(() => ({
+    mineObjectLevel: window.game.mineObjectLevel,
+    highestMineObjectLevel: window.game.highestMineObjectLevel,
+    currentObjectName: window.game.currentMineObject.name,
+    currentObjectHp: window.game.currentMineObject.hp.toString(),
+    currentObjectTotalHp: window.game.currentMineObject.totalHp.toString(),
+    currentObjectValue: window.game.currentMineObject.value.toString(),
+    activeDamage: window.functions.getActiveDamage().toString(),
+    money: window.game.money.toString(),
+    highestMoney: window.game.highestMoney.toString(),
+    gems: window.game.gems.toString(),
+    blacksmithLevel: window.game.upgrades.blacksmith.level,
+    storyPage: window.game.story.page,
+    storyHighestUnlocked: window.game.story.highestUnlocked,
+    storyNotifications: window.game.story.notifications,
+    firstStoneUnlocked: window.functions.storyUnlocked("firstStone"),
+    tenThousandUnlocked: window.functions.storyUnlocked("tenThousand"),
+  }));
+  const hitsPerRock = Math.ceil(
+    Number(miningSetup.currentObjectTotalHp) / Number(miningSetup.activeDamage),
+  );
+  const breaksToThreshold = Math.ceil(
+    (10_000 - Number(miningSetup.money)) /
+      Number(miningSetup.currentObjectValue),
+  );
+  if (
+    miningSetup.mineObjectLevel !== 4 ||
+    miningSetup.highestMineObjectLevel !== 5 ||
+    miningSetup.currentObjectName !== "Rock" ||
+    miningSetup.currentObjectHp !== "2200" ||
+    miningSetup.currentObjectTotalHp !== "2200" ||
+    miningSetup.currentObjectValue !== "120" ||
+    miningSetup.activeDamage !== firstStoneProgression.activeDamage ||
+    miningSetup.money !== firstStoneProgression.rockMiningState.money ||
+    miningSetup.highestMoney !== firstStoneProgression.rockMiningState.money ||
+    miningSetup.gems !== firstStoneProgression.rockMiningState.gems ||
+    miningSetup.blacksmithLevel !== 2 ||
+    miningSetup.storyPage !== 1 ||
+    miningSetup.storyHighestUnlocked !== 6 ||
+    miningSetup.storyNotifications !== 0 ||
+    !miningSetup.firstStoneUnlocked ||
+    miningSetup.tenThousandUnlocked ||
+    hitsPerRock !== 257 ||
+    breaksToThreshold !== 32
+  ) {
+    throw new Error(
+      "Remix did not reach the expected post-Stone Money objective state: " +
+        JSON.stringify({ ...miningSetup, hitsPerRock, breaksToThreshold }),
+    );
+  }
+
+  const rockFarming = await page.evaluate(
+    ({ hitsPerRock, breaksToThreshold, startingMoney, startingGems }) => {
+      const breaks = [];
+      const gemDrops = [];
+      for (
+        let breakNumber = 1;
+        breakNumber <= breaksToThreshold;
+        breakNumber += 1
+      ) {
+        const gemsBefore = Number(window.game.gems);
+        for (let hit = 0; hit < hitsPerRock; hit += 1) {
+          window.functions.clickMineObject();
+        }
+        window.update();
+        const state = {
+          breakNumber,
+          currentObjectName: window.game.currentMineObject.name,
+          currentObjectHp: window.game.currentMineObject.hp.toString(),
+          money: window.game.money.toString(),
+          highestMoney: window.game.highestMoney.toString(),
+          gems: window.game.gems.toString(),
+          storyHighestUnlocked: window.game.story.highestUnlocked,
+          storyNotifications: window.game.story.notifications,
+          tenThousandUnlocked: window.functions.storyUnlocked("tenThousand"),
+          nextObjective: window.functions.getNextStoryText(),
+        };
+        breaks.push(state);
+        if (Number(state.gems) > gemsBefore) {
+          gemDrops.push({
+            breakNumber,
+            gemsBefore: String(gemsBefore),
+            gemsAfter: state.gems,
+          });
+        }
+      }
+      return {
+        hitsPerRock,
+        breaksToThreshold,
+        activeHits: hitsPerRock * breaksToThreshold,
+        startingMoney,
+        startingGems,
+        endingMoney: window.game.money.toString(),
+        highestMoney: window.game.highestMoney.toString(),
+        endingGems: window.game.gems.toString(),
+        breaks,
+        gemDrops,
+      };
+    },
+    {
+      hitsPerRock,
+      breaksToThreshold,
+      startingMoney: miningSetup.money,
+      startingGems: miningSetup.gems,
+    },
+  );
+  const expectedEndingMoney = String(
+    Number(miningSetup.money) +
+      Number(miningSetup.currentObjectValue) * breaksToThreshold,
+  );
+  const finalBreak = rockFarming.breaks.at(-1);
+  if (
+    rockFarming.breaks.length !== breaksToThreshold ||
+    rockFarming.endingMoney !== expectedEndingMoney ||
+    rockFarming.highestMoney !== expectedEndingMoney ||
+    Number(rockFarming.endingMoney) < 10_000 ||
+    !finalBreak?.tenThousandUnlocked ||
+    finalBreak.storyHighestUnlocked !== 7 ||
+    finalBreak.storyNotifications !== 1 ||
+    finalBreak.currentObjectName !== "Rock" ||
+    finalBreak.currentObjectHp !== "2200"
+  ) {
+    throw new Error(
+      "Remix Rock farming did not reach the 10,000-Money Story milestone: " +
+        JSON.stringify(rockFarming),
+    );
+  }
+
+  await page.locator("button.story-tab").click();
+  await page.waitForTimeout(60);
+  const storyStates = [];
+  const screenshotMetrics = [];
+  for (const theme of ["light", "dark"]) {
+    await page.evaluate((selectedTheme) => {
+      window.functions.setTheme(selectedTheme);
+    }, theme);
+    await page.waitForTimeout(100);
+    const storyState = await page.evaluate(() => {
+      const scroller = document.querySelector(".story-milestones");
+      if (!scroller) throw new Error("10,000-Money Story scroller is missing.");
+      return {
+        tab: window.game.settings.tab,
+        theme: window.game.settings.theme,
+        page: window.game.story.page,
+        notifications: window.game.story.notifications,
+        highestUnlocked: window.game.story.highestUnlocked,
+        maxStoryPage: window.functions.getMaxStoryPage(),
+        mineObjectLevel: window.game.mineObjectLevel,
+        highestMineObjectLevel: window.game.highestMineObjectLevel,
+        currentObjectName: window.game.currentMineObject.name,
+        currentObjectHp: window.game.currentMineObject.hp.toString(),
+        money: window.game.money.toString(),
+        gems: window.game.gems.toString(),
+        pickaxeName: window.game.pickaxe.name,
+        pickaxePower: window.game.pickaxe.pow.toString(),
+        pickaxeQuality: window.game.pickaxe.quality.toString(),
+        pickaxeDamage: window.game.pickaxe.getDamage().toString(),
+        blacksmithLevel: window.game.upgrades.blacksmith.level,
+        scrollTop: scroller.scrollTop,
+        visibleMilestones: [
+          "firstStone",
+          "tenThousand",
+          "firstSpookyBone",
+        ].filter((key) => window.functions.storyDisplayed(key)),
+        nextObjective: window.functions.getNextStoryText(),
+        chapterHeading:
+          document.querySelector(".chapter-control h3")?.textContent ?? null,
+        bodyBackground: getComputedStyle(document.body).backgroundColor,
+      };
+    });
+    const expectedBodyColor =
+      theme === "dark" ? "rgb(54, 54, 54)" : "rgb(250, 250, 250)";
+    if (
+      storyState.tab !== "story" ||
+      storyState.theme !== theme ||
+      storyState.page !== 1 ||
+      storyState.notifications !== 0 ||
+      storyState.highestUnlocked !== 7 ||
+      storyState.maxStoryPage !== 1 ||
+      storyState.mineObjectLevel !== 4 ||
+      storyState.highestMineObjectLevel !== 5 ||
+      storyState.currentObjectName !== "Rock" ||
+      storyState.currentObjectHp !== "2200" ||
+      storyState.money !== rockFarming.endingMoney ||
+      storyState.gems !== rockFarming.endingGems ||
+      storyState.pickaxeDamage !==
+        firstStoneProgression.craftState.pickaxeDamage ||
+      storyState.blacksmithLevel !== 2 ||
+      storyState.scrollTop !== 0 ||
+      JSON.stringify(storyState.visibleMilestones) !==
+        JSON.stringify(["firstStone", "tenThousand"]) ||
+      storyState.nextObjective !== rockFarming.breaks.at(-1)?.nextObjective ||
+      storyState.chapterHeading !== "Chapter 2: The real Adventure begins!" ||
+      storyState.bodyBackground !== expectedBodyColor
+    ) {
+      throw new Error(
+        `Remix 10,000-Money Story screenshot reached the wrong state: ${JSON.stringify(storyState)}.`,
+      );
+    }
+    storyStates.push(storyState);
+    if (!captureScreenshots) continue;
+
+    await page.evaluate(async () => {
+      await new Promise((resolve) => window.app.$nextTick(resolve));
+      for (const animation of document.getAnimations()) {
+        animation.pause();
+        animation.currentTime = 0;
+      }
+    });
+    await page.mouse.move(viewport.width - 1, viewport.height - 1);
+    const screenshot = `story-ten-thousand-${theme}-1440x900.png`;
+    await page.screenshot({
+      path: path.join(outputDirectory, screenshot),
+      fullPage: false,
+    });
+    screenshotMetrics.push({ ...storyState, screenshot });
+  }
+
+  const capture = {
+    scenario: "first-Stone-plus-32-Rock-breaks-to-reach-10,000-Money",
+    miningSetup,
+    hitsPerRock,
+    breaksToThreshold,
+    rockFarming,
+    storyStates,
+  };
+  if (captureScreenshots) {
+    await writeFile(
+      path.join(outputDirectory, "story-ten-thousand-visual-metrics.json"),
+      JSON.stringify(
+        {
+          miningSetup,
+          hitsPerRock,
+          breaksToThreshold,
+          rockFarming,
+          captureNote:
+            "Continue from the pinned first-Stone Rock state with 6,213 Money, a full 2,200-HP Rock, and 8.5882157584418 active damage. Invoke the canonical active-click function 257 times per break for 32 Rock breaks, running source update after each. The final break crosses the highest-Money threshold, unlocks tenThousand, and leaves the next objective to the source runtime. Enter Story and capture page 1 in both themes.",
+          screenshots: screenshotMetrics,
+        },
+        null,
+        2,
+      ) + "\n",
+      "utf8",
+    );
+  }
+  return capture;
+}
+
+async function captureSpookyBoneProgression(
+  page,
+  captureScreenshots,
+  tenThousandProgression,
+) {
+  const millionaireProgression = await captureMillionaireProgression(
+    page,
+    captureScreenshots,
+    tenThousandProgression,
+  );
+  const sourceState = await page.evaluate(() => {
+    const game = window.game;
+    const functions = window.functions;
+    const before = {
+      mineObjectLevel: game.mineObjectLevel,
+      highestMineObjectLevel: game.highestMineObjectLevel,
+      money: game.money.toString(),
+      gems: game.gems.toString(),
+      storyPage: game.story.page,
+      storyHighestUnlocked: game.story.highestUnlocked,
+      storyNotifications: game.story.notifications,
+      tenThousandUnlocked: functions.storyUnlocked("tenThousand"),
+    };
+    if (
+      before.mineObjectLevel !== 4 ||
+      before.highestMineObjectLevel !== 5 ||
+      before.money !== "10053" ||
+      before.gems !== "7" ||
+      before.storyPage !== 1 ||
+      before.storyHighestUnlocked !== 7 ||
+      before.storyNotifications !== 0 ||
+      !before.tenThousandUnlocked
+    ) {
+      throw new Error(
+        "Controlled Spooky Bone probe did not start at the captured 10,000-Money Story state: " +
+          JSON.stringify(before),
+      );
+    }
+
+    // Inject the post-break save fields only; the source selector, notification
+    // scan, Story tab transition, objective, and renderer remain unmodified.
+    game.highestMineObjectLevel = 13;
+    functions.setMineObjectLevel(12);
+    functions.refreshStoryNotifications();
+    return {
+      before,
+      mineObjectLevel: game.mineObjectLevel,
+      highestMineObjectLevel: game.highestMineObjectLevel,
+      currentObjectName: game.currentMineObject.name,
+      currentObjectHp: game.currentMineObject.hp.toString(),
+      currentObjectTotalHp: game.currentMineObject.totalHp.toString(),
+      currentObjectDefense: game.currentMineObject.def.toString(),
+      currentObjectValue: game.currentMineObject.value.toString(),
+      money: game.money.toString(),
+      highestMoney: game.highestMoney.toString(),
+      gems: game.gems.toString(),
+      storyPage: game.story.page,
+      storyHighestUnlocked: game.story.highestUnlocked,
+      storyNotifications: game.story.notifications,
+      firstSpookyBoneUnlocked: functions.storyUnlocked("firstSpookyBone"),
+      firstSpookyBoneDisplayed: functions.storyDisplayed("firstSpookyBone"),
+      nextObjective: functions.getNextStoryText(),
+    };
+  });
+  if (
+    sourceState.mineObjectLevel !== 12 ||
+    sourceState.highestMineObjectLevel !== 13 ||
+    sourceState.currentObjectName !== "Spooky Bone" ||
+    sourceState.currentObjectHp !== sourceState.currentObjectTotalHp ||
+    sourceState.currentObjectDefense !== "5400" ||
+    sourceState.storyHighestUnlocked !== 8 ||
+    sourceState.storyNotifications !== 1 ||
+    !sourceState.firstSpookyBoneUnlocked ||
+    !sourceState.firstSpookyBoneDisplayed ||
+    sourceState.nextObjective !== "Have 1,000,000 $ on hand"
+  ) {
+    throw new Error(
+      "Pinned Remix did not expose the controlled first-Spooky-Bone boundary: " +
+        JSON.stringify(sourceState),
+    );
+  }
+
+  await page.locator("button.story-tab").click();
+  await page.waitForTimeout(60);
+  const storyStates = [];
+  const screenshotMetrics = [];
+  for (const theme of ["light", "dark"]) {
+    await page.evaluate((selectedTheme) => {
+      window.functions.setTheme(selectedTheme);
+    }, theme);
+    await page.waitForTimeout(100);
+    const storyState = await page.evaluate(() => {
+      const scroller = document.querySelector(".story-milestones");
+      if (!scroller) throw new Error("Spooky Bone Story scroller is missing.");
+      return {
+        tab: window.game.settings.tab,
+        theme: window.game.settings.theme,
+        page: window.game.story.page,
+        notifications: window.game.story.notifications,
+        highestUnlocked: window.game.story.highestUnlocked,
+        maxStoryPage: window.functions.getMaxStoryPage(),
+        mineObjectLevel: window.game.mineObjectLevel,
+        highestMineObjectLevel: window.game.highestMineObjectLevel,
+        currentObjectName: window.game.currentMineObject.name,
+        currentObjectHp: window.game.currentMineObject.hp.toString(),
+        money: window.game.money.toString(),
+        highestMoney: window.game.highestMoney.toString(),
+        gems: window.game.gems.toString(),
+        pickaxeName: window.game.pickaxe.name,
+        pickaxePower: window.game.pickaxe.pow.toString(),
+        pickaxeQuality: window.game.pickaxe.quality.toString(),
+        pickaxeDamage: window.game.pickaxe.getDamage().toString(),
+        blacksmithLevel: window.game.upgrades.blacksmith.level,
+        scrollTop: scroller.scrollTop,
+        visibleMilestones: [
+          "firstStone",
+          "tenThousand",
+          "firstSpookyBone",
+        ].filter((key) => window.functions.storyDisplayed(key)),
+        firstSpookyBoneUnlocked:
+          window.functions.storyUnlocked("firstSpookyBone"),
+        nextObjective: window.functions.getNextStoryText(),
+        chapterHeading:
+          document.querySelector(".chapter-control h3")?.textContent ?? null,
+        bodyBackground: getComputedStyle(document.body).backgroundColor,
+      };
+    });
+    const expectedBodyColor =
+      theme === "dark" ? "rgb(54, 54, 54)" : "rgb(250, 250, 250)";
+    if (
+      storyState.tab !== "story" ||
+      storyState.theme !== theme ||
+      storyState.page !== 1 ||
+      storyState.notifications !== 0 ||
+      storyState.highestUnlocked !== 8 ||
+      storyState.maxStoryPage !== 1 ||
+      storyState.mineObjectLevel !== 12 ||
+      storyState.highestMineObjectLevel !== 13 ||
+      storyState.currentObjectName !== "Spooky Bone" ||
+      storyState.money !== sourceState.money ||
+      storyState.highestMoney !== sourceState.highestMoney ||
+      storyState.gems !== sourceState.gems ||
+      storyState.pickaxeDamage !==
+        tenThousandProgression.storyStates[0].pickaxeDamage ||
+      storyState.blacksmithLevel !== 2 ||
+      storyState.scrollTop !== 0 ||
+      JSON.stringify(storyState.visibleMilestones) !==
+        JSON.stringify(["firstStone", "tenThousand", "firstSpookyBone"]) ||
+      storyState.nextObjective !== sourceState.nextObjective ||
+      storyState.chapterHeading !== "Chapter 2: The real Adventure begins!" ||
+      storyState.bodyBackground !== expectedBodyColor
+    ) {
+      throw new Error(
+        `Pinned Remix Spooky Bone Story screenshot reached the wrong state: ${JSON.stringify(storyState)}.`,
+      );
+    }
+    storyStates.push(storyState);
+    if (!captureScreenshots) continue;
+
+    await page.evaluate(async () => {
+      await new Promise((resolve) => window.app.$nextTick(resolve));
+      for (const animation of document.getAnimations()) {
+        animation.pause();
+        animation.currentTime = 0;
+      }
+    });
+    await page.mouse.move(viewport.width - 1, viewport.height - 1);
+    const screenshot = `story-spooky-bone-${theme}-1440x900.png`;
+    await page.screenshot({
+      path: path.join(outputDirectory, screenshot),
+      fullPage: false,
+    });
+    screenshotMetrics.push({ ...storyState, screenshot });
+  }
+
+  const capture = {
+    scenario: "controlled-post-break-Spooky-Bone-object-12-Story-state",
+    millionaireProgression,
+    stateInjection: {
+      highestMineObjectLevel: 13,
+      mineObjectLevel: 12,
+      sourceFunction: "functions.setMineObjectLevel(12)",
+    },
+    sourceState,
+    storyStates,
+  };
+  if (captureScreenshots) {
+    await writeFile(
+      path.join(outputDirectory, "story-spooky-bone-visual-metrics.json"),
+      JSON.stringify(
+        {
+          ...capture,
+          captureNote:
+            "Controlled source state only: starting from the pinned 10,000-Money state, set highestMineObjectLevel to 13 and select mine object 12 through functions.setMineObjectLevel(12), then call refreshStoryNotifications and enter Story. This verifies the post-break firstSpookyBone condition, source notification clearing, objective, and rendering; it does not claim a natural gameplay route to object 12.",
+          screenshots: screenshotMetrics,
+        },
+        null,
+        2,
+      ) + "\n",
+      "utf8",
+    );
+  }
+  return capture;
+}
+
+async function captureMillionaireProgression(
+  page,
+  captureScreenshots,
+  tenThousandProgression,
+) {
+  await page.locator("footer > button").first().click();
+  const miningSetup = await page.evaluate(() => ({
+    save: window.functions.getSaveString(),
+    mineObjectLevel: window.game.mineObjectLevel,
+    highestMineObjectLevel: window.game.highestMineObjectLevel,
+    currentObjectName: window.game.currentMineObject.name,
+    currentObjectHp: window.game.currentMineObject.hp.toString(),
+    currentObjectTotalHp: window.game.currentMineObject.totalHp.toString(),
+    currentObjectValue: window.game.currentMineObject.value.toString(),
+    activeDamage: window.functions.getActiveDamage().toString(),
+    money: window.game.money.toString(),
+    highestMoney: window.game.highestMoney.toString(),
+    gems: window.game.gems.toString(),
+    blacksmithLevel: window.game.upgrades.blacksmith.level,
+    storyPage: window.game.story.page,
+    storyHighestUnlocked: window.game.story.highestUnlocked,
+    storyNotifications: window.game.story.notifications,
+  }));
+  const hitsPerRock = Math.ceil(
+    Number(miningSetup.currentObjectTotalHp) / Number(miningSetup.activeDamage),
+  );
+  const breaksToThreshold = Math.ceil(
+    (1_000_000 - Number(miningSetup.money)) /
+      Number(miningSetup.currentObjectValue),
+  );
+  if (
+    miningSetup.mineObjectLevel !== 4 ||
+    miningSetup.highestMineObjectLevel !== 5 ||
+    miningSetup.currentObjectName !== "Rock" ||
+    miningSetup.currentObjectHp !== "2200" ||
+    miningSetup.currentObjectTotalHp !== "2200" ||
+    miningSetup.currentObjectValue !== "120" ||
+    miningSetup.money !== "10053" ||
+    miningSetup.highestMoney !== "10053" ||
+    miningSetup.gems !== tenThousandProgression.rockFarming.endingGems ||
+    miningSetup.blacksmithLevel !== 2 ||
+    miningSetup.storyPage !== 1 ||
+    miningSetup.storyHighestUnlocked !== 7 ||
+    miningSetup.storyNotifications !== 0 ||
+    hitsPerRock !== 257 ||
+    breaksToThreshold !== 8250
+  ) {
+    throw new Error(
+      "Remix did not reach the expected 10,000-Money state before the natural millionaire route: " +
+        JSON.stringify({
+          ...miningSetup,
+          save: undefined,
+          hitsPerRock,
+          breaksToThreshold,
+        }),
+    );
+  }
+
+  const rockFarming = await page.evaluate(
+    ({ hitsPerRock, breaksToThreshold }) => {
+      const firstGemDropBreaks = [];
+      let totalGemDrops = 0;
+      let lastGemDropBreaks = [];
+      let lastBreak = null;
+      for (
+        let breakNumber = 1;
+        breakNumber <= breaksToThreshold;
+        breakNumber += 1
+      ) {
+        const gemsBefore = window.game.gems.toString();
+        for (let hit = 0; hit < hitsPerRock; hit += 1) {
+          window.functions.clickMineObject();
+        }
+        window.update();
+        lastBreak = {
+          breakNumber,
+          money: window.game.money.toString(),
+          highestMoney: window.game.highestMoney.toString(),
+          gems: window.game.gems.toString(),
+          currentObjectName: window.game.currentMineObject.name,
+          currentObjectHp: window.game.currentMineObject.hp.toString(),
+          storyHighestUnlocked: window.game.story.highestUnlocked,
+          storyNotifications: window.game.story.notifications,
+          firstSpookyBoneUnlocked:
+            window.functions.storyUnlocked("firstSpookyBone"),
+          millionaireUnlocked: window.functions.storyUnlocked("millionaire"),
+          nextObjective: window.functions.getNextStoryText(),
+        };
+        if (Number(lastBreak.gems) > Number(gemsBefore)) {
+          totalGemDrops += 1;
+          if (firstGemDropBreaks.length < 5) {
+            firstGemDropBreaks.push(breakNumber);
+          }
+          lastGemDropBreaks = [...lastGemDropBreaks, breakNumber].slice(-5);
+        }
+      }
+      return {
+        hitsPerRock,
+        breaksToThreshold,
+        activeHits: hitsPerRock * breaksToThreshold,
+        startingMoney: "10053",
+        endingMoney: window.game.money.toString(),
+        highestMoney: window.game.highestMoney.toString(),
+        startingGems: "7",
+        endingGems: window.game.gems.toString(),
+        totalGemDrops,
+        firstGemDropBreaks,
+        lastGemDropBreaks,
+        finalBreak: lastBreak,
+      };
+    },
+    { hitsPerRock, breaksToThreshold },
+  );
+  if (
+    rockFarming.endingMoney !== "1000053.0000000001" ||
+    rockFarming.highestMoney !== "1000053.0000000001" ||
+    rockFarming.endingGems !== "182" ||
+    rockFarming.totalGemDrops !== 175 ||
+    rockFarming.finalBreak?.breakNumber !== 8250 ||
+    rockFarming.finalBreak?.currentObjectName !== "Rock" ||
+    rockFarming.finalBreak?.currentObjectHp !== "2200" ||
+    rockFarming.finalBreak?.storyHighestUnlocked !== 9 ||
+    rockFarming.finalBreak?.storyNotifications !== 1 ||
+    rockFarming.finalBreak?.firstSpookyBoneUnlocked !== false ||
+    rockFarming.finalBreak?.millionaireUnlocked !== true ||
+    rockFarming.finalBreak?.nextObjective !==
+      "Mine a Spooky Bone (6 / 14) (Reach Mineral number 13 and break it to reach mineral number 14)"
+  ) {
+    throw new Error(
+      "Natural Remix Rock farming did not reach the expected millionaire Story boundary: " +
+        JSON.stringify(rockFarming),
+    );
+  }
+
+  const nextObjectProbe = await page.evaluate(() => {
+    const millionaireState = {
+      mineObjectLevel: window.game.mineObjectLevel,
+      highestMineObjectLevel: window.game.highestMineObjectLevel,
+      money: window.game.money.toString(),
+      gems: window.game.gems.toString(),
+      powerMining: window.game.powers.data.values[0].toString(),
+      pickaxeDamage: window.game.pickaxe.getDamage().toString(),
+      activeDamage: window.functions.getActiveDamage().toString(),
+    };
+    window.functions.nextMineObjectLevel();
+    const nextSelectableObject = {
+      mineObjectLevel: window.game.mineObjectLevel,
+      highestMineObjectLevel: window.game.highestMineObjectLevel,
+      name: window.game.currentMineObject.name,
+      hp: window.game.currentMineObject.hp.toString(),
+      defense: window.game.currentMineObject.def.toString(),
+      value: window.game.currentMineObject.value.toString(),
+      activeDamage: window.functions.getActiveDamage().toString(),
+      idleDamage: window.functions.getIdleDamage().toString(),
+    };
+    window.functions.prevMineObjectLevel();
+    return {
+      millionaireState,
+      nextSelectableObject,
+      restoredMineObjectLevel: window.game.mineObjectLevel,
+      restoredObjectName: window.game.currentMineObject.name,
+    };
+  });
+  if (
+    nextObjectProbe.millionaireState.mineObjectLevel !== 4 ||
+    nextObjectProbe.millionaireState.highestMineObjectLevel !== 5 ||
+    nextObjectProbe.millionaireState.money !== "1000053.0000000001" ||
+    nextObjectProbe.millionaireState.gems !== "182" ||
+    nextObjectProbe.millionaireState.powerMining !== "1" ||
+    nextObjectProbe.millionaireState.pickaxeDamage !== "98.58821575844182" ||
+    nextObjectProbe.nextSelectableObject.mineObjectLevel !== 5 ||
+    nextObjectProbe.nextSelectableObject.highestMineObjectLevel !== 5 ||
+    nextObjectProbe.nextSelectableObject.name !== "Coal" ||
+    nextObjectProbe.nextSelectableObject.hp !== "4000" ||
+    nextObjectProbe.nextSelectableObject.defense !== "200" ||
+    nextObjectProbe.nextSelectableObject.value !== "275" ||
+    nextObjectProbe.nextSelectableObject.activeDamage !== "0" ||
+    nextObjectProbe.nextSelectableObject.idleDamage !== "0" ||
+    nextObjectProbe.restoredMineObjectLevel !== 4 ||
+    nextObjectProbe.restoredObjectName !== "Rock"
+  ) {
+    throw new Error(
+      "The natural millionaire state reached a different next-mine-object boundary: " +
+        JSON.stringify(nextObjectProbe),
+    );
+  }
+
+  await page.locator("button.story-tab").click();
+  await page.waitForTimeout(60);
+  const storyStates = [];
+  const screenshotMetrics = [];
+  const millionaireScrolledScreenshots = [];
+  for (const theme of ["light", "dark"]) {
+    await page.evaluate((selectedTheme) => {
+      window.functions.setTheme(selectedTheme);
+    }, theme);
+    await page.waitForTimeout(100);
+    const storyState = await page.evaluate(() => {
+      const scroller = document.querySelector(".story-milestones");
+      if (!scroller) throw new Error("Millionaire Story scroller is missing.");
+      return {
+        tab: window.game.settings.tab,
+        theme: window.game.settings.theme,
+        page: window.game.story.page,
+        notifications: window.game.story.notifications,
+        highestUnlocked: window.game.story.highestUnlocked,
+        maxStoryPage: window.functions.getMaxStoryPage(),
+        mineObjectLevel: window.game.mineObjectLevel,
+        highestMineObjectLevel: window.game.highestMineObjectLevel,
+        currentObjectName: window.game.currentMineObject.name,
+        currentObjectHp: window.game.currentMineObject.hp.toString(),
+        money: window.game.money.toString(),
+        highestMoney: window.game.highestMoney.toString(),
+        gems: window.game.gems.toString(),
+        pickaxeName: window.game.pickaxe.name,
+        pickaxePower: window.game.pickaxe.pow.toString(),
+        pickaxeQuality: window.game.pickaxe.quality.toString(),
+        pickaxeDamage: window.game.pickaxe.getDamage().toString(),
+        blacksmithLevel: window.game.upgrades.blacksmith.level,
+        scrollTop: scroller.scrollTop,
+        visibleMilestones: [
+          "firstStone",
+          "tenThousand",
+          "firstSpookyBone",
+          "millionaire",
+        ].filter((key) => window.functions.storyDisplayed(key)),
+        firstSpookyBoneUnlocked:
+          window.functions.storyUnlocked("firstSpookyBone"),
+        millionaireUnlocked: window.functions.storyUnlocked("millionaire"),
+        nextObjective: window.functions.getNextStoryText(),
+        chapterHeading:
+          document.querySelector(".chapter-control h3")?.textContent ?? null,
+        bodyBackground: getComputedStyle(document.body).backgroundColor,
+      };
+    });
+    const expectedBodyColor =
+      theme === "dark" ? "rgb(54, 54, 54)" : "rgb(250, 250, 250)";
+    if (
+      storyState.tab !== "story" ||
+      storyState.theme !== theme ||
+      storyState.page !== 1 ||
+      storyState.notifications !== 0 ||
+      storyState.highestUnlocked !== 9 ||
+      storyState.maxStoryPage !== 1 ||
+      storyState.mineObjectLevel !== 4 ||
+      storyState.highestMineObjectLevel !== 5 ||
+      storyState.currentObjectName !== "Rock" ||
+      storyState.money !== "1000053.0000000001" ||
+      storyState.highestMoney !== "1000053.0000000001" ||
+      storyState.gems !== rockFarming.endingGems ||
+      storyState.blacksmithLevel !== 2 ||
+      storyState.scrollTop !== 0 ||
+      JSON.stringify(storyState.visibleMilestones) !==
+        JSON.stringify(["firstStone", "tenThousand", "millionaire"]) ||
+      storyState.firstSpookyBoneUnlocked ||
+      !storyState.millionaireUnlocked ||
+      storyState.nextObjective !== rockFarming.finalBreak.nextObjective ||
+      storyState.chapterHeading !== "Chapter 2: The real Adventure begins!" ||
+      storyState.bodyBackground !== expectedBodyColor
+    ) {
+      throw new Error(
+        `Remix millionaire Story screenshot reached the wrong state: ${JSON.stringify(storyState)}.`,
+      );
+    }
+    storyStates.push(storyState);
+    if (!captureScreenshots) continue;
+
+    await page.evaluate(async () => {
+      await new Promise((resolve) => window.app.$nextTick(resolve));
+      for (const animation of document.getAnimations()) {
+        animation.pause();
+        animation.currentTime = 0;
+      }
+    });
+    await page.mouse.move(viewport.width - 1, viewport.height - 1);
+    const screenshot = `story-millionaire-${theme}-1440x900.png`;
+    await page.screenshot({
+      path: path.join(outputDirectory, screenshot),
+      fullPage: false,
+    });
+    screenshotMetrics.push({ ...storyState, screenshot });
+  }
+
+  for (const theme of ["light", "dark"]) {
+    await page.evaluate((selectedTheme) => {
+      window.functions.setTheme(selectedTheme);
+    }, theme);
+    await page.waitForTimeout(100);
+    const scrollState = await page.evaluate(() => {
+      const scroller = document.querySelector(".story-milestones");
+      if (!scroller) throw new Error("Millionaire Story scroller is missing.");
+      const target = [...scroller.children].find((child) =>
+        child.textContent?.includes(
+          "There are multiple ways to earn a million",
+        ),
+      );
+      if (!target) {
+        throw new Error(
+          "The unlocked millionaire Story block is missing from the source DOM.",
+        );
+      }
+      const priorScrollTop = scroller.scrollTop;
+      scroller.scrollTop = 0;
+      const beforeScrollTop = scroller.scrollTop;
+      const targetTop =
+        target.getBoundingClientRect().top -
+        scroller.getBoundingClientRect().top +
+        beforeScrollTop;
+      const initialScrollerBounds = scroller.getBoundingClientRect();
+      const initialTargetBounds = target.getBoundingClientRect();
+      const targetFullyVisibleAtInitial =
+        initialTargetBounds.top >= initialScrollerBounds.top &&
+        initialTargetBounds.bottom <= initialScrollerBounds.bottom;
+      const maxScrollTop = scroller.scrollHeight - scroller.clientHeight;
+      scroller.scrollTop = maxScrollTop;
+      const scrollerBounds = scroller.getBoundingClientRect();
+      const targetBounds = target.getBoundingClientRect();
+      return {
+        tab: window.game.settings.tab,
+        theme: window.game.settings.theme,
+        page: window.game.story.page,
+        highestUnlocked: window.game.story.highestUnlocked,
+        notifications: window.game.story.notifications,
+        priorScrollTop,
+        beforeScrollTop,
+        targetFullyVisibleAtInitial,
+        targetContentTop: targetTop,
+        targetHeight: targetBounds.height,
+        scrollTop: scroller.scrollTop,
+        clientHeight: scroller.clientHeight,
+        scrollHeight: scroller.scrollHeight,
+        maxScrollTop,
+        targetViewportTop: targetBounds.top - scrollerBounds.top,
+        targetViewportBottom: targetBounds.bottom - scrollerBounds.top,
+        targetFullyVisible:
+          targetBounds.top >= scrollerBounds.top &&
+          targetBounds.bottom <= scrollerBounds.bottom,
+        targetText: target.textContent?.trim() ?? "",
+      };
+    });
+    if (
+      scrollState.tab !== "story" ||
+      scrollState.theme !== theme ||
+      scrollState.page !== 1 ||
+      scrollState.highestUnlocked !== 9 ||
+      scrollState.notifications !== 0 ||
+      scrollState.beforeScrollTop !== 0 ||
+      scrollState.targetFullyVisibleAtInitial ||
+      scrollState.maxScrollTop <= 0 ||
+      scrollState.scrollTop !== scrollState.maxScrollTop ||
+      !scrollState.targetFullyVisible ||
+      !scrollState.targetText.includes("you've just reached")
+    ) {
+      throw new Error(
+        `Remix millionaire Story scroll reached the wrong state: ${JSON.stringify(scrollState)}.`,
+      );
+    }
+    const screenshot = `story-millionaire-scrolled-${theme}-1440x900.png`;
+    if (captureScreenshots) {
+      await page.evaluate(async () => {
+        await new Promise((resolve) => window.app.$nextTick(resolve));
+        for (const animation of document.getAnimations()) {
+          animation.pause();
+          animation.currentTime = 0;
+        }
+      });
+      await page.mouse.move(viewport.width - 1, viewport.height - 1);
+      await page.screenshot({
+        path: path.join(outputDirectory, screenshot),
+        fullPage: false,
+      });
+    }
+    millionaireScrolledScreenshots.push({ ...scrollState, screenshot });
+  }
+
+  await page.locator(".story-milestones").evaluate((scroller) => {
+    scroller.scrollTop = 0;
+  });
+
+  const sourceInteractionProgression = await page.evaluate(() => {
+    const { game, functions } = window;
+    functions.changeTab("main");
+    functions.nextMineObjectLevel();
+
+    const startingState = {
+      mineObjectLevel: game.mineObjectLevel,
+      highestMineObjectLevel: game.highestMineObjectLevel,
+      currentObjectName: game.currentMineObject.name,
+      money: game.money.toString(),
+      gems: game.gems.toString(),
+      pickaxeDamage: game.pickaxe.getDamage().toString(),
+      blacksmithLevel: game.upgrades.blacksmith.level,
+      activePowerLevel: game.upgrades.activePower.level,
+    };
+    if (
+      startingState.mineObjectLevel !== 5 ||
+      startingState.highestMineObjectLevel !== 5 ||
+      startingState.currentObjectName !== "Coal"
+    ) {
+      throw new Error(
+        `Source-interaction route did not start at selectable Coal: ${JSON.stringify(startingState)}`,
+      );
+    }
+
+    let blacksmithPurchases = 0;
+    while (game.upgrades.blacksmith.buy()) blacksmithPurchases++;
+    let activePowerPurchases = 0;
+    while (game.upgrades.activePower.buy()) activePowerPurchases++;
+    const moneyAfterPurchases = game.money.toString();
+
+    const targetObjects = Array.from({ length: 8 }, (_, index) => {
+      const object = functions.getMineObject(index + 5);
+      return {
+        id: index + 5,
+        name: object.name,
+        hp: object.totalHp.toString(),
+        defense: object.def.toString(),
+        value: object.value.toString(),
+      };
+    });
+    const spookyBone = functions.getMineObject(12);
+    const crafting = {
+      startingGems: game.gems.toString(),
+      usedGemsPerCraft: functions.getUsedGems().toString(),
+      attempts: 0,
+      improvedPickaxes: 0,
+      targetSpookyBoneDamage: "100",
+    };
+    let lastPickaxeDamage = game.pickaxe.getDamage().toString();
+    while (
+      game.gems.gte(functions.getUsedGems()) &&
+      functions.getActiveDamage(spookyBone).lt(100) &&
+      crafting.attempts < 500
+    ) {
+      functions.craftPick(functions.getUsedGems());
+      crafting.attempts++;
+      const currentPickaxeDamage = game.pickaxe.getDamage().toString();
+      if (currentPickaxeDamage !== lastPickaxeDamage) {
+        crafting.improvedPickaxes++;
+        lastPickaxeDamage = currentPickaxeDamage;
+      }
+    }
+    Object.assign(crafting, {
+      remainingGems: game.gems.toString(),
+      pickaxeName: game.pickaxe.name,
+      pickaxePower: game.pickaxe.pow.toString(),
+      pickaxeQuality: game.pickaxe.quality.toString(),
+      pickaxeDamage: game.pickaxe.getDamage().toString(),
+      activeDamageOnSpookyBone: functions
+        .getActiveDamage(spookyBone)
+        .toString(),
+      targetReached: functions.getActiveDamage(spookyBone).gte(100),
+    });
+
+    const minedObjects = [];
+    for (const object of targetObjects) {
+      if (game.highestMineObjectLevel < object.id) break;
+      functions.setMineObjectLevel(object.id);
+      const activeDamage = functions.getActiveDamage().toString();
+      if (functions.getActiveDamage().lte(0)) {
+        minedObjects.push({
+          ...object,
+          activeDamage,
+          breakClicks: 0,
+          reached: false,
+        });
+        break;
+      }
+
+      let breakClicks = 0;
+      while (
+        game.highestMineObjectLevel < object.id + 1 &&
+        breakClicks < 100_000
+      ) {
+        functions.clickMineObject();
+        breakClicks++;
+      }
+      const reached = game.highestMineObjectLevel >= object.id + 1;
+      if (reached) window.update();
+      minedObjects.push({
+        ...object,
+        activeDamage,
+        breakClicks,
+        reached,
+        highestMineObjectLevel: game.highestMineObjectLevel,
+        moneyAfterBreak: game.money.toString(),
+        gemsAfterBreak: game.gems.toString(),
+        firstSpookyBoneUnlocked: functions.storyUnlocked("firstSpookyBone"),
+      });
+      if (!reached) break;
+    }
+
+    const notificationsBeforeStoryEntry = game.story.notifications;
+    functions.changeTab("story");
+    const storyEntry = {
+      tab: game.settings.tab,
+      page: game.story.page,
+      notificationsBeforeEntry: notificationsBeforeStoryEntry,
+      notificationsAfterEntry: game.story.notifications,
+      highestUnlocked: game.story.highestUnlocked,
+      maxStoryPage: functions.getMaxStoryPage(),
+      visibleMilestones: Object.keys(game.story.milestones).filter((key) =>
+        functions.storyDisplayed(key),
+      ),
+      firstSpookyBoneUnlocked: functions.storyUnlocked("firstSpookyBone"),
+      nextObjective: functions.getNextStoryText(),
+    };
+
+    return {
+      scenario:
+        "millionaire-save-with-source-upgrades-single-gem-crafting-and-active-mining",
+      startingState,
+      upgradePurchases: {
+        blacksmithPurchases,
+        blacksmithStartLevel: startingState.blacksmithLevel,
+        blacksmithLevel: game.upgrades.blacksmith.level,
+        activePowerPurchases,
+        activePowerStartLevel: startingState.activePowerLevel,
+        activePowerLevel: game.upgrades.activePower.level,
+        moneyAfterPurchases,
+      },
+      crafting,
+      targetObjects,
+      minedObjects,
+      storyEntry,
+      endingState: {
+        mineObjectLevel: game.mineObjectLevel,
+        highestMineObjectLevel: game.highestMineObjectLevel,
+        currentObjectName: game.currentMineObject.name,
+        money: game.money.toString(),
+        gems: game.gems.toString(),
+        firstSpookyBoneUnlocked: functions.storyUnlocked("firstSpookyBone"),
+      },
+    };
+  });
+  const sourceInteractionScreenshots = [];
+  for (const theme of ["light", "dark"]) {
+    await page.evaluate((selectedTheme) => {
+      window.functions.setTheme(selectedTheme);
+    }, theme);
+    await page.waitForTimeout(100);
+    const screenshotState = await page.evaluate(async () => {
+      const scroller = document.querySelector(".story-milestones");
+      if (!scroller) throw new Error("Natural Spooky Bone Story is missing.");
+      await new Promise((resolve) => window.app.$nextTick(resolve));
+      await document.fonts.ready;
+      return {
+        tab: window.game.settings.tab,
+        theme: window.game.settings.theme,
+        page: window.game.story.page,
+        notifications: window.game.story.notifications,
+        highestUnlocked: window.game.story.highestUnlocked,
+        maxStoryPage: window.functions.getMaxStoryPage(),
+        mineObjectLevel: window.game.mineObjectLevel,
+        highestMineObjectLevel: window.game.highestMineObjectLevel,
+        currentObjectName: window.game.currentMineObject.name,
+        currentObjectHp: window.game.currentMineObject.hp.toString(),
+        money: window.game.money.toString(),
+        highestMoney: window.game.highestMoney.toString(),
+        gems: window.game.gems.toString(),
+        pickaxeName: window.game.pickaxe.name,
+        pickaxePower: window.game.pickaxe.pow.toString(),
+        pickaxeQuality: window.game.pickaxe.quality.toString(),
+        pickaxeDamage: window.game.pickaxe.getDamage().toString(),
+        blacksmithLevel: window.game.upgrades.blacksmith.level,
+        scrollTop: scroller.scrollTop,
+        visibleMilestones: [
+          "firstStone",
+          "tenThousand",
+          "firstSpookyBone",
+          "millionaire",
+        ].filter((key) => window.functions.storyDisplayed(key)),
+        firstSpookyBoneUnlocked:
+          window.functions.storyUnlocked("firstSpookyBone"),
+        nextObjective: window.functions.getNextStoryText(),
+        chapterHeading:
+          document.querySelector(".chapter-control h3")?.textContent ?? null,
+        bodyBackground: getComputedStyle(document.body).backgroundColor,
+      };
+    });
+    const expectedBodyColor =
+      theme === "dark" ? "rgb(54, 54, 54)" : "rgb(250, 250, 250)";
+    if (
+      screenshotState.tab !== "story" ||
+      screenshotState.theme !== theme ||
+      screenshotState.page !== 1 ||
+      screenshotState.notifications !== 0 ||
+      screenshotState.highestUnlocked !== 9 ||
+      screenshotState.maxStoryPage !== 1 ||
+      screenshotState.mineObjectLevel !== 12 ||
+      screenshotState.highestMineObjectLevel !== 13 ||
+      screenshotState.currentObjectName !== "Spooky Bone" ||
+      screenshotState.currentObjectHp !== "92000" ||
+      screenshotState.money !== "37105.410590093" ||
+      screenshotState.highestMoney !== "1000053.0000000001" ||
+      screenshotState.gems !== "181" ||
+      screenshotState.pickaxeName !== 'Normal Pick "Igico"' ||
+      screenshotState.blacksmithLevel !== 47 ||
+      screenshotState.scrollTop !== 0 ||
+      !screenshotState.firstSpookyBoneUnlocked ||
+      screenshotState.nextObjective !== "Reach Emerald" ||
+      screenshotState.bodyBackground !== expectedBodyColor
+    ) {
+      throw new Error(
+        `Pinned natural Spooky Bone Story screenshot has unexpected state: ${JSON.stringify(screenshotState)}`,
+      );
+    }
+    const screenshot = `story-natural-spooky-bone-${theme}-1440x900.png`;
+    if (captureScreenshots) {
+      await page.evaluate(async () => {
+        await new Promise((resolve) => window.app.$nextTick(resolve));
+        for (const animation of document.getAnimations()) {
+          animation.pause();
+          animation.currentTime = 0;
+        }
+      });
+      await page.mouse.move(viewport.width - 1, viewport.height - 1);
+      await page.screenshot({
+        path: path.join(outputDirectory, screenshot),
+        fullPage: false,
+      });
+    }
+    sourceInteractionScreenshots.push({ ...screenshotState, screenshot });
+  }
+  sourceInteractionProgression.storyScreenshots = sourceInteractionScreenshots;
+
+  const restoredState = await page.evaluate((save) => {
+    window.functions.loadGame(save, true, true);
+    window.functions.changeTab("main");
+    return {
+      mineObjectLevel: window.game.mineObjectLevel,
+      highestMineObjectLevel: window.game.highestMineObjectLevel,
+      currentObjectName: window.game.currentMineObject.name,
+      currentObjectHp: window.game.currentMineObject.hp.toString(),
+      money: window.game.money.toString(),
+      highestMoney: window.game.highestMoney.toString(),
+      gems: window.game.gems.toString(),
+      storyPage: window.game.story.page,
+      storyHighestUnlocked: window.game.story.highestUnlocked,
+      storyNotifications: window.game.story.notifications,
+      tab: window.game.settings.tab,
+    };
+  }, miningSetup.save);
+  if (
+    restoredState.mineObjectLevel !== 4 ||
+    restoredState.highestMineObjectLevel !== 5 ||
+    restoredState.currentObjectName !== "Rock" ||
+    restoredState.currentObjectHp !== "2200" ||
+    restoredState.money !== "10053" ||
+    restoredState.highestMoney !== "10053" ||
+    restoredState.gems !== miningSetup.gems ||
+    restoredState.storyPage !== 1 ||
+    restoredState.storyHighestUnlocked !== 7 ||
+    restoredState.storyNotifications !== 0 ||
+    restoredState.tab !== "main"
+  ) {
+    throw new Error(
+      "Remix did not restore its saved 10,000-Money state after the independent natural millionaire route: " +
+        JSON.stringify(restoredState),
+    );
+  }
+
+  const capture = {
+    scenario: "10,000-Money-Rock-plus-8,250-natural-breaks-to-1,000,000-Money",
+    miningSetup: { ...miningSetup, save: undefined },
+    hitsPerRock,
+    breaksToThreshold,
+    rockFarming,
+    nextObjectProbe,
+    sourceInteractionProgression,
+    storyStates,
+    millionaireScrolledScreenshots,
+    restoredState,
+  };
+  if (captureScreenshots) {
+    await writeFile(
+      path.join(outputDirectory, "story-millionaire-visual-metrics.json"),
+      JSON.stringify(
+        {
+          ...capture,
+          captureNote:
+            "Natural source route: start from the verified 10,000-Money Rock state, call functions.clickMineObject 257 times per break for 8,250 Rock breaks, and run the actual source update after each break. This raises money/highestMoney from 10,053 to 1,000,053 without changing the mine-object level. At the initial scrollTop of zero the millionaire block is below the Story viewport; the capture then scrolls the pinned source Story scroller to its natural maximum and records the exact metrics for a second screenshot where the complete millionaire block is visible. The ordered Story scan unlocks millionaire while firstSpookyBone remains locked and the next objective remains the earlier Spooky Bone requirement. The saved 10,000-Money state is restored afterward for the separate controlled Spooky Bone boundary capture.",
+          screenshots: screenshotMetrics,
+          scrolledScreenshots: millionaireScrolledScreenshots,
+        },
+        null,
+        2,
+      ) + "\n",
+      "utf8",
+    );
+  }
+  return capture;
+}
+
 async function captureStory(
   reference,
   snapshots,
@@ -728,6 +3229,75 @@ async function captureStory(
       );
       await page.waitForFunction("window.imgLoaded === true");
       await page.evaluate(() => document.fonts.ready);
+      const freshStoryVisualMetrics = [];
+      await page.locator("button.story-tab").click();
+      await page.waitForTimeout(60);
+      for (const theme of ["light", "dark"]) {
+        await page.evaluate((selectedTheme) => {
+          window.game.story.page = 0;
+          window.functions.setTheme(selectedTheme);
+        }, theme);
+        await page.waitForTimeout(100);
+        const freshStoryState = await page.evaluate(() => {
+          const scroller = document.querySelector(".story-milestones");
+          if (!scroller)
+            throw new Error("Fresh Story scroller was not rendered.");
+          return {
+            tab: window.game.settings.tab,
+            theme: window.game.settings.theme,
+            page: window.game.story.page,
+            notifications: window.game.story.notifications,
+            highestUnlocked: window.game.story.highestUnlocked,
+            mineObjectLevel: window.game.mineObjectLevel,
+            money: window.game.money.toString(),
+            gems: window.game.gems.toString(),
+            scrollTop: scroller.scrollTop,
+            bodyBackground: getComputedStyle(document.body).backgroundColor,
+          };
+        });
+        const expectedBodyColor =
+          theme === "dark" ? "rgb(54, 54, 54)" : "rgb(250, 250, 250)";
+        if (
+          freshStoryState.tab !== "story" ||
+          freshStoryState.theme !== theme ||
+          freshStoryState.page !== 0 ||
+          freshStoryState.notifications !== 0 ||
+          freshStoryState.mineObjectLevel !== 0 ||
+          freshStoryState.money !== "0" ||
+          freshStoryState.gems !== "5" ||
+          freshStoryState.scrollTop !== 0 ||
+          freshStoryState.bodyBackground !== expectedBodyColor
+        ) {
+          throw new Error(
+            "Remix fresh Story screenshot reached the wrong state: " +
+              JSON.stringify(freshStoryState),
+          );
+        }
+        await page.evaluate(async () => {
+          await new Promise((resolve) => window.app.$nextTick(resolve));
+          for (const animation of document.getAnimations()) {
+            animation.pause();
+            animation.currentTime = 0;
+          }
+        });
+        await page.mouse.move(viewport.width - 1, viewport.height - 1);
+        await page.screenshot({
+          path: path.join(
+            outputDirectory,
+            "story-fresh-" + theme + "-1440x900.png",
+          ),
+          fullPage: false,
+        });
+        freshStoryVisualMetrics.push({
+          ...freshStoryState,
+          screenshot: "story-fresh-" + theme + "-1440x900.png",
+        });
+      }
+      await writeFile(
+        path.join(outputDirectory, "story-fresh-visual-metrics.json"),
+        JSON.stringify(freshStoryVisualMetrics, null, 2) + "\n",
+        "utf8",
+      );
       for (const theme of ["light", "dark"]) {
         await page.evaluate((selectedTheme) => {
           window.game.settings.tab = "settings";
@@ -770,6 +3340,36 @@ async function captureStory(
         });
       }
     }
+    const firstMudProgression = await captureFirstMudProgression(
+      page,
+      writeScreenshots,
+    );
+    const firstPaperProgression = await captureFirstPaperProgression(
+      page,
+      writeScreenshots,
+    );
+    const firstBlacksmithProgression = await captureFirstBlacksmithProgression(
+      page,
+      writeScreenshots,
+    );
+    const firstClayProgression = await captureFirstClayProgression(
+      page,
+      writeScreenshots,
+    );
+    const firstStoneProgression = await captureFirstStoneProgression(
+      page,
+      writeScreenshots,
+    );
+    const tenThousandProgression = await captureTenThousandProgression(
+      page,
+      writeScreenshots,
+      firstStoneProgression,
+    );
+    const spookyBoneProgression = await captureSpookyBoneProgression(
+      page,
+      writeScreenshots,
+      tenThousandProgression,
+    );
     return {
       source: {
         repository: reference.canonicalUrl,
@@ -780,8 +3380,14 @@ async function captureStory(
           "index.html",
           "main.css",
           "Themes/dark.css",
+          "Scripts/Define/functions.js",
+          "Scripts/Define/game.js",
           "Scripts/main.js",
+          "Scripts/mineobject.js",
+          "Scripts/pickaxe.js",
+          "Scripts/upgrade.js",
           "Scripts/Components/mine-object.js",
+          "Scripts/Components/upgrade.js",
         ],
         captureMethod:
           "Read-only local server of the pinned clean checkout; Playwright Chromium; SHA-verified CDN snapshots.",
@@ -807,6 +3413,13 @@ async function captureStory(
         viewport,
       },
       ...sourceCapture,
+      firstMudProgression,
+      firstPaperProgression,
+      firstBlacksmithProgression,
+      firstClayProgression,
+      firstStoneProgression,
+      tenThousandProgression,
+      spookyBoneProgression,
     };
   } finally {
     await browser?.close();
@@ -909,7 +3522,7 @@ async function main() {
       "utf8",
     );
     process.stdout.write(
-      `Captured fresh Story state and ${captured.allUnlocked.length} unlocked pages from ${reference.pinnedCommit}. Screenshots are in ignored .research/outputs/story-runtime/.\n`,
+      `Captured fresh Story state, first-Mud, first-Paper, first-Blacksmith, first-Clay, first-Stone, 10,000-Money, natural millionaire, controlled Spooky Bone milestone boundary, and ${captured.allUnlocked.length} unlocked pages from ${reference.pinnedCommit}. Screenshots are in ignored .research/outputs/story-runtime/.\n`,
     );
     return;
   }
@@ -1014,7 +3627,7 @@ async function main() {
     return;
   }
   process.stdout.write(
-    `Verified fresh Story state and ${captured.allUnlocked.length} unlocked pages against ${reference.pinnedCommit}.\n`,
+    `Verified fresh Story state, first-Mud, first-Paper, first-Blacksmith, first-Clay, first-Stone, 10,000-Money, natural millionaire, controlled Spooky Bone milestone boundary, and ${captured.allUnlocked.length} unlocked pages against ${reference.pinnedCommit}.\n`,
   );
 }
 

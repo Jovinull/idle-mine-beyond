@@ -9,8 +9,14 @@
       "index.html",
       "main.css",
       "Themes/dark.css",
+      "Scripts/Define/functions.js",
+      "Scripts/Define/game.js",
       "Scripts/main.js",
-      "Scripts/Components/mine-object.js"
+      "Scripts/mineobject.js",
+      "Scripts/pickaxe.js",
+      "Scripts/upgrade.js",
+      "Scripts/Components/mine-object.js",
+      "Scripts/Components/upgrade.js"
     ],
     "captureMethod": "Read-only local server of the pinned clean checkout; Playwright Chromium; SHA-verified CDN snapshots.",
     "browser": { "name": "Chromium", "version": "153.0.8010.12" },

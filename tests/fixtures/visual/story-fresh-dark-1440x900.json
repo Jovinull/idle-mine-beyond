@@ -1,0 +1,44 @@
+{
+  "repository": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": [
+    "index.html",
+    "main.css",
+    "Themes/dark.css",
+    "Scripts/main.js",
+    "Scripts/Components/mine-object.js"
+  ],
+  "browserName": "Chromium",
+  "browserVersion": "153.0.8010.12",
+  "playwrightVersion": "1.63.0",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "browserColorScheme": "light",
+  "gameTheme": "dark",
+  "locale": "en-US",
+  "timezoneId": "UTC",
+  "clockMs": 1704067200000,
+  "state": {
+    "scenario": "fresh-game-after-story-tab-entry",
+    "tab": "story",
+    "mineObjectLevel": 0,
+    "highestMineObjectLevel": 0,
+    "currentObjectName": "Mud",
+    "money": "0",
+    "gems": "5",
+    "story": {
+      "page": 0,
+      "notifications": 0,
+      "highestUnlocked": -1,
+      "scrollTop": 0,
+      "visibleMilestones": ["gameStart"],
+      "nextObjective": "Mine your first piece of Mud"
+    }
+  },
+  "screenshotSha256": "45c950c6decf4b6d2b5a992d9cbb76532be188770b6eb868b2406695b70ea668",
+  "screenshotPath": "tests/fixtures/visual/story-fresh-dark-1440x900.png",
+  "captureNote": "The capture starts from a new browser context with no saved game, enters Story through the source tab button (clearing notifications), and captures page 0 at scrollTop 0."
+}

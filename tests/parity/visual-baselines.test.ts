@@ -9,16 +9,44 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
   const sidecars = (await readdir(visualDirectory))
     .filter((name) => name.endsWith(".json"))
     .sort();
-  // Each reviewed Windows baseline has a Linux capture of the same source state.
+  // Story captures without Linux baselines are tracked as explicit gaps below.
   const windowsSidecars = sidecars.filter(
     (name) => !name.endsWith("-linux.json"),
   );
-  expect(windowsSidecars).toHaveLength(23);
-  expect(sidecars.filter((name) => name.endsWith("-linux.json"))).toEqual(
-    windowsSidecars
-      .map((name) => name.replace(/\.json$/, "-linux.json"))
-      .sort(),
+  expect(windowsSidecars).toHaveLength(45);
+  const linuxSidecars = sidecars.filter((name) => name.endsWith("-linux.json"));
+  const missingLinuxBaselines = windowsSidecars
+    .filter(
+      (name) => !sidecars.includes(name.replace(/\.json$/, "-linux.json")),
+    )
+    .sort();
+  expect(missingLinuxBaselines).toEqual(
+    [
+      "story-first-mud-dark-1440x900.json",
+      "story-first-mud-light-1440x900.json",
+      "story-first-blacksmith-dark-1440x900.json",
+      "story-first-blacksmith-light-1440x900.json",
+      "story-first-clay-dark-1440x900.json",
+      "story-first-clay-light-1440x900.json",
+      "story-first-stone-dark-1440x900.json",
+      "story-first-stone-light-1440x900.json",
+      "story-ten-thousand-dark-1440x900.json",
+      "story-ten-thousand-light-1440x900.json",
+      "story-millionaire-dark-1440x900.json",
+      "story-millionaire-light-1440x900.json",
+      "story-millionaire-scrolled-dark-1440x900.json",
+      "story-millionaire-scrolled-light-1440x900.json",
+      "story-spooky-bone-dark-1440x900.json",
+      "story-spooky-bone-light-1440x900.json",
+      "story-natural-spooky-bone-dark-1440x900.json",
+      "story-natural-spooky-bone-light-1440x900.json",
+      "story-first-paper-dark-1440x900.json",
+      "story-first-paper-light-1440x900.json",
+      "story-fresh-dark-1440x900.json",
+      "story-fresh-light-1440x900.json",
+    ].sort(),
   );
+  expect(linuxSidecars).toHaveLength(23);
 
   for (const sidecarName of sidecars) {
     const metadata = JSON.parse(
@@ -67,6 +95,7 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
   };
   for (const windowsName of windowsSidecars) {
     const linuxName = windowsName.replace(/\.json$/, "-linux.json");
+    if (!sidecars.includes(linuxName)) continue;
     expect(await readState(linuxName), `${linuxName} source state`).toEqual(
       await readState(windowsName),
     );
