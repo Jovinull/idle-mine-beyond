@@ -5,9 +5,9 @@
     calculateRemixPickaxeCraft,
     calculateRemixMiningRates,
     getRemixCraftGemSelectionControls,
-    getRemixMineObject,
     isRemixPowersUnlocked,
     resolveRemixMiningInput,
+    selectRemixMineObject,
     transitionRemixStoryTab,
     type DecimalSource,
     type RemixMineObjectCatalog,
@@ -518,11 +518,7 @@
       }
       return {
         ...state,
-        simulation: {
-          ...state.simulation,
-          mineObjectLevel: nextLevel,
-          currentObject: getRemixMineObject(nextLevel, catalog),
-        },
+        simulation: selectRemixMineObject(state.simulation, nextLevel, catalog),
       };
     });
   }

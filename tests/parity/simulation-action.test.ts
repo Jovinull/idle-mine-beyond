@@ -5,6 +5,7 @@ import {
   createInitialRemixSimulationState,
   getRemixCraftGemSelectionControls,
   performRemixSimulationAction,
+  selectRemixMineObject,
   type RemixMineObjectCatalog,
   type RemixStoryMilestone,
   type RemixUpgradeGroup,
@@ -150,6 +151,29 @@ const storyContent = JSON.parse(
     "utf8",
   ),
 ) as { milestones: RemixStoryMilestone[] };
+
+it("matches the guarded source mine-object selection and full-object reset", () => {
+  const state = createInitialRemixSimulationState(
+    corpus.data.mineObjectCatalog,
+  );
+  state.highestMineObjectLevel = 4;
+  state.currentObject.hp = new Decimal(1);
+  const selected = selectRemixMineObject(
+    state,
+    3,
+    corpus.data.mineObjectCatalog,
+  );
+  expect(selected.mineObjectLevel).toBe(3);
+  expect(selected.currentObject.id).toBe(3);
+  expect(selected.currentObject.hp).toEqual(selected.currentObject.totalHp);
+  expect(selected.resources).toBe(state.resources);
+  expect(selectRemixMineObject(state, -1, corpus.data.mineObjectCatalog)).toBe(
+    state,
+  );
+  expect(selectRemixMineObject(state, 5, corpus.data.mineObjectCatalog)).toBe(
+    state,
+  );
+});
 
 function stateSnapshot(
   state: ReturnType<typeof createInitialRemixSimulationState>,

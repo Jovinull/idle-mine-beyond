@@ -135,6 +135,7 @@ export type {
 } from "./remix-pickaxe-crafting.js";
 export { createInitialRemixSimulationState } from "./remix-simulation-state.js";
 export type { RemixSimulationState } from "./remix-simulation-state.js";
+export { selectRemixMineObject } from "./remix-mine-object-selection.js";
 export {
   changeRemixCraftGemSelection,
   getRemixCraftGemSelectionControls,
