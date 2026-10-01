@@ -65,7 +65,19 @@ const server = createServer(async (request, response) => {
     return;
   }
   const file = found?.file ?? path.join(root, "404.html");
-  const body = await readFile(file);
+  let body;
+  try {
+    body = await readFile(file);
+  } catch {
+    // The build can change under the server (for example during a rebuild);
+    // answer instead of crashing.
+    response.writeHead(found ? 503 : 404, {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-cache",
+    });
+    response.end(found ? "Site is being rebuilt; try again." : "Not found");
+    return;
+  }
   response.writeHead(found ? 200 : 404, {
     "Content-Type":
       types[path.extname(file).toLowerCase()] ?? "application/octet-stream",
