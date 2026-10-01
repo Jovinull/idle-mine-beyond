@@ -9,7 +9,7 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
   const sidecars = (await readdir(visualDirectory))
     .filter((name) => name.endsWith(".json"))
     .sort();
-  // Story captures without Linux baselines are tracked as explicit gaps below.
+  // Every screenshot has a Linux pair except the selected Windows-only chapter captures.
   const windowsSidecars = sidecars.filter(
     (name) => !name.endsWith("-linux.json"),
   );
@@ -27,33 +27,8 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
         !sidecars.includes(name.replace(/\.json$/, "-linux.json")),
     )
     .sort();
-  expect(missingLinuxBaselines).toEqual(
-    [
-      "story-first-mud-dark-1440x900.json",
-      "story-first-mud-light-1440x900.json",
-      "story-first-blacksmith-dark-1440x900.json",
-      "story-first-blacksmith-light-1440x900.json",
-      "story-first-clay-dark-1440x900.json",
-      "story-first-clay-light-1440x900.json",
-      "story-first-stone-dark-1440x900.json",
-      "story-first-stone-light-1440x900.json",
-      "story-ten-thousand-dark-1440x900.json",
-      "story-ten-thousand-light-1440x900.json",
-      "story-millionaire-dark-1440x900.json",
-      "story-millionaire-light-1440x900.json",
-      "story-millionaire-scrolled-dark-1440x900.json",
-      "story-millionaire-scrolled-light-1440x900.json",
-      "story-spooky-bone-dark-1440x900.json",
-      "story-spooky-bone-light-1440x900.json",
-      "story-natural-spooky-bone-dark-1440x900.json",
-      "story-natural-spooky-bone-light-1440x900.json",
-      "story-first-paper-dark-1440x900.json",
-      "story-first-paper-light-1440x900.json",
-      "story-fresh-dark-1440x900.json",
-      "story-fresh-light-1440x900.json",
-    ].sort(),
-  );
-  expect(linuxSidecars).toHaveLength(23);
+  expect(missingLinuxBaselines).toEqual([]);
+  expect(linuxSidecars).toHaveLength(45);
 
   for (const sidecarName of sidecars) {
     const metadata = JSON.parse(

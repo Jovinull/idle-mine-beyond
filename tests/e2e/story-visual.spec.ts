@@ -227,12 +227,10 @@ for (const theme of ["light", "dark"] as const) {
           animation.currentTime = 0;
         }
       });
-      if (process.platform !== "linux") {
-        await expect(page).toHaveScreenshot(
-          "story-fresh-" + theme + "-1440x900.png",
-          { maxDiffPixels: 0 },
-        );
-      }
+      await expect(page).toHaveScreenshot(
+        "story-fresh-" + theme + "-1440x900.png",
+        { maxDiffPixels: 0 },
+      );
     },
   );
 }
@@ -352,11 +350,9 @@ for (const theme of ["light", "dark"] as const) {
         animation.currentTime = 0;
       }
     });
-    if (process.platform !== "linux") {
-      await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
-        maxDiffPixels: 0,
-      });
-    }
+    await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
+      maxDiffPixels: 0,
+    });
   });
 }
 
@@ -504,11 +500,9 @@ for (const theme of ["light", "dark"] as const) {
         animation.currentTime = 0;
       }
     });
-    if (process.platform !== "linux") {
-      await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
-        maxDiffPixels: 0,
-      });
-    }
+    await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
+      maxDiffPixels: 0,
+    });
   });
 }
 
@@ -651,11 +645,9 @@ for (const theme of ["light", "dark"] as const) {
         animation.currentTime = 0;
       }
     });
-    if (process.platform !== "linux") {
-      await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
-        maxDiffPixels: 0,
-      });
-    }
+    await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
+      maxDiffPixels: 0,
+    });
   });
 }
 
@@ -884,11 +876,9 @@ for (const theme of ["light", "dark"] as const) {
         animation.currentTime = 0;
       }
     });
-    if (process.platform !== "linux") {
-      await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
-        maxDiffPixels: 0,
-      });
-    }
+    await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
+      maxDiffPixels: 0,
+    });
 
     await page.locator("[data-game-tab='mining']").click();
     await page.locator('button[aria-label="Next mine object"]').click();
@@ -964,11 +954,9 @@ for (const theme of ["light", "dark"] as const) {
         animation.currentTime = 0;
       }
     });
-    if (process.platform !== "linux") {
-      await expect(page).toHaveScreenshot(`${clayScreenshotName}.png`, {
-        maxDiffPixels: 0,
-      });
-    }
+    await expect(page).toHaveScreenshot(`${clayScreenshotName}.png`, {
+      maxDiffPixels: 0,
+    });
   });
 }
 
@@ -1081,11 +1069,9 @@ for (const theme of ["light", "dark"] as const) {
         animation.currentTime = 0;
       }
     });
-    if (process.platform !== "linux") {
-      await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
-        maxDiffPixels: 0,
-      });
-    }
+    await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
+      maxDiffPixels: 0,
+    });
   });
 }
 
@@ -1213,11 +1199,9 @@ for (const theme of ["light", "dark"] as const) {
         animation.currentTime = 0;
       }
     });
-    if (process.platform !== "linux") {
-      await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
-        maxDiffPixels: 0,
-      });
-    }
+    await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
+      maxDiffPixels: 0,
+    });
   });
 }
 
@@ -1351,11 +1335,9 @@ for (const theme of ["light", "dark"] as const) {
         animation.currentTime = 0;
       }
     });
-    if (process.platform !== "linux") {
-      await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
-        maxDiffPixels: 0,
-      });
-    }
+    await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
+      maxDiffPixels: 0,
+    });
   });
 }
 
@@ -1495,11 +1477,9 @@ for (const theme of ["light", "dark"] as const) {
         animation.currentTime = 0;
       }
     });
-    if (process.platform !== "linux") {
-      await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
-        maxDiffPixels: 0,
-      });
-    }
+    await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
+      maxDiffPixels: 0,
+    });
   });
 }
 
@@ -1628,11 +1608,9 @@ for (const theme of ["light", "dark"] as const) {
         animation.currentTime = 0;
       }
     });
-    if (process.platform !== "linux") {
-      await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
-        maxDiffPixels: 0,
-      });
-    }
+    await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
+      maxDiffPixels: 0,
+    });
   });
 }
 
