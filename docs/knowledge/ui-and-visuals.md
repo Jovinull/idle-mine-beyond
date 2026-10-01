@@ -22,7 +22,7 @@ These declarations come from the pinned source (`main.css`, lines 408–468; `Th
 
 At the pinned source, the header title uses `flex-grow: 1`, Money uses `flex-grow: 1.1` and centered text, and Gems/Planet Coins use `flex-grow: 1` with right alignment. Footer order is Mining, conditionally Powers, Story, Settings; their source icons are part of the button content. The Story badge is absolutely placed at `left: 1.5rem; bottom: 0.2rem`; while a notification is present the Story icon gets the notification class and a `0.9rem` right margin. Header/footer and icon behavior is reproduced by the route.
 
-The pinned Chromium runtime records native `1px 6px` padding on the chapter arrow buttons. Preserve it: setting padding to zero visibly shifts the right arrow. Tracked source screenshots cover all nine controlled all-unlocked Story pages in both themes at 1440x900; the Beyond route matches all eighteen at zero differing pixels. The dark capture uses the pinned `Themes/dark.css` and its source body colors `#363636` / `#c1c1c1`; the source also overrides the quote text to `#c1c1c1`. The first dark comparison exposed a white Beyond Story host and dark text because the standalone Story renderer sets its own light colors. `remix-story.css` now applies the captured dark background, inherited foreground, and quote color. CSS animations are paused at time zero in all captures. This certifies all nine page indices in both themes at this viewport; other Story states, the remaining game screens, and other viewports remain open.
+The pinned Chromium runtime records native `1px 6px` padding on the chapter arrow buttons. Preserve it: setting padding to zero visibly shifts the right arrow. Tracked source screenshots cover all nine controlled all-unlocked Story pages in both themes at 1440x900; the Beyond route matches all eighteen at zero differing pixels. The dark capture uses the pinned `Themes/dark.css` and its source body colors `#363636` / `#c1c1c1`; the source also overrides the quote text to `#c1c1c1`. The first dark comparison exposed a white Beyond Story host and dark text because the standalone Story renderer sets its own light colors. `remix-story.css` now applies the captured dark background, inherited foreground, and quote color. CSS animations are paused at time zero in all captures. Together with the fresh Game Start and first-Mud captures below, this certifies those two states and all nine all-unlocked page indices in both themes at this viewport; additional notification/progression states, the remaining game screens, and other viewports remain open.
 
 | Story page | Light baseline                                                                  | Dark baseline                                                                  |
 | ---------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
@@ -35,6 +35,46 @@ The pinned Chromium runtime records native `1px 6px` padding on the chapter arro
 | 6          | [PNG](../../tests/fixtures/visual/story-all-unlocked-page-6-light-1440x900.png) | [PNG](../../tests/fixtures/visual/story-all-unlocked-page-6-dark-1440x900.png) |
 | 7          | [PNG](../../tests/fixtures/visual/story-all-unlocked-page-7-light-1440x900.png) | [PNG](../../tests/fixtures/visual/story-all-unlocked-page-7-dark-1440x900.png) |
 | 8          | [PNG](../../tests/fixtures/visual/story-all-unlocked-page-8-light-1440x900.png) | [PNG](../../tests/fixtures/visual/story-all-unlocked-page-8-dark-1440x900.png) |
+
+## Fresh Story start visual baseline
+
+The pinned fresh-game capture enters Story through the source tab control, clearing the initial notification, then records page 0 at scrollTop 0. The state contains the source Game Start milestone and the objective to mine the first Mud; Money is 0 and Gems are 5. Both screenshots use the pinned Remix commit, Chromium 153.0.8010.12, and 1440x900. The app route matches each source image at zero differing pixels.
+
+| Theme | Fresh Story baseline                                              |
+| ----- | ----------------------------------------------------------------- |
+| Light | [PNG](../../tests/fixtures/visual/story-fresh-light-1440x900.png) |
+| Dark  | [PNG](../../tests/fixtures/visual/story-fresh-dark-1440x900.png)  |
+
+## First-Mud progress visual baseline
+
+The source capture clicks the initial Mud canvas five times, executes the pinned update loop to refresh Story notifications, then enters Story through its tab control. The five real hits break the Mud and award 2 Money; the current object remains Mud with 100 HP, the Story high-water mark becomes 1, and the notification count becomes 2 before Story entry clears it. The resulting page shows `gameStart` and `firstMud`, with “Mine a piece of Paper” as the next objective. `pnpm reference:story-runtime:capture` recreates both source screenshots and records the pre-entry and captured Story states in ignored `.research/outputs/story-runtime/story-first-mud-visual-metrics.json`.
+
+| Theme | First-Mud Story baseline                                              |
+| ----- | --------------------------------------------------------------------- |
+| Light | [PNG](../../tests/fixtures/visual/story-first-mud-light-1440x900.png) |
+| Dark  | [PNG](../../tests/fixtures/visual/story-first-mud-dark-1440x900.png)  |
+
+The Beyond E2E repeats the five mining clicks and matches both source screenshots at zero differing pixels on Windows. Linux still checks the live state and milestone order, but its screenshot comparison awaits Linux captures for fresh Game Start, first-Mud, first-Paper, first-Blacksmith, and first-Clay; the current managed session cannot start WSL (`Wsl/Service/E_ACCESSDENIED`).
+
+## First-Paper progress visual baseline
+
+The pinned browser probe continues from the captured first-Mud Story entry, returns to Mining, selects Paper, and applies 24 real canvas clicks. Paper starts with 400 HP and 3 defense; the active damage is 17. The source awards 10 Money, leaves the selected Paper at 400 HP, advances `highestMineObjectLevel` to 2 while `mineObjectLevel` stays 1, and raises one Story notification on the next source update. Opening Story clears it. The page shows `gameStart`, `firstMud`, and `firstPaper`, with Money 12 and Gems 5. Its next objective is `Upgrade Your Blacksmith once`, because that false milestone precedes `firstSalt` in source order. Preserve this order even though Salt is the next mine object.
+
+`pnpm reference:story-runtime:capture` recreates both pinned screenshots and records mining setup/progression in ignored `.research/outputs/story-runtime/story-first-paper-visual-metrics.json`. The tracked source hashes are light `9cf9019144b35ddba386d75b2a4deddfc86da7a2fabfc9b3d5ca6ab0d2f16ddf` and dark `3b5f849d53958bb2deaae4ac69f1b7b4f96e27d8b4df5bed573efb6b95e7f9b0`; sidecars record the source state, 24-hit action, source revision, and browser provenance.
+
+The Beyond E2E repeats the real route: five Mud hits, Story entry, next-object selection, 23 Paper hits to 9 HP, and the 24th hit to break Paper. It fixes the clock and uses the source sidecar's RNG seed so stochastic Gem drops cannot change the screenshot state; an initial unseeded dark run demonstrated that an extra Gem can otherwise occur. It verifies Money 12, Gems 5, the one-count badge before Story entry, milestone order, objective text, and both full-screen images at zero differing pixels on Windows. Linux continues to verify the interaction and visible state; Linux screenshot comparisons for this and the fresh Story, first-Mud, first-Blacksmith, and first-Clay states remain pending because this managed session cannot start WSL (`Wsl/Service/E_ACCESSDENIED`).
+
+## First-Blacksmith progress visual baseline
+
+The pinned probe continues through the next-objective route. At Paper, the source asks for a Blacksmith upgrade while the player has 12 Money and the level-zero price is 30. Salt is therefore mined next: it has 700 HP, 15 defense, and value 22; the current pickaxe deals 5 damage, so 140 active hits break it. Money becomes 34, and the source update unlocks `firstSalt`, advances Story `highestUnlocked` from 2 to 4, and adds one notification while `blacksmithUpgrade` remains false. Buying Blacksmith once spends 30 and leaves Money 4. The earlier `blacksmithUpgrade` condition becomes true and renders before `firstSalt`, but notification high-water remains 4 and the count stays 1; Story entry clears the badge. The resulting next objective is `Mine a piece of Clay`.
+
+`pnpm reference:story-runtime:capture` records setup, Salt break, purchase, and post-entry Story states in ignored `.research/outputs/story-runtime/story-first-blacksmith-visual-metrics.json`. The tracked light and dark source screenshots have SHA-256 `209a2a2baabd72be6bd4533ecfb689319992f14e6e0acce889123aaa1601c518` and `c84b2529c3ce6bfc842b1f5fa22ca4467f6c6bbcb0e62e41d24dda6be709f9aa`. The Beyond E2E repeats the complete 5-Mud/24-Paper/140-Salt click route and Blacksmith purchase, checks that the later Blacksmith unlock does not add a second Story notification, and matches both Windows screenshots at zero differing pixels. Linux checks the route state but awaits source screenshots for comparison.
+
+## First-Clay progress visual baseline
+
+After the Blacksmith purchase, the next source objective is Clay. The Toy Pickaxe has raw damage 20, while Clay has 35 defense, so the initial active damage is zero. With the route's fixed RNG seed, the first single-Gem craft replaces the Toy Pickaxe with raw damage `34.13925023767472` but still cannot damage Clay; the second craft replaces it with raw damage `61.80207046534054`, giving `26.802070465340503` active damage. Every attempt spends one Gem. The first effective hit leaves Clay at raw HP `1373.1979295346598` (`HP: 1,373` in the source UI); 53 clicks break it and award 50 Money. Story high-water becomes 5 with one notification, and the next objective changes to `Mine a piece of Stone`. These craft results and attempt count are specific to seed 7454 and the recorded preceding route.
+
+The runtime fixture and sidecars capture the two craft outputs, displayed Mining stats, first-hit HP, post-break resources and Story state. Source screenshot hashes are light `e7748b2222891834f0d26e989da5900007aa22c1d830d5f7a856040436b5fdcf` and dark `e6ef626c7430cdb90061bb0d6a2e9f0a3cb7c6e2f9046518e948fc9ac39ee8ec`. The Beyond E2E repeats the fixed-seed route from first-Blacksmith, verifies both one-Gem attempts and the zero-damage first result, then matches both full-screen Story screenshots at zero differing pixels on Windows. Linux checks interaction/state and awaits this screenshot pair.
 
 ## Fresh Mining screen visual baseline
 
