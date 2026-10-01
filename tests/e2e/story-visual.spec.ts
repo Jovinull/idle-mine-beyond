@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import {
   createBeyondStoryVisualSave,
+  createBeyondStoryVisualSaveFromRemixSave,
   createFreshBeyondVisualSave,
 } from "./visual-state.js";
 
@@ -1634,3 +1635,422 @@ for (const theme of ["light", "dark"] as const) {
     }
   });
 }
+
+test("matches the natural Chapter 3 Remix Story screen", async ({ page }) => {
+  const screenshotName = "story-natural-chapter-3-light-1440x900";
+  const metadata = JSON.parse(
+    await readFile(
+      new URL(`../fixtures/visual/${screenshotName}.json`, import.meta.url),
+      "utf8",
+    ),
+  ) as {
+    gameTheme: string;
+    clockMs: number;
+    randomSeed: number;
+    state: {
+      page: number;
+      highestUnlocked: number;
+      maxStoryPage: number;
+      mineObjectLevel: number;
+      highestMineObjectLevel: number;
+      currentObjectHp: string;
+      money: string;
+      highestMoney: string;
+      gems: string;
+      pickaxeName: string;
+      pickaxePower: string;
+      pickaxeQuality: string;
+      blacksmithLevel: number;
+      gemWasterLevel?: number;
+      notifications: number;
+      scrollTop: number;
+      visibleMilestones: string[];
+      nextObjective: string;
+      chapterHeading: string;
+    };
+    route: {
+      seed: number;
+      startingDraws: number;
+      checkpoints: number;
+    };
+  };
+  expect(metadata.gameTheme).toBe("light");
+  expect(metadata.route).toMatchObject({
+    seed: 7454,
+    startingDraws: 8461,
+    checkpoints: 212,
+  });
+  expect(metadata.state).toMatchObject({
+    page: 2,
+    highestUnlocked: 12,
+    maxStoryPage: 2,
+    mineObjectLevel: 26,
+    highestMineObjectLevel: 27,
+    money: "4816780575.35893",
+    gems: "146",
+    notifications: 0,
+    scrollTop: 0,
+    visibleMilestones: ["unrealStones"],
+    nextObjective: "Upgrade Gem Waster to Level 1",
+    chapterHeading: "Chapter 3: Mysterious Materials",
+  });
+
+  const fixedClock = metadata.clockMs;
+  const serialized = await createBeyondStoryVisualSave({
+    clockMs: fixedClock,
+    theme: "light",
+    source: {
+      mineObjectLevel: metadata.state.mineObjectLevel,
+      highestMineObjectLevel: metadata.state.highestMineObjectLevel,
+      currentObjectHp: metadata.state.currentObjectHp,
+      money: metadata.state.money,
+      highestMoney: metadata.state.highestMoney,
+      gems: metadata.state.gems,
+      pickaxeName: metadata.state.pickaxeName,
+      pickaxePower: metadata.state.pickaxePower,
+      pickaxeQuality: metadata.state.pickaxeQuality,
+      blacksmithLevel: metadata.state.blacksmithLevel,
+      ...(metadata.state.gemWasterLevel === undefined
+        ? {}
+        : { gemWasterLevel: metadata.state.gemWasterLevel }),
+      story: {
+        page: metadata.state.page,
+        highestUnlocked: metadata.state.highestUnlocked,
+        notifications: metadata.state.notifications,
+      },
+    },
+  });
+  await page.addInitScript(
+    ({ now, save, seed }) => {
+      localStorage.clear();
+      localStorage.setItem("IdleMineBeyond", save);
+      Object.defineProperty(Date, "now", {
+        configurable: true,
+        value: () => now,
+      });
+      let randomState = seed >>> 0;
+      Math.random = () => {
+        randomState = (Math.imul(randomState, 1_664_525) + 1_013_904_223) >>> 0;
+        return randomState / 0x1_0000_0000;
+      };
+    },
+    { now: fixedClock, save: serialized, seed: metadata.randomSeed },
+  );
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+  await expect(page.locator("#app")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator("article.story")).toBeVisible();
+  await expect(page.locator("[data-story-page]")).toHaveAttribute(
+    "data-story-page",
+    "2",
+  );
+  await expect(page.locator(".chapter-control h3")).toHaveText(
+    metadata.state.chapterHeading,
+  );
+  const milestones = page.locator(
+    ".story-milestones > div[data-story-milestone-key]",
+  );
+  await expect(milestones).toHaveCount(1);
+  await expect(milestones).toHaveAttribute(
+    "data-story-milestone-key",
+    "unrealStones",
+  );
+  await expect(page.locator(".objective")).toContainText(
+    metadata.state.nextObjective,
+  );
+  await expect(page.locator("header")).toContainText("4,816,780,575 $");
+  await expect(page.locator("header")).toContainText("146");
+  await expect(
+    page.locator("[data-game-tab='story'] .notification"),
+  ).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page.locator(".story-milestones").evaluate((node) => node.scrollTop),
+    )
+    .toBe(metadata.state.scrollTop);
+  await page.evaluate(() => document.fonts.ready);
+  await page.mouse.move(1439, 899);
+  await page.evaluate(() => {
+    for (const animation of document.getAnimations()) {
+      animation.pause();
+      animation.currentTime = 0;
+    }
+  });
+  if (process.platform !== "linux") {
+    await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
+      maxDiffPixels: 0,
+    });
+  }
+});
+
+test("matches the natural Chapter 4 Remix Story screen", async ({ page }) => {
+  const screenshotName = "story-natural-chapter-4-light-1440x900";
+  const metadata = JSON.parse(
+    await readFile(
+      new URL(`../fixtures/visual/${screenshotName}.json`, import.meta.url),
+      "utf8",
+    ),
+  ) as {
+    gameTheme: string;
+    clockMs: number;
+    randomSeed: number;
+    state: {
+      page: number;
+      highestUnlocked: number;
+      maxStoryPage: number;
+      mineObjectLevel: number;
+      highestMineObjectLevel: number;
+      currentObjectHp: string;
+      money: string;
+      highestMoney: string;
+      gems: string;
+      pickaxeName: string;
+      pickaxePower: string;
+      pickaxeQuality: string;
+      blacksmithLevel: number;
+      gemWasterLevel: number;
+      notifications: number;
+      scrollTop: number;
+      visibleMilestones: string[];
+      nextObjective: string;
+      chapterHeading: string;
+    };
+    route: {
+      seed: number;
+      startingDraws: number;
+      checkpoints: number;
+    };
+  };
+  expect(metadata.gameTheme).toBe("light");
+  expect(metadata.route).toMatchObject({
+    seed: 7454,
+    startingDraws: 8922,
+    checkpoints: 1689,
+  });
+  expect(metadata.state).toMatchObject({
+    page: 3,
+    highestUnlocked: 19,
+    maxStoryPage: 3,
+    mineObjectLevel: 54,
+    highestMineObjectLevel: 55,
+    money: "20034557385697100000",
+    gems: "0",
+    notifications: 0,
+    scrollTop: 0,
+    visibleMilestones: ["infinitum"],
+    nextObjective: "Reach THE GEM (56 / 61)",
+    chapterHeading: "Chapter 4: It's NOT over",
+  });
+
+  const fixedClock = metadata.clockMs;
+  const serialized = await createBeyondStoryVisualSave({
+    clockMs: fixedClock,
+    theme: "light",
+    source: {
+      mineObjectLevel: metadata.state.mineObjectLevel,
+      highestMineObjectLevel: metadata.state.highestMineObjectLevel,
+      currentObjectHp: metadata.state.currentObjectHp,
+      money: metadata.state.money,
+      highestMoney: metadata.state.highestMoney,
+      gems: metadata.state.gems,
+      pickaxeName: metadata.state.pickaxeName,
+      pickaxePower: metadata.state.pickaxePower,
+      pickaxeQuality: metadata.state.pickaxeQuality,
+      blacksmithLevel: metadata.state.blacksmithLevel,
+      gemWasterLevel: metadata.state.gemWasterLevel,
+      story: {
+        page: metadata.state.page,
+        highestUnlocked: metadata.state.highestUnlocked,
+        notifications: metadata.state.notifications,
+      },
+    },
+  });
+  await page.addInitScript(
+    ({ now, save, seed }) => {
+      localStorage.clear();
+      localStorage.setItem("IdleMineBeyond", save);
+      Object.defineProperty(Date, "now", {
+        configurable: true,
+        value: () => now,
+      });
+      let randomState = seed >>> 0;
+      Math.random = () => {
+        randomState = (Math.imul(randomState, 1_664_525) + 1_013_904_223) >>> 0;
+        return randomState / 0x1_0000_0000;
+      };
+    },
+    { now: fixedClock, save: serialized, seed: metadata.randomSeed },
+  );
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+  await expect(page.locator("#app")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator("article.story")).toBeVisible();
+  await expect(page.locator("[data-story-page]")).toHaveAttribute(
+    "data-story-page",
+    "3",
+  );
+  await expect(page.locator(".chapter-control h3")).toHaveText(
+    metadata.state.chapterHeading,
+  );
+  const milestones = page.locator(
+    ".story-milestones > div[data-story-milestone-key]",
+  );
+  await expect(milestones).toHaveCount(1);
+  await expect(milestones).toHaveAttribute(
+    "data-story-milestone-key",
+    "infinitum",
+  );
+  await expect(page.locator(".objective")).toContainText(
+    metadata.state.nextObjective,
+  );
+  await expect(page.locator("header")).toContainText("20.03 Qt $");
+  await expect(page.locator("header")).toContainText("0");
+  await expect(
+    page.locator("[data-game-tab='story'] .notification"),
+  ).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page.locator(".story-milestones").evaluate((node) => node.scrollTop),
+    )
+    .toBe(metadata.state.scrollTop);
+  await page.evaluate(() => document.fonts.ready);
+  await page.mouse.move(1439, 899);
+  await page.evaluate(() => {
+    for (const animation of document.getAnimations()) {
+      animation.pause();
+      animation.currentTime = 0;
+    }
+  });
+  if (process.platform !== "linux") {
+    await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
+      maxDiffPixels: 0,
+    });
+  }
+});
+
+test("matches the natural Chapter 5 Remix Story screen", async ({ page }) => {
+  const screenshotName = "story-natural-chapter-5-light-1440x900";
+  const metadata = JSON.parse(
+    await readFile(
+      new URL(`../fixtures/visual/${screenshotName}.json`, import.meta.url),
+      "utf8",
+    ),
+  ) as {
+    gameTheme: string;
+    clockMs: number;
+    route: { seed: number; startingDraws: number; checkpoints: number };
+    state: {
+      page: number;
+      highestUnlocked: number;
+      maxStoryPage: number;
+      highestMineObjectLevel: number;
+      notifications: number;
+      scrollTop: number;
+      visibleMilestones: string[];
+      nextObjective: string;
+      chapterHeading: string;
+    };
+  };
+  const runtime = JSON.parse(
+    await readFile(
+      new URL("../fixtures/parity/remix-story-runtime.json", import.meta.url),
+      "utf8",
+    ),
+  ) as {
+    spookyBoneProgression: {
+      millionaireProgression: {
+        chapter5Progression: {
+          saveString: string;
+          trace: { records: number };
+        };
+      };
+    };
+  };
+  const sourceRoute =
+    runtime.spookyBoneProgression.millionaireProgression.chapter5Progression;
+  expect(metadata.gameTheme).toBe("light");
+  expect(metadata.route).toMatchObject({
+    seed: 7454,
+    startingDraws: 9697,
+    checkpoints: sourceRoute.trace.records,
+  });
+  expect(metadata.state).toMatchObject({
+    page: 4,
+    highestMineObjectLevel: 71,
+    highestUnlocked: 23,
+    maxStoryPage: 4,
+    notifications: 0,
+    scrollTop: 0,
+    visibleMilestones: ["reachPortal"],
+    nextObjective: "Break through THE PORTAL",
+    chapterHeading: "Chapter 5: New Dimensions",
+  });
+
+  const serialized = await createBeyondStoryVisualSaveFromRemixSave({
+    clockMs: metadata.clockMs,
+    theme: "light",
+    saveString: sourceRoute.saveString,
+  });
+  await page.addInitScript(
+    ({ now, save, seed }) => {
+      localStorage.clear();
+      localStorage.setItem("IdleMineBeyond", save);
+      Object.defineProperty(Date, "now", {
+        configurable: true,
+        value: () => now,
+      });
+      let randomState = seed >>> 0;
+      Math.random = () => {
+        randomState = (Math.imul(randomState, 1_664_525) + 1_013_904_223) >>> 0;
+        return randomState / 0x1_0000_0000;
+      };
+    },
+    { now: metadata.clockMs, save: serialized, seed: 7454 },
+  );
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+  await expect(page.locator("#app")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator("article.story")).toBeVisible();
+  await expect(page.locator("[data-story-page]")).toHaveAttribute(
+    "data-story-page",
+    "4",
+  );
+  await expect(page.locator(".chapter-control h3")).toHaveText(
+    metadata.state.chapterHeading,
+  );
+  const milestones = page.locator(
+    ".story-milestones > div[data-story-milestone-key]",
+  );
+  await expect(milestones).toHaveCount(1);
+  await expect(milestones).toHaveAttribute(
+    "data-story-milestone-key",
+    "reachPortal",
+  );
+  await expect(page.locator(".objective")).toContainText(
+    metadata.state.nextObjective,
+  );
+  await expect(
+    page.locator("[data-game-tab='story'] .notification"),
+  ).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page.locator(".story-milestones").evaluate((node) => node.scrollTop),
+    )
+    .toBe(metadata.state.scrollTop);
+  await page.evaluate(() => document.fonts.ready);
+  await page.mouse.move(1439, 899);
+  await page.evaluate(() => {
+    for (const animation of document.getAnimations()) {
+      animation.pause();
+      animation.currentTime = 0;
+    }
+  });
+  if (process.platform !== "linux") {
+    await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
+      maxDiffPixels: 0,
+    });
+  }
+});

@@ -13,11 +13,18 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
   const windowsSidecars = sidecars.filter(
     (name) => !name.endsWith("-linux.json"),
   );
-  expect(windowsSidecars).toHaveLength(45);
+  expect(windowsSidecars).toHaveLength(48);
   const linuxSidecars = sidecars.filter((name) => name.endsWith("-linux.json"));
+  const windowsOnlyStoryCaptures = new Set([
+    "story-natural-chapter-3-light-1440x900.json",
+    "story-natural-chapter-4-light-1440x900.json",
+    "story-natural-chapter-5-light-1440x900.json",
+  ]);
   const missingLinuxBaselines = windowsSidecars
     .filter(
-      (name) => !sidecars.includes(name.replace(/\.json$/, "-linux.json")),
+      (name) =>
+        !windowsOnlyStoryCaptures.has(name) &&
+        !sidecars.includes(name.replace(/\.json$/, "-linux.json")),
     )
     .sort();
   expect(missingLinuxBaselines).toEqual(

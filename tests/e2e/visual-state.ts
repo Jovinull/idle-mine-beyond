@@ -7,6 +7,7 @@ import {
 import {
   createInitialRemixLegacySaveApplicationState,
   encodeRemixBeyondSave,
+  loadRemixLegacySaveIntoState,
 } from "../../packages/persistence/src/index.js";
 
 type VisualState = {
@@ -29,6 +30,7 @@ type StoryVisualState = {
     readonly pickaxePower: string;
     readonly pickaxeQuality: string;
     readonly blacksmithLevel: number;
+    readonly gemWasterLevel?: number;
     readonly story: {
       readonly page: number;
       readonly highestUnlocked: number;
@@ -107,6 +109,8 @@ export async function createBeyondStoryVisualSave({
       money: {
         ...initial.simulation.upgrades.money,
         blacksmith: source.blacksmithLevel,
+        gemWaster:
+          source.gemWasterLevel ?? initial.simulation.upgrades.money.gemWaster,
       },
     },
     lastActiveMs: clockMs,
@@ -116,5 +120,50 @@ export async function createBeyondStoryVisualSave({
     ...initial,
     simulation,
     settings: { ...initial.settings, theme, tab: "story" },
+  });
+}
+
+/** Re-encodes a captured Remix save as Beyond v1 for endpoint rendering checks. */
+export async function createBeyondStoryVisualSaveFromRemixSave({
+  clockMs,
+  theme,
+  saveString,
+}: {
+  readonly clockMs: number;
+  readonly theme: "light" | "dark";
+  readonly saveString: string;
+}): Promise<string> {
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as { data: { mineObjectCatalog: unknown } };
+  const catalog = reference.data.mineObjectCatalog as Parameters<
+    typeof createInitialRemixSimulationState
+  >[0];
+  const initial = createInitialRemixLegacySaveApplicationState(
+    createInitialRemixSimulationState(catalog),
+  );
+  const loaded = loadRemixLegacySaveIntoState({
+    state: initial,
+    saveString,
+    catalog,
+    clock: { now: () => clockMs },
+    resolveNumberFormatter: () => () => "",
+    noOffline: true,
+  });
+  if (loaded.status !== "loaded") {
+    throw new Error(
+      `Captured Remix Story save could not be prepared for visual comparison: ${loaded.status}.`,
+    );
+  }
+  return encodeRemixBeyondSave({
+    ...loaded.state,
+    simulation: { ...loaded.state.simulation, lastActiveMs: clockMs },
+    settings: { ...loaded.state.settings, theme, tab: "story" },
   });
 }
