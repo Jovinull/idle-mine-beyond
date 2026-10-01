@@ -105,7 +105,7 @@ The formatting package uses the MIT-licensed `@antimatter-dimensions/notations@1
 
 ## Math evidence
 
-Initial sources: `Scripts/Define/functions.js`, `Scripts/pickaxe.js`, `Scripts/upgrade.js`, `Scripts/Define/game.js`, `Scripts/random.js`, and `Scripts/utils.js`. The exact reference commit is in the manifest. Decimal, seeded RNG, procedural-object outputs for IDs 0–512 and five high-ID probes, nine controlled mining-rate/factor scenarios, 249 upgrade price/effect samples, and 14 purchase/bulk-buy transitions are captured and tested. Coverage of the full safe-integer object-ID space, crafting, integrated progression, and reachable-save coverage remains pending.
+Initial sources: `Scripts/Define/functions.js`, `Scripts/pickaxe.js`, `Scripts/upgrade.js`, `Scripts/Define/game.js`, `Scripts/random.js`, and `Scripts/utils.js`. The exact reference commit is in the manifest. Decimal, seeded RNG, procedural-object outputs for IDs 0–768 and five high-ID probes, nine controlled mining-rate/factor scenarios, 249 upgrade price/effect samples, and 14 purchase/bulk-buy transitions are captured and tested. Coverage of the full safe-integer object-ID space, crafting, integrated progression, and reachable-save coverage remains pending.
 
 ## Controlled initial-state baseline
 
