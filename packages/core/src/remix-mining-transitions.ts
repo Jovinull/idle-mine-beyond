@@ -366,3 +366,76 @@ export function performRemixMiningAction(input: {
     frameEvents,
   };
 }
+
+/**
+ * Applies a recorded run of active clicks. When mining power remains constant
+ * and the click count ends exactly at the object break, the run is equivalent
+ * to one aggregate hit; all other cases retain click-by-click semantics.
+ */
+export function performRemixMiningActionBatch(input: {
+  state: RemixMiningActionState;
+  clicks: number;
+  catalog: RemixMineObjectCatalog;
+  random: RemixMiningRandom;
+}): RemixMiningActionResult {
+  if (!Number.isSafeInteger(input.clicks) || input.clicks < 1) {
+    throw new RangeError(
+      "An active-click batch requires a positive safe integer.",
+    );
+  }
+
+  const { mining, highestDamageableMineObjectLevel } =
+    resolveRemixMiningInput(input);
+  const hitDamage = calculateRemixActiveDamage(mining);
+  const miningPowerGainMultiplier = calculateRemixMiningPowerGainMultiplier({
+    upgradeInput: createRemixMiningUpgradeInput(input.state),
+    action: "activeClick",
+  });
+  const damageBeforeLastClick = hitDamage.mul(input.clicks - 1);
+  const totalDamage = hitDamage.mul(input.clicks);
+  if (
+    miningPowerGainMultiplier.eq(1) &&
+    damageBeforeLastClick.lt(input.state.currentObject.hp) &&
+    totalDamage.gte(input.state.currentObject.hp)
+  ) {
+    const hit = applyRemixMiningHit({
+      state: input.state,
+      damage: totalDamage,
+      highestDamageableMineObjectLevel,
+      effects: {
+        gemChance: mining.factors.gemChance,
+        gemMultiplier: mining.factors.gemMultiplier,
+        lastObjectGemMultiplier: mining.factors.lastObjectGemMultiplier,
+        miningPowerGainMultiplier,
+      },
+      random: input.random,
+    });
+    return {
+      state: {
+        ...input.state,
+        ...hit.state,
+        powers: { ...input.state.powers, ...hit.state.powers },
+      },
+      hitOccurred: true,
+      hitDamage: totalDamage,
+      damagedObjectHp: hit.damagedObjectHp,
+      objectBroken: hit.objectBroken,
+      highestDamageableMineObjectLevel,
+      frameEvents: [],
+    };
+  }
+
+  let state = input.state;
+  let result: RemixMiningActionResult | undefined;
+  for (let click = 0; click < input.clicks; click++) {
+    result = performRemixMiningAction({
+      state,
+      action: "activeClick",
+      deltaSeconds: 0,
+      catalog: input.catalog,
+      random: input.random,
+    });
+    state = result.state;
+  }
+  return result!;
+}

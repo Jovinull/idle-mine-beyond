@@ -155,7 +155,10 @@ export type {
   RemixPowerPrestigeIndex,
   RemixPowerPrestigeRow,
 } from "./remix-powers.js";
-export { performRemixSimulationAction } from "./remix-simulation-action.js";
+export {
+  performRemixSimulationAction,
+  performRemixSimulationActiveClickBatch,
+} from "./remix-simulation-action.js";
 export type {
   RemixSimulationAction,
   RemixSimulationActionInput,

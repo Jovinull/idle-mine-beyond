@@ -4,6 +4,7 @@ import {
 } from "./mine-objects.js";
 import { Decimal } from "./decimal.js";
 import {
+  performRemixMiningActionBatch,
   performRemixMiningAction,
   resolveRemixMiningInput,
   type RemixMiningActionResult,
@@ -170,6 +171,27 @@ export type RemixSimulationActionResult =
       rewards: RemixOfflineRewards;
       effects: RemixSimulationEffect[];
     };
+
+/** Replays a recorded consecutive click run for parity tests only. */
+export function performRemixSimulationActiveClickBatch(input: {
+  state: RemixSimulationState;
+  clicks: number;
+  catalog: RemixMineObjectCatalog;
+  storyMilestones: readonly RemixStoryMilestone[];
+  random: RemixMiningRandom;
+}): RemixMiningSimulationActionResult {
+  const mining = performRemixMiningActionBatch(input);
+  const state: RemixSimulationState = {
+    ...input.state,
+    ...mining.state,
+    pickaxe: input.state.pickaxe,
+    powers: { ...input.state.powers, ...mining.state.powers },
+    powersUnlocked: isRemixPowersUnlocked(mining.state.highestMineObjectLevel),
+    upgrades: input.state.upgrades,
+    story: input.state.story,
+  };
+  return { type: "mining", ...mining, state, effects: [] };
+}
 
 function createUpgradeContext(
   state: RemixSimulationState,

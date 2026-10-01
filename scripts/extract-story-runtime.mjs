@@ -1,8 +1,17 @@
 import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
 import { createServer } from "node:http";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { gunzipSync, gzipSync } from "node:zlib";
+import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { createReadStream, createWriteStream } from "node:fs";
+import {
+  constants as zlibConstants,
+  createBrotliCompress,
+  createBrotliDecompress,
+  gunzipSync,
+  gzipSync,
+} from "node:zlib";
+import { createInterface } from "node:readline";
+import { pipeline } from "node:stream/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
@@ -37,12 +46,25 @@ const visualGoldenManifestPath = path.join(
   "manifest.json",
 );
 const outputDirectory = path.join(root, ".research/outputs/story-runtime");
+const storyRouteTraceDirectory = path.join(root, "tests/fixtures/parity");
+const storyRouteTraceSinks = new WeakMap();
 const fixedClock = 1_704_067_200_000;
 const randomSeed = 0x1d1e;
 const viewport = { width: 1440, height: 900 };
+const routeTraceCompressionOptions = {
+  params: { [zlibConstants.BROTLI_PARAM_QUALITY]: 4 },
+};
 
 function sha256(contents) {
   return createHash("sha256").update(contents).digest("hex");
+}
+
+function storyRouteTraceFixturePath(file) {
+  return path.join(storyRouteTraceDirectory, file);
+}
+
+function storyRouteTraceOutputPath(file) {
+  return path.join(outputDirectory, file);
 }
 
 function describeValue(value) {
@@ -70,6 +92,474 @@ function findFirstDifference(actual, expected, location = "$") {
     if (difference) return difference;
   }
   return `${location}: key order differs`;
+}
+
+async function captureReplayRouteStart(page) {
+  return page.evaluate(() => ({
+    saveString: window.functions.getSaveString(),
+    state: window.__idleMineBeyondProbe.simulationState(),
+    random: window.__idleMineBeyondProbe.randomCursor(),
+  }));
+}
+
+async function captureReplayCheckpoint(page, label) {
+  return page.evaluate(
+    (checkpointLabel) =>
+      window.__idleMineBeyondProbe.checkpoint(checkpointLabel),
+    label,
+  );
+}
+
+async function createStoryRouteTraceSink(page, traceFile) {
+  await mkdir(outputDirectory, { recursive: true });
+  const filePath = path.join(outputDirectory, traceFile);
+  const compressor = createBrotliCompress(routeTraceCompressionOptions);
+  const output = createWriteStream(filePath);
+  const completed = pipeline(compressor, output);
+  let records = 0;
+  const rawHash = createHash("sha256");
+  let pageState = storyRouteTraceSinks.get(page);
+  if (!pageState) {
+    pageState = { activeSink: undefined };
+    await page.exposeBinding(
+      "__idleMineBeyondPushStoryRouteTrace",
+      async (_source, batch) => {
+        const activeSink = pageState.activeSink;
+        if (!activeSink) {
+          throw new Error("No Story route trace sink is active.");
+        }
+        await activeSink.push(batch);
+      },
+    );
+    storyRouteTraceSinks.set(page, pageState);
+  }
+  if (pageState.activeSink) {
+    throw new Error("A Story route trace sink is already active.");
+  }
+
+  const sink = {
+    async push(batch) {
+      const contents = `${batch.map((record) => JSON.stringify(record)).join("\n")}\n`;
+      rawHash.update(contents);
+      records += batch.length;
+      await new Promise((resolve, reject) => {
+        compressor.write(contents, (error) =>
+          error ? reject(error) : resolve(),
+        );
+      });
+    },
+  };
+  pageState.activeSink = sink;
+
+  return {
+    async close() {
+      compressor.end();
+      await completed;
+      pageState.activeSink = undefined;
+      return {
+        path: filePath,
+        records,
+        rawSha256: rawHash.digest("hex"),
+      };
+    },
+  };
+}
+
+async function assertStoryRouteTracesMatch(actualPath, expectedPath) {
+  const makeLines = (filePath) =>
+    createInterface({
+      input: createReadStream(filePath).pipe(createBrotliDecompress()),
+      crlfDelay: Infinity,
+    });
+  const actual = makeLines(actualPath)[Symbol.asyncIterator]();
+  const expected = makeLines(expectedPath)[Symbol.asyncIterator]();
+  let index = 0;
+  while (true) {
+    const [actualLine, expectedLine] = await Promise.all([
+      actual.next(),
+      expected.next(),
+    ]);
+    if (actualLine.done || expectedLine.done) {
+      if (actualLine.done !== expectedLine.done) {
+        throw new Error(
+          `Source route trace ${path.basename(actualPath)} length differs after ${index} checkpoints.`,
+        );
+      }
+      return index;
+    }
+    index++;
+    const actualRecord = JSON.parse(actualLine.value);
+    const expectedRecord = JSON.parse(expectedLine.value);
+    if (JSON.stringify(actualRecord) !== JSON.stringify(expectedRecord)) {
+      throw new Error(
+        `Source route trace ${path.basename(actualPath)} differs at checkpoint ${index}: ${findFirstDifference(actualRecord, expectedRecord)}.`,
+      );
+    }
+  }
+}
+
+async function captureNaturalStoryChapterProgression(
+  page,
+  routeConfiguration,
+  captureScreenshots,
+) {
+  await page.evaluate(() => window.functions.changeTab("main"));
+  const replayRouteStart = await captureReplayRouteStart(page);
+  const traceSink = routeConfiguration.traceFile
+    ? await createStoryRouteTraceSink(page, routeConfiguration.traceFile)
+    : undefined;
+  let replay;
+  try {
+    replay = await page.evaluate(
+      async (route) => {
+        const { game, functions } = window;
+        const events = [];
+        const replayCheckpoints = [];
+        const traceBatch = [];
+        let routeRecordCount = 0;
+        let totalActiveClicks = route.totalActiveClicksOffset ?? 0;
+        let craftAttempts = route.craftAttemptsOffset ?? 0;
+        let farmBreaks = route.farmBreaksOffset ?? 0;
+
+        const record = async (event) => {
+          const checkpoint = window.__idleMineBeyondProbe.checkpoint(
+            event.label,
+          );
+          routeRecordCount++;
+          if (route.streamTrace) {
+            traceBatch.push({ event, checkpoint });
+            if (traceBatch.length >= route.traceBatchSize) {
+              await window.__idleMineBeyondPushStoryRouteTrace(
+                traceBatch.splice(0),
+              );
+            }
+          } else {
+            events.push(event);
+            replayCheckpoints.push(checkpoint);
+          }
+        };
+        const select = async (id, purpose) => {
+          functions.setMineObjectLevel(id);
+          await record({
+            type: "select",
+            id,
+            purpose,
+            label: `select-${purpose}-${id}`,
+          });
+        };
+        const buyAffordableUpgrades = async () => {
+          for (const key of route.upgradeKeys) {
+            const upgrade = game.upgrades[key];
+            while (upgrade.buy()) {
+              await record({
+                type: "purchase",
+                key,
+                level: upgrade.level,
+                label: `purchase-${key}-${upgrade.level}`,
+              });
+            }
+          }
+          if (game.gemUpgradesUnlocked()) {
+            for (const key of route.gemUpgradeKeys ?? []) {
+              const upgrade = game.gemUpgrades[key];
+              const targetLevel = route.gemUpgradeTargets?.[key];
+              while (
+                (targetLevel === undefined || upgrade.level < targetLevel) &&
+                upgrade.buy()
+              ) {
+                await record({
+                  type: "gemUpgradePurchase",
+                  key,
+                  level: upgrade.level,
+                  label: `purchase-gem-${key}-${upgrade.level}`,
+                });
+              }
+            }
+          }
+        };
+        const chooseCraftGemLevel = async () => {
+          const maximumLevel =
+            game.upgrades.gemWaster.level + game.gemUpgrades.gemWaster.level;
+          const progressionLevel = Object.entries(
+            route.craftGemLevelFromMineObjectLevel ?? {},
+          )
+            .filter(
+              ([minimumLevel]) =>
+                game.highestMineObjectLevel >= Number(minimumLevel),
+            )
+            .sort(([left], [right]) => Number(left) - Number(right))
+            .at(-1)?.[1];
+          const targetLevel = Math.min(
+            progressionLevel ?? route.targetCraftGemLevel ?? maximumLevel,
+            maximumLevel,
+          );
+          while (game.usedGemsLevel !== targetLevel) {
+            const direction =
+              game.usedGemsLevel < targetLevel ? "increase" : "decrease";
+            game.usedGemsLevel += direction === "increase" ? 1 : -1;
+            await record({
+              type: "craftLevel",
+              direction,
+              level: game.usedGemsLevel,
+              label:
+                direction === "increase"
+                  ? `craft-gem-level-${game.usedGemsLevel}`
+                  : `craft-gem-level-down-${game.usedGemsLevel}`,
+            });
+          }
+        };
+        const mineOneBreak = async (id, purpose) => {
+          const damage = functions.getActiveDamage();
+          if (damage.lte(0)) {
+            throw new Error(
+              `Natural Chapter ${route.chapterNumber} route cannot damage ${game.currentMineObject.name} (#${id}).`,
+            );
+          }
+          const moneyBefore = game.money;
+          let clicks = 0;
+          let batchedClicks = false;
+          const canBatchClicks =
+            route.batchUnchangingActiveClicks &&
+            game.powers.upgrades.powerPowerActive.level === 0 &&
+            game.powers.data.values[0].eq(1);
+          if (canBatchClicks) {
+            // In the pinned source, clickMineObject() only damages the object
+            // and multiplies Power of Mining by Power Power (Active). With
+            // that upgrade at level 0, its effect is exactly 1 and no state
+            // changes between hits. Keep the exact source click count in the
+            // event while applying the equivalent aggregate damage once.
+            const batchClicks = Math.ceil(
+              game.currentMineObject.hp.div(damage).toNumber(),
+            );
+            const batchDamage = damage.mul(batchClicks);
+            const previousDamage = damage.mul(batchClicks - 1);
+            if (
+              Number.isSafeInteger(batchClicks) &&
+              batchClicks > 0 &&
+              batchClicks <= 10_000_000 &&
+              batchDamage.gte(game.currentMineObject.hp) &&
+              previousDamage.lt(game.currentMineObject.hp)
+            ) {
+              clicks = batchClicks;
+              batchedClicks = true;
+              totalActiveClicks += clicks;
+              game.currentMineObject.damage(batchDamage);
+              window.Vue.set(
+                game.powers.data.values,
+                0,
+                game.powers.data.values[0].mul(1),
+              );
+            }
+          }
+          while (game.money.eq(moneyBefore)) {
+            if (batchedClicks) {
+              throw new Error(
+                `Batched source clicks failed to break object ${id} after ${clicks} hits.`,
+              );
+            }
+            functions.clickMineObject();
+            clicks++;
+            totalActiveClicks++;
+            if (clicks > 10_000_000) {
+              throw new Error(
+                `Natural route exceeded the click guard at object ${id}.`,
+              );
+            }
+          }
+          window.update();
+          if (purpose === "farm") farmBreaks++;
+          await record({
+            type: "mine",
+            id,
+            purpose,
+            clicks,
+            label: `${purpose}-break-${id}-${purpose === "farm" ? farmBreaks : game.highestMineObjectLevel}`,
+          });
+          return clicks;
+        };
+
+        let routeIterations = route.routeIterationsOffset ?? 0;
+        while (game.highestMineObjectLevel < route.targetMineObjectLevel) {
+          routeIterations++;
+          if (routeIterations > (route.maxIterations ?? 1000)) {
+            throw new Error(
+              `Natural Chapter ${route.chapterNumber} route did not reach object ${route.targetMineObjectLevel}: ${JSON.stringify({ highest: game.highestMineObjectLevel, money: game.money.toString(), gems: game.gems.toString(), currentObject: { id: game.mineObjectLevel, name: game.currentMineObject.name, hp: game.currentMineObject.hp.toString(), defense: game.currentMineObject.def.toString() }, pickaxe: { name: game.pickaxe.name, power: game.pickaxe.pow.toString(), quality: game.pickaxe.quality.toString(), damage: game.pickaxe.getDamage().toString() }, activeDamage: functions.getActiveDamage().toString(), usedGemsLevel: game.usedGemsLevel, usedGems: functions.getUsedGems().toString(), upgrades: { blacksmith: game.upgrades.blacksmith.level, blacksmithSkill: game.upgrades.blacksmithSkill.level, blacksmithBonus: game.upgrades.blacksmithBonus.level, activePower: game.upgrades.activePower.level, gemChance: game.upgrades.gemChance.level, gemWaster: game.upgrades.gemWaster.level }, craftAttempts, farmBreaks, totalActiveClicks })}`,
+            );
+          }
+
+          await buyAffordableUpgrades();
+          await chooseCraftGemLevel();
+          const targetId = game.highestMineObjectLevel;
+          await select(targetId, "progress");
+          let activeDamage = functions.getActiveDamage();
+          const reservingGemsForUpgrade = (route.gemUpgradeKeys ?? []).some(
+            (key) => {
+              const targetLevel = route.gemUpgradeTargets?.[key];
+              const upgrade = game.gemUpgrades[key];
+              return (
+                targetLevel !== undefined &&
+                upgrade.level < targetLevel &&
+                game.gems.lt(upgrade.currentPrice())
+              );
+            },
+          );
+          if (
+            activeDamage.lte(0) &&
+            game.gems.gte(functions.getUsedGems()) &&
+            !reservingGemsForUpgrade
+          ) {
+            const usedGems = functions.getUsedGems();
+            functions.craftPick(usedGems);
+            craftAttempts++;
+            await record({
+              type: "craft",
+              attempt: craftAttempts,
+              label: `craft-${craftAttempts}`,
+            });
+            activeDamage = functions.getActiveDamage();
+          }
+
+          if (activeDamage.gt(0)) {
+            await mineOneBreak(targetId, "progress");
+            continue;
+          }
+
+          const farmId = Math.max(0, game.highestMineObjectLevel - 1);
+          await select(farmId, "farm");
+          await mineOneBreak(farmId, "farm");
+        }
+
+        functions.changeTab("story");
+        await record({ type: "storyEntry", label: "story-entry" });
+        functions.increaseStoryPage();
+        await record({
+          type: "storyPage",
+          page: game.story.page,
+          label: `story-page-${route.chapterNumber}`,
+        });
+        if (traceBatch.length > 0) {
+          await window.__idleMineBeyondPushStoryRouteTrace(
+            traceBatch.splice(0),
+          );
+        }
+
+        return {
+          ...(route.streamTrace
+            ? {
+                trace: {
+                  file: route.traceFile,
+                  records: routeRecordCount,
+                },
+              }
+            : { events, replayCheckpoints }),
+          routeIterations,
+          totalActiveClicks,
+          craftAttempts,
+          farmBreaks,
+          storyState: {
+            tab: game.settings.tab,
+            page: game.story.page,
+            highestMineObjectLevel: game.highestMineObjectLevel,
+            money: game.money.toString(),
+            highestMoney: game.highestMoney.toString(),
+            gems: game.gems.toString(),
+            highestUnlocked: game.story.highestUnlocked,
+            notifications: game.story.notifications,
+            maxStoryPage: functions.getMaxStoryPage(),
+            visibleMilestones: Object.keys(game.story.milestones).filter(
+              (key) => functions.storyDisplayed(key),
+            ),
+            nextObjective: functions.getNextStoryText(),
+            chapterHeading:
+              document.querySelector(".chapter-control h3")?.textContent ??
+              null,
+          },
+          saveString: functions.getSaveString(),
+        };
+      },
+      {
+        ...routeConfiguration,
+        streamTrace: Boolean(traceSink),
+        traceBatchSize: routeConfiguration.traceBatchSize ?? 256,
+      },
+    );
+  } catch (error) {
+    if (traceSink) await traceSink.close();
+    throw error;
+  }
+  if (traceSink) {
+    const traceMetadata = await traceSink.close();
+    if (traceMetadata.records !== replay.trace.records) {
+      throw new Error(
+        `Chapter ${routeConfiguration.chapterNumber} trace writer received ${traceMetadata.records} records, browser reported ${replay.trace.records}.`,
+      );
+    }
+    replay.trace.rawSha256 = traceMetadata.rawSha256;
+    replay.trace.file = routeConfiguration.traceFile;
+  }
+  replay.replayRouteStart = replayRouteStart;
+
+  await page.evaluate(() => window.functions.setTheme("light"));
+  await page.waitForTimeout(100);
+  const screenshotState = await page.evaluate(async () => {
+    await new Promise((resolve) => window.app.$nextTick(resolve));
+    await document.fonts.ready;
+    const scroller = document.querySelector(".story-milestones");
+    if (!scroller) throw new Error("Natural Story chapter view is missing.");
+    return {
+      tab: window.game.settings.tab,
+      theme: window.game.settings.theme,
+      page: window.game.story.page,
+      highestMineObjectLevel: window.game.highestMineObjectLevel,
+      money: window.game.money.toString(),
+      gems: window.game.gems.toString(),
+      highestUnlocked: window.game.story.highestUnlocked,
+      notifications: window.game.story.notifications,
+      maxStoryPage: window.functions.getMaxStoryPage(),
+      visibleMilestones: Object.keys(window.game.story.milestones).filter(
+        (key) => window.functions.storyDisplayed(key),
+      ),
+      nextObjective: window.functions.getNextStoryText(),
+      chapterHeading:
+        document.querySelector(".chapter-control h3")?.textContent ?? null,
+      scrollTop: scroller.scrollTop,
+      bodyBackground: getComputedStyle(document.body).backgroundColor,
+    };
+  });
+  if (
+    screenshotState.tab !== "story" ||
+    screenshotState.theme !== "light" ||
+    screenshotState.page !== routeConfiguration.storyPage ||
+    screenshotState.highestMineObjectLevel !==
+      routeConfiguration.targetMineObjectLevel ||
+    screenshotState.maxStoryPage !== routeConfiguration.storyPage ||
+    !screenshotState.visibleMilestones.includes(
+      routeConfiguration.milestoneKey,
+    ) ||
+    screenshotState.chapterHeading !== routeConfiguration.chapterHeading ||
+    screenshotState.scrollTop !== 0
+  ) {
+    throw new Error(
+      `Pinned natural Chapter ${routeConfiguration.chapterNumber} Story screenshot has unexpected state: ${JSON.stringify(screenshotState)}`,
+    );
+  }
+
+  const screenshot = `story-natural-chapter-${routeConfiguration.chapterNumber}-light-1440x900.png`;
+  if (captureScreenshots) {
+    await page.evaluate(async () => {
+      await new Promise((resolve) => window.app.$nextTick(resolve));
+      for (const animation of document.getAnimations()) {
+        animation.pause();
+        animation.currentTime = 0;
+      }
+    });
+    await page.mouse.move(viewport.width - 1, viewport.height - 1);
+    await page.screenshot({
+      path: path.join(outputDirectory, screenshot),
+      fullPage: false,
+    });
+  }
+  return { ...replay, screenshotState, screenshot };
 }
 
 function mimeType(filePath) {
@@ -1053,6 +1543,7 @@ async function captureFirstClayProgression(page, captureScreenshots) {
 }
 
 async function captureFirstStoneProgression(page, captureScreenshots) {
+  const replayRouteStart = await captureReplayRouteStart(page);
   await page.locator("footer > button").first().click();
   const clayMiningSetup = await page.evaluate(() => ({
     mineObjectLevel: window.game.mineObjectLevel,
@@ -1108,6 +1599,7 @@ async function captureFirstStoneProgression(page, captureScreenshots) {
   const gemFarm = await page.evaluate(
     ({ activeHitsPerClay, startingMoney, startingGems, targetGems }) => {
       const gemDrops = [];
+      const replayCheckpoints = [];
       let breaks = 0;
       for (; breaks < 1_000 && Number(window.game.gems) < targetGems;) {
         const gemsBefore = Number(window.game.gems);
@@ -1124,6 +1616,9 @@ async function captureFirstStoneProgression(page, captureScreenshots) {
             gemsAfter: String(gemsAfter),
           });
         }
+        replayCheckpoints.push(
+          window.__idleMineBeyondProbe.checkpoint(`clay-break-${breaks}`),
+        );
       }
       return {
         targetGems,
@@ -1135,6 +1630,7 @@ async function captureFirstStoneProgression(page, captureScreenshots) {
         startingGems,
         endingGems: window.game.gems.toString(),
         gemDrops,
+        replayCheckpoints,
         mineObjectLevel: window.game.mineObjectLevel,
         highestMineObjectLevel: window.game.highestMineObjectLevel,
         currentObjectName: window.game.currentMineObject.name,
@@ -1258,6 +1754,10 @@ async function captureFirstStoneProgression(page, captureScreenshots) {
         JSON.stringify(blacksmithPurchaseState),
     );
   }
+  const replayCheckpoints = [...gemFarm.replayCheckpoints];
+  replayCheckpoints.push(
+    await captureReplayCheckpoint(page, "blacksmith-level-2"),
+  );
 
   const craftButton = page.locator(".craft-pickaxe > button");
   if ((await craftButton.count()) !== 1) {
@@ -1266,6 +1766,7 @@ async function captureFirstStoneProgression(page, captureScreenshots) {
     );
   }
   const craftAttempts = [];
+  const craftReplayCheckpoints = [];
   for (
     let attempt = 1;
     attempt <= Number(blacksmithPurchaseState.gems);
@@ -1301,8 +1802,12 @@ async function captureFirstStoneProgression(page, captureScreenshots) {
       );
     }
     craftAttempts.push({ attempt, gemsBefore, ...outcome });
+    craftReplayCheckpoints.push(
+      await captureReplayCheckpoint(page, `rock-craft-${attempt}`),
+    );
     if (Number(outcome.activeDamage) > 0) break;
   }
+  replayCheckpoints.push(...craftReplayCheckpoints);
   const craftState = craftAttempts.at(-1);
   if (
     !craftState ||
@@ -1340,6 +1845,7 @@ async function captureFirstStoneProgression(page, captureScreenshots) {
       null,
     activeDamage: window.functions.getActiveDamage().toString(),
   }));
+  replayCheckpoints.push(await captureReplayCheckpoint(page, "rock-first-hit"));
   if (
     rockFirstHitState.currentObjectName !== "Rock" ||
     Number(rockFirstHitState.currentObjectHp) >= 2200 ||
@@ -1370,6 +1876,9 @@ async function captureFirstStoneProgression(page, captureScreenshots) {
       sourceStoryPage: window.game.story.page,
     };
   });
+  replayCheckpoints.push(
+    await captureReplayCheckpoint(page, "first-rock-break"),
+  );
   if (
     rockMiningState.mineObjectLevel !== 4 ||
     rockMiningState.highestMineObjectLevel !== 5 ||
@@ -1490,6 +1999,8 @@ async function captureFirstStoneProgression(page, captureScreenshots) {
   const capture = {
     scenario:
       "first-clay-repeat-until-six-gems-blacksmith-level-two-random-craft-first-stone",
+    replayRouteStart,
+    replayCheckpoints,
     clayMiningSetup,
     clayHitsToBreak,
     clayBreaksNeeded,
@@ -1538,6 +2049,7 @@ async function captureTenThousandProgression(
   captureScreenshots,
   firstStoneProgression,
 ) {
+  const replayRouteStart = await captureReplayRouteStart(page);
   await page.locator("footer > button").first().click();
   const miningSetup = await page.evaluate(() => ({
     mineObjectLevel: window.game.mineObjectLevel,
@@ -1594,6 +2106,7 @@ async function captureTenThousandProgression(
     ({ hitsPerRock, breaksToThreshold, startingMoney, startingGems }) => {
       const breaks = [];
       const gemDrops = [];
+      const replayCheckpoints = [];
       for (
         let breakNumber = 1;
         breakNumber <= breaksToThreshold;
@@ -1617,6 +2130,9 @@ async function captureTenThousandProgression(
           nextObjective: window.functions.getNextStoryText(),
         };
         breaks.push(state);
+        replayCheckpoints.push(
+          window.__idleMineBeyondProbe.checkpoint(`rock-break-${breakNumber}`),
+        );
         if (Number(state.gems) > gemsBefore) {
           gemDrops.push({
             breakNumber,
@@ -1636,6 +2152,7 @@ async function captureTenThousandProgression(
         endingGems: window.game.gems.toString(),
         breaks,
         gemDrops,
+        replayCheckpoints,
       };
     },
     {
@@ -1759,6 +2276,7 @@ async function captureTenThousandProgression(
 
   const capture = {
     scenario: "first-Stone-plus-32-Rock-breaks-to-reach-10,000-Money",
+    replayRouteStart,
     miningSetup,
     hitsPerRock,
     breaksToThreshold,
@@ -1997,6 +2515,7 @@ async function captureMillionaireProgression(
   captureScreenshots,
   tenThousandProgression,
 ) {
+  const replayRouteStart = await captureReplayRouteStart(page);
   await page.locator("footer > button").first().click();
   const miningSetup = await page.evaluate(() => ({
     save: window.functions.getSaveString(),
@@ -2053,6 +2572,7 @@ async function captureMillionaireProgression(
   const rockFarming = await page.evaluate(
     ({ hitsPerRock, breaksToThreshold }) => {
       const firstGemDropBreaks = [];
+      const replayCheckpoints = [];
       let totalGemDrops = 0;
       let lastGemDropBreaks = [];
       let lastBreak = null;
@@ -2087,6 +2607,18 @@ async function captureMillionaireProgression(
           }
           lastGemDropBreaks = [...lastGemDropBreaks, breakNumber].slice(-5);
         }
+        if (
+          breakNumber === 1 ||
+          breakNumber % 250 === 0 ||
+          Number(lastBreak.gems) > Number(gemsBefore) ||
+          breakNumber === breaksToThreshold
+        ) {
+          replayCheckpoints.push(
+            window.__idleMineBeyondProbe.checkpoint(
+              `rock-break-${breakNumber}`,
+            ),
+          );
+        }
       }
       return {
         hitsPerRock,
@@ -2100,6 +2632,7 @@ async function captureMillionaireProgression(
         totalGemDrops,
         firstGemDropBreaks,
         lastGemDropBreaks,
+        replayCheckpoints,
         finalBreak: lastBreak,
       };
     },
@@ -2371,10 +2904,15 @@ async function captureMillionaireProgression(
     scroller.scrollTop = 0;
   });
 
+  const sourceInteractionRouteStart = await captureReplayRouteStart(page);
   const sourceInteractionProgression = await page.evaluate(() => {
     const { game, functions } = window;
+    const replayCheckpoints = [];
     functions.changeTab("main");
     functions.nextMineObjectLevel();
+    replayCheckpoints.push(
+      window.__idleMineBeyondProbe.checkpoint("select-coal"),
+    );
 
     const startingState = {
       mineObjectLevel: game.mineObjectLevel,
@@ -2397,9 +2935,23 @@ async function captureMillionaireProgression(
     }
 
     let blacksmithPurchases = 0;
-    while (game.upgrades.blacksmith.buy()) blacksmithPurchases++;
+    while (game.upgrades.blacksmith.buy()) {
+      blacksmithPurchases++;
+      replayCheckpoints.push(
+        window.__idleMineBeyondProbe.checkpoint(
+          `blacksmith-level-${game.upgrades.blacksmith.level}`,
+        ),
+      );
+    }
     let activePowerPurchases = 0;
-    while (game.upgrades.activePower.buy()) activePowerPurchases++;
+    while (game.upgrades.activePower.buy()) {
+      activePowerPurchases++;
+      replayCheckpoints.push(
+        window.__idleMineBeyondProbe.checkpoint(
+          `active-power-level-${game.upgrades.activePower.level}`,
+        ),
+      );
+    }
     const moneyAfterPurchases = game.money.toString();
 
     const targetObjects = Array.from({ length: 8 }, (_, index) => {
@@ -2428,6 +2980,11 @@ async function captureMillionaireProgression(
     ) {
       functions.craftPick(functions.getUsedGems());
       crafting.attempts++;
+      replayCheckpoints.push(
+        window.__idleMineBeyondProbe.checkpoint(
+          `pickaxe-craft-${crafting.attempts}`,
+        ),
+      );
       const currentPickaxeDamage = game.pickaxe.getDamage().toString();
       if (currentPickaxeDamage !== lastPickaxeDamage) {
         crafting.improvedPickaxes++;
@@ -2450,6 +3007,9 @@ async function captureMillionaireProgression(
     for (const object of targetObjects) {
       if (game.highestMineObjectLevel < object.id) break;
       functions.setMineObjectLevel(object.id);
+      replayCheckpoints.push(
+        window.__idleMineBeyondProbe.checkpoint(`select-object-${object.id}`),
+      );
       const activeDamage = functions.getActiveDamage().toString();
       if (functions.getActiveDamage().lte(0)) {
         minedObjects.push({
@@ -2471,6 +3031,13 @@ async function captureMillionaireProgression(
       }
       const reached = game.highestMineObjectLevel >= object.id + 1;
       if (reached) window.update();
+      if (reached) {
+        replayCheckpoints.push(
+          window.__idleMineBeyondProbe.checkpoint(
+            `mine-object-${object.id}-break`,
+          ),
+        );
+      }
       minedObjects.push({
         ...object,
         activeDamage,
@@ -2486,6 +3053,9 @@ async function captureMillionaireProgression(
 
     const notificationsBeforeStoryEntry = game.story.notifications;
     functions.changeTab("story");
+    replayCheckpoints.push(
+      window.__idleMineBeyondProbe.checkpoint("story-entry"),
+    );
     const storyEntry = {
       tab: game.settings.tab,
       page: game.story.page,
@@ -2503,6 +3073,7 @@ async function captureMillionaireProgression(
     return {
       scenario:
         "millionaire-save-with-source-upgrades-single-gem-crafting-and-active-mining",
+      replayCheckpoints,
       startingState,
       upgradePurchases: {
         blacksmithPurchases,
@@ -2527,6 +3098,7 @@ async function captureMillionaireProgression(
       },
     };
   });
+  sourceInteractionProgression.replayRouteStart = sourceInteractionRouteStart;
   const sourceInteractionScreenshots = [];
   for (const theme of ["light", "dark"]) {
     await page.evaluate((selectedTheme) => {
@@ -2618,6 +3190,67 @@ async function captureMillionaireProgression(
   }
   sourceInteractionProgression.storyScreenshots = sourceInteractionScreenshots;
 
+  const chapter3Progression = await captureNaturalStoryChapterProgression(
+    page,
+    {
+      chapterNumber: 3,
+      targetMineObjectLevel: 27,
+      storyPage: 2,
+      milestoneKey: "unrealStones",
+      chapterHeading: "Chapter 3: Mysterious Materials",
+      batchUnchangingActiveClicks: true,
+      upgradeKeys: ["blacksmith", "activePower"],
+      targetCraftGemLevel: 0,
+    },
+    captureScreenshots,
+  );
+  const chapter4Progression = await captureNaturalStoryChapterProgression(
+    page,
+    {
+      chapterNumber: 4,
+      targetMineObjectLevel: 55,
+      storyPage: 3,
+      milestoneKey: "infinitum",
+      chapterHeading: "Chapter 4: It's NOT over",
+      batchUnchangingActiveClicks: true,
+      upgradeKeys: [
+        "gemWaster",
+        "blacksmithSkill",
+        "blacksmithBonus",
+        "gemChance",
+        "blacksmith",
+        "activePower",
+      ],
+      targetCraftGemLevel: null,
+    },
+    captureScreenshots,
+  );
+  const chapter5Progression = await captureNaturalStoryChapterProgression(
+    page,
+    {
+      chapterNumber: 5,
+      targetMineObjectLevel: 71,
+      storyPage: 4,
+      milestoneKey: "reachPortal",
+      chapterHeading: "Chapter 5: New Dimensions",
+      traceFile: "story-natural-chapter-5-route.jsonl.br",
+      batchUnchangingActiveClicks: true,
+      upgradeKeys: [
+        "gemWaster",
+        "blacksmithSkill",
+        "blacksmithBonus",
+        "gemChance",
+        "blacksmith",
+        "activePower",
+      ],
+      gemUpgradeKeys: ["blacksmith"],
+      gemUpgradeTargets: { blacksmith: 3 },
+      targetCraftGemLevel: null,
+      maxIterations: 30_000,
+    },
+    captureScreenshots,
+  );
+
   const restoredState = await page.evaluate((save) => {
     window.functions.loadGame(save, true, true);
     window.functions.changeTab("main");
@@ -2656,12 +3289,16 @@ async function captureMillionaireProgression(
 
   const capture = {
     scenario: "10,000-Money-Rock-plus-8,250-natural-breaks-to-1,000,000-Money",
+    replayRouteStart,
     miningSetup: { ...miningSetup, save: undefined },
     hitsPerRock,
     breaksToThreshold,
     rockFarming,
     nextObjectProbe,
     sourceInteractionProgression,
+    chapter3Progression,
+    chapter4Progression,
+    chapter5Progression,
     storyStates,
     millionaireScrolledScreenshots,
     restoredState,
@@ -2714,11 +3351,97 @@ async function captureStory(
           value: () => clock,
         });
         let randomState = seed >>> 0;
+        let randomDrawCount = 0;
         Math.random = () => {
           randomState =
             (Math.imul(randomState, 1_664_525) + 1_013_904_223) >>> 0;
+          randomDrawCount++;
           return randomState / 0x1_0000_0000;
         };
+        Object.defineProperty(window, "__idleMineBeyondProbe", {
+          configurable: false,
+          value: {
+            randomCursor: () => ({
+              seed,
+              draws: randomDrawCount,
+              state: randomState,
+            }),
+            simulationState: () => {
+              const { game } = window;
+              const levels = (group) =>
+                Object.fromEntries(
+                  Object.entries(group).map(([key, upgrade]) => [
+                    key,
+                    upgrade.level,
+                  ]),
+                );
+              const decimal = (value) => value.toString();
+              const currentObject = game.currentMineObject;
+              return {
+                mineObjectLevel: game.mineObjectLevel,
+                highestMineObjectLevel: game.highestMineObjectLevel,
+                currentObject: {
+                  id: game.mineObjectLevel,
+                  name: currentObject.name,
+                  hp: decimal(currentObject.hp),
+                  totalHp: decimal(currentObject.totalHp),
+                  defense: decimal(currentObject.def),
+                  value: decimal(currentObject.value),
+                  colors: [...currentObject.colors],
+                  skin: currentObject.skin,
+                  drops: Object.fromEntries(
+                    Object.entries(currentObject.drops).map(([key, drop]) => [
+                      key,
+                      { chance: drop.chance, amount: decimal(drop.amount) },
+                    ]),
+                  ),
+                },
+                resources: {
+                  money: decimal(game.money),
+                  highestMoney: decimal(game.highestMoney),
+                  gems: decimal(game.gems),
+                  planetCoins: decimal(game.planetCoins),
+                  maxPlanetCoins: decimal(game.maxPlanetCoins),
+                  wisdom: decimal(game.wisdom),
+                  maxWisdom: decimal(game.maxWisdom),
+                },
+                powers: {
+                  mining: decimal(game.powers.data.values[0]),
+                  craftsmanship: decimal(game.powers.data.values[1]),
+                  expertise: decimal(game.powers.data.values[2]),
+                  wisdom: decimal(game.powers.data.values[3]),
+                  exquisity: decimal(game.powers.data.values[4]),
+                },
+                upgrades: {
+                  money: levels(game.upgrades),
+                  gems: levels(game.gemUpgrades),
+                  planetCoins: levels(game.planetCoinUpgrades),
+                  wisdom: levels(game.powers.upgrades),
+                },
+                pickaxe: {
+                  name: game.pickaxe.name,
+                  power: decimal(game.pickaxe.pow),
+                  quality: decimal(game.pickaxe.quality),
+                },
+                autoPickaxeTimer: game.timer.autoPickaxe,
+                saveTimer: game.timer.save,
+                powersUnlocked: game.powers.unlocked(),
+                usedGemsLevel: game.usedGemsLevel,
+                lastActiveMs: game.lastActive,
+                story: {
+                  page: game.story.page,
+                  highestUnlocked: game.story.highestUnlocked,
+                  notifications: game.story.notifications,
+                },
+              };
+            },
+            checkpoint: (label) => ({
+              label,
+              state: window.__idleMineBeyondProbe.simulationState(),
+              random: window.__idleMineBeyondProbe.randomCursor(),
+            }),
+          },
+        });
         window.requestAnimationFrame = () => 0;
       },
       { clock: fixedClock, seed: randomSeed },
@@ -3514,6 +4237,14 @@ async function main() {
     }
   }
   if (mode === "--write") {
+    for (const route of [
+      captured.spookyBoneProgression.millionaireProgression.chapter5Progression,
+    ]) {
+      await copyFile(
+        storyRouteTraceOutputPath(route.trace.file),
+        storyRouteTraceFixturePath(route.trace.file),
+      );
+    }
     captured.source.capturedOn =
       expected.source?.capturedOn ?? new Date().toISOString().slice(0, 10);
     await writeFile(
@@ -3522,9 +4253,49 @@ async function main() {
       "utf8",
     );
     process.stdout.write(
-      `Captured fresh Story state, first-Mud, first-Paper, first-Blacksmith, first-Clay, first-Stone, 10,000-Money, natural millionaire, controlled Spooky Bone milestone boundary, and ${captured.allUnlocked.length} unlocked pages from ${reference.pinnedCommit}. Screenshots are in ignored .research/outputs/story-runtime/.\n`,
+      `Captured fresh Story state, first-Mud, first-Paper, first-Blacksmith, first-Clay, first-Stone, 10,000-Money, natural millionaire, controlled Spooky Bone, natural Chapter 3–5 routes, and ${captured.allUnlocked.length} unlocked pages from ${reference.pinnedCommit}. Chapter 5's ${captured.spookyBoneProgression.millionaireProgression.chapter5Progression.trace.records} full checkpoints are in the streamed Brotli trace. Screenshots are in ignored .research/outputs/story-runtime/.\n`,
     );
     return;
+  }
+
+  const routeTracePairs = [
+    {
+      label: "Chapter 5",
+      expected:
+        expected.spookyBoneProgression.millionaireProgression
+          .chapter5Progression,
+      actual:
+        captured.spookyBoneProgression.millionaireProgression
+          .chapter5Progression,
+    },
+  ];
+  for (const {
+    label,
+    expected: expectedRoute,
+    actual: actualRoute,
+  } of routeTracePairs) {
+    const trace = expectedRoute?.trace;
+    if (!trace) {
+      throw new Error(
+        `The Story runtime fixture does not contain the streamed ${label} route trace. Recapture it with \`pnpm reference:story-runtime:capture\`.`,
+      );
+    }
+    if (trace.file !== path.basename(storyRouteTraceFixturePath(trace.file))) {
+      throw new Error(`${label} route trace points to an unexpected file.`);
+    }
+    const traceRecords = await assertStoryRouteTracesMatch(
+      storyRouteTraceOutputPath(trace.file),
+      storyRouteTraceFixturePath(trace.file),
+    );
+    if (
+      traceRecords !== trace.records ||
+      actualRoute.trace.records !== trace.records ||
+      actualRoute.trace.rawSha256 !== trace.rawSha256
+    ) {
+      throw new Error(
+        `${label} route trace metadata differs: checked ${traceRecords} records, expected ${trace.records}.`,
+      );
+    }
   }
 
   if (JSON.stringify(captured) !== JSON.stringify(expected)) {
