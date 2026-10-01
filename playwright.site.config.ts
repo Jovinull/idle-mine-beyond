@@ -4,6 +4,8 @@ import { getChromiumLaunchOptions } from "./scripts/playwright-browser.mjs";
 // Browser tests for the built project site (run `pnpm site:build` first).
 export default defineConfig({
   testDir: "./tests/site",
+  // Own results folder: other Playwright runs in this checkout clear test-results/.
+  outputDir: "./apps/site/test-results",
   fullyParallel: true,
   workers: 2,
   forbidOnly: Boolean(process.env.CI),
