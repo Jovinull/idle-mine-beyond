@@ -10,6 +10,8 @@ const ignored = new Set([
   ".svelte-kit",
   "build",
   "target",
+  "test-results",
+  "playwright-report",
 ]);
 const files = [];
 
