@@ -43,7 +43,18 @@
   {#if !customValue}<small>Use a number like 1e50 or 123456.</small>{/if}
 </label>
 
-<div class="table-wrap">
+<p class="hint">
+  The table scrolls on its own; notation names and column headers stay in view.
+</p>
+
+<!-- Scrollable regions must be keyboard-focusable so the table can be scrolled without a mouse. -->
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+<div
+  class="table-wrap"
+  role="region"
+  aria-label="Notation examples"
+  tabindex="0"
+>
   <table>
     <thead>
       <tr>
@@ -97,10 +108,48 @@
     color: var(--text);
   }
 
+  .hint {
+    font-size: 0.9rem;
+    color: var(--text-faint);
+    margin-bottom: 0.6rem;
+  }
+
+  /* A capped height keeps both scrollbars on screen; the header row and the
+     name column stay pinned while the examples scroll. */
   .table-wrap {
-    overflow-x: auto;
+    overflow: auto;
+    max-height: min(75vh, 48rem);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
+    background: var(--bg-raised);
+  }
+
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bg-raised);
+    box-shadow: inset 0 -1px 0 var(--line-strong);
+    white-space: nowrap;
+  }
+
+  thead th:first-child,
+  tbody th[scope="row"] {
+    position: sticky;
+    left: 0;
+    background: var(--bg-raised);
+    box-shadow: inset -1px 0 0 var(--line);
+  }
+
+  thead th:first-child {
+    z-index: 3;
+    box-shadow:
+      inset 0 -1px 0 var(--line-strong),
+      inset -1px 0 0 var(--line);
+  }
+
+  tbody th[scope="row"] {
+    z-index: 1;
   }
 
   table {
@@ -143,7 +192,8 @@
     text-overflow: ellipsis;
   }
 
-  tr.selected {
+  tr.selected td,
+  tr.selected th[scope="row"] {
     background: var(--accent-soft);
   }
 </style>
