@@ -118,6 +118,21 @@ const fixture = JSON.parse(
   };
 };
 
+// Mirrors the reproducible xorshift64* sample in scripts/reference-probe.mjs.
+function sampledPostUniverseIds(count: number): number[] {
+  const range = BigInt(Number.MAX_SAFE_INTEGER - 768);
+  let state = 0x494d4220261002n;
+  const samples = new Set<number>();
+  while (samples.size < count) {
+    state = BigInt.asUintN(64, state ^ (state >> 12n));
+    state = BigInt.asUintN(64, state ^ (state << 25n));
+    state = BigInt.asUintN(64, state ^ (state >> 27n));
+    const output = BigInt.asUintN(64, state * 0x2545f4914f6cdd1dn);
+    samples.add(769 + Number(output % range));
+  }
+  return [...samples];
+}
+
 it("records the complete indexed mine-object range and high-ID oracle probes", () => {
   expect(fixture.metadata.sourceCommit).toBe(
     "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
@@ -125,8 +140,7 @@ it("records the complete indexed mine-object range and high-ID oracle probes", (
   expect(fixture.metadata.licenseNotice).toContain(
     "Copyright (c) 2023 veprogames",
   );
-  expect(fixture.data.objects.map((object) => object.id)).toEqual([
-    ...Array.from({ length: 769 }, (_, id) => id),
+  const boundaryIds = [
     769,
     999,
     1_000,
@@ -150,6 +164,10 @@ it("records the complete indexed mine-object range and high-ID oracle probes", (
     Number.MAX_SAFE_INTEGER - 2,
     Number.MAX_SAFE_INTEGER - 1,
     Number.MAX_SAFE_INTEGER,
+  ];
+  expect(fixture.data.objects.map((object) => object.id)).toEqual([
+    ...Array.from({ length: 769 }, (_, id) => id),
+    ...[...boundaryIds, ...sampledPostUniverseIds(128)].sort((a, b) => a - b),
   ]);
   expect(fixture.data.initialState.progress).toMatchObject({
     mineObjectLevel: 0,

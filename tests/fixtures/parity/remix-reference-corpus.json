@@ -29528,6 +29528,4614 @@
         }
       },
       {
+        "id": 11128392758021,
+        "name": "Plasmase-Verse #1394",
+        "hp": {
+          "decimal": "2.4e+856437119379119",
+          "mantissa": 2.4,
+          "exponent": 856437119379119
+        },
+        "totalHp": {
+          "decimal": "2.4e+856437119379119",
+          "mantissa": 2.4,
+          "exponent": 856437119379119
+        },
+        "defense": {
+          "decimal": "2.4e+856437119379117",
+          "mantissa": 2.4,
+          "exponent": 856437119379117
+        },
+        "value": {
+          "decimal": "1.8e+967046031676460",
+          "mantissa": 1.8,
+          "exponent": 967046031676460
+        },
+        "colors": ["#f774a3", "#671dfe", "#e62ef7", "#377161"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.46167430768798773,
+            "amount": {
+              "decimal": "2.089485171358386e+39519686258146",
+              "mantissa": 2.089485171358386,
+              "exponent": 39519686258146
+            }
+          }
+        }
+      },
+      {
+        "id": 38528723330138,
+        "name": "Fumeuse-Verse #8108",
+        "hp": {
+          "decimal": "6.2e+3568987390865777",
+          "mantissa": 6.2,
+          "exponent": 3568987390865777
+        },
+        "totalHp": {
+          "decimal": "6.2e+3568987390865777",
+          "mantissa": 6.2,
+          "exponent": 3568987390865777
+        },
+        "defense": {
+          "decimal": "6.2e+3568987390865775",
+          "mantissa": 6.2,
+          "exponent": 3568987390865775
+        },
+        "value": {
+          "decimal": "6.7e+4029922355469713",
+          "mantissa": 6.7,
+          "exponent": 4029922355469713
+        },
+        "colors": ["#501a8f", "#69deab", "#24f557", "#f8fbfb"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.7134900203503156,
+            "amount": {
+              "decimal": "3.3236256121667087e+154917642444090",
+              "mantissa": 3.3236256121667087,
+              "exponent": 154917642444090
+            }
+          }
+        }
+      },
+      {
+        "id": 47256886118555,
+        "name": "Supergyre-Verse #6327",
+        "hp": {
+          "decimal": "1.1e+4513025691471347",
+          "mantissa": 1.1,
+          "exponent": 4513025691471347
+        },
+        "totalHp": {
+          "decimal": "1.1e+4513025691471347",
+          "mantissa": 1.1,
+          "exponent": 4513025691471347
+        },
+        "defense": {
+          "decimal": "1.1e+4513025691471345",
+          "mantissa": 1.1,
+          "exponent": 4513025691471345
+        },
+        "value": {
+          "decimal": "1.1e+5095883266894259",
+          "mantissa": 1.1,
+          "exponent": 5095883266894259
+        },
+        "colors": ["#bed6c4", "#fc8000", "#021500", "#0ce399"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.9633919745513201,
+            "amount": {
+              "decimal": "7.243475172033341e+253796887260239",
+              "mantissa": 7.243475172033341,
+              "exponent": 253796887260239
+            }
+          }
+        }
+      },
+      {
+        "id": 79776181737312,
+        "name": "Spying-Verse #4370",
+        "hp": {
+          "decimal": "1.9e+8238383307219410",
+          "mantissa": 1.9,
+          "exponent": 8238383307219410
+        },
+        "totalHp": {
+          "decimal": "1.9e+8238383307219410",
+          "mantissa": 1.9,
+          "exponent": 8238383307219410
+        },
+        "defense": {
+          "decimal": "1.9e+8238383307219408",
+          "mantissa": 1.9,
+          "exponent": 8238383307219408
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 9302371072439708
+        },
+        "colors": ["black", "#3601c5", "#3702c7", "#af3bf2"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.8840124876629619,
+            "amount": {
+              "decimal": "3.4839474499518697e+344983536154414",
+              "mantissa": 3.4839474499518697,
+              "exponent": 344983536154414
+            }
+          }
+        }
+      },
+      {
+        "id": 86300365995022,
+        "name": "Scholar-Verse #3635",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 9017402675057844
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 9017402675057844
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 9017402675057844
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 10182000844691276
+        },
+        "colors": ["black", "#d90813", "#8543c3", "#00af2c"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.6721262972206465,
+            "amount": {
+              "decimal": "8.366602043629651e+376141887872860",
+              "mantissa": 8.366602043629651,
+              "exponent": 376141887872860
+            }
+          }
+        }
+      },
+      {
+        "id": 210893500436807,
+        "name": "Ripe-Verse #4754",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 25183683463495364
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 25183683463495364
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 25183683463495360
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 28436157897994960
+        },
+        "colors": ["black", "#00f775", "#5d4095", "#014b1a"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.40131821129532447,
+            "amount": {
+              "decimal": "5.908961115937483e+1005095465261310",
+              "mantissa": 5.908961115937483,
+              "exponent": 1005095465261310
+            }
+          }
+        }
+      },
+      {
+        "id": 298731294032053,
+        "name": "Unpityingly-Verse #8589",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 37578651859301800
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 37578651859301800
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 37578651859301800
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 42431937306305880
+        },
+        "colors": ["black", "#20867e", "#270365", "#008f30"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.15654891876343122,
+            "amount": {
+              "decimal": "6.387779665927615e+1474166680146171",
+              "mantissa": 6.387779665927615,
+              "exponent": 1474166680146171
+            }
+          }
+        }
+      },
+      {
+        "id": 324813485337493,
+        "name": "Bukeyef-Verse #7730",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 41374172812443860
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 41374172812443860
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 41374172812443860
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 46717650049048390
+        },
+        "colors": ["black", "#e3ff2e", "#a79786", "#ed6cf6"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.6619075046209187,
+            "amount": {
+              "decimal": "8.495768989844098e+1616349433941174",
+              "mantissa": 8.495768989844098,
+              "exponent": 1616349433941174
+            }
+          }
+        }
+      },
+      {
+        "id": 399830680578399,
+        "name": "Enanthesis-Verse #225",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 52536784085547340
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 52536784085547340
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 52536784085547340
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 59321913328326936
+        },
+        "colors": ["#fc7b26", "#07073e", "#9a38fe", "#70c857"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.594918163770306,
+            "amount": {
+              "decimal": "5.3154834609980295e+2031428431577245",
+              "mantissa": 5.3154834609980295,
+              "exponent": 2031428431577245
+            }
+          }
+        }
+      },
+      {
+        "id": 411801296587948,
+        "name": "Routeways-Verse #3376",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 54348886560028120
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 54348886560028120
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 54348886560028120
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 61368048960804056
+        },
+        "colors": ["black", "#7d28fc", "#ccedc0", "#cff022"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.8397324107772356,
+            "amount": {
+              "decimal": "4.235347801790789e+2098428999178982",
+              "mantissa": 4.235347801790789,
+              "exponent": 2098428999178982
+            }
+          }
+        }
+      },
+      {
+        "id": 482330907877586,
+        "name": "Giaours-Verse #3913",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 65179954879911260
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 65179954879911260
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 65179954879911260
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 73597950491873390
+        },
+        "colors": ["black", "#170619", "#902e6b", "#d00002"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.10817326750055574,
+            "amount": {
+              "decimal": "9.244428157768855e+2496993434510355",
+              "mantissa": 9.244428157768855,
+              "exponent": 2496993434510355
+            }
+          }
+        }
+      },
+      {
+        "id": 519014651622931,
+        "name": "Precoccygeal-Verse #593",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 70910232618261660
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 70910232618261660
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 70910232618261660
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 80068293990404690
+        },
+        "colors": ["#fa0b8c", "#05ce2d", "#89ff8b", "#f2fa11"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.6697250994247036,
+            "amount": {
+              "decimal": "4.721754736211601e+2706670430882576",
+              "mantissa": 4.721754736211601,
+              "exponent": 2706670430882576
+            }
+          }
+        }
+      },
+      {
+        "id": 620603907948479,
+        "name": "Overemotionalize-Verse #8955",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 87087032533669280
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 87087032533669280
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 87087032533669280
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 98334328716643090
+        },
+        "colors": ["black", "#ff0d06", "#e16be0", "#22598a"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.43459715062500776,
+            "amount": {
+              "decimal": "2.3009814918525553e+3294835641715245",
+              "mantissa": 2.3009814918525553,
+              "exponent": 3294835641715245
+            }
+          }
+        }
+      },
+      {
+        "id": 637671861732917,
+        "name": "Mine-Verse #6387",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 89845915984974690
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 89845915984974690
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 89845915984974690
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 101449522153584300
+        },
+        "colors": ["black", "#b9ed73", "#d2eef3", "#35c03b"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.22027176628833253,
+            "amount": {
+              "decimal": "4.5398464671637235e+3394648232194388",
+              "mantissa": 4.5398464671637235,
+              "exponent": 3394648232194388
+            }
+          }
+        }
+      },
+      {
+        "id": 697276933274180,
+        "name": "Taled-Verse #4856",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 99565814488477340
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 99565814488477340
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 99565814488477340
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 112424746210809010
+        },
+        "colors": ["#48398c", "#c085f5", "#00040d", "#d1c200"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.6254299090362293,
+            "amount": {
+              "decimal": "1.598900189376893e+4901404081249035",
+              "mantissa": 1.598900189376893,
+              "exponent": 4901404081249035
+            }
+          }
+        }
+      },
+      {
+        "id": 712379840432263,
+        "name": "Incoercible-Verse #5499",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 102048916349531600
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 102048916349531600
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 102048916349531600
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 115228540846335420
+        },
+        "colors": ["#dd16d2", "#8d28fa", "#e9fa49", "#284d04"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.17776907895587807,
+            "amount": {
+              "decimal": "5.625275249629875e+3834604536131332",
+              "mantissa": 5.625275249629875,
+              "exponent": 3834604536131332
+            }
+          }
+        }
+      },
+      {
+        "id": 755574730119800,
+        "name": "Turbellariform-Verse #6191",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 109193757165012020
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 109193757165012020
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 109193757165012020
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 123296138339749950
+        },
+        "colors": ["black", "#ceab50", "#7735e0", "#efffd1"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.2887836011540068,
+            "amount": {
+              "decimal": "3.4628005053053728e+5354018246194152",
+              "mantissa": 3.4628005053053728,
+              "exponent": 5354018246194152
+            }
+          }
+        }
+      },
+      {
+        "id": 848023890089866,
+        "name": "Fangot-Verse #4450",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 124688463651728860
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 124688463651728860
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 124688463651728860
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.1,
+          "exponent": 140791987224526720
+        },
+        "colors": ["black", "#000809", "#9940b0", "#011216"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.49021836393057294,
+            "amount": {
+              "decimal": "2.0399072608826723e+4645010441120552",
+              "mantissa": 2.0399072608826723,
+              "exponent": 4645010441120552
+            }
+          }
+        }
+      },
+      {
+        "id": 898407151995450,
+        "name": "Inverse-Verse #6848",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 133241770798717150
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 133241770798717150
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 133241770798717150
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 150449954572090020
+        },
+        "colors": ["black", "#f8d1fd", "#f6ffad", "#68fe12"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.5412297023186599,
+            "amount": {
+              "decimal": "1.8476443471523112e+6477317722184298",
+              "mantissa": 1.8476443471523112,
+              "exponent": 6477317722184298
+            }
+          }
+        }
+      },
+      {
+        "id": 1031388746728948,
+        "name": "Blacketeer-Verse #2940",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 156155255218228130
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 156155255218228130
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 156155255218228130
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 176322717064953150
+        },
+        "colors": ["black", "#03fc07", "#525f04", "#d3bf48"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.5313017901644584,
+            "amount": {
+              "decimal": "3.764338906859175e+5761060369052210",
+              "mantissa": 3.764338906859175,
+              "exponent": 5761060369052210
+            }
+          }
+        }
+      },
+      {
+        "id": 1033919897388294,
+        "name": "Aired-Verse #1619",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 156595882726533730
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 156595882726533730
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 156595882726533730
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 176820251645966300
+        },
+        "colors": ["black", "#1afc48", "#0f0e38", "#f0f243"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.2521703346875358,
+            "amount": {
+              "decimal": "3.9655735129950944e+5776614436103376",
+              "mantissa": 3.9655735129950944,
+              "exponent": 5776614436103376
+            }
+          }
+        }
+      },
+      {
+        "id": 1107095675847739,
+        "name": "Substantialization-Verse #9938",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 169402952334951900
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 169402952334951900
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 169402952334951900
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 191281355166564800
+        },
+        "colors": ["black", "#fded25", "#5decb8", "#09fed5"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.3943377483609774,
+            "amount": {
+              "decimal": "2.5358972204826773e+6227897677264851",
+              "mantissa": 2.5358972204826773,
+              "exponent": 6227897677264851
+            }
+          }
+        }
+      },
+      {
+        "id": 1148833030914034,
+        "name": "Semang-Verse #7549",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 176765236738179170
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 176765236738179170
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 176765236738179170
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 199594479101893120
+        },
+        "colors": ["black", "#fff803", "#b3a3bf", "#f20901"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.8196477204652726,
+            "amount": {
+              "decimal": "1.2200363339415505e+6486649081427057",
+              "mantissa": 1.2200363339415505,
+              "exponent": 6486649081427057
+            }
+          }
+        }
+      },
+      {
+        "id": 1154130961441282,
+        "name": "Approvedly-Verse #7082",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 177702665079683970
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 177702665079683970
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 177702665079683970
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.1,
+          "exponent": 200652976377548900
+        },
+        "colors": ["black", "#dcd9da", "#33f5b7", "#49ef3e"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.37437432975246304,
+            "amount": {
+              "decimal": "2.6711233130252325e+6519561699003160",
+              "mantissa": 2.6711233130252325,
+              "exponent": 6519561699003160
+            }
+          }
+        }
+      },
+      {
+        "id": 1377004651983966,
+        "name": "Indaconitine-Verse #1327",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 217693344563911360
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 217693344563911360
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 217693344563911360
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 245808454840815800
+        },
+        "colors": ["black", "#b25601", "#e89817", "#e2ff27"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.3620966641987193,
+            "amount": {
+              "decimal": "2.761693489258985e+7917111236471995",
+              "mantissa": 2.761693489258985,
+              "exponent": 7917111236471995
+            }
+          }
+        }
+      },
+      {
+        "id": 1545152242281743,
+        "name": "β-Verse #2726",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 248522957147889730
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 248522957147889730
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 248522957147889730
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 280619713989732320
+        },
+        "colors": ["#14d9a6", "#f2d423", "#04e3bd", "#49f01a"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.4137733673740986,
+            "amount": {
+              "decimal": "2.4167819363199503e+8986823303445655",
+              "mantissa": 2.4167819363199503,
+              "exponent": 8986823303445655
+            }
+          }
+        }
+      },
+      {
+        "id": 1549055900501924,
+        "name": "Kochia-Verse #1647",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 249244892075019330
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 249244892075019330
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 249244892075019330
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 281434886861869660
+        },
+        "colors": ["black", "#9cf5a3", "#ffbed2", "#b520e2"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.9790376685462137,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.04282231854248,
+              "exponent": 9011801105118852
+            }
+          }
+        }
+      },
+      {
+        "id": 1568901384897330,
+        "name": "Heptasemic-Verse #3268",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 252919276321053760
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 252919276321053760
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 252919276321053760
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 285583818083531300
+        },
+        "colors": ["black", "#35150e", "#08f6ff", "#2b0d00"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.23425653587759313,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 4.268824330786371,
+              "exponent": 11959964504832832
+            }
+          }
+        }
+      },
+      {
+        "id": 1640240512234305,
+        "name": "Subinfeud-Verse #6810",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 266184666203294600
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 266184666203294600
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 266184666203294600
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 300562433972531500
+        },
+        "colors": ["#ae3420", "#03e58b", "#fec8ff", "#156e1b"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.9687050296779279,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.0323059851691663,
+              "exponent": 12559517849638224
+            }
+          }
+        }
+      },
+      {
+        "id": 1690705329184344,
+        "name": "cook1ee-Verse #4033",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 275621029749872770
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 275621029749872770
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 275621029749872770
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 311217504513834200
+        },
+        "colors": ["#fff9ed", "#8efaf2", "#8b8333", "#e0d207"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.03638409359212224,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 5.4969075839037345,
+              "exponent": 9922303624804468
+            }
+          }
+        }
+      },
+      {
+        "id": 1863217264993883,
+        "name": "Malodorant-Verse #8551",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 308191728819375700
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 308191728819375700
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 308191728819375700
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 347994711586461250
+        },
+        "colors": ["black", "#32a018", "#7f1638", "#0123ff"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.5804750433100737,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.7227269484276997,
+              "exponent": 11041489110700876
+            }
+          }
+        }
+      },
+      {
+        "id": 1904916077937979,
+        "name": "Debug-Verse #5169",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 316134214777462700
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 316134214777462700
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 316134214777462700
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 356962970146975360
+        },
+        "colors": ["#110528", "#ffc71e", "#ebf900", "#4f00e4"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.893131340338444,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.1196561522754973,
+              "exponent": 11313610703722024
+            }
+          }
+        }
+      },
+      {
+        "id": 1917208093884769,
+        "name": "Landlady-Verse #2568",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 318480504492221800
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 318480504492221800
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 318480504492221800
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 359612283338194750
+        },
+        "colors": ["#2ffe4b", "#e9ee11", "#05e918", "#f611c0"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.37796722649501974,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.6457320368044566,
+              "exponent": 11393941303784820
+            }
+          }
+        }
+      },
+      {
+        "id": 1920763502366673,
+        "name": "Nonmetallurgically-Verse #339",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 319159578427589500
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 319159578427589500
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 319159578427589500
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 360379059718564900
+        },
+        "colors": ["black", "#ef879f", "#c00203", "#59bab3"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.17795387850047736,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 5.619433576983361,
+              "exponent": 11417186175753834
+            }
+          }
+        }
+      },
+      {
+        "id": 1929170725049916,
+        "name": "Subthreshold-Verse #8566",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 320766084445376260
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 320766084445376260
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 320766084445376260
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 362193046097963460
+        },
+        "colors": ["black", "#8efe90", "#ec41cf", "#6341fe"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.7445499369616387,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.6861865144487216,
+              "exponent": 11472168783631538
+            }
+          }
+        }
+      },
+      {
+        "id": 1996949310382927,
+        "name": "Cookie-Verse #2825",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 333755611120414600
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 333755611120414600
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 333755611120414600
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 376860171027762700
+        },
+        "colors": ["black", "#6f0bf3", "#f05d98", "#ff0015"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.03067520774466694,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 3.259961622179578,
+              "exponent": 11916303171033880
+            }
+          }
+        }
+      },
+      {
+        "id": 2051075389107779,
+        "name": "Diversifies-Verse #222",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 344176290751714800
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 344176290751714800
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 344176290751714800
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 388626682143168260
+        },
+        "colors": ["black", "#f10138", "#0244f1", "#03a82f"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.20515563953907956,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 4.874348091267131,
+              "exponent": 12272063239312766
+            }
+          }
+        }
+      },
+      {
+        "id": 2069559093958566,
+        "name": "Hedonic-Verse #5957",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 347744378843275970
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 347744378843275970
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 347744378843275970
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 392655589054766900
+        },
+        "colors": ["black", "#2ffe53", "#6e0264", "#9cd631"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.12223862815752562,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 8.180720080655085,
+              "exponent": 12393769463057418
+            }
+          }
+        }
+      },
+      {
+        "id": 2142102847226986,
+        "name": "Oes-Verse #8617",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 361793990445103360
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 361793990445103360
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 361793990445103360
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 408519708951849500
+        },
+        "colors": ["black", "#b6ff76", "#dd00e5", "#ac8cf6"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.14854407457101348,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 6.732008684209996,
+              "exponent": 12872477725231832
+            }
+          }
+        }
+      },
+      {
+        "id": 2150851221721591,
+        "name": "Inverse-Verse #5612",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 363493161315574850
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 363493161315574850
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 363493161315574850
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 410438327855968000
+        },
+        "colors": ["black", "#ddb8fd", "#4e6a0f", "#aafcc1"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.21973471493447885,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 4.55094225916093,
+              "exponent": 12930318013287910
+            }
+          }
+        }
+      },
+      {
+        "id": 2157878224860268,
+        "name": "Fumeuse-Verse #9656",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 364858744868295940
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 364858744868295940
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 364858744868295940
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 411980276617529100
+        },
+        "colors": ["black", "#84fee7", "#b33c57", "#fe2697"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.3339580671554236,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 5.988775827562815,
+              "exponent": 12976794419294450
+            }
+          }
+        }
+      },
+      {
+        "id": 2236603980492032,
+        "name": "Budged-Verse #4688",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 380202901465212800
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 380202901465212800
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 380202901465212800
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 429306132083984640
+        },
+        "colors": ["black", "#4d5f72", "#ea71ff", "#ff384d"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.14942885849132614,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.3384295511539985,
+              "exponent": 13498509033387440
+            }
+          }
+        }
+      },
+      {
+        "id": 2272251459581296,
+        "name": "Oversteadily-Verse #6491",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 387177633963074050
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 387177633963074050
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 387177633963074050
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 437181651758973900
+        },
+        "colors": ["#9503e2", "#ffc409", "#edf205", "#000aac"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.6462065599142605,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 3.0949856037756143,
+              "exponent": 13735353111910238
+            }
+          }
+        }
+      },
+      {
+        "id": 2289568708602986,
+        "name": "Kochia-Verse #1382",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 390571832279764350
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 390571832279764350
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 390571832279764350
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 441014211019434000
+        },
+        "colors": ["#1dffd7", "#baf3ff", "#00cdfe", "#19d7f4"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.6689599117585271,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.4948578867323332,
+              "exponent": 13850544525713282
+            }
+          }
+        }
+      },
+      {
+        "id": 2318862461152492,
+        "name": "Fractal-Verse #6201",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 396322177205014600
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 396322177205014600
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 396322177205014600
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 447507213383419900
+        },
+        "colors": ["#756536", "#1562f7", "#9e0ef2", "#f2f822"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.5111653071414518,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 3.912628599903303,
+              "exponent": 14045599729098824
+            }
+          }
+        }
+      },
+      {
+        "id": 2469984184692702,
+        "name": "cook1ee-Verse #3630",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 426157674996810940
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 426157674996810940
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 426157674996810940
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 481195967747037760
+        },
+        "colors": ["black", "#fb9706", "#240572", "#6d3524"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.03539817083412696,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.8250047288768707,
+              "exponent": 15055715114707128
+            }
+          }
+        }
+      },
+      {
+        "id": 2501560239217662,
+        "name": "Balletomanes-Verse #9215",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 432426799702144100
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 432426799702144100
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 432426799702144100
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 488274750335037000
+        },
+        "colors": ["#983516", "#3f194a", "#b8c50e", "#f9f200"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.377169854648956,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.651325358254656,
+              "exponent": 15267567919058990
+            }
+          }
+        }
+      },
+      {
+        "id": 2554495423614004,
+        "name": "Valance-Verse #2833",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 442963110723837760
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 442963110723837760
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 442963110723837760
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 500171826642780540
+        },
+        "colors": ["black", "#d7fccf", "#2d606e", "#052fbb"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.7204311414251249,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.7761154189471724,
+              "exponent": 15623324043308178
+            }
+          }
+        }
+      },
+      {
+        "id": 2651651654090193,
+        "name": "Boutonnieres-Verse #5903",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 462386019098741200
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 462386019098741200
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 462386019098741200
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 522103204957141900
+        },
+        "colors": ["black", "#2bf7fe", "#224012", "#f6022b"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.010243617002965704,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 9.762176775161379,
+              "exponent": 16278182612800812
+            }
+          }
+        }
+      },
+      {
+        "id": 2672356288154359,
+        "name": "β-Verse #3143",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 466539091424402940
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 466539091424402940
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 466539091424402940
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 526792646856516860
+        },
+        "colors": ["black", "#ffa72c", "#bf8eca", "#f274ff"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.726843792352287,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.3758114336557743,
+              "exponent": 16418050757564586
+            }
+          }
+        }
+      },
+      {
+        "id": 2785097799270777,
+        "name": "Fabricant-Verse #1343",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 489237285958788800
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 489237285958788800
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 489237285958788800
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 552422314760928100
+        },
+        "colors": ["black", "#cc0944", "#83442b", "#08ac17"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.8491456344952554,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.1776542908265846,
+              "exponent": 17181548161032592
+            }
+          }
+        }
+      },
+      {
+        "id": 2942451985970338,
+        "name": "Baramin-Verse #2546",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 521147004951356350
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 521147004951356350
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 521147004951356350
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 588453176134666100
+        },
+        "colors": ["black", "#00ee93", "#a6e8c8", "#d3adb2"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.7494215344774637,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.334362510275679,
+              "exponent": 18252322010302950
+            }
+          }
+        }
+      },
+      {
+        "id": 3012636459518519,
+        "name": "Coadapting-Verse #4641",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 535463081956118850
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 535463081956118850
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 535463081956118850
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.1,
+          "exponent": 604618175459621100
+        },
+        "colors": ["black", "#fbfb89", "#6475e4", "#838f86"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.6744293666791308,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.482734959961736,
+              "exponent": 18731786499797060
+            }
+          }
+        }
+      },
+      {
+        "id": 3038358836156131,
+        "name": "Precoccygeal-Verse #6334",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 540722453126972500
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 540722453126972500
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 540722453126972500
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 610556794775391400
+        },
+        "colors": ["#005eb7", "#e20da3", "#ff6dde", "#147eb5"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.0929328208290659,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.0760461062936308,
+              "exponent": 18907789933688950
+            }
+          }
+        }
+      },
+      {
+        "id": 3043822977795373,
+        "name": "Mine-Verse #2081",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 541840548966527100
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 541840548966527100
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 541840548966527100
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 611819292768774800
+        },
+        "colors": ["black", "#19572f", "#249373", "#00bfb7"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.5384199677679781,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.8572862446864735,
+              "exponent": 18945197147954544
+            }
+          }
+        }
+      },
+      {
+        "id": 3163941146261443,
+        "name": "α-Verse #2661",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 566494752082207600
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 566494752082207600
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 566494752082207600
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 639657587895973100
+        },
+        "colors": ["black", "#d40ad6", "#ffbcbf", "#e5e8b5"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.42628246565641953,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.3458623813206345,
+              "exponent": 19769197253225704
+            }
+          }
+        }
+      },
+      {
+        "id": 3382545524204579,
+        "name": "Corydaline-Verse #4887",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 611720750629415800
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 611720750629415800
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 611720750629415800
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 690724527235767600
+        },
+        "colors": ["black", "#34e94d", "#2245f1", "#dd9b6f"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.23503090638435953,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 4.254759577723973,
+              "exponent": 21276775637822744
+            }
+          }
+        }
+      },
+      {
+        "id": 3577304901877084,
+        "name": "Mine-Verse #5766",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 652384870787093800
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 652384870787093800
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 652384870787093800
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 736640421281327400
+        },
+        "colors": ["black", "#04fff5", "#5ec908", "#e6aa10"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.879659654050907,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.273606605452269,
+              "exponent": 22628165792794290
+            }
+          }
+        }
+      },
+      {
+        "id": 3669345415948463,
+        "name": "Remix-Verse #6298",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 671718931030525000
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 671718931030525000
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 671718931030525000
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 758471476721985700
+        },
+        "colors": ["#35a79e", "#ab0196", "#09f05b", "#bf3fd3"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.3183961134955269,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 3.1407418546082497,
+              "exponent": 23269403716924800
+            }
+          }
+        }
+      },
+      {
+        "id": 3714544148494673,
+        "name": "Nonclose-Verse #7043",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 681240119395285600
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 681240119395285600
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 681240119395285600
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 769222327212516200
+        },
+        "colors": ["black", "#c40b07", "#0e4816", "#1129f2"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.09143858640056038,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.0936302051076672,
+              "exponent": 23584891114772896
+            }
+          }
+        }
+      },
+      {
+        "id": 3746752645164122,
+        "name": "Precoccygeal-Verse #9476",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 688035496075518000
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 688035496075518000
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 688035496075518000
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 776895327253814300
+        },
+        "colors": ["black", "#f93ed3", "#7a1a72", "#269206"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.009295857515789503,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.0757479859189403,
+              "exponent": 23809941234879280
+            }
+          }
+        }
+      },
+      {
+        "id": 3757424295393119,
+        "name": "Microbeproof-Verse #1128",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 690288943248841900
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 690288943248841900
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 690288943248841900
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 779439807283048800
+        },
+        "colors": ["black", "#025806", "#327fe4", "#a2cff2"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.2236363371944224,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 4.47154524414622,
+              "exponent": 23884549915527932
+            }
+          }
+        }
+      },
+      {
+        "id": 3877792360783034,
+        "name": "Questionless-Verse #5855",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 715771928331680100
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 715771928331680100
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 715771928331680100
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 808213921624909400
+        },
+        "colors": ["black", "#127791", "#e28c1e", "#f18ec3"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.18741970937113264,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 5.335618134055356,
+              "exponent": 24727533819116100
+            }
+          }
+        }
+      },
+      {
+        "id": 3976299862020480,
+        "name": "Fish-Verse #6680",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 736715304359663200
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 736715304359663200
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 736715304359663200
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 831862136093300500
+        },
+        "colors": ["black", "#5c51f8", "#2dfa01", "#d1dd00"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.8443096447011035,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.1843995935330254,
+              "exponent": 33266087128891956
+            }
+          }
+        }
+      },
+      {
+        "id": 3979666907140602,
+        "name": "cook1ee-Verse #2921",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 737432546253567500
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 737432546253567500
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 737432546253567500
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 832672009826651800
+        },
+        "colors": ["black", "#4907f5", "#0012fc", "#14e905"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.4471964773010446,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.2361535717706875,
+              "exponent": 25443051369732724
+            }
+          }
+        }
+      },
+      {
+        "id": 4021184173465573,
+        "name": "Boogiewoogie-Verse #2072",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 746283925998147300
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 746283925998147300
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 746283925998147300
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 842666545868086400
+        },
+        "colors": ["#bbef29", "#65fd0b", "#ee4bfd", "#11849f"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.49824525625363236,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.0070436947440773,
+              "exponent": 25735177010174130
+            }
+          }
+        }
+      },
+      {
+        "id": 4177342633367036,
+        "name": "Hodaddy-Verse #5543",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 779698155129758200
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 779698155129758200
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 779698155129758200
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 880396224967793000
+        },
+        "colors": ["#b93296", "#14e500", "#eb8f46", "#f4ebfb"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.7454764292321524,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.682848070810258,
+              "exponent": 26836625571235616
+            }
+          }
+        }
+      },
+      {
+        "id": 4335097514483893,
+        "name": "Ankylomerism-Verse #8336",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 813644407108873500
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 813644407108873500
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 813644407108873500
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 918726637701993700
+        },
+        "colors": ["black", "#ba00ee", "#88d52e", "#b9fdfd"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.2796903277187098,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 3.5753828462946355,
+              "exponent": 27953523433078068
+            }
+          }
+        }
+      },
+      {
+        "id": 4430258998302511,
+        "name": "Detrusive-Verse #1396",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 834211641526513500
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 834211641526513500
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 834211641526513500
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 941950131845448100
+        },
+        "colors": ["black", "#6c1e04", "#4f0001", "#6da36d"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.10004500816578278,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 9.995501208245374,
+              "exponent": 28629240487350824
+            }
+          }
+        }
+      },
+      {
+        "id": 4502722254214121,
+        "name": "Reprehensibleness-Verse #3469",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 849917606791522600
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 849917606791522600
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 849917606791522600
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.1,
+          "exponent": 959684523594121600
+        },
+        "colors": ["black", "#5e4f45", "#5eaaff", "#00f35a"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.5533216933502451,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.80726693353592,
+              "exponent": 29144759327538480
+            }
+          }
+        }
+      },
+      {
+        "id": 4526679462033809,
+        "name": "cook1ee-Verse #7469",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 855118543285252900
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 855118543285252900
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 855118543285252900
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 965557161390238200
+        },
+        "colors": ["black", "#bbb420", "#8df0c3", "#fe75e3"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.4287394547968821,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.332418882404364,
+              "exponent": 29315379169816308
+            }
+          }
+        }
+      },
+      {
+        "id": 4534881091685751,
+        "name": "λ-Verse #7511",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 856900005909603500
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 856900005909603500
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 856900005909603500
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 967568700033854100
+        },
+        "colors": ["black", "#d6081e", "#51b9cc", "#14afd7"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.5264820342541123,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.8994000458472227,
+              "exponent": 29373810790638030
+            }
+          }
+        }
+      },
+      {
+        "id": 4933205794010238,
+        "name": "Caiquejee-Verse #438",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 943986506632186400
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 943986506632186400
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 943986506632186400
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 1065902428255972700
+        },
+        "colors": ["black", "#0631fe", "#120170", "#e7155c"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.8481531696618316,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.1790323207761064,
+              "exponent": 32224037544576444
+            }
+          }
+        }
+      },
+      {
+        "id": 4978305970488293,
+        "name": "Contractation-Verse #8993",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 953915011844613100
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 953915011844613100
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 953915011844613100
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1077113200592786700
+        },
+        "colors": ["#a141b1", "#f1ea5f", "#c80cd1", "#d00ce9"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.4292408211292889,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.3296945462202356,
+              "exponent": 32548242449287576
+            }
+          }
+        }
+      },
+      {
+        "id": 4981682554880331,
+        "name": "Siberian-Verse #9946",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 954658888030995600
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 954658888030995600
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 954658888030995600
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 1077953148439303700
+        },
+        "colors": ["black", "#ffff57", "#1dff1f", "#360058"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.9908587299244752,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.009225603811576,
+              "exponent": 32572527050491436
+            }
+          }
+        }
+      },
+      {
+        "id": 5142563708523439,
+        "name": "Oes-Verse #552",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 990188415545445500
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 990188415545445500
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 990188415545445500
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1118071316852060000
+        },
+        "colors": ["black", "#3bd8ff", "#0e0491", "#4a339b"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.7203603017704376,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.3881942099561688,
+              "exponent": 33731483938737416
+            }
+          }
+        }
+      },
+      {
+        "id": 5169022961160131,
+        "name": "Embryographic-Verse #7425",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 996047857224616700
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 996047857224616700
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 996047857224616700
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 1124687505823166200
+        },
+        "colors": ["black", "#001a9a", "#5c924c", "#02131c"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.7603085244820958,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.315255541401665,
+              "exponent": 33922441809732796
+            }
+          }
+        }
+      },
+      {
+        "id": 5266291403253320,
+        "name": "Mine-Verse #4867",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1017626563724956900
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1017626563724956900
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1017626563724956900
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1149053103737689700
+        },
+        "colors": ["black", "#5cf193", "#2cddec", "#d9df00"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.7073074950404966,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.413812248579022,
+              "exponent": 45313755284866440
+            }
+          }
+        }
+      },
+      {
+        "id": 5354341429747528,
+        "name": "Mine-Verse #7715",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1037211747618959500
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1037211747618959500
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1037211747618959500
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.1,
+          "exponent": 1171167715465493800
+        },
+        "colors": ["#05a6ff", "#fabbe2", "#302d7a", "#e315ee"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.18225336828373995,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.0973734086967948,
+              "exponent": 35262610993482270
+            }
+          }
+        }
+      },
+      {
+        "id": 5414710788152602,
+        "name": "Fractal-Verse #4736",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1050667792102024600
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1050667792102024600
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1050667792102024600
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1186361609010000000
+        },
+        "colors": ["#ee0aff", "#bb9e76", "#ebe68d", "#ec0c43"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.3600951970369067,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.7770434269288757,
+              "exponent": 35700195148863240
+            }
+          }
+        }
+      },
+      {
+        "id": 5416075186708853,
+        "name": "Routeways-Verse #5764",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 1050972170665073000
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 1050972170665073000
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 1050972170665073000
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1186705298085196300
+        },
+        "colors": ["black", "#5f0be0", "#f9f16b", "#02080f"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.0426298938890127,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.345771731460343,
+              "exponent": 35710090580270990
+            }
+          }
+        }
+      },
+      {
+        "id": 5433876709936793,
+        "name": "Remix-Verse #3204",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1054944496909465900
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1054944496909465900
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1054944496909465900
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1191190650534596400
+        },
+        "colors": ["black", "#01da0d", "#e20601", "#690b1a"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.18340433630319514,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 5.452433787317049,
+              "exponent": 35839220658255900
+            }
+          }
+        }
+      },
+      {
+        "id": 5571748074552921,
+        "name": "Spying-Verse #8266",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1085775430485567700
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1085775430485567700
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1085775430485567700
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 1226003401281859000
+        },
+        "colors": ["black", "#61f6e3", "#27f676", "#891002"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.6879281181320214,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.4536402476400716,
+              "exponent": 36840746146394990
+            }
+          }
+        }
+      },
+      {
+        "id": 5632193215041512,
+        "name": "Jailage-Verse #8310",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1099328460283340700
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1099328460283340700
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1099328460283340700
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1241306805801072600
+        },
+        "colors": ["black", "#a6e72d", "#149c78", "#3aff0e"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.1814903426829215,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.1019870095755806,
+              "exponent": 37280617589868160
+            }
+          }
+        }
+      },
+      {
+        "id": 5657855421935986,
+        "name": "Fractal-Verse #8751",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1105089051173843600
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1105089051173843600
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1105089051173843600
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1247811377397421600
+        },
+        "colors": ["black", "#389ed8", "#1638b3", "#914672"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.3366341643671664,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.9705838142717487,
+              "exponent": 37467509728581490
+            }
+          }
+        }
+      },
+      {
+        "id": 5817400354138401,
+        "name": "Twiglike-Verse #4926",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 1140990527128656800
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 1140990527128656800
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 1140990527128656800
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 1288349531416946400
+        },
+        "colors": ["black", "#045e26", "#a8ff50", "#c4f063"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.27735679423313436,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 3.6054642279988367,
+              "exponent": 38631328817427440
+            }
+          }
+        }
+      },
+      {
+        "id": 5822094679393704,
+        "name": "Unicornous-Verse #9101",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1142049118315906300
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1142049118315906300
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1142049118315906300
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 1289544839728126700
+        },
+        "colors": ["#8f24d9", "#00df06", "#006c00", "#49d001"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.46353158562608604,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 4.314700577089318,
+              "exponent": 38665620916863920
+            }
+          }
+        }
+      },
+      {
+        "id": 5887026282821698,
+        "name": "Coinherent-Verse #9153",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1156704554138462200
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1156704554138462200
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1156704554138462200
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.1,
+          "exponent": 1306093026085305900
+        },
+        "colors": ["black", "#33ff10", "#d5ff25", "#b491cd"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.19413886135171116,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 5.150952225831554,
+              "exponent": 39140229776154220
+            }
+          }
+        }
+      },
+      {
+        "id": 5926715570573620,
+        "name": "Hypoglossal-Verse #8326",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 1165674596387114200
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 1165674596387114200
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 1165674596387114200
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1316221549901295400
+        },
+        "colors": ["black", "#76e052", "#007302", "#fc6567"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.13878456556181637,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 7.205412186520032,
+              "exponent": 51602432421984140
+            }
+          }
+        }
+      },
+      {
+        "id": 6025984774489004,
+        "name": "Forkedly-Verse #2007",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1188149381664387000
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1188149381664387000
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1188149381664387000
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.1,
+          "exponent": 1341598955227821800
+        },
+        "colors": ["#41f1ef", "#030268", "#4a47f4", "#ea00f8"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.6630820001769261,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 3.0162182044850447,
+              "exponent": 40157681574585680
+            }
+          }
+        }
+      },
+      {
+        "id": 6121462592932211,
+        "name": "Math-Verse #5417",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1209818161263850500
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1209818161263850500
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1209818161263850500
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 1366066259188355000
+        },
+        "colors": ["#7e16a4", "#ff93c4", "#0162b9", "#09aaf0"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.2545880900018793,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 3.927913517056584,
+              "exponent": 40858133077956610
+            }
+          }
+        }
+      },
+      {
+        "id": 6223051587139624,
+        "name": "cook1ee-Verse #2571",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1232929492804430000
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1232929492804430000
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1232929492804430000
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 1392162420771447600
+        },
+        "colors": ["#5c05f0", "#00a50e", "#1b221d", "#1a6d2e"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.16297178723056419,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.2272062753846478,
+              "exponent": 41604618109885540
+            }
+          }
+        }
+      },
+      {
+        "id": 6455230980432171,
+        "name": "Prepartaken-Verse #6466",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1285961034817221400
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1285961034817221400
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1285961034817221400
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1452042990047018500
+        },
+        "colors": ["black", "#021232", "#3ec4e1", "#e5e091"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.040912804678507525,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.4442225554028663,
+              "exponent": 43315243894727340
+            }
+          }
+        }
+      },
+      {
+        "id": 6559108286612585,
+        "name": "Precoccygeal-Verse #8450",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 1309780657227340800
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 1309780657227340800
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 1309780657227340800
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 1478938918313691600
+        },
+        "colors": ["black", "#3b4908", "#b391f4", "#5222c6"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.4411464698804293,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.266820814118824,
+              "exponent": 57690454533850200
+            }
+          }
+        }
+      },
+      {
+        "id": 6648403079606350,
+        "name": "Pinnately-Verse #8947",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 1330301659018652200
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 1330301659018652200
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 1330301659018652200
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 1502110208883978000
+        },
+        "colors": ["black", "#7214a0", "#014fd2", "#a6fc5d"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.40820964118848074,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.4497216603913445,
+              "exponent": 58554969073337816
+            }
+          }
+        }
+      },
+      {
+        "id": 6654409625026541,
+        "name": "Insalvable-Verse #1065",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1331683522436641800
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1331683522436641800
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1331683522436641800
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 1503670540056515800
+        },
+        "colors": ["black", "#ffedb5", "#069bfe", "#fe8d01"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.9515123516095394,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.0509585065379772,
+              "exponent": 44787650753055680
+            }
+          }
+        }
+      },
+      {
+        "id": 6708614599435055,
+        "name": "Remix-Verse #1728",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1344162327492235300
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1344162327492235300
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1344162327492235300
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1517760983634935000
+        },
+        "colors": ["#410488", "#5bfd00", "#30f161", "#fdbe50"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.16976503663219747,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 5.8904944141504165,
+              "exponent": 59138568387196616
+            }
+          }
+        }
+      },
+      {
+        "id": 6713248972793506,
+        "name": "Reprehensibleness-Verse #7533",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1345229932765724700
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1345229932765724700
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1345229932765724700
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1518966470202207200
+        },
+        "colors": ["black", "#c10187", "#a90029", "#effffd"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.39390516346036697,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.5386821315446286,
+              "exponent": 45223464316749490
+            }
+          }
+        }
+      },
+      {
+        "id": 6740631655758277,
+        "name": "Remontado-Verse #7991",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1351540241102838800
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1351540241102838800
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1351540241102838800
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 1526091755290836700
+        },
+        "colors": ["black", "#1bb800", "#dd3868", "#abf5f2"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.15188104014465634,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 6.584100286958583,
+              "exponent": 45426413922734530
+            }
+          }
+        }
+      },
+      {
+        "id": 6945577321987295,
+        "name": "Considerateness-Verse #4947",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1398890743455166200
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1398890743455166200
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1398890743455166200
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1579557578246875400
+        },
+        "colors": ["black", "#e9fcdd", "#f061b6", "#24bc00"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.9822733979589647,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.018046505257975,
+              "exponent": 61440376065373200
+            }
+          }
+        }
+      },
+      {
+        "id": 7009141414642825,
+        "name": "Annonce-Verse #8176",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1413619393895111700
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1413619393895111700
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1413619393895111700
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 1596188434894266400
+        },
+        "colors": ["black", "#2003f5", "#f1ec0a", "#0a0903"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.30603959798162783,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 3.267551018218342,
+              "exponent": 62059173053176320
+            }
+          }
+        }
+      },
+      {
+        "id": 7047195381969940,
+        "name": "Astragalocalcaneal-Verse #8123",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1422446593885720000
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1422446593885720000
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1422446593885720000
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1606155668364857600
+        },
+        "colors": ["black", "#5afd5c", "#33bfcb", "#a883ff"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.33897340965409456,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.950083904871624,
+              "exponent": 62429897711850776
+            }
+          }
+        }
+      },
+      {
+        "id": 7062842177864908,
+        "name": "Cookie-Verse #6467",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1426078180851963400
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1426078180851963400
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1426078180851963400
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1610256275035128000
+        },
+        "colors": ["#da5e2d", "#53fd5a", "#8ef500", "#dce10c"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.9288237862888834,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.153260962438314,
+              "exponent": 47820625311955870
+            }
+          }
+        }
+      },
+      {
+        "id": 7083122766530065,
+        "name": "Baudrons-Verse #117",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1430787053445268700
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1430787053445268700
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1430787053445268700
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 1615573298844566800
+        },
+        "colors": ["black", "#2aacfd", "#f16a0b", "#f4fe0c"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.08257785583034989,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.2109784032833526,
+              "exponent": 62780088824287310
+            }
+          }
+        }
+      },
+      {
+        "id": 7134978602671140,
+        "name": "Grovelled-Verse #4801",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 1442836432660307700
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 1442836432660307700
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 1442836432660307700
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1629178856205877000
+        },
+        "colors": ["#5c0f6e", "#69bc81", "#ee2a4f", "#6bfb28"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.12354262598023873,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 8.094372222264038,
+              "exponent": 63285850690108910
+            }
+          }
+        }
+      },
+      {
+        "id": 7774597108629939,
+        "name": "Diageotropy-Verse #4930",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1592514841609805600
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1592514841609805600
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1592514841609805600
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1798188241865374000
+        },
+        "colors": ["black", "#660716", "#e7bf60", "#10ecf5"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.16929777207285993,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 5.906752272969277,
+              "exponent": 53147578297950830
+            }
+          }
+        }
+      },
+      {
+        "id": 7824090575914448,
+        "name": "Overliver-Verse #7583",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1604175981538356200
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1604175981538356200
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1604175981538356200
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1811355418809903900
+        },
+        "colors": ["#74e0ed", "#004b0d", "#fd9914", "#0041fe"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.3602208608576194,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 5.552149298734029,
+              "exponent": 53519870641304340
+            }
+          }
+        }
+      },
+      {
+        "id": 7829214961819712,
+        "name": "Nonequable-Verse #8434",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1605383968755415600
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1605383968755415600
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1605383968755415600
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1812719417658319000
+        },
+        "colors": ["black", "#25fe0a", "#fbfdfc", "#db0600"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.5997999844140373,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 3.334444901584752,
+              "exponent": 53558430010256620
+            }
+          }
+        }
+      },
+      {
+        "id": 7904097547884109,
+        "name": "Catty-Verse #9736",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1623049742267155200
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1623049742267155200
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1623049742267155200
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.1,
+          "exponent": 1832666727022265600
+        },
+        "colors": ["#09be88", "#91468b", "#253681", "#6b6003"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.5138515408681015,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.9460873821855214,
+              "exponent": 54122184726265520
+            }
+          }
+        }
+      },
+      {
+        "id": 7917787332669413,
+        "name": "Idle-Verse #7503",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1626282057428280300
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1626282057428280300
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1626282057428280300
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1836316495906593800
+        },
+        "colors": ["black", "#4fdf80", "#5d0059", "#4ff924"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.15132751509143388,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 6.608183577162343,
+              "exponent": 54225306392603230
+            }
+          }
+        }
+      },
+      {
+        "id": 7982995341813946,
+        "name": "Fangot-Verse #9102",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 1641689882319991600
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 1641689882319991600
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 1641689882319991600
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 1853714242432452600
+        },
+        "colors": ["black", "#5e58e3", "#a9cdd6", "#fda1c1"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.4976708900638255,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.009360040873099,
+              "exponent": 54716746011965010
+            }
+          }
+        }
+      },
+      {
+        "id": 8040977756262379,
+        "name": "Vermian-Verse #811",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1655406233015386000
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1655406233015386000
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1655406233015386000
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.2,
+          "exponent": 1869202060754339000
+        },
+        "colors": ["black", "#becc24", "#5c32ae", "#d8c101"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.5752174191061489,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.7384730830195234,
+              "exponent": 55154067397687340
+            }
+          }
+        }
+      },
+      {
+        "id": 8049868769301094,
+        "name": "Inverse-Verse #9018",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 1657510808309833000
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 1657510808309833000
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 1657510808309833000
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1871578442091400400
+        },
+        "colors": ["#a92dff", "#6f0ade", "#24a693", "#a5ac1d"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.762733538058928,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.311073854894186,
+              "exponent": 55221154126922720
+            }
+          }
+        }
+      },
+      {
+        "id": 8114913406555293,
+        "name": "Cookie-Verse #638",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1672917971485524500
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1672917971485524500
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1672917971485524500
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.1,
+          "exponent": 1888975441440571000
+        },
+        "colors": ["black", "#0433fb", "#2c03d9", "#00aefb"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.8960169716253956,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.1160502888533201,
+              "exponent": 55712170371634660
+            }
+          }
+        }
+      },
+      {
+        "id": 8136273750100751,
+        "name": "Myrmecophagoid-Verse #1636",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1677981651090497800
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1677981651090497800
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1677981651090497800
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 1894693095611399200
+        },
+        "colors": ["black", "#11ff08", "#a51702", "#0043f3"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.25268925412217585,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 3.9574298617245423,
+              "exponent": 55873503745309780
+            }
+          }
+        }
+      },
+      {
+        "id": 8150109776413537,
+        "name": "Spelt-Verse #79",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1681262680004541700
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1681262680004541700
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1681262680004541700
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1898397869633153500
+        },
+        "colors": ["#66dea9", "#ff0864", "#1063c2", "#f706d9"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.7638670917432137,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.30912826433969,
+              "exponent": 55978029021701790
+            }
+          }
+        }
+      },
+      {
+        "id": 8193588651147063,
+        "name": "Venine-Verse #8417",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 1691578538119074600
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 1691578538119074600
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 1691578538119074600
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.3,
+          "exponent": 1910046021525761800
+        },
+        "colors": ["#ff8810", "#260045", "#fdfb1a", "#01df10"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.17537604187399897,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 5.702033124447306,
+              "exponent": 56306608751293890
+            }
+          }
+        }
+      },
+      {
+        "id": 8215543354423699,
+        "name": "Chatting-Verse #5173",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1696790659390158000
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1696790659390158000
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1696790659390158000
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 1915931288613988600
+        },
+        "colors": ["#a35312", "#8d03b8", "#1ceb15", "#ec9c00"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.7835124152635747,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.2763039621568708,
+              "exponent": 56472591749592030
+            }
+          }
+        }
+      },
+      {
+        "id": 8298590291622749,
+        "name": "Nonequable-Verse #181",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1716525114175986200
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1716525114175986200
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1716525114175986200
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1938214449579464200
+        },
+        "colors": ["black", "#6ef4ff", "#27432a", "#04fffe"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.9235999025048688,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.0827199064096138,
+              "exponent": 57100847567699940
+            }
+          }
+        }
+      },
+      {
+        "id": 8299409133019488,
+        "name": "cook1ee-Verse #5331",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1716719843314090000
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1716719843314090000
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 2,
+          "exponent": 1716719843314090000
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.1,
+          "exponent": 1938434327999016400
+        },
+        "colors": ["#189800", "#0b352d", "#b50795", "#1591b6"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.14373805659997185,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.3914199532877165,
+              "exponent": 57107045300505980
+            }
+          }
+        }
+      },
+      {
+        "id": 8349505179626535,
+        "name": "Pinot-Verse #3082",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 1728638675186134500
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 1728638675186134500
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 1728638675186134500
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 1951892477819093200
+        },
+        "colors": ["black", "#0955dd", "#a172b6", "#f62959"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.8710807156148742,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.1479992405687973,
+              "exponent": 75231806782254800
+            }
+          }
+        }
+      },
+      {
+        "id": 8376782430099038,
+        "name": "Caffetannic-Verse #2602",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1735132975981477400
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1735132975981477400
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1735132975981477400
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.1,
+          "exponent": 1959225518004463000
+        },
+        "colors": ["#2c3495", "#aef5ff", "#97b849", "#f8f839"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.20861184653295756,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 4.793591623005049,
+              "exponent": 57692951556568930
+            }
+          }
+        }
+      },
+      {
+        "id": 8389544372549484,
+        "name": "β-Verse #4092",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 1738172489560460800
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 1738172489560460800
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.7,
+          "exponent": 1738172489560460800
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.8,
+          "exponent": 1962657584969184800
+        },
+        "colors": ["#a5fe8b", "#fd6eff", "#0e015b", "#3a5b1e"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.8346315509800946,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 2.396266948752934,
+              "exponent": 57789643002566940
+            }
+          }
+        }
+      },
+      {
+        "id": 8445608039905983,
+        "name": "Ticktacktoo-Verse #5852",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1751533370935192000
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1751533370935192000
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1751533370935192000
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.4,
+          "exponent": 1977744025083434200
+        },
+        "colors": ["#03df45", "#68ba97", "#0d8210", "#7a58f3"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.07562523944099678,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.3223098629396148,
+              "exponent": 58214585944878420
+            }
+          }
+        }
+      },
+      {
+        "id": 8854256250665453,
+        "name": "Pizza-Verse #718",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1849317613345330000
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1849317613345330000
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1,
+          "exponent": 1849317613345330000
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.1,
+          "exponent": 2088157109060648400
+        },
+        "colors": ["#f48e95", "#160091", "#c7f79c", "#13645c"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.6117397153804729,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.63468216115092,
+              "exponent": 61320416227954080
+            }
+          }
+        }
+      },
+      {
+        "id": 8888551725047690,
+        "name": "Fissidentaceous-Verse #4849",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1857555299473497900
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1857555299473497900
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 1857555299473497900
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.2,
+          "exponent": 2097458692913314600
+        },
+        "colors": ["black", "#f3ff01", "#b9fba9", "#d50046"],
+        "skin": 35,
+        "drops": {
+          "wisdom": {
+            "chance": 0.27954920068362227,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 3.5771878351093642,
+              "exponent": 80591415582279710
+            }
+          }
+        }
+      },
+      {
+        "id": 8912440553546106,
+        "name": "Pizza-Verse #7988",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 1863296149482497800
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 1863296149482497800
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.5,
+          "exponent": 1863296149482497800
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 1.6,
+          "exponent": 2103940974091970000
+        },
+        "colors": ["#9d3658", "#750a73", "#154d2a", "#04d709"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.9885167386329345,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 1.0116166584927495,
+              "exponent": 61763814420881120
+            }
+          }
+        }
+      },
+      {
+        "id": 8973304299232446,
+        "name": "Mortified-Verse #9528",
+        "hp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1877933039611132200
+        },
+        "totalHp": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1877933039611132200
+        },
+        "defense": {
+          "decimal": "Infinity",
+          "mantissa": 1.9,
+          "exponent": 1877933039611132200
+        },
+        "value": {
+          "decimal": "Infinity",
+          "mantissa": 2.1,
+          "exponent": 2120468219577594600
+        },
+        "colors": ["#3f23de", "#5af3ef", "#358dff", "#fef225"],
+        "skin": 35,
+        "drops": {
+          "planetcoin": {
+            "chance": 0.03309813841855998,
+            "amount": {
+              "decimal": "Infinity",
+              "mantissa": 3.021317958593236,
+              "exponent": 62227941372281580
+            }
+          }
+        }
+      },
+      {
         "id": 9007199254740989,
         "name": "Fractal-Verse #3463",
         "hp": {
@@ -77155,6 +81763,7 @@
           "inputJson": "null",
           "encoded": "bnVsbA==",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot read properties of null (reading 'money')",
           "stateAfter": {
             "money": {
               "decimal": "77",
@@ -77226,6 +81835,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":null}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0FudWxsJTI1N0Q=",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot read properties of null (reading 'page')",
           "stateAfter": {
             "money": {
               "decimal": "123",
@@ -77297,6 +81907,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"settings\":null}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJzZXR0aW5ncyUyNTIyJTI1M0FudWxsJTI1N0Q=",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot read properties of null (reading 'numberFormatterIndex')",
           "stateAfter": {
             "money": {
               "decimal": "123",
@@ -77368,6 +81979,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"settings\":{\"numberFormatterIndex\":0,\"theme\":\"light\",\"showMineObjLevel\":false,\"showMinCraftDamage\":false},\"upgrades\":null}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJzZXR0aW5ncyUyNTIyJTI1M0ElMjU3QiUyNTIybnVtYmVyRm9ybWF0dGVySW5kZXglMjUyMiUyNTNBMCUyNTJDJTI1MjJ0aGVtZSUyNTIyJTI1M0ElMjUyMmxpZ2h0JTI1MjIlMjUyQyUyNTIyc2hvd01pbmVPYmpMZXZlbCUyNTIyJTI1M0FmYWxzZSUyNTJDJTI1MjJzaG93TWluQ3JhZnREYW1hZ2UlMjUyMiUyNTNBZmFsc2UlMjU3RCUyNTJDJTI1MjJ1cGdyYWRlcyUyNTIyJTI1M0FudWxsJTI1N0Q=",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot convert undefined or null to object",
           "stateAfter": {
             "money": {
               "decimal": "123",
@@ -77439,6 +82051,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"upgrades\":{\"retiredUpgrade\":{\"level\":1}}}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJ1cGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIycmV0aXJlZFVwZ3JhZGUlMjUyMiUyNTNBJTI1N0IlMjUyMmxldmVsJTI1MjIlMjUzQTElMjU3RCUyNTdEJTI1N0Q=",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot set properties of undefined (setting 'level')",
           "stateAfter": {
             "money": {
               "decimal": "123",
@@ -77510,6 +82123,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"upgrades\":{\"idleSpeed\":null}}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJ1cGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIyaWRsZVNwZWVkJTI1MjIlMjUzQW51bGwlMjU3RCUyNTdE",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot read properties of null (reading 'level')",
           "stateAfter": {
             "money": {
               "decimal": "123",
@@ -77581,6 +82195,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"gemUpgrades\":null}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJnZW1VcGdyYWRlcyUyNTIyJTI1M0FudWxsJTI1N0Q=",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot convert undefined or null to object",
           "stateAfter": {
             "money": {
               "decimal": "123",
@@ -77652,6 +82267,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"upgrades\":{\"idleSpeed\":{\"level\":6}},\"gemUpgrades\":{\"offlineGems\":null}}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJ1cGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIyaWRsZVNwZWVkJTI1MjIlMjUzQSUyNTdCJTI1MjJsZXZlbCUyNTIyJTI1M0E2JTI1N0QlMjU3RCUyNTJDJTI1MjJnZW1VcGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIyb2ZmbGluZUdlbXMlMjUyMiUyNTNBbnVsbCUyNTdEJTI1N0Q=",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot read properties of null (reading 'level')",
           "stateAfter": {
             "money": {
               "decimal": "123",
@@ -77723,6 +82339,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"gemUpgrades\":{\"offlineGems\":{\"level\":4}},\"planetCoinUpgrades\":null}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJnZW1VcGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIyb2ZmbGluZUdlbXMlMjUyMiUyNTNBJTI1N0IlMjUyMmxldmVsJTI1MjIlMjUzQTQlMjU3RCUyNTdEJTI1MkMlMjUyMnBsYW5ldENvaW5VcGdyYWRlcyUyNTIyJTI1M0FudWxsJTI1N0Q=",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot convert undefined or null to object",
           "stateAfter": {
             "money": {
               "decimal": "123",
@@ -77794,6 +82411,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"gemUpgrades\":{\"offlineGems\":{\"level\":4}},\"planetCoinUpgrades\":{\"offlinePC\":null}}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJnZW1VcGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIyb2ZmbGluZUdlbXMlMjUyMiUyNTNBJTI1N0IlMjUyMmxldmVsJTI1MjIlMjUzQTQlMjU3RCUyNTdEJTI1MkMlMjUyMnBsYW5ldENvaW5VcGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIyb2ZmbGluZVBDJTI1MjIlMjUzQW51bGwlMjU3RCUyNTdE",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot read properties of null (reading 'level')",
           "stateAfter": {
             "money": {
               "decimal": "123",
@@ -77865,6 +82483,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"powers\":{\"data\":{\"values\":null},\"upgrades\":{}}}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJwb3dlcnMlMjUyMiUyNTNBJTI1N0IlMjUyMmRhdGElMjUyMiUyNTNBJTI1N0IlMjUyMnZhbHVlcyUyNTIyJTI1M0FudWxsJTI1N0QlMjUyQyUyNTIydXBncmFkZXMlMjUyMiUyNTNBJTI1N0IlMjU3RCUyNTdEJTI1N0Q=",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot read properties of null (reading 'length')",
           "stateAfter": {
             "money": {
               "decimal": "123",
@@ -77936,6 +82555,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"powers\":null}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJwb3dlcnMlMjUyMiUyNTNBbnVsbCUyNTdE",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot read properties of null (reading 'data')",
           "stateAfter": {
             "money": {
               "decimal": "123",
@@ -78007,6 +82627,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"powers\":{\"data\":null,\"upgrades\":{}}}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJwb3dlcnMlMjUyMiUyNTNBJTI1N0IlMjUyMmRhdGElMjUyMiUyNTNBbnVsbCUyNTJDJTI1MjJ1cGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTdEJTI1N0QlMjU3RA==",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot read properties of null (reading 'values')",
           "stateAfter": {
             "money": {
               "decimal": "123",
@@ -78078,6 +82699,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"powers\":{\"data\":{\"values\":[\"2\"]},\"upgrades\":null}}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJwb3dlcnMlMjUyMiUyNTNBJTI1N0IlMjUyMmRhdGElMjUyMiUyNTNBJTI1N0IlMjUyMnZhbHVlcyUyNTIyJTI1M0ElMjU1QiUyNTIyMiUyNTIyJTI1NUQlMjU3RCUyNTJDJTI1MjJ1cGdyYWRlcyUyNTIyJTI1M0FudWxsJTI1N0QlMjU3RA==",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot convert undefined or null to object",
           "stateAfter": {
             "money": {
               "decimal": "123",
@@ -78149,6 +82771,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"powers\":{\"data\":{\"values\":[\"3\"]},\"upgrades\":{\"powerPowerActive\":null}}}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJwb3dlcnMlMjUyMiUyNTNBJTI1N0IlMjUyMmRhdGElMjUyMiUyNTNBJTI1N0IlMjUyMnZhbHVlcyUyNTIyJTI1M0ElMjU1QiUyNTIyMyUyNTIyJTI1NUQlMjU3RCUyNTJDJTI1MjJ1cGdyYWRlcyUyNTIyJTI1M0ElMjU3QiUyNTIycG93ZXJQb3dlckFjdGl2ZSUyNTIyJTI1M0FudWxsJTI1N0QlMjU3RCUyNTdE",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot read properties of null (reading 'level')",
           "stateAfter": {
             "money": {
               "decimal": "123",
@@ -78220,6 +82843,7 @@
           "inputJson": "{\"money\":\"123\",\"highestMoney\":\"130\",\"gems\":\"8\",\"planetCoins\":\"2\",\"maxPlanetCoins\":\"3\",\"wisdom\":\"4\",\"maxWisdom\":\"5\",\"mineObjectLevel\":4,\"highestMineObjectLevel\":9,\"story\":{\"page\":2,\"notifications\":3,\"highestUnlocked\":5,\"scrollY\":6},\"pickaxe\":null}",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIyaGlnaGVzdE1vbmV5JTI1MjIlMjUzQSUyNTIyMTMwJTI1MjIlMjUyQyUyNTIyZ2VtcyUyNTIyJTI1M0ElMjUyMjglMjUyMiUyNTJDJTI1MjJwbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjIlMjUyMiUyNTJDJTI1MjJtYXhQbGFuZXRDb2lucyUyNTIyJTI1M0ElMjUyMjMlMjUyMiUyNTJDJTI1MjJ3aXNkb20lMjUyMiUyNTNBJTI1MjI0JTI1MjIlMjUyQyUyNTIybWF4V2lzZG9tJTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMm1pbmVPYmplY3RMZXZlbCUyNTIyJTI1M0E0JTI1MkMlMjUyMmhpZ2hlc3RNaW5lT2JqZWN0TGV2ZWwlMjUyMiUyNTNBOSUyNTJDJTI1MjJzdG9yeSUyNTIyJTI1M0ElMjU3QiUyNTIycGFnZSUyNTIyJTI1M0EyJTI1MkMlMjUyMm5vdGlmaWNhdGlvbnMlMjUyMiUyNTNBMyUyNTJDJTI1MjJoaWdoZXN0VW5sb2NrZWQlMjUyMiUyNTNBNSUyNTJDJTI1MjJzY3JvbGxZJTI1MjIlMjUzQTYlMjU3RCUyNTJDJTI1MjJwaWNrYXhlJTI1MjIlMjUzQW51bGwlMjU3RA==",
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot read properties of null (reading 'name')",
           "stateAfter": {
             "money": {
               "decimal": "123",

@@ -126,7 +126,7 @@ function withoutNodeSensitiveChanceBoundaries(
   });
 }
 
-it("matches captured mine objects continuously through generated ID 768", () => {
+it("matches the dense mine-object corpus and 151 high-index probes", () => {
   expect(catalogFile.source.commit).toBe(corpus.metadata.sourceCommit);
   expect(catalog.base).toHaveLength(72);
   expect(catalog.special).toHaveLength(78);
@@ -134,6 +134,12 @@ it("matches captured mine objects continuously through generated ID 768", () => 
   expect(
     corpus.data.objects.filter(({ id }) => id <= 768).map(({ id }) => id),
   ).toEqual(Array.from({ length: 769 }, (_, id) => id));
+  const highIndexIds = corpus.data.objects
+    .filter(({ id }) => id > 768)
+    .map(({ id }) => id);
+  expect(highIndexIds).toHaveLength(151);
+  expect(new Set(highIndexIds).size).toBe(highIndexIds.length);
+  expect(highIndexIds).toContain(Number.MAX_SAFE_INTEGER);
   // Math.sin differs by a few ulps between Node and the pinned Chromium
   // runtime for these chance values. The browser E2E test checks them exactly.
   expect(

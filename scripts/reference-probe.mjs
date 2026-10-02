@@ -34,7 +34,7 @@ const previewPath = path.join(
 );
 const fixedClock = 1_704_067_200_000;
 const randomSeed = 0x1d1e;
-const postUniverseIds = [
+const postUniverseBoundaryIds = [
   769,
   999,
   1_000,
@@ -58,6 +58,27 @@ const postUniverseIds = [
   Number.MAX_SAFE_INTEGER - 2,
   Number.MAX_SAFE_INTEGER - 1,
   Number.MAX_SAFE_INTEGER,
+];
+
+function createPostUniverseSampleIds(sampleCount) {
+  // Reproducible xorshift64* sample across the safe-integer range. Keep the
+  // seed fixed so the checked-in oracle IDs are regenerated identically.
+  const sampleRange = BigInt(Number.MAX_SAFE_INTEGER - 768);
+  let state = 0x494d4220261002n;
+  const samples = new Set();
+  while (samples.size < sampleCount) {
+    state = BigInt.asUintN(64, state ^ (state >> 12n));
+    state = BigInt.asUintN(64, state ^ (state << 25n));
+    state = BigInt.asUintN(64, state ^ (state >> 27n));
+    const output = BigInt.asUintN(64, state * 0x2545f4914f6cdd1dn);
+    samples.add(769 + Number(output % sampleRange));
+  }
+  return [...samples];
+}
+
+const postUniverseIds = [
+  ...postUniverseBoundaryIds,
+  ...createPostUniverseSampleIds(128),
 ];
 
 function sha256(contents) {
@@ -2727,16 +2748,19 @@ async function capture(reference, dependencies, dependencySnapshots) {
                   const inputJson = JSON.stringify(scenario.input);
                   const encoded = encodeProbeSave(scenario.input);
                   let thrownErrorName = null;
+                  let thrownErrorMessage = null;
                   try {
                     functions.loadGame(encoded, undefined, true);
                   } catch (error) {
                     thrownErrorName = error.name;
+                    thrownErrorMessage = error.message;
                   }
                   return {
                     name: scenario.name,
                     inputJson,
                     encoded,
                     thrownErrorName,
+                    thrownErrorMessage,
                     stateAfter: {
                       money: normalizedDecimal(game.money),
                       mineObjectLevel: game.mineObjectLevel,
