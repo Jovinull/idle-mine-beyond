@@ -1,0 +1,39 @@
+{
+  "repository": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": ["index.html", "main.css", "Scripts/Define/game.js"],
+  "browserName": "Chromium",
+  "browserVersion": "153.0.8010.12",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "browserColorScheme": "light",
+  "gameTheme": "dark",
+  "locale": "en-US",
+  "timezoneId": "UTC",
+  "clockMs": 1704067200000,
+  "phaseSaveId": "space",
+  "controlledBoundary": false,
+  "state": {
+    "tab": "main",
+    "upgradeTab": "gems",
+    "theme": "dark",
+    "mineObjectLevel": 124,
+    "highestMineObjectLevel": 124,
+    "currentObjectName": "Hyper-Saturn",
+    "money": "1e+80",
+    "gems": "100",
+    "planetCoins": "1000",
+    "wisdom": "0",
+    "story": {
+      "page": 6,
+      "highestUnlocked": 36,
+      "notifications": 34
+    }
+  },
+  "screenshotSha256": "00df03f8a0441918ec9158463a31a4a0a1acbb8a5471a8246459425023b61471",
+  "capturedOn": "2026-10-01",
+  "screenshotPath": "tests/fixtures/visual/remix-upgrades-space-gems-dark-1440x900.png"
+}

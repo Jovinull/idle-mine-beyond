@@ -1,0 +1,39 @@
+{
+  "repository": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": ["index.html", "main.css", "Scripts/Define/game.js"],
+  "browserName": "Chromium",
+  "browserVersion": "153.0.8010.12",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "browserColorScheme": "light",
+  "gameTheme": "dark",
+  "locale": "en-US",
+  "timezoneId": "UTC",
+  "clockMs": 1704067200000,
+  "phaseSaveId": "galaxies",
+  "controlledBoundary": false,
+  "state": {
+    "tab": "main",
+    "upgradeTab": "money",
+    "theme": "dark",
+    "mineObjectLevel": 198,
+    "highestMineObjectLevel": 198,
+    "currentObjectName": "Large Magellanic Cloud",
+    "money": "1e+175",
+    "gems": "10000",
+    "planetCoins": "100000000000000",
+    "wisdom": "100000000",
+    "story": {
+      "page": 8,
+      "highestUnlocked": 53,
+      "notifications": 50
+    }
+  },
+  "screenshotSha256": "b5428887fb9f43f318253be8c5774d9ae3ccd6bca906af32d33a4852a6a23999",
+  "capturedOn": "2026-10-01",
+  "screenshotPath": "tests/fixtures/visual/remix-mining-galaxies-dark-1440x900.png"
+}

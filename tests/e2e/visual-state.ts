@@ -13,8 +13,10 @@ import {
 type VisualState = {
   readonly clockMs: number;
   readonly theme: "light" | "dark";
-  readonly tab: "main" | "settings";
+  readonly tab: "main" | "powers" | "story" | "settings";
 };
+
+type RemixSaveVisualState = VisualState & { readonly saveString: string };
 
 type StoryVisualState = {
   readonly clockMs: number;
@@ -165,5 +167,47 @@ export async function createBeyondStoryVisualSaveFromRemixSave({
     ...loaded.state,
     simulation: { ...loaded.state.simulation, lastActiveMs: clockMs },
     settings: { ...loaded.state.settings, theme, tab: "story" },
+  });
+}
+
+/** Imports one source-captured Remix save into Beyond v1 for app visual checks. */
+export async function createBeyondVisualSaveFromRemixSave({
+  clockMs,
+  theme,
+  tab,
+  saveString,
+}: RemixSaveVisualState): Promise<string> {
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as { data: { mineObjectCatalog: unknown } };
+  const catalog = reference.data.mineObjectCatalog as Parameters<
+    typeof createInitialRemixSimulationState
+  >[0];
+  const initial = createInitialRemixLegacySaveApplicationState(
+    createInitialRemixSimulationState(catalog),
+  );
+  const loaded = loadRemixLegacySaveIntoState({
+    state: initial,
+    saveString,
+    catalog,
+    clock: { now: () => clockMs },
+    resolveNumberFormatter: () => () => "",
+    noOffline: true,
+  });
+  if (loaded.status !== "loaded") {
+    throw new Error(
+      `Captured Remix save could not be prepared for a Beyond visual comparison: ${loaded.status}.`,
+    );
+  }
+  return encodeRemixBeyondSave({
+    ...loaded.state,
+    simulation: { ...loaded.state.simulation, lastActiveMs: clockMs },
+    settings: { ...loaded.state.settings, theme, tab },
   });
 }

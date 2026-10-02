@@ -1,0 +1,39 @@
+{
+  "repository": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": ["index.html", "main.css", "Scripts/Define/game.js"],
+  "browserName": "Chromium",
+  "browserVersion": "153.0.8010.12",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "browserColorScheme": "light",
+  "gameTheme": "dark",
+  "locale": "en-US",
+  "timezoneId": "UTC",
+  "clockMs": 1704067200000,
+  "phaseSaveId": "wisdom-stars",
+  "controlledBoundary": true,
+  "state": {
+    "tab": "powers",
+    "upgradeTab": "money",
+    "theme": "dark",
+    "mineObjectLevel": 169,
+    "highestMineObjectLevel": 170,
+    "currentObjectName": "ESSENCE OF WISDOM",
+    "money": "1e+140",
+    "gems": "500",
+    "planetCoins": "100000000",
+    "wisdom": "10",
+    "story": {
+      "page": 7,
+      "highestUnlocked": 45,
+      "notifications": 43
+    }
+  },
+  "screenshotSha256": "6ac767b7ba8eb481c77076826fe14e018a39e55bbd1d5d452facffa92491bbd0",
+  "capturedOn": "2026-10-01",
+  "screenshotPath": "tests/fixtures/visual/remix-powers-wisdom-stars-dark-1440x900.png"
+}

@@ -1,0 +1,39 @@
+{
+  "repository": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": ["index.html", "main.css", "Scripts/Define/game.js"],
+  "browserName": "Chromium",
+  "browserVersion": "153.0.8010.12",
+  "viewport": {
+    "width": 2560,
+    "height": 1440
+  },
+  "deviceScaleFactor": 1,
+  "browserColorScheme": "light",
+  "gameTheme": "dark",
+  "locale": "en-US",
+  "timezoneId": "UTC",
+  "clockMs": 1704067200000,
+  "phaseSaveId": null,
+  "controlledBoundary": false,
+  "state": {
+    "tab": "settings",
+    "upgradeTab": "money",
+    "theme": "dark",
+    "mineObjectLevel": 0,
+    "highestMineObjectLevel": 0,
+    "currentObjectName": "Mud",
+    "money": "0",
+    "gems": "5",
+    "planetCoins": "0",
+    "wisdom": "0",
+    "story": {
+      "page": 0,
+      "highestUnlocked": 0,
+      "notifications": 1
+    }
+  },
+  "screenshotSha256": "ac70ccf8074e30b2dfc3671a288eb1aadb95f905dc5909d5ae71f428415171f0",
+  "capturedOn": "2026-10-02",
+  "screenshotPath": "tests/fixtures/visual/remix-primary-settings-dark-2560x1440-linux.png"
+}

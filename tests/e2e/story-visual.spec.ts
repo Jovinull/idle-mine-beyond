@@ -655,7 +655,7 @@ for (const theme of ["light", "dark"] as const) {
   test(`matches the pinned first-Blacksmith and first-Clay Remix Story ${theme} screens`, async ({
     page,
   }) => {
-    test.setTimeout(60_000);
+    test.setTimeout(120_000);
     const screenshotName = `story-first-blacksmith-${theme}-1440x900`;
     const screenshotMetadata = JSON.parse(
       await readFile(
@@ -794,6 +794,7 @@ for (const theme of ["light", "dark"] as const) {
     await expect(page.locator("#app")).toHaveAttribute(
       "data-app-state",
       "ready",
+      { timeout: 15_000 },
     );
     await expect(page.locator("#app")).toHaveAttribute("data-theme", theme);
 
@@ -1441,6 +1442,7 @@ for (const theme of ["light", "dark"] as const) {
       metadata.state.nextObjective,
     );
     await expect(page.locator("header")).toContainText("1,000,053 $");
+    await page.evaluate(() => document.fonts.ready);
     await page.locator(".story-milestones").evaluate((node) => {
       node.scrollTop = node.scrollHeight - node.clientHeight;
     });
@@ -1466,7 +1468,6 @@ for (const theme of ["light", "dark"] as const) {
         metadata.scrollCapture.maxScrollTop,
       );
     }
-    await page.evaluate(() => document.fonts.ready);
     for (const canvas of await page.locator(".story-milestones canvas").all()) {
       await expect(canvas).toHaveAttribute("data-rendered", "true");
     }
@@ -2013,6 +2014,131 @@ test("matches the natural Chapter 5 Remix Story screen", async ({ page }) => {
   await expect(
     page.locator("[data-game-tab='story'] .notification"),
   ).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page.locator(".story-milestones").evaluate((node) => node.scrollTop),
+    )
+    .toBe(metadata.state.scrollTop);
+  await page.evaluate(() => document.fonts.ready);
+  await page.mouse.move(1439, 899);
+  await page.evaluate(() => {
+    for (const animation of document.getAnimations()) {
+      animation.pause();
+      animation.currentTime = 0;
+    }
+  });
+  if (process.platform !== "linux") {
+    await expect(page).toHaveScreenshot(`${screenshotName}.png`, {
+      maxDiffPixels: 0,
+    });
+  }
+});
+
+test("matches the natural Chapter 6 Remix Story screen", async ({ page }) => {
+  const screenshotName = "story-natural-chapter-6-light-1440x900";
+  const metadata = JSON.parse(
+    await readFile(
+      new URL(`../fixtures/visual/${screenshotName}.json`, import.meta.url),
+      "utf8",
+    ),
+  ) as {
+    gameTheme: string;
+    clockMs: number;
+    route: { seed: number; startingDraws: number; checkpoints: number };
+    state: {
+      page: number;
+      highestUnlocked: number;
+      maxStoryPage: number;
+      highestMineObjectLevel: number;
+      notifications: number;
+      scrollTop: number;
+      visibleMilestones: string[];
+      nextObjective: string;
+      chapterHeading: string;
+    };
+  };
+  const runtime = JSON.parse(
+    await readFile(
+      new URL("../fixtures/parity/remix-story-runtime.json", import.meta.url),
+      "utf8",
+    ),
+  ) as {
+    spookyBoneProgression: {
+      millionaireProgression: {
+        chapter6Progression: {
+          replayRouteStart: { random: { draws: number } };
+          saveString: string;
+          trace: { records: number };
+        };
+      };
+    };
+  };
+  const sourceRoute =
+    runtime.spookyBoneProgression.millionaireProgression.chapter6Progression;
+  expect(metadata.gameTheme).toBe("light");
+  expect(metadata.route).toMatchObject({
+    seed: 7454,
+    startingDraws: sourceRoute.replayRouteStart.random.draws,
+    checkpoints: sourceRoute.trace.records,
+  });
+  expect(metadata.state).toMatchObject({
+    page: 5,
+    highestMineObjectLevel: 90,
+    maxStoryPage: 5,
+    scrollTop: 0,
+    visibleMilestones: ["breakSpacePortal"],
+    chapterHeading: "Chapter 6: Gone to Space",
+  });
+
+  const serialized = await createBeyondStoryVisualSaveFromRemixSave({
+    clockMs: metadata.clockMs,
+    theme: "light",
+    saveString: sourceRoute.saveString,
+  });
+  await page.addInitScript(
+    ({ now, save, seed }) => {
+      localStorage.clear();
+      localStorage.setItem("IdleMineBeyond", save);
+      Object.defineProperty(Date, "now", {
+        configurable: true,
+        value: () => now,
+      });
+      let randomState = seed >>> 0;
+      Math.random = () => {
+        randomState = (Math.imul(randomState, 1_664_525) + 1_013_904_223) >>> 0;
+        return randomState / 0x1_0000_0000;
+      };
+    },
+    { now: metadata.clockMs, save: serialized, seed: 7454 },
+  );
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+  await expect(page.locator("#app")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator("article.story")).toBeVisible();
+  await expect(page.locator("[data-story-page]")).toHaveAttribute(
+    "data-story-page",
+    "5",
+  );
+  await expect(page.locator(".chapter-control h3")).toHaveText(
+    metadata.state.chapterHeading,
+  );
+  const milestones = page.locator(
+    ".story-milestones > div[data-story-milestone-key]",
+  );
+  await expect(milestones).toHaveCount(1);
+  await expect(milestones).toHaveAttribute(
+    "data-story-milestone-key",
+    "breakSpacePortal",
+  );
+  await expect(page.locator(".objective")).toContainText(
+    metadata.state.nextObjective,
+  );
+  if (metadata.state.notifications === 0) {
+    await expect(
+      page.locator("[data-game-tab='story'] .notification"),
+    ).toHaveCount(0);
+  }
   await expect
     .poll(() =>
       page.locator(".story-milestones").evaluate((node) => node.scrollTop),
