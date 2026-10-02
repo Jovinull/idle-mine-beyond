@@ -127,10 +127,28 @@ it("records the complete indexed mine-object range and high-ID oracle probes", (
   );
   expect(fixture.data.objects.map((object) => object.id)).toEqual([
     ...Array.from({ length: 769 }, (_, id) => id),
+    769,
+    999,
     1_000,
+    1_001,
+    1_023,
+    1_024,
+    1_025,
+    9_999,
     10_000,
+    10_001,
     1_000_000,
+    1_048_575,
+    1_048_576,
+    1_048_577,
+    2_147_483_646,
     2_147_483_647,
+    2_147_483_648,
+    4_294_967_295,
+    4_294_967_296,
+    4_294_967_297,
+    Number.MAX_SAFE_INTEGER - 2,
+    Number.MAX_SAFE_INTEGER - 1,
     Number.MAX_SAFE_INTEGER,
   ]);
   expect(fixture.data.initialState.progress).toMatchObject({

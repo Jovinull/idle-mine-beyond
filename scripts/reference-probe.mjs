@@ -35,10 +35,28 @@ const previewPath = path.join(
 const fixedClock = 1_704_067_200_000;
 const randomSeed = 0x1d1e;
 const postUniverseIds = [
+  769,
+  999,
   1_000,
+  1_001,
+  1_023,
+  1_024,
+  1_025,
+  9_999,
   10_000,
+  10_001,
+  1_048_575,
+  1_048_576,
+  1_048_577,
   1_000_000,
+  2_147_483_646,
   2_147_483_647,
+  2_147_483_648,
+  4_294_967_295,
+  4_294_967_296,
+  4_294_967_297,
+  Number.MAX_SAFE_INTEGER - 2,
+  Number.MAX_SAFE_INTEGER - 1,
   Number.MAX_SAFE_INTEGER,
 ];
 
