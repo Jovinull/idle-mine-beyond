@@ -1,8 +1,9 @@
 import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
 import { createServer } from "node:http";
-import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { createReadStream, createWriteStream } from "node:fs";
+import { Readable } from "node:stream";
 import {
   constants as zlibConstants,
   createBrotliCompress,
@@ -18,6 +19,7 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "@playwright/test";
 import { format } from "prettier";
 import { getChromiumLaunchOptions } from "./playwright-browser.mjs";
+import { compactStoryRouteRecords } from "./story-route-trace.mjs";
 
 const execFileAsync = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -37,6 +39,10 @@ const fixturePath = path.join(
   root,
   "tests/fixtures/parity/remix-story-runtime.json",
 );
+const phaseDifferentialFixturePath = path.join(
+  root,
+  "tests/fixtures/parity/remix-phase-differentials.json",
+);
 const visualGoldenDirectory = path.join(
   root,
   "tests/fixtures/visual/remix-story-mine-objects",
@@ -51,12 +57,74 @@ const storyRouteTraceSinks = new WeakMap();
 const fixedClock = 1_704_067_200_000;
 const randomSeed = 0x1d1e;
 const viewport = { width: 1440, height: 900 };
+// The natural Chapter 6 route replays about 3.75 million source checkpoints
+// and takes hours, so only `--check-chapter6` recaptures it.
+let captureChapter6Route = false;
+const compactTraceCompressionOptions = {
+  params: {
+    [zlibConstants.BROTLI_PARAM_QUALITY]: 9,
+    [zlibConstants.BROTLI_PARAM_LGWIN]: 24,
+  },
+};
 const routeTraceCompressionOptions = {
   params: { [zlibConstants.BROTLI_PARAM_QUALITY]: 4 },
 };
+const endgamePhases = [
+  {
+    id: "space",
+    heading: "Hyperplanets",
+    page: 6,
+    mineObjectLevel: 124,
+    milestone: "hyperSaturn",
+    money: "1e80",
+    gems: "100",
+    planetCoins: "1000",
+    wisdom: "0",
+    pickaxePower: "1e62",
+    sequenceSeed: 1_256_245_121,
+  },
+  {
+    id: "wisdom-stars",
+    heading: "The Wisdom Era",
+    page: 7,
+    mineObjectLevel: 169,
+    milestone: "reachWisdomEssence",
+    money: "1e140",
+    gems: "500",
+    planetCoins: "1e8",
+    wisdom: "10",
+    pickaxePower: "1e104",
+    sequenceSeed: 1_256_245_122,
+  },
+  {
+    id: "galaxies",
+    heading: "Cosmic Superstructures",
+    page: 8,
+    mineObjectLevel: 198,
+    milestone: "mineSmallGalaxy",
+    money: "1e175",
+    gems: "10000",
+    planetCoins: "1e14",
+    wisdom: "1e8",
+    pickaxePower: "1e135",
+    sequenceSeed: 1_256_245_123,
+  },
+];
+const phaseDifferentialActionCount = 3_000;
+const phaseDifferentialTraceBatchSize = 100;
 
 function sha256(contents) {
   return createHash("sha256").update(contents).digest("hex");
+}
+
+function setLegacySaveTab(saveString, tab) {
+  const encodedJson = Buffer.from(saveString, "base64").toString("latin1");
+  const json = JSON.parse(decodeURIComponent(decodeURIComponent(encodedJson)));
+  json.settings.tab = tab;
+  return Buffer.from(
+    escape(encodeURIComponent(JSON.stringify(json))),
+    "latin1",
+  ).toString("base64");
 }
 
 function storyRouteTraceFixturePath(file) {
@@ -165,13 +233,302 @@ async function createStoryRouteTraceSink(page, traceFile) {
   };
 }
 
-async function assertStoryRouteTracesMatch(actualPath, expectedPath) {
+async function readStoryRouteTraceSummary(filePath) {
+  const rawHash = createHash("sha256");
+  const lines = createInterface({
+    input: createReadStream(filePath).pipe(createBrotliDecompress()),
+    crlfDelay: Infinity,
+  });
+  let records = 0;
+  let routeIterations = 0;
+  let totalActiveClicks = 0;
+  let craftAttempts = 0;
+  let farmBreaks = 0;
+  const eventCounts = {};
+  const upgradePurchases = {};
+  let last;
+  for await (const line of lines) {
+    rawHash.update(`${line}\n`);
+    records++;
+    const record = JSON.parse(line);
+    last = record;
+    eventCounts[record.event.type] = (eventCounts[record.event.type] ?? 0) + 1;
+    if (record.event.type === "select" && record.event.purpose === "progress") {
+      routeIterations++;
+    }
+    if (record.event.type === "craft") craftAttempts++;
+    if (record.event.type === "purchase") {
+      upgradePurchases[record.event.key] =
+        (upgradePurchases[record.event.key] ?? 0) + 1;
+    }
+    if (record.event.type === "mine") {
+      totalActiveClicks += record.event.clicks;
+      if (record.event.purpose === "farm") farmBreaks++;
+    }
+  }
+  if (!last) throw new Error(`Story route trace is empty: ${filePath}`);
+  return {
+    records,
+    routeIterations,
+    totalActiveClicks,
+    craftAttempts,
+    farmBreaks,
+    eventCounts,
+    upgradePurchases,
+    rawSha256: rawHash.digest("hex"),
+    last,
+  };
+}
+
+async function mergeStoryRouteTraces(inputPaths, outputPath) {
+  const rawHash = createHash("sha256");
+  let records = 0;
+  async function* traceLines() {
+    for (const inputPath of inputPaths) {
+      const lines = createInterface({
+        input: createReadStream(inputPath).pipe(createBrotliDecompress()),
+        crlfDelay: Infinity,
+      });
+      for await (const line of lines) {
+        const recordLine = `${line}\n`;
+        rawHash.update(recordLine);
+        records++;
+        yield recordLine;
+      }
+    }
+  }
+  const temporaryPath = `${outputPath}.tmp`;
+  await pipeline(
+    Readable.from(traceLines()),
+    createBrotliCompress(routeTraceCompressionOptions),
+    createWriteStream(temporaryPath),
+  );
+  await rename(temporaryPath, outputPath);
+  return { records, rawSha256: rawHash.digest("hex") };
+}
+
+function readStoryRouteTraceRecords(filePath) {
+  const lines = createInterface({
+    input: createReadStream(filePath).pipe(createBrotliDecompress()),
+    crlfDelay: Infinity,
+  });
+  return (async function* () {
+    for await (const line of lines) yield JSON.parse(line);
+  })();
+}
+
+/** Writes the tracked compact form of a full route trace from `.research/`. */
+async function writeCompactStoryRouteTrace(fullPath, outputPath) {
+  const sourceHash = createHash("sha256");
+  const compactHash = createHash("sha256");
+  let records = 0;
+  async function* sourceRecords() {
+    const lines = createInterface({
+      input: createReadStream(fullPath).pipe(createBrotliDecompress()),
+      crlfDelay: Infinity,
+    });
+    for await (const line of lines) {
+      sourceHash.update(`${line}\n`);
+      yield JSON.parse(line);
+    }
+  }
+  async function* compactLines() {
+    for await (const record of compactStoryRouteRecords(sourceRecords())) {
+      const line = `${JSON.stringify(record)}\n`;
+      compactHash.update(line);
+      records++;
+      yield line;
+    }
+  }
+  const temporaryPath = `${outputPath}.tmp`;
+  await pipeline(
+    Readable.from(compactLines()),
+    createBrotliCompress(compactTraceCompressionOptions),
+    createWriteStream(temporaryPath),
+  );
+  await rename(temporaryPath, outputPath);
+  return {
+    records,
+    rawSha256: compactHash.digest("hex"),
+    sourceRawSha256: sourceHash.digest("hex"),
+  };
+}
+
+async function restoreStoryRouteCheckpoint(page, { saveString, checkpoint }) {
+  const restored = await page.evaluate(
+    ({ saveString: startingSave, checkpoint: target }) => {
+      const { game, functions } = window;
+      const { state, random } = target;
+      functions.loadGame(startingSave, true, true);
+
+      const decimal = (value) => new window.Decimal(value);
+      game.mineObjectLevel = state.mineObjectLevel;
+      game.highestMineObjectLevel = state.highestMineObjectLevel;
+      game.currentMineObject = functions.getMineObject(state.mineObjectLevel);
+      game.currentMineObject.hp = decimal(state.currentObject.hp);
+      for (const key of Object.keys(state.resources)) {
+        game[key] = decimal(state.resources[key]);
+      }
+      const powerIndex = {
+        mining: 0,
+        craftsmanship: 1,
+        expertise: 2,
+        wisdom: 3,
+        exquisity: 4,
+      };
+      for (const [name, index] of Object.entries(powerIndex)) {
+        window.Vue.set(
+          game.powers.data.values,
+          index,
+          decimal(state.powers[name]),
+        );
+      }
+      const groups = {
+        money: game.upgrades,
+        gems: game.gemUpgrades,
+        planetCoins: game.planetCoinUpgrades,
+        wisdom: game.powers.upgrades,
+      };
+      for (const [groupName, upgrades] of Object.entries(groups)) {
+        for (const [key, level] of Object.entries(state.upgrades[groupName])) {
+          upgrades[key].level = level;
+        }
+      }
+      game.pickaxe.name = state.pickaxe.name;
+      game.pickaxe.pow = decimal(state.pickaxe.power);
+      game.pickaxe.quality = decimal(state.pickaxe.quality);
+      game.timer.autoPickaxe = state.autoPickaxeTimer;
+      game.timer.save = state.saveTimer;
+      game.usedGemsLevel = state.usedGemsLevel;
+      game.lastActive = state.lastActiveMs;
+      game.story.page = state.story.page;
+      game.story.highestUnlocked = state.story.highestUnlocked;
+      game.story.notifications = state.story.notifications;
+      functions.changeTab("main");
+      window.__idleMineBeyondProbe.restoreRandomCursor(random);
+      return {
+        state: window.__idleMineBeyondProbe.simulationState(),
+        random: window.__idleMineBeyondProbe.randomCursor(),
+      };
+    },
+    { saveString, checkpoint },
+  );
+  if (JSON.stringify(restored.state) !== JSON.stringify(checkpoint.state)) {
+    throw new Error(
+      `Restored source route checkpoint differs: ${findFirstDifference(restored.state, checkpoint.state)}.`,
+    );
+  }
+  if (JSON.stringify(restored.random) !== JSON.stringify(checkpoint.random)) {
+    throw new Error(
+      "Restored source route RNG cursor differs from its checkpoint.",
+    );
+  }
+  return restored;
+}
+
+async function captureChapter6Continuation(page, captureScreenshots) {
+  const expected = JSON.parse(await readFile(fixturePath, "utf8"));
+  const millionaire = expected.spookyBoneProgression.millionaireProgression;
+  const chapter5 = millionaire.chapter5Progression;
+  const partialTracePath = storyRouteTraceOutputPath(
+    "story-natural-chapter-6-route.jsonl.br",
+  );
+  const partial = await readStoryRouteTraceSummary(partialTracePath);
+  const chapter5End = await readStoryRouteTraceSummary(
+    storyRouteTraceFixturePath(chapter5.trace.file),
+  );
+  if (
+    partial.last.event.type !== "mine" ||
+    partial.last.event.purpose !== "farm" ||
+    partial.last.checkpoint.random.seed !== randomSeed ||
+    partial.last.checkpoint.state.highestMineObjectLevel < 72 ||
+    chapter5End.last.event.type !== "storyPage" ||
+    chapter5End.last.checkpoint.state.story.page !== 4
+  ) {
+    throw new Error(
+      "The saved Chapter 6 partial trace or Chapter 5 route endpoint is not a valid continuation point.",
+    );
+  }
+
+  await restoreStoryRouteCheckpoint(page, {
+    saveString: chapter5.saveString,
+    checkpoint: partial.last.checkpoint,
+  });
+  const chapter6Progression = await captureNaturalStoryChapterProgression(
+    page,
+    {
+      chapterNumber: 6,
+      targetMineObjectLevel: 90,
+      storyPage: 5,
+      milestoneKey: "breakSpacePortal",
+      chapterHeading: "Chapter 6: Gone to Space",
+      traceFile: "story-natural-chapter-6-continuation.jsonl.br",
+      traceBatchSize: 2048,
+      batchUnchangingActiveClicks: true,
+      upgradeKeys: [
+        "gemWaster",
+        "blacksmithSkill",
+        "blacksmithBonus",
+        "gemChance",
+        "blacksmith",
+        "activePower",
+      ],
+      gemUpgradeKeys: ["gemChance", "blacksmith", "blacksmithSkill"],
+      gemUpgradeTargets: {
+        gemChance: 3,
+        blacksmith: 15,
+        blacksmithSkill: 10,
+      },
+      targetCraftGemLevel: null,
+      routeIterationsOffset: partial.routeIterations,
+      totalActiveClicksOffset: partial.totalActiveClicks,
+      craftAttemptsOffset: partial.craftAttempts,
+      farmBreaksOffset: partial.farmBreaks,
+      maxIterations: 5_000_000,
+    },
+    captureScreenshots,
+  );
+  chapter6Progression.replayRouteStart = {
+    saveString: setLegacySaveTab(chapter5.saveString, "main"),
+    state: chapter5End.last.checkpoint.state,
+    random: chapter5End.last.checkpoint.random,
+  };
+  const completeTrace = await mergeStoryRouteTraces(
+    [
+      partialTracePath,
+      storyRouteTraceOutputPath(
+        "story-natural-chapter-6-continuation.jsonl.br",
+      ),
+    ],
+    partialTracePath,
+  );
+  chapter6Progression.trace = {
+    file: "story-natural-chapter-6-route.jsonl.br",
+    ...completeTrace,
+  };
+  return chapter6Progression;
+}
+
+async function assertStoryRouteTracesMatch(
+  actualPath,
+  expectedPath,
+  { compactExpected = false } = {},
+) {
   const makeLines = (filePath) =>
     createInterface({
       input: createReadStream(filePath).pipe(createBrotliDecompress()),
       crlfDelay: Infinity,
     });
-  const actual = makeLines(actualPath)[Symbol.asyncIterator]();
+  // A tracked compact trace is compared with the compact form of the capture.
+  const actual = compactExpected
+    ? (async function* () {
+        for await (const record of compactStoryRouteRecords(
+          readStoryRouteTraceRecords(actualPath),
+        )) {
+          yield JSON.stringify(record);
+        }
+      })()[Symbol.asyncIterator]()
+    : makeLines(actualPath)[Symbol.asyncIterator]();
   const expected = makeLines(expectedPath)[Symbol.asyncIterator]();
   let index = 0;
   while (true) {
@@ -3250,6 +3607,37 @@ async function captureMillionaireProgression(
     },
     captureScreenshots,
   );
+  const chapter6Progression = !captureChapter6Route
+    ? undefined
+    : await captureNaturalStoryChapterProgression(
+        page,
+        {
+          chapterNumber: 6,
+          targetMineObjectLevel: 90,
+          storyPage: 5,
+          milestoneKey: "breakSpacePortal",
+          chapterHeading: "Chapter 6: Gone to Space",
+          traceFile: "story-natural-chapter-6-route.jsonl.br",
+          batchUnchangingActiveClicks: true,
+          upgradeKeys: [
+            "gemWaster",
+            "blacksmithSkill",
+            "blacksmithBonus",
+            "gemChance",
+            "blacksmith",
+            "activePower",
+          ],
+          gemUpgradeKeys: ["gemChance", "blacksmith", "blacksmithSkill"],
+          gemUpgradeTargets: {
+            gemChance: 3,
+            blacksmith: 15,
+            blacksmithSkill: 10,
+          },
+          targetCraftGemLevel: null,
+          maxIterations: 5_000_000,
+        },
+        captureScreenshots,
+      );
 
   const restoredState = await page.evaluate((save) => {
     window.functions.loadGame(save, true, true);
@@ -3302,6 +3690,7 @@ async function captureMillionaireProgression(
     storyStates,
     millionaireScrolledScreenshots,
     restoredState,
+    ...(chapter6Progression ? { chapter6Progression } : {}),
   };
   if (captureScreenshots) {
     await writeFile(
@@ -3323,12 +3712,242 @@ async function captureMillionaireProgression(
   return capture;
 }
 
+function createPhaseDifferentialActions(phase) {
+  let state = phase.sequenceSeed >>> 0;
+  const next = () => {
+    state = (Math.imul(state, 1_664_525) + 1_013_904_223) >>> 0;
+    return state / 0x1_0000_0000;
+  };
+  const idleDeltas = [0.1, 0.125, 0.15, 0.2];
+  const purchases = [
+    { group: "money", key: "activePower" },
+    { group: "money", key: "gemChance" },
+    { group: "gems", key: "blacksmith" },
+    { group: "gems", key: "gemMultiply" },
+    { group: "planetCoins", key: "activePower" },
+    { group: "planetCoins", key: "gemChance" },
+    { group: "wisdom", key: "powerPowerActive" },
+    { group: "wisdom", key: "damageBoost" },
+  ];
+  const actions = [];
+  for (let index = 0; index < phaseDifferentialActionCount; index++) {
+    const roll = next();
+    if (roll < 0.78) {
+      actions.push({ type: "activeClick" });
+    } else if (roll < 0.86) {
+      actions.push({
+        type: "idleFrame",
+        deltaSeconds: idleDeltas[Math.floor(next() * idleDeltas.length)],
+      });
+    } else if (roll < 0.92) {
+      actions.push({
+        type: "select",
+        level: phase.mineObjectLevel - 4 + Math.floor(next() * 5),
+      });
+    } else if (roll < 0.975) {
+      actions.push({
+        type: "purchase",
+        ...purchases[Math.floor(next() * purchases.length)],
+      });
+    } else {
+      actions.push({ type: "craftPickaxe", shiftHeld: false });
+    }
+  }
+  return actions;
+}
+
+async function captureEndgamePhaseDifferentials(page, browserVersion) {
+  const freshSave = await page.evaluate(() => window.functions.getSaveString());
+  const captured = [];
+  for (const phase of endgamePhases) {
+    const startingState = await page.evaluate(
+      ({ phaseSpec, saveString, clock, seed }) => {
+        const { game, functions } = window;
+        const decimal = (value) => new window.Decimal(value);
+        functions.loadGame(saveString, true, true);
+        window.__idleMineBeyondProbe.restoreRandomCursor({
+          seed,
+          draws: 0,
+          state: seed,
+        });
+        game.highestMineObjectLevel = phaseSpec.mineObjectLevel;
+        game.money = decimal(phaseSpec.money);
+        game.highestMoney = decimal(phaseSpec.money);
+        game.gems = decimal(phaseSpec.gems);
+        game.planetCoins = decimal(phaseSpec.planetCoins);
+        game.maxPlanetCoins = decimal(phaseSpec.planetCoins);
+        game.wisdom = decimal(phaseSpec.wisdom);
+        game.maxWisdom = decimal(phaseSpec.wisdom);
+        game.pickaxe.name = "Phase Probe Pick";
+        game.pickaxe.pow = decimal(phaseSpec.pickaxePower);
+        game.pickaxe.quality = decimal("1");
+        game.timer.autoPickaxe = 0;
+        game.timer.save = 0;
+        game.usedGemsLevel = 0;
+        game.story.page = phaseSpec.page;
+        game.story.highestUnlocked = 0;
+        game.story.notifications = 0;
+        functions.setMineObjectLevel(phaseSpec.mineObjectLevel);
+        functions.refreshStoryNotifications();
+        game.story.page = phaseSpec.page;
+        functions.saveGame();
+        const state = window.__idleMineBeyondProbe.simulationState();
+        const random = window.__idleMineBeyondProbe.randomCursor();
+        const persistedSaveString = localStorage.getItem("IdleMine");
+        const chapterHeading = game.story.chapters[phaseSpec.page];
+        const storyBoundaryUnlocked = functions.storyUnlocked(
+          phaseSpec.milestone,
+        );
+        if (chapterHeading !== phaseSpec.heading || !storyBoundaryUnlocked) {
+          throw new Error(
+            `${phaseSpec.id} phase save does not satisfy its pinned Story boundary.`,
+          );
+        }
+        if (state.currentObject.id !== phaseSpec.mineObjectLevel) {
+          throw new Error(`${phaseSpec.id} save selected the wrong object.`);
+        }
+        if (!persistedSaveString) {
+          throw new Error(`${phaseSpec.id} source saveGame() wrote no save.`);
+        }
+        return {
+          saveString: persistedSaveString,
+          state,
+          random,
+          chapterHeading,
+          storyBoundaryUnlocked,
+          nextObjective: functions.getNextStoryText(),
+          clock,
+        };
+      },
+      {
+        phaseSpec: phase,
+        saveString: freshSave,
+        clock: fixedClock,
+        seed: randomSeed,
+      },
+    );
+    const actions = createPhaseDifferentialActions(phase);
+    const traceName = `remix-phase-${phase.id}.jsonl.br`;
+    const tracePath = path.join(outputDirectory, traceName);
+    await mkdir(outputDirectory, { recursive: true });
+    const compressor = createBrotliCompress(routeTraceCompressionOptions);
+    const output = createWriteStream(tracePath);
+    const finished = pipeline(compressor, output);
+    const rawHash = createHash("sha256");
+    let records = 0;
+    for (
+      let offset = 0;
+      offset < actions.length;
+      offset += phaseDifferentialTraceBatchSize
+    ) {
+      const batch = actions.slice(
+        offset,
+        offset + phaseDifferentialTraceBatchSize,
+      );
+      const recordsBatch = await page.evaluate(
+        ({ sourceActions, startIndex }) => {
+          const { game, functions } = window;
+          const upgradeGroups = {
+            money: game.upgrades,
+            gems: game.gemUpgrades,
+            planetCoins: game.planetCoinUpgrades,
+            wisdom: game.powers.upgrades,
+          };
+          return sourceActions.map((event, index) => {
+            switch (event.type) {
+              case "activeClick":
+                functions.clickMineObject();
+                break;
+              case "idleFrame":
+                window.__idleMineBeyondProbe.advanceClock(
+                  event.deltaSeconds * 1000,
+                );
+                window.update();
+                break;
+              case "select":
+                functions.setMineObjectLevel(event.level);
+                break;
+              case "purchase":
+                upgradeGroups[event.group][event.key].buy();
+                break;
+              case "craftPickaxe":
+                functions.craftPick(1);
+                break;
+            }
+            return {
+              event,
+              checkpoint: window.__idleMineBeyondProbe.checkpoint(
+                `phase-action-${startIndex + index + 1}`,
+              ),
+            };
+          });
+        },
+        { sourceActions: batch, startIndex: offset },
+      );
+      const contents = `${recordsBatch.map((record) => JSON.stringify(record)).join("\n")}\n`;
+      rawHash.update(contents);
+      await new Promise((resolve, reject) => {
+        compressor.write(contents, (error) =>
+          error ? reject(error) : resolve(),
+        );
+      });
+      records += recordsBatch.length;
+    }
+    compressor.end();
+    await finished;
+    captured.push({
+      id: phase.id,
+      heading: startingState.chapterHeading,
+      storyPage: phase.page,
+      mineObjectLevel: phase.mineObjectLevel,
+      milestone: phase.milestone,
+      milestoneUnlocked: startingState.storyBoundaryUnlocked,
+      setup: {
+        money: phase.money,
+        gems: phase.gems,
+        planetCoins: phase.planetCoins,
+        wisdom: phase.wisdom,
+        pickaxePower: phase.pickaxePower,
+      },
+      nextObjective: startingState.nextObjective,
+      sequenceSeed: phase.sequenceSeed,
+      saveString: startingState.saveString,
+      start: {
+        state: startingState.state,
+        random: startingState.random,
+      },
+      trace: {
+        file: traceName,
+        records,
+        rawSha256: rawHash.digest("hex"),
+      },
+    });
+  }
+
+  return {
+    source: {
+      repository: "https://github.com/Jovinull/idle-mine-remix",
+      commit: "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+      browser: { name: "Playwright Chromium", version: browserVersion },
+      capturedOn: new Date().toISOString().slice(0, 10),
+      captureKind: "controlled Remix runtime phase-start save",
+      actionCountPerPhase: phaseDifferentialActionCount,
+      rngSeed: randomSeed,
+      traceNote:
+        "Every checkpoint follows one action generated by the recorded independent sequence seed. Game state, RNG cursor, save start, and actions are preserved; controlled resource/pickaxe setup is test fixture construction, not natural progression.",
+    },
+    phases: captured,
+  };
+}
+
 async function captureStory(
   reference,
   snapshots,
   markup,
   writeScreenshots,
   includePixelData = false,
+  resumeChapter6 = false,
+  phaseDifferentialsOnly = false,
 ) {
   const sourceRoot = await verifySource(reference);
   const { server, url } = await startReadOnlyServer(sourceRoot);
@@ -3348,8 +3967,9 @@ async function captureStory(
       ({ clock, seed }) => {
         Object.defineProperty(Date, "now", {
           configurable: true,
-          value: () => clock,
+          value: () => clockNow,
         });
+        let clockNow = clock;
         let randomState = seed >>> 0;
         let randomDrawCount = 0;
         Math.random = () => {
@@ -3366,6 +3986,16 @@ async function captureStory(
               draws: randomDrawCount,
               state: randomState,
             }),
+            restoreRandomCursor: (cursor) => {
+              if (cursor.seed !== seed) {
+                throw new Error("Cannot restore a different Story RNG seed.");
+              }
+              randomState = cursor.state >>> 0;
+              randomDrawCount = cursor.draws;
+            },
+            advanceClock: (deltaMs) => {
+              clockNow += deltaMs;
+            },
             simulationState: () => {
               const { game } = window;
               const levels = (group) =>
@@ -3471,6 +4101,12 @@ async function captureStory(
     await page.evaluate(() => document.fonts.ready);
     if (pageErrors.length) {
       throw new Error(`Reference page errors: ${pageErrors.join("; ")}`);
+    }
+    if (resumeChapter6) {
+      return await captureChapter6Continuation(page, writeScreenshots);
+    }
+    if (phaseDifferentialsOnly) {
+      return await captureEndgamePhaseDifferentials(page, browser.version());
     }
 
     const sourceCapture = await page.evaluate(
@@ -4152,6 +4788,107 @@ async function captureStory(
   }
 }
 
+async function materializeChapter6VisualFixture() {
+  const runtime = JSON.parse(await readFile(fixturePath, "utf8"));
+  const route =
+    runtime.spookyBoneProgression.millionaireProgression.chapter6Progression;
+  if (!route?.trace || !route.screenshot || route.screenshotState?.page !== 5) {
+    throw new Error(
+      "The Chapter 6 runtime route and screenshot must be captured before writing its visual fixture.",
+    );
+  }
+  const screenshotName = "story-natural-chapter-6-light-1440x900.png";
+  const outputScreenshotPath = path.join(outputDirectory, screenshotName);
+  const fixtureScreenshotPath = path.join(
+    root,
+    "tests/fixtures/visual",
+    screenshotName,
+  );
+  const sourceBytes = await readFile(outputScreenshotPath);
+  await copyFile(outputScreenshotPath, fixtureScreenshotPath);
+  const traceSummary = await readStoryRouteTraceSummary(
+    storyRouteTraceFixturePath(route.trace.file),
+  );
+  if (
+    traceSummary.records !== route.trace.records ||
+    traceSummary.last.event.type !== "storyPage" ||
+    traceSummary.last.checkpoint.state.story.page !== 5
+  ) {
+    throw new Error(
+      "The Chapter 6 visual fixture does not match its route trace.",
+    );
+  }
+  const finalState = traceSummary.last.checkpoint.state;
+  const priorSidecar = JSON.parse(
+    await readFile(
+      path.join(
+        root,
+        "tests/fixtures/visual/story-natural-chapter-5-light-1440x900.json",
+      ),
+      "utf8",
+    ),
+  );
+  const sidecar = {
+    ...priorSidecar,
+    scenario: "natural-chapter-5-to-chapter-6-first-eligibility-route",
+    route: {
+      seed: route.replayRouteStart.random.seed,
+      startingDraws: route.replayRouteStart.random.draws,
+      endingDraws: traceSummary.last.checkpoint.random.draws,
+      checkpoints: traceSummary.records,
+      routeIterations: route.routeIterations,
+      activeClicks: route.totalActiveClicks,
+      craftAttempts: route.craftAttempts,
+      farmBreaks: route.farmBreaks,
+      upgradePurchases: traceSummary.upgradePurchases,
+      eventCounts: traceSummary.eventCounts,
+      checkpointTrace: {
+        file: route.trace.file,
+        rawSha256: route.trace.rawSha256,
+      },
+    },
+    state: {
+      ...route.screenshotState,
+      mineObjectLevel: finalState.mineObjectLevel,
+      highestMoney: finalState.resources.highestMoney,
+      currentObjectName: finalState.currentObject.name,
+      currentObjectHp: finalState.currentObject.hp,
+      pickaxeName: finalState.pickaxe.name,
+      pickaxePower: finalState.pickaxe.power,
+      pickaxeQuality: finalState.pickaxe.quality,
+      blacksmithLevel: finalState.upgrades.money.blacksmith,
+      blacksmithSkillLevel: finalState.upgrades.money.blacksmithSkill,
+      blacksmithBonusLevel: finalState.upgrades.money.blacksmithBonus,
+      activePowerLevel: finalState.upgrades.money.activePower,
+      gemChanceLevel: finalState.upgrades.money.gemChance,
+      gemWasterLevel: finalState.upgrades.money.gemWaster,
+      gemBlacksmithLevel: finalState.upgrades.gems.blacksmith,
+      usedGemsLevel: finalState.usedGemsLevel,
+    },
+    screenshotPath: `tests/fixtures/visual/${screenshotName}`,
+    screenshotSha256: sha256(sourceBytes),
+    captureNote:
+      "Natural source-seeded route from the captured Chapter 5 endpoint to first Chapter 6 eligibility. The complete event and full-state checkpoint trace preserves the source save, ordered actions, and RNG cursor at each route checkpoint; Beyond replays that route in parity tests. This selected 1440x900 light capture is Windows-only.",
+  };
+  await writeFile(
+    path.join(
+      root,
+      "tests/fixtures/visual/story-natural-chapter-6-light-1440x900.json",
+    ),
+    await format(JSON.stringify(sidecar), { parser: "json" }),
+    "utf8",
+  );
+  route.replayRouteStart.saveString = setLegacySaveTab(
+    route.replayRouteStart.saveString,
+    "main",
+  );
+  await writeFile(
+    fixturePath,
+    await format(JSON.stringify(runtime), { parser: "json" }),
+    "utf8",
+  );
+}
+
 async function main() {
   const mode = process.argv[2];
   if (
@@ -4160,15 +4897,23 @@ async function main() {
       "--check",
       "--write-pixel-goldens",
       "--check-pixel-goldens",
+      "--check-chapter6",
+      "--resume-chapter6",
+      "--write-chapter6-visual",
+      "--merge-chapter6-continuation",
+      "--write-phase-differentials",
+      "--check-phase-differentials",
     ].includes(mode)
   ) {
     throw new Error(
       "Use --check/--write for the Story runtime or --check-pixel-goldens/--write-pixel-goldens for source Canvas baselines.",
     );
   }
+  captureChapter6Route = mode === "--check-chapter6";
   const launchOptions = getChromiumLaunchOptions();
   if (
-    mode.startsWith("--write") &&
+    ((mode.startsWith("--write") && mode !== "--write-chapter6-visual") ||
+      mode === "--resume-chapter6") &&
     (launchOptions.executablePath || launchOptions.channel)
   ) {
     throw new Error(
@@ -4183,19 +4928,148 @@ async function main() {
   );
   if (!reference)
     throw new Error("Idle Mine: Remix is absent from the source manifest.");
+  if (mode === "--merge-chapter6-continuation") {
+    const routePath = storyRouteTraceOutputPath(
+      "story-natural-chapter-6-route.jsonl.br",
+    );
+    const continuationPath = storyRouteTraceOutputPath(
+      "story-natural-chapter-6-continuation.jsonl.br",
+    );
+    const continuation = await readStoryRouteTraceSummary(continuationPath);
+    if (continuation.last.event.type !== "mine") {
+      throw new Error(
+        "The Chapter 6 continuation trace does not end at a resumable mine checkpoint.",
+      );
+    }
+    const merged = await mergeStoryRouteTraces(
+      [routePath, continuationPath],
+      routePath,
+    );
+    process.stdout.write(
+      `Merged ${continuation.records} resumable Chapter 6 checkpoints into the route prefix (${merged.records} total).\n`,
+    );
+    return;
+  }
   if (reference.pinnedCommit !== markup.source.commit) {
     throw new Error(
       "Story markup fixture and source manifest use different commits.",
     );
+  }
+  if (mode === "--write-chapter6-visual") {
+    await materializeChapter6VisualFixture();
+    process.stdout.write(
+      "Wrote the Chapter 6 Windows visual fixture from the captured pinned-source screenshot.\n",
+    );
+    return;
   }
   const snapshots = await loadDependencySnapshots(dependencies);
   const captured = await captureStory(
     reference,
     snapshots,
     markup,
-    mode === "--write",
+    mode === "--write" || mode === "--resume-chapter6",
     mode === "--write-pixel-goldens" || mode === "--check-pixel-goldens",
+    mode === "--resume-chapter6",
+    mode === "--write-phase-differentials" ||
+      mode === "--check-phase-differentials",
   );
+
+  if (
+    mode === "--write-phase-differentials" ||
+    mode === "--check-phase-differentials"
+  ) {
+    const expected = JSON.parse(
+      await readFile(phaseDifferentialFixturePath, "utf8").catch(() => "{}"),
+    );
+    if (mode === "--check-phase-differentials") {
+      if (captured.source.commit !== reference.pinnedCommit) {
+        throw new Error(
+          "Phase differential capture used a different Remix pin.",
+        );
+      }
+      if (
+        captured.source.browser.version !== expected.source?.browser?.version
+      ) {
+        throw new Error(
+          `Phase differential corpus expects Chromium ${expected.source?.browser?.version}; this run used ${captured.source.browser.version}.`,
+        );
+      }
+      if (captured.phases.length !== expected.phases?.length) {
+        throw new Error("Phase differential fixture phase count differs.");
+      }
+      for (let index = 0; index < captured.phases.length; index++) {
+        const actual = captured.phases[index];
+        const stored = expected.phases[index];
+        const actualStable = {
+          ...actual,
+          trace: undefined,
+        };
+        const storedStable = {
+          ...stored,
+          trace: undefined,
+        };
+        if (JSON.stringify(actualStable) !== JSON.stringify(storedStable)) {
+          throw new Error(
+            `Phase differential ${actual.id} save differs: ${findFirstDifference(actualStable, storedStable)}.`,
+          );
+        }
+        const records = await assertStoryRouteTracesMatch(
+          storyRouteTraceOutputPath(actual.trace.file),
+          storyRouteTraceFixturePath(stored.trace.file),
+        );
+        if (
+          records !== stored.trace.records ||
+          actual.trace.rawSha256 !== stored.trace.rawSha256
+        ) {
+          throw new Error(
+            `Phase differential ${actual.id} trace metadata differs.`,
+          );
+        }
+      }
+      process.stdout.write(
+        `Verified ${captured.phases.length} pinned Remix phase starts and ${captured.source.actionCountPerPhase} source actions per phase.\n`,
+      );
+      return;
+    }
+
+    for (const phase of captured.phases) {
+      await copyFile(
+        storyRouteTraceOutputPath(phase.trace.file),
+        storyRouteTraceFixturePath(phase.trace.file),
+      );
+    }
+    await writeFile(
+      phaseDifferentialFixturePath,
+      await format(JSON.stringify(captured), { parser: "json" }),
+      "utf8",
+    );
+    process.stdout.write(
+      `Captured ${captured.phases.length} controlled pinned Remix phase-start saves and ${captured.source.actionCountPerPhase} randomized source actions per phase.\n`,
+    );
+    return;
+  }
+
+  if (mode === "--resume-chapter6") {
+    const expected = JSON.parse(await readFile(fixturePath, "utf8"));
+    captured.trace = {
+      file: captured.trace.file,
+      ...(await writeCompactStoryRouteTrace(
+        storyRouteTraceOutputPath(captured.trace.file),
+        storyRouteTraceFixturePath(captured.trace.file),
+      )),
+    };
+    expected.spookyBoneProgression.millionaireProgression.chapter6Progression =
+      captured;
+    await writeFile(
+      fixturePath,
+      await format(JSON.stringify(expected), { parser: "json" }),
+      "utf8",
+    );
+    process.stdout.write(
+      `Completed the natural Chapter 6 route with ${captured.trace.records} streamed Remix checkpoints from the pinned source.\n`,
+    );
+    return;
+  }
 
   const expected = JSON.parse(await readFile(fixturePath, "utf8"));
   captured.source.capturedOn = expected.source.capturedOn;
@@ -4236,14 +5110,18 @@ async function main() {
       }
     }
   }
+  const storedChapter6 =
+    expected.spookyBoneProgression?.millionaireProgression?.chapter6Progression;
   if (mode === "--write") {
-    for (const route of [
-      captured.spookyBoneProgression.millionaireProgression.chapter5Progression,
-    ]) {
-      await copyFile(
-        storyRouteTraceOutputPath(route.trace.file),
-        storyRouteTraceFixturePath(route.trace.file),
-      );
+    const route =
+      captured.spookyBoneProgression.millionaireProgression.chapter5Progression;
+    await copyFile(
+      storyRouteTraceOutputPath(route.trace.file),
+      storyRouteTraceFixturePath(route.trace.file),
+    );
+    if (storedChapter6) {
+      captured.spookyBoneProgression.millionaireProgression.chapter6Progression =
+        storedChapter6;
     }
     captured.source.capturedOn =
       expected.source?.capturedOn ?? new Date().toISOString().slice(0, 10);
@@ -4268,6 +5146,17 @@ async function main() {
         captured.spookyBoneProgression.millionaireProgression
           .chapter5Progression,
     },
+    ...(captureChapter6Route
+      ? [
+          {
+            label: "Chapter 6",
+            expected: storedChapter6,
+            actual:
+              captured.spookyBoneProgression.millionaireProgression
+                .chapter6Progression,
+          },
+        ]
+      : []),
   ];
   for (const {
     label,
@@ -4286,11 +5175,12 @@ async function main() {
     const traceRecords = await assertStoryRouteTracesMatch(
       storyRouteTraceOutputPath(trace.file),
       storyRouteTraceFixturePath(trace.file),
+      { compactExpected: trace.sourceRawSha256 !== undefined },
     );
     if (
       traceRecords !== trace.records ||
       actualRoute.trace.records !== trace.records ||
-      actualRoute.trace.rawSha256 !== trace.rawSha256
+      actualRoute.trace.rawSha256 !== (trace.sourceRawSha256 ?? trace.rawSha256)
     ) {
       throw new Error(
         `${label} route trace metadata differs: checked ${traceRecords} records, expected ${trace.records}.`,
@@ -4298,9 +5188,18 @@ async function main() {
     }
   }
 
-  if (JSON.stringify(captured) !== JSON.stringify(expected)) {
+  // The Chapter 6 route is checked through its trace above, and only on request.
+  const withoutChapter6 = (runtime) => {
+    const copy = structuredClone(runtime);
+    delete copy.spookyBoneProgression?.millionaireProgression
+      ?.chapter6Progression;
+    return copy;
+  };
+  const capturedStable = withoutChapter6(captured);
+  const expectedStable = withoutChapter6(expected);
+  if (JSON.stringify(capturedStable) !== JSON.stringify(expectedStable)) {
     throw new Error(
-      `Story runtime differs from tests/fixtures/parity/remix-story-runtime.json at ${findFirstDifference(captured, expected)}. Review the reference state before recapturing.`,
+      `Story runtime differs from tests/fixtures/parity/remix-story-runtime.json at ${findFirstDifference(capturedStable, expectedStable)}. Review the reference state before recapturing.`,
     );
   }
   if (mode === "--write-pixel-goldens" || mode === "--check-pixel-goldens") {

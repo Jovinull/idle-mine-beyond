@@ -22,6 +22,7 @@ import {
   createInitialRemixLegacySaveApplicationState,
   loadRemixLegacySaveIntoState,
 } from "../../packages/persistence/src/index.js";
+import { chainStoryRouteCheckpoint } from "../../scripts/story-route-trace.mjs";
 
 type RandomCursor = { seed: number; draws: number; state: number };
 type DropSnapshot = { chance: number; amount: string };
@@ -160,6 +161,7 @@ type StreamedStoryProgression = Omit<
     file: string;
     records: number;
     rawSha256: string;
+    sourceRawSha256?: string;
   };
 };
 
@@ -200,6 +202,7 @@ type StoryRuntime = {
       chapter3Progression: Chapter3Progression;
       chapter4Progression: Chapter3Progression;
       chapter5Progression: StreamedStoryProgression;
+      chapter6Progression: StreamedStoryProgression;
     };
   };
 };
@@ -246,7 +249,8 @@ async function* streamStoryRouteTrace(
     count++;
     yield JSON.parse(line) as {
       event: StoryRouteEvent;
-      checkpoint: RouteCheckpoint;
+      checkpoint?: RouteCheckpoint;
+      chain?: string;
     };
   }
   expect(count, `${trace.file} source checkpoint count`).toBe(trace.records);
@@ -254,6 +258,37 @@ async function* streamStoryRouteTrace(
     trace.rawSha256,
   );
 }
+
+it("chains every checkpoint field, independent of key order", () => {
+  const checkpoint = {
+    label: "mine-farm-70",
+    state: { resources: { money: "10", gems: "2" }, mineObjectLevel: 70 },
+    random: { seed: 7454, draws: 3, state: 99 },
+  };
+  const chain = chainStoryRouteCheckpoint("", checkpoint);
+  expect(
+    chainStoryRouteCheckpoint("", {
+      random: { state: 99, draws: 3, seed: 7454 },
+      state: { mineObjectLevel: 70, resources: { gems: "2", money: "10" } },
+      label: "mine-farm-70",
+    }),
+  ).toBe(chain);
+  for (const changed of [
+    { ...checkpoint, label: "mine-farm-71" },
+    { ...checkpoint, state: { ...checkpoint.state, mineObjectLevel: 71 } },
+    {
+      ...checkpoint,
+      state: {
+        ...checkpoint.state,
+        resources: { ...checkpoint.state.resources, gems: "3" },
+      },
+    },
+    { ...checkpoint, random: { ...checkpoint.random, draws: 4 } },
+  ]) {
+    expect(chainStoryRouteCheckpoint("", changed)).not.toBe(chain);
+  }
+  expect(chainStoryRouteCheckpoint(chain, checkpoint)).not.toBe(chain);
+});
 
 it("pins the shared RNG seed and intermediate checkpoint coverage", () => {
   const routes = [
@@ -299,6 +334,8 @@ it("pins the shared RNG seed and intermediate checkpoint coverage", () => {
   ];
   const chapter5 =
     runtime.spookyBoneProgression.millionaireProgression.chapter5Progression;
+  const chapter6 =
+    runtime.spookyBoneProgression.millionaireProgression.chapter6Progression;
 
   expect(routes.map(({ start }) => start.random.seed)).toEqual([
     7454, 7454, 7454, 7454, 7454, 7454,
@@ -343,6 +380,21 @@ it("pins the shared RNG seed and intermediate checkpoint coverage", () => {
     visibleMilestones: ["reachPortal"],
     nextObjective: "Break through THE PORTAL",
     chapterHeading: "Chapter 5: New Dimensions",
+  });
+  expect(chapter6.replayRouteStart.random.seed).toBe(7454);
+  // The tracked Chapter 6 trace is compact; its source capture is pinned by hash.
+  expect(chapter6.trace).toMatchObject({
+    file: "story-natural-chapter-6-route.jsonl.br",
+    records: 3751241,
+    rawSha256: expect.stringMatching(/^[a-f0-9]{64}$/),
+    sourceRawSha256:
+      "649f772d16f63bb2729aa53c54b5c1d6234731d7ab0322ffe189c5b5201fc098",
+  });
+  expect(chapter6.storyState).toMatchObject({
+    page: 5,
+    highestMineObjectLevel: 90,
+    visibleMilestones: ["breakSpacePortal"],
+    chapterHeading: "Chapter 6: Gone to Space",
   });
 });
 
@@ -960,10 +1012,15 @@ async function replayStreamedStoryRoute(
   );
   let state = startingState;
   let checkpointIndex = 0;
+  let chain = "";
 
-  for await (const { event, checkpoint } of streamStoryRouteTrace(
-    route.trace,
-  )) {
+  // Compact traces keep some full checkpoints; the SHA-256 chain on those
+  // still covers every intermediate checkpoint.
+  for await (const {
+    event,
+    checkpoint,
+    chain: expectedChain,
+  } of streamStoryRouteTrace(route.trace)) {
     switch (event.type) {
       case "select":
         state = selectObject(state, event.id);
@@ -1026,8 +1083,18 @@ async function replayStreamedStoryRoute(
       }
     }
 
-    expect(checkpoint.label).toBe(event.label);
-    assertCheckpoint(state, random, checkpoint);
+    chain = chainStoryRouteCheckpoint(chain, {
+      label: event.label,
+      state: simulationSnapshot(state),
+      random: random.cursor(),
+    });
+    if (checkpoint) {
+      expect(checkpoint.label).toBe(event.label);
+      assertCheckpoint(state, random, checkpoint);
+    }
+    if (expectedChain !== undefined) {
+      expect(chain, `${event.label} checkpoint chain`).toBe(expectedChain);
+    }
     checkpointIndex++;
   }
 
@@ -1057,3 +1124,17 @@ it("streams and replays the natural Chapter 4-to-Chapter 5 route at every source
     },
   );
 }, 3_600_000);
+
+it("streams and replays the natural Chapter 5-to-Chapter 6 route at every source checkpoint", async () => {
+  await replayStreamedStoryRoute(
+    runtime.spookyBoneProgression.millionaireProgression.chapter6Progression,
+    {
+      file: "story-natural-chapter-6-route.jsonl.br",
+      chapter: 6,
+      objectLevel: 90,
+      visibleMilestone: "breakSpacePortal",
+      nextObjective: "Earn a Planet Coin",
+      heading: "Chapter 6: Gone to Space",
+    },
+  );
+}, 7_200_000);
