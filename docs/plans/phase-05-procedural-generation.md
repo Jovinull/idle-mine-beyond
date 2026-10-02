@@ -1,6 +1,6 @@
 # Phase 5 — Procedural generation
 
-Status: Partial compatibility slice implemented; high-index coverage expanded on 2026-10-01. Full phase certification remains open.
+Status: Partial compatibility slice implemented; high-index differential sampling expanded on 2026-10-02. Full phase certification remains open.
 
 ## Outcome
 
@@ -16,4 +16,4 @@ Golden comparisons around every region boundary and fixed anchor, plus determini
 
 ## Current verified slice
 
-The pinned corpus has exact object outputs for every ID from 0 through 768 and 23 probes spanning the first post-dense ID, 1k/10k/2^20 neighborhoods, signed and unsigned 32-bit boundaries, and the `Number.MAX_SAFE_INTEGER` edge. The corpus contains 792 objects total. Chromium exact comparison, corpus verification, and the Node repeatability property pass. This sample does not certify every safe integer, and Phase 5 remains open until all required boundary/anchor coverage and gameplay integration are reviewed.
+The pinned corpus has exact object outputs for every ID from 0 through 768, 23 explicit boundary probes, and 128 reproducible xorshift64* samples distributed across the safe-integer range (seed `0x494d4220261002`). The corpus contains 920 objects total. The source probe verifies the exact pinned corpus, Chromium compares every object, the core corpus test compares Beyond's generated outputs, and the Node repeatability property passes. This sample does not certify every safe integer, and Phase 5 remains open until every required anchor/boundary and gameplay integration are reviewed.
