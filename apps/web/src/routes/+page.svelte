@@ -1130,9 +1130,9 @@
     justify-content: flex-end;
   }
 
-  h1,
-  h2,
-  h4 {
+  :global(h1),
+  :global(h2),
+  :global(h4) {
     margin: 0;
     font-family: Montserrat, sans-serif;
   }
@@ -1161,22 +1161,49 @@
     opacity: 0.7;
   }
 
-  .inline-resource {
+  :global(.inline-resource) {
     display: inline-flex;
     align-items: center;
   }
 
-  img.inline {
+  :global(img.inline) {
     display: inline;
     height: 1em;
   }
 
-  .inline-resource img {
+  :global(.inline-resource img) {
     margin: 0 0.2em;
   }
 
-  img[src$="wisdom.png"] {
+  :global(img[src$="wisdom.png"]) {
     animation: wisdom-resource-rotate 1s linear infinite;
+  }
+
+  :global(.upgrade-panel .upg-tabs button),
+  :global(.powers button) {
+    border: 0;
+    background: #cfcfcf;
+    font-size: 110%;
+    outline: 0;
+  }
+
+  :global(.upgrade-panel .upg-tabs button:hover:not(:disabled)),
+  :global(.powers button:hover:not(:disabled)) {
+    background: #b6b6b6;
+  }
+
+  :global(.upgrade-panel .upg-tabs button:disabled),
+  :global(.powers button:disabled) {
+    opacity: 0.7;
+  }
+
+  :global(body[data-theme="dark"] .powers button) {
+    color: #c1c1c1;
+    background: #636363;
+  }
+
+  :global(body[data-theme="dark"] .powers button:hover:not(:disabled)) {
+    background: #636363;
   }
 
   @keyframes wisdom-resource-rotate {
