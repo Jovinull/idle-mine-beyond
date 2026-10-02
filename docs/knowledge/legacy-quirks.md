@@ -96,6 +96,10 @@ The additional `saveSemantics.fieldApplicationErrors` cases exercise a JSON `nul
 
 **Verified legacy behavior (source and controlled runtime):** `functions.getActiveDamage(obj)` subtracts the supplied object's defense from its direct-damage term, then adds `functions.getIdleDPS(obj)` multiplied by Planet Coin Active Power. `getIdleDPS` declares no parameter and reads `game.currentMineObject`, so its supplied `obj` is ignored. The `currentObjectArgumentQuirk` fixture captures a current object at index 90 and explicit target at 118; Beyond reproduces this split in `calculateRemixActiveDamage`.
 
+## Galaxy objective and object-name mismatch
+
+**Verified source and captured content:** At `highestMineObjectLevel >= 198`, the Story milestone `mineSmallGalaxy` displays the objective “Mine The Small Magellanic Cloud.” The captured object at mine-object ID 198 is named “Large Magellanic Cloud.” The pinned source condition/text is in [`Scripts/Define/game.js` at `0e0f4bf`](https://github.com/Jovinull/idle-mine-remix/blob/0e0f4bf5a9c66e5603cda2ce4bd54213023dae21/Scripts/Define/game.js), and the source object record is in [`remix-reference-corpus.json`](../../tests/fixtures/parity/remix-reference-corpus.json). Keep the Story objective and object name from their own source definitions; do not silently harmonize them during parity.
+
 ## Exception policy
 
 No listed concern grants permission to change observable behavior. See [behavioral exceptions](BEHAVIORAL_EXCEPTIONS.md).

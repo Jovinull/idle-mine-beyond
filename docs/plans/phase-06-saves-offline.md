@@ -1,6 +1,6 @@
 # Phase 6 — Saves and offline behavior
 
-Status: Planned after Phase 1. Current-save decoding, field application, legacy migration, Beyond v1 storage/recovery, and v1 offline-load coordination are implemented prerequisites. Native storage, app startup/action wiring, UI, and future schema migrations remain future work.
+Status: Planned after Phase 1. Current-save decoding, field application, legacy migration, Beyond v1 storage/recovery, and v1 offline-load coordination are implemented prerequisites. On 2026-10-01, four genuine natural Chapter 3–6 route-end saves were added to the save compatibility test surface; native storage, app startup/action wiring, UI, and future schema migrations remain future work.
 
 ## Outcome
 
@@ -12,4 +12,4 @@ Legacy fields, encodings, defaults, missing fields, and offline caps are partial
 
 ## Validation
 
-Full legacy compatibility, schema round-trip, future migrations, malformed/corrupt inputs, native storage recovery, UI import/export, clock boundaries, and reference output comparisons.
+Full legacy compatibility, schema round-trip, future migrations, malformed/corrupt inputs, native storage recovery, UI import/export, clock boundaries, and reference output comparisons. The Chapter 3–6 route-end cases now compare the full source JSON and exact legacy encoded string after import, then exercise Beyond v1 serialization/restore under the captured session selections. Historical save formats and other long-run state combinations remain open.
