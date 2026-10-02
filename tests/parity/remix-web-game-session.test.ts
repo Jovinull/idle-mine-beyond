@@ -42,6 +42,12 @@ const corpus = JSON.parse(
       inputJson: string;
       resources: { money: { decimal: string } };
     };
+    saveSemantics: {
+      fieldApplicationErrors: {
+        name: string;
+        encoded: string;
+      }[];
+    };
     pickaxeCraftingSemantics: {
       attempts: {
         input: {
@@ -623,6 +629,39 @@ it("leaves current state and storage untouched when text-field decoding fails", 
   expect(test.session.getState()).toBe(originalState);
   expect(storage.calls).toEqual([]);
   expect(test.effects).toEqual([]);
+});
+
+it("keeps Remix partial field changes when a decoded text import fails mid-load", async () => {
+  const sample = corpus.data.saveSemantics.fieldApplicationErrors.find(
+    ({ name }) => name === "null-upgrades-after-settings",
+  );
+  if (!sample) throw new Error("The pinned malformed-save case is missing.");
+
+  const storage = new MemoryStorage();
+  const test = createSessionInput({ storage });
+  expect((await test.session.initialize()).status).toBe("ready");
+  storage.calls = [];
+  test.effects.length = 0;
+
+  const result = await test.session.importLegacySave(sample.encoded);
+
+  expect(result.status).toBe("legacyLoadFailed");
+  expect(test.session.getState()).toMatchObject({
+    simulation: {
+      resources: {
+        money: expect.objectContaining({ toString: expect.any(Function) }),
+      },
+      mineObjectLevel: 4,
+      story: { page: 2, notifications: 3, highestUnlocked: 5 },
+    },
+    settings: { theme: "light", numberFormatterIndex: 0 },
+  });
+  expect(test.session.getState()?.simulation.resources.money.toString()).toBe(
+    "123",
+  );
+  expect(storage.calls).toEqual([]);
+  expect(storage.primaryWrites).toEqual([]);
+  expect(test.effects).toEqual(["theme:light"]);
 });
 
 it("routes stochastic craft feedback and intermediate saves in Remix order", async () => {

@@ -637,6 +637,9 @@ export function createRemixWebGameSession(
         dispatchEffect: input.dispatchEffect,
       });
       if (result.status === "legacyLoadFailed") {
+        if (result.result.status === "applicationFailed") {
+          state = result.result.partialState;
+        }
         return { status: "legacyLoadFailed" as const, result };
       }
 

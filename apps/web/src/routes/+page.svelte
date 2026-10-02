@@ -145,7 +145,7 @@
 
   async function dispatch(action: RemixSimulationAction) {
     if (!gameSession) return;
-    actionError = "";
+    if (action.type !== "idleFrame") actionError = "";
     try {
       const result = await gameSession.dispatch(action);
       if (result.status === "recoveryRequired") {
@@ -265,6 +265,11 @@
       }
       if (result.status === "legacyLoadFailed") {
         const failure = result.result.result;
+        if (failure.status === "applicationFailed") {
+          appState = failure.partialState;
+          actionError = failure.error.message;
+          return;
+        }
         if (failure.status === "invalidEncoding") {
           window.alert(
             `Error loading Game: ${failure.decodeError.name}: ${failure.decodeError.message}`,

@@ -8,6 +8,7 @@ import {
 } from "@idle-mine-beyond/core";
 import {
   applyRemixLegacySaveFields,
+  RemixLegacySaveApplicationError,
   type RemixLegacySaveApplicationEffect,
   type RemixLegacySaveApplicationState,
   type RemixLegacySaveClock,
@@ -46,6 +47,13 @@ export type LoadRemixLegacySaveResult =
       rewards: RemixOfflineRewards;
       effects: RemixLegacySaveLoadEffect[];
     }
+  | {
+      status: "applicationFailed";
+      partialState: RemixLegacySaveApplicationState;
+      effects: RemixLegacySaveApplicationEffect[];
+      error: { name: string; message: string };
+      evaluatedLastActiveFallbackMs?: number;
+    }
   | Exclude<RemixLegacySaveDecodeResult, { status: "success" }>;
 
 function toLoadedSaveEffect(
@@ -71,12 +79,28 @@ export function loadRemixLegacySaveIntoState(
   const decoded = decodeRemixLegacySave(input.saveString);
   if (decoded.status !== "success") return decoded;
 
-  const application = applyRemixLegacySaveFields({
-    state: input.state,
-    save: decoded.value as RemixLegacySaveData,
-    catalog: input.catalog,
-    clock: input.clock,
-  });
+  let application;
+  try {
+    application = applyRemixLegacySaveFields({
+      state: input.state,
+      save: decoded.value as RemixLegacySaveData,
+      catalog: input.catalog,
+      clock: input.clock,
+    });
+  } catch (error) {
+    if (!(error instanceof RemixLegacySaveApplicationError)) throw error;
+    return {
+      status: "applicationFailed",
+      partialState: error.partialState,
+      effects: error.effects,
+      error: { name: error.name, message: error.message },
+      ...(error.evaluatedLastActiveFallbackMs === undefined
+        ? {}
+        : {
+            evaluatedLastActiveFallbackMs: error.evaluatedLastActiveFallbackMs,
+          }),
+    };
+  }
   let numberFormatter: RemixOfflineNumberFormatter | undefined;
   const formatNumber: RemixOfflineNumberFormatter = (
     value,

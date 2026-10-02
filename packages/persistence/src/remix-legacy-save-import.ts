@@ -62,6 +62,11 @@ export async function importRemixLegacySaveToBeyond(input: {
 }): Promise<ImportRemixLegacySaveToBeyondResult> {
   const loaded = loadRemixLegacySaveIntoState(input.load);
   if (loaded.status !== "loaded") {
+    if (loaded.status === "applicationFailed") {
+      for (const effect of loaded.effects) {
+        await input.dispatchEffect(effect);
+      }
+    }
     return { status: "legacyLoadFailed", result: loaded };
   }
 

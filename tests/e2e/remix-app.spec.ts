@@ -26,6 +26,12 @@ type SettingsRuntimeFixture = {
       inputJson: string;
       resources: { money: { decimal: string } };
     };
+    saveSemantics: {
+      fieldApplicationErrors: {
+        name: string;
+        encoded: string;
+      }[];
+    };
     saveExportSemantics: {
       fresh: { object: Record<string, unknown> };
     };
@@ -1068,6 +1074,29 @@ test("exports and imports the pinned legacy save through the Settings text field
     showMinCraftDamage: true,
     theme: "dark",
   });
+
+  const malformed = reference.data.saveSemantics.fieldApplicationErrors.find(
+    ({ name }) => name === "null-upgrades-after-settings",
+  );
+  if (!malformed) throw new Error("The pinned malformed save is missing.");
+  const beforeMalformedImport = await page.evaluate(() =>
+    localStorage.getItem("IdleMineBeyond"),
+  );
+  await saveField.fill(malformed.encoded);
+  await settings
+    .getByRole("button", { name: "Import (from Text Field)" })
+    .click();
+
+  await expect(page.locator("#app")).toHaveAttribute("data-theme", "light");
+  await expect(page.getByRole("alert")).toContainText("Cannot convert");
+  expect(
+    await page.evaluate(() => localStorage.getItem("IdleMineBeyond")),
+  ).toBe(beforeMalformedImport);
+  await page.locator("[data-game-tab='mining']").click();
+  await expect(page.locator(".mineobject h2")).toHaveText("Rock");
+  expect(
+    await page.evaluate(() => localStorage.getItem("IdleMineBeyond")),
+  ).toBe(beforeMalformedImport);
 });
 
 test("unlocks Powers at the source object and renders prestige and Wisdom upgrades", async ({

@@ -3,11 +3,13 @@ import { expect, it } from "vitest";
 import {
   Decimal,
   createInitialRemixSimulationState,
+  type DecimalSource,
   type RemixMineObjectCatalog,
 } from "../../packages/core/src/index.js";
 import {
   applyRemixLegacySaveFields,
   createInitialRemixLegacySaveApplicationState,
+  loadRemixLegacySaveIntoState,
   type RemixLegacySaveApplicationState,
   type RemixLegacySaveData,
 } from "../../packages/persistence/src/index.js";
@@ -24,6 +26,31 @@ const corpus = JSON.parse(
     saveSemantics: {
       missingOptionalGroups: { inputJson: string };
       emptyPresentGroups: { inputJson: string };
+      fieldApplicationErrors: {
+        name: string;
+        encoded: string;
+        thrownErrorName: string;
+        thrownErrorMessage: string;
+        stateAfter: {
+          money: { decimal: string };
+          mineObjectLevel: number;
+          highestMineObjectLevel: number;
+          story: {
+            page: number;
+            notifications: number;
+            highestUnlocked: number;
+            scrollY: number;
+          };
+          settings: { theme: string; numberFormatterIndex: number };
+          upgradeLevels: Record<string, number>;
+          powers: { decimal: string }[];
+          pickaxe: {
+            name: string;
+            power: { decimal: string };
+            quality: { decimal: string };
+          };
+        };
+      }[];
     };
     saveApplicationSemantics: {
       inputJson: string;
@@ -284,4 +311,117 @@ it("preserves the loader's absent and empty-group behavior", () => {
   expect(empty.effects).toEqual([{ type: "setTheme", theme: "dark" }]);
   expect(seed.simulation.upgrades.gems.offlineGems).toBe(8);
   expect(seed.simulation.pickaxe.name).toBe("Probe Pickaxe");
+});
+
+it("preserves source partial state and effects for malformed field application", () => {
+  const makeMalformedSeed = () => {
+    const seed = seedApplicationState();
+    const { simulation } = seed;
+    return {
+      ...seed,
+      storyScrollY: 10,
+      settings: {
+        ...seed.settings,
+        numberFormatterIndex: 2,
+        theme: "dark",
+      },
+      simulation: {
+        ...simulation,
+        resources: { ...simulation.resources, money: new Decimal(77) },
+        mineObjectLevel: 3,
+        highestMineObjectLevel: 3,
+        story: {
+          ...simulation.story,
+          page: 7,
+          notifications: 8,
+          highestUnlocked: 9,
+        },
+        upgrades: {
+          ...simulation.upgrades,
+          money: { ...simulation.upgrades.money, idleSpeed: 11 },
+          gems: { ...simulation.upgrades.gems, offlineGems: 12 },
+          planetCoins: {
+            ...simulation.upgrades.planetCoins,
+            offlinePC: 13,
+          },
+          wisdom: {
+            ...simulation.upgrades.wisdom,
+            powerPowerActive: 14,
+          },
+        },
+        powers: { ...simulation.powers, mining: new Decimal(9) },
+        pickaxe: {
+          name: "Probe Sentinel",
+          power: new Decimal(23),
+          quality: new Decimal(4),
+        },
+      },
+    } satisfies RemixLegacySaveApplicationState;
+  };
+  const decimalSnapshot = (value: DecimalSource) => {
+    const decimal = new Decimal(value);
+    return {
+      decimal: decimal.toString(),
+      mantissa: decimal.mantissa,
+      exponent: decimal.exponent,
+    };
+  };
+  const actualSnapshot = (state: RemixLegacySaveApplicationState) => ({
+    money: decimalSnapshot(state.simulation.resources.money),
+    mineObjectLevel: state.simulation.mineObjectLevel,
+    highestMineObjectLevel: state.simulation.highestMineObjectLevel,
+    story: {
+      page: state.simulation.story.page,
+      notifications: state.simulation.story.notifications,
+      highestUnlocked: state.simulation.story.highestUnlocked,
+      scrollY: state.storyScrollY,
+    },
+    settings: {
+      theme: state.settings.theme,
+      numberFormatterIndex: state.settings.numberFormatterIndex,
+    },
+    upgradeLevels: {
+      moneyIdleSpeed: state.simulation.upgrades.money.idleSpeed,
+      gemOfflineGems: state.simulation.upgrades.gems.offlineGems,
+      planetOfflinePC: state.simulation.upgrades.planetCoins.offlinePC,
+      wisdomPowerPowerActive: state.simulation.upgrades.wisdom.powerPowerActive,
+    },
+    powers: [
+      state.simulation.powers.mining,
+      state.simulation.powers.craftsmanship,
+      state.simulation.powers.expertise,
+      state.simulation.powers.wisdom,
+      state.simulation.powers.exquisity,
+    ].map(decimalSnapshot),
+    pickaxe: {
+      name: state.simulation.pickaxe.name,
+      power: decimalSnapshot(state.simulation.pickaxe.power),
+      quality: decimalSnapshot(state.simulation.pickaxe.quality),
+    },
+  });
+
+  for (const sample of corpus.data.saveSemantics.fieldApplicationErrors) {
+    const loaded = loadRemixLegacySaveIntoState({
+      state: makeMalformedSeed(),
+      saveString: sample.encoded,
+      catalog: corpus.data.mineObjectCatalog,
+      clock: { now: () => 1900000000000 },
+      resolveNumberFormatter: () => () => "",
+      noOffline: true,
+    });
+    expect(loaded.status, sample.name).toBe("applicationFailed");
+    if (loaded.status !== "applicationFailed") {
+      throw new Error(`${sample.name} did not fail during field application.`);
+    }
+    expect(loaded.error.name, sample.name).toBe(sample.thrownErrorName);
+    expect(loaded.error.message, sample.name).toBe(sample.thrownErrorMessage);
+    expect(actualSnapshot(loaded.partialState), sample.name).toEqual(
+      sample.stateAfter,
+    );
+    expect(loaded.effects, sample.name).toEqual(
+      sample.stateAfter.settings.theme === "light"
+        ? [{ type: "setTheme", theme: "light" }]
+        : [],
+    );
+  }
 });

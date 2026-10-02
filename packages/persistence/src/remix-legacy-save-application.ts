@@ -95,6 +95,35 @@ export interface ApplyRemixLegacySaveResult {
   evaluatedLastActiveFallbackMs: number;
 }
 
+export class RemixLegacySaveApplicationError extends Error {
+  readonly partialState: RemixLegacySaveApplicationState;
+  readonly effects: RemixLegacySaveApplicationEffect[];
+  readonly evaluatedLastActiveFallbackMs?: number;
+
+  constructor(input: {
+    sourceError: unknown;
+    partialState: RemixLegacySaveApplicationState;
+    effects: RemixLegacySaveApplicationEffect[];
+    evaluatedLastActiveFallbackMs?: number;
+  }) {
+    super(
+      input.sourceError instanceof Error
+        ? input.sourceError.message
+        : String(input.sourceError),
+    );
+    this.name =
+      input.sourceError instanceof Error ? input.sourceError.name : "Error";
+    this.partialState = input.partialState;
+    this.effects = input.effects;
+    if (input.evaluatedLastActiveFallbackMs !== undefined) {
+      this.evaluatedLastActiveFallbackMs = input.evaluatedLastActiveFallbackMs;
+    }
+    if (input.sourceError instanceof Error && input.sourceError.stack) {
+      this.stack = input.sourceError.stack;
+    }
+  }
+}
+
 const POWER_VALUE_KEYS = [
   "mining",
   "craftsmanship",
@@ -120,24 +149,6 @@ function resetUpgradeGroup(group: RemixUpgradeGroup) {
   return Object.fromEntries(
     REMIX_UPGRADE_KEYS[group].map((key) => [key, 0]),
   ) as Record<string, number>;
-}
-
-function applyUpgradeGroup(
-  group: RemixUpgradeGroup,
-  current: Record<string, number>,
-  incoming: LegacyUpgradeGroup,
-) {
-  const next = { ...current };
-  const knownKeys = REMIX_UPGRADE_KEYS[group] as readonly string[];
-
-  for (const key of Object.keys(incoming)) {
-    if (!knownKeys.includes(key)) {
-      throw new TypeError(`Unknown Remix ${group} upgrade: ${key}`);
-    }
-    next[key] = incoming[key]!.level as number;
-  }
-
-  return next;
 }
 
 /** Creates the pinned fresh-game settings around an initial simulation state. */
@@ -174,142 +185,212 @@ export function applyRemixLegacySaveFields(
   const { save } = input;
   const effects: RemixLegacySaveApplicationEffect[] = [];
   let simulation = input.state.simulation;
-  const mineObjectLevel = loadValue(save.mineObjectLevel, 0);
-  const highestMineObjectLevel = loadValue(save.highestMineObjectLevel, 0);
-
-  simulation = {
-    ...simulation,
-    resources: {
-      money: loadDecimal(save.money),
-      highestMoney: loadDecimal(save.highestMoney),
-      gems: loadDecimal(save.gems),
-      planetCoins: loadDecimal(save.planetCoins),
-      maxPlanetCoins: loadDecimal(save.maxPlanetCoins),
-      wisdom: loadDecimal(save.wisdom),
-      maxWisdom: loadDecimal(save.maxWisdom),
-    },
-    mineObjectLevel,
-    highestMineObjectLevel,
-    powersUnlocked: highestMineObjectLevel >= 170,
+  let state = input.state;
+  let evaluatedLastActiveFallbackMs: number | undefined;
+  const commitSimulation = (next: RemixSimulationState) => {
+    simulation = next;
+    state = { ...state, simulation };
   };
-  simulation = {
-    ...simulation,
-    currentObject: getRemixMineObject(
-      simulation.mineObjectLevel,
-      input.catalog,
-    ),
+  const commitSettings = (settings: RemixLegacySaveSettings) => {
+    state = { ...state, settings };
+  };
+  const commitUpgradeGroup = (
+    group: RemixUpgradeGroup,
+    levels: Record<string, number>,
+  ) => {
+    const upgrades = {
+      ...simulation.upgrades,
+      [group]: levels,
+    } as RemixUpgradeLevels;
+    commitSimulation({ ...simulation, upgrades });
   };
 
-  simulation = {
-    ...simulation,
-    story: {
-      ...simulation.story,
-      page: loadValue(save.story.page, 0),
-      notifications: loadValue(save.story.notifications, 0),
-      highestUnlocked: loadValue(save.story.highestUnlocked, -1),
-    },
-  };
-  const storyScrollY = loadValue(save.story.scrollY, 0);
+  try {
+    const resourceFields = [
+      "money",
+      "highestMoney",
+      "gems",
+      "planetCoins",
+      "maxPlanetCoins",
+      "wisdom",
+      "maxWisdom",
+    ] as const;
+    for (const key of resourceFields) {
+      const value = loadDecimal(save[key]);
+      commitSimulation({
+        ...simulation,
+        resources: { ...simulation.resources, [key]: value },
+      });
+    }
 
-  // Date.now() is evaluated as the fallback argument on every successful
-  // load, even when the save already has lastActive.
-  const now = input.clock.now();
-  simulation = {
-    ...simulation,
-    lastActiveMs: loadValue(save.lastActive, now),
-  };
+    const mineObjectLevel = loadValue(save.mineObjectLevel, 0);
+    commitSimulation({ ...simulation, mineObjectLevel });
+    const highestMineObjectLevel = loadValue(save.highestMineObjectLevel, 0);
+    commitSimulation({
+      ...simulation,
+      highestMineObjectLevel,
+      powersUnlocked: highestMineObjectLevel >= 170,
+    });
+    commitSimulation({
+      ...simulation,
+      currentObject: getRemixMineObject(
+        simulation.mineObjectLevel,
+        input.catalog,
+      ),
+    });
 
-  let settings = input.state.settings;
-  if (save.settings !== undefined) {
-    settings = {
-      ...settings,
-      numberFormatterIndex: loadValue(save.settings.numberFormatterIndex, 0),
-      theme: loadValue(save.settings.theme, "light"),
-      showMineObjLevel: loadValue(save.settings.showMineObjLevel, false),
-      showMinCraftDamage: loadValue(save.settings.showMinCraftDamage, false),
-    };
-    effects.push({ type: "setTheme", theme: settings.theme });
-  }
+    const storyPage = loadValue(save.story.page, 0);
+    commitSimulation({
+      ...simulation,
+      story: { ...simulation.story, page: storyPage },
+    });
+    const storyNotifications = loadValue(save.story.notifications, 0);
+    commitSimulation({
+      ...simulation,
+      story: { ...simulation.story, notifications: storyNotifications },
+    });
+    const highestUnlocked = loadValue(save.story.highestUnlocked, -1);
+    commitSimulation({
+      ...simulation,
+      story: { ...simulation.story, highestUnlocked },
+    });
+    state = { ...state, storyScrollY: loadValue(save.story.scrollY, 0) };
 
-  const upgrades: RemixUpgradeLevels = {
-    ...simulation.upgrades,
-    money:
-      save.upgrades === undefined
-        ? simulation.upgrades.money
-        : (applyUpgradeGroup(
-            "money",
-            simulation.upgrades.money,
-            save.upgrades,
-          ) as RemixUpgradeLevels["money"]),
-    gems:
-      save.gemUpgrades === undefined
-        ? (resetUpgradeGroup("gems") as RemixUpgradeLevels["gems"])
-        : (applyUpgradeGroup(
-            "gems",
-            simulation.upgrades.gems,
-            save.gemUpgrades,
-          ) as RemixUpgradeLevels["gems"]),
-    planetCoins:
-      save.planetCoinUpgrades === undefined
-        ? (resetUpgradeGroup(
-            "planetCoins",
-          ) as RemixUpgradeLevels["planetCoins"])
-        : (applyUpgradeGroup(
-            "planetCoins",
-            simulation.upgrades.planetCoins,
-            save.planetCoinUpgrades,
-          ) as RemixUpgradeLevels["planetCoins"]),
-    wisdom: simulation.upgrades.wisdom,
-  };
+    // Date.now() is evaluated as the fallback argument even when present.
+    evaluatedLastActiveFallbackMs = input.clock.now();
+    commitSimulation({
+      ...simulation,
+      lastActiveMs: loadValue(save.lastActive, evaluatedLastActiveFallbackMs),
+    });
 
-  let powers = simulation.powers;
-  const powerValueExtras = [...input.state.powerValueExtras];
-  if (save.powers !== undefined) {
-    if (save.powers.data !== undefined) {
-      powers = { ...powers };
-      for (let index = 0; index < save.powers.data.values.length; index += 1) {
-        const key = POWER_VALUE_KEYS[index];
-        const value = loadDecimal(save.powers.data.values[index]);
-        if (key === undefined) {
-          powerValueExtras[index - POWER_VALUE_KEYS.length] = value;
-        } else {
-          powers[key] = value;
+    if (save.settings !== undefined) {
+      let settings = state.settings;
+      settings = {
+        ...settings,
+        numberFormatterIndex: loadValue(save.settings.numberFormatterIndex, 0),
+      };
+      commitSettings(settings);
+      settings = {
+        ...settings,
+        theme: loadValue(save.settings.theme, "light"),
+      };
+      commitSettings(settings);
+      effects.push({ type: "setTheme", theme: settings.theme });
+      settings = {
+        ...settings,
+        showMineObjLevel: loadValue(save.settings.showMineObjLevel, false),
+      };
+      commitSettings(settings);
+      settings = {
+        ...settings,
+        showMinCraftDamage: loadValue(save.settings.showMinCraftDamage, false),
+      };
+      commitSettings(settings);
+    }
+
+    const applyUpgradeGroup = (
+      group: RemixUpgradeGroup,
+      incoming: LegacyUpgradeGroup,
+    ) => {
+      const levels = { ...simulation.upgrades[group] } as Record<
+        string,
+        number
+      >;
+      const knownKeys = REMIX_UPGRADE_KEYS[group] as readonly string[];
+      for (const key of Object.keys(incoming)) {
+        // In the source assignment, the right-hand value is read before the
+        // write to an unknown game's upgrade entry throws.
+        const level = (incoming as Record<string, { level?: number } | null>)[
+          key
+        ]!.level;
+        if (!knownKeys.includes(key)) {
+          throw new TypeError(
+            "Cannot set properties of undefined (setting 'level')",
+          );
         }
+        levels[key] = level as number;
+        commitUpgradeGroup(group, levels);
+      }
+    };
+
+    if (save.upgrades !== undefined) {
+      applyUpgradeGroup("money", save.upgrades);
+    }
+    if (save.gemUpgrades !== undefined) {
+      applyUpgradeGroup("gems", save.gemUpgrades);
+    } else {
+      commitUpgradeGroup(
+        "gems",
+        resetUpgradeGroup("gems") as RemixUpgradeLevels["gems"],
+      );
+    }
+    if (save.planetCoinUpgrades !== undefined) {
+      applyUpgradeGroup("planetCoins", save.planetCoinUpgrades);
+    } else {
+      commitUpgradeGroup(
+        "planetCoins",
+        resetUpgradeGroup("planetCoins") as RemixUpgradeLevels["planetCoins"],
+      );
+    }
+
+    if (save.powers !== undefined) {
+      if (save.powers.data !== undefined) {
+        for (
+          let index = 0;
+          index < save.powers.data.values.length;
+          index += 1
+        ) {
+          const key = POWER_VALUE_KEYS[index];
+          const value = loadDecimal(save.powers.data.values[index]);
+          if (key === undefined) {
+            const powerValueExtras = [...state.powerValueExtras];
+            powerValueExtras[index - POWER_VALUE_KEYS.length] = value;
+            state = { ...state, powerValueExtras };
+          } else {
+            commitSimulation({
+              ...simulation,
+              powers: { ...simulation.powers, [key]: value },
+            });
+          }
+        }
+      }
+      if (save.powers.upgrades !== undefined) {
+        applyUpgradeGroup("wisdom", save.powers.upgrades);
+      } else {
+        commitUpgradeGroup(
+          "wisdom",
+          resetUpgradeGroup("wisdom") as RemixUpgradeLevels["wisdom"],
+        );
       }
     }
 
-    upgrades.wisdom =
-      save.powers.upgrades === undefined
-        ? (resetUpgradeGroup("wisdom") as RemixUpgradeLevels["wisdom"])
-        : (applyUpgradeGroup(
-            "wisdom",
-            simulation.upgrades.wisdom,
-            save.powers.upgrades,
-          ) as RemixUpgradeLevels["wisdom"]);
-  }
-
-  if (save.pickaxe !== undefined) {
-    simulation = {
-      ...simulation,
-      pickaxe: {
+    if (save.pickaxe !== undefined) {
+      let pickaxe = simulation.pickaxe;
+      pickaxe = {
+        ...pickaxe,
         name: loadValue(save.pickaxe.name, "Toy Pickaxe"),
-        power: loadDecimal(save.pickaxe.pow),
-        quality: loadDecimal(save.pickaxe.quality),
-      },
+      };
+      commitSimulation({ ...simulation, pickaxe });
+      pickaxe = { ...pickaxe, power: loadDecimal(save.pickaxe.pow) };
+      commitSimulation({ ...simulation, pickaxe });
+      pickaxe = { ...pickaxe, quality: loadDecimal(save.pickaxe.quality) };
+      commitSimulation({ ...simulation, pickaxe });
+    }
+
+    return {
+      state,
+      effects,
+      evaluatedLastActiveFallbackMs:
+        evaluatedLastActiveFallbackMs ?? Number.NaN,
     };
+  } catch (sourceError) {
+    throw new RemixLegacySaveApplicationError({
+      sourceError,
+      partialState: state,
+      effects,
+      ...(evaluatedLastActiveFallbackMs === undefined
+        ? {}
+        : { evaluatedLastActiveFallbackMs }),
+    });
   }
-
-  simulation = { ...simulation, powers, upgrades };
-
-  return {
-    state: {
-      ...input.state,
-      simulation,
-      storyScrollY,
-      settings,
-      powerValueExtras,
-    },
-    effects,
-    evaluatedLastActiveFallbackMs: now,
-  };
 }

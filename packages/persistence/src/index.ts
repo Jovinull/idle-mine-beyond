@@ -56,6 +56,7 @@ export type {
 export {
   applyRemixLegacySaveFields,
   createInitialRemixLegacySaveApplicationState,
+  RemixLegacySaveApplicationError,
 } from "./remix-legacy-save-application.js";
 export type {
   ApplyRemixLegacySaveInput,
