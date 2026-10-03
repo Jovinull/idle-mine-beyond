@@ -434,6 +434,14 @@
     ) {
       pressedKeys = [...pressedKeys, event.key];
     }
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      void changeMineObject(1);
+    } else if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      void changeMineObject(-1);
+    }
   }
 
   function onKeyUp(event: KeyboardEvent) {
@@ -553,7 +561,6 @@
         null,
         2,
       );
-    const handleBlur = () => (pressedKeys = []);
     gameSession = createRemixWebGameSession({
       catalog,
       legacySaveTemplate: legacySaveTemplateContent.template as Record<
@@ -594,7 +601,6 @@
 
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
-    window.addEventListener("blur", handleBlur);
 
     const runFrame = async () => {
       const deltaTimeNew = clock.now();
@@ -637,7 +643,6 @@
       window.cancelAnimationFrame(animationFrame);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
-      window.removeEventListener("blur", handleBlur);
     };
   });
 </script>
