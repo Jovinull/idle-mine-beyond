@@ -1,16 +1,184 @@
 # Project status
 
-Last updated: 2026-10-02
+Last updated: 2026-10-03
 
 ## Phase
 
-**Phase 1 - Deterministic core (in progress).** The Phase 0 reference foundation is pinned and documented. Source-backed simulation slices, Story rendering, mine-object Canvas output, persistence flows, and connected web panels have differential or visual fixtures; the detailed coverage is tracked in the parity matrix. Natural Story route replay is verified through Chapter 6, and Chapters 7-9 have controlled phase-start differential tests. Selected Windows visual pairs cover Story progression, all Story pages, Mining, Settings, all upgrade tabs, Powers at its unlock boundary, and representative Space/Wisdom/galaxy Mining states. The selected shop/Powers/Mining states match at 1440x900 in both themes; primary Mining, Story, and Settings screens also match at 1366x768, 1920x1080, and 2560x1440. The 22 previously captured Linux Story screenshots remain preserved. Full game parity is not certified. A Tauri save adapter exists, but WebView save/reload validation is deferred until native packaging.
+**Phase 1 - Deterministic core (in progress).** The source-to-test audit maps all 36 parity-matrix areas to pinned Remix functions/branches, fixtures, and assertions. Random distributions and RNG was the first Certified area after confirming every consumer threshold, fixed-seed outcomes, and 90,000 differential state/RNG checkpoints; Big-number math and serialization, Fresh simulation-state initialization, Simulation action composition, Active and idle damage, and Procedural mine objects are also Certified. Fresh-state coverage traces Remix's no-save startup and verifies the complete initial state, live browser startup/interactions, and fresh Mining visuals in both themes. Action-composition coverage compares source frame, click, break, purchase, and craft branches in core, then verifies browser event wiring, save-before-Story ordering, random draws, and persisted state. Active/idle damage has browser assertions for a fresh-Mud click and a pinned full-health idle break; procedural-object coverage loads all three generator regions plus a sparse high ID through the Beyond save and Mining Canvas. Qualified non-exhaustive formula/RNG samples do not block certification; unresolved source boundaries, save/platform domains, and visual/UI evidence still can. The checker flags Certified rows that retain mapped gaps or unqualified sampled domains, and does not infer certification from code presence. parity-v1 remains web-only; native packaging, storage, and running Tauri WebView validation are post-v1.
 
-Beyond's seeded core route replay now validates eight captured Story route segments with full normalized state and RNG-cursor comparisons at all 3,833,896 source checkpoints. The first seven segments cover first eligibility through Chapter 5 (82,655 checkpoints); the natural Chapter 5-to-Chapter 6 segment adds 3,751,241 checkpoints from the captured Chapter 5 endpoint using seed 7454 and starting RNG cursor 37,097. These are source-captured route segments, not fresh-game-to-chapter replays. Chapters 7-9 now have three controlled Remix phase-start saves and differential randomized-action tests (3,000 source actions per phase, 9,000 full-state/RNG checkpoints total); these certify segments from the captured start states, not natural paths to those chapters.
+**Sampled-domain review (2026-10-03):** when relevant formula/RNG boundaries,
+a recorded fixed-seed sample, and a passing pinned differential are present,
+the finite sample is not a certification blocker; only a missing relevant
+source boundary leaves that sampled domain unqualified. The matrix currently
+has six Certified rows: Big-number math/serialization, Random distributions/RNG,
+Fresh simulation-state initialization, Simulation action composition, Active
+and idle damage, and Procedural mine objects. Other qualified subdomains belong to
+broader rows with separate UI, integration,
+visual, save, platform, or unmapped source-path evidence still open. No further
+sample growth is requested for those qualified formula/RNG domains.
 
-The procedural corpus now contains 920 exact source objects: IDs 0–768 dense, 23 explicit boundaries, and 128 deterministic probes across the safe-integer range. Core corpus tests, pinned-source verification, and Chromium comparison pass. Four actual source route-end saves from Chapters 3–6 now match every legacy-export field and their exact encoded strings after import under the captured session context, then pass Beyond v1 encode/decode/restore checks; the route set reaches 443,818,759 active clicks by Chapter 6. These results are sampled evidence, not exhaustive safe-integer object coverage or historical-save parity.
+Fresh-state certification on 2026-10-03: the trace includes Remix `onCreate`
+and the no-stored-save startup path, alongside the full pinned default-state and
+catalog assertions. The clean-storage browser test asserts Money, Gems, Mud HP,
+Toy Pickaxe values, the first active hit, upgrade dispatch, and Story navigation
+from the actual Beyond startup. Fresh Mining screenshots compare at zero pixels
+in both themes. The focused core/session suite passed 20/20 and the three
+Chromium startup/visual tests passed 3/3. This certifies initialization only;
+loaded-save and broader action/UI rows remain separate. Git metadata is read-only
+in this managed checkout, so this validated slice is uncommitted.
+
+Simulation-action certification on 2026-10-03: a new pinned `update()` capture
+starts with full-health Mud, a source fixture for `Math.random`, 61 seconds of
+elapsed time, and an autosave timer at 60 seconds. Remix breaks Mud, records the
+save snapshot, then refreshes Story; the snapshot retains Story at high-water 0
+with one notification while the final state has high-water 1 with two. The
+platform-independent action test compares every state field, RNG draw, timer,
+effect, and saved snapshot. A Chromium E2E feeds the same state through the
+Beyond browser RAF, verifies the visible reward/notification, checks the v1 save
+captured before Story refresh, and asserts one RNG draw. The focused simulation
+action suite passed 5/5, the new browser differential passed 1/1, the pinned
+reference corpus verification passed, and the complete Remix app E2E passed 20/20. Git metadata is read-only in this managed checkout, so it remains
+uncommitted.
+
+Active/idle-damage certification on 2026-10-03: the focused parity suite
+compares source formula boundaries, hit/reward transitions, frame ordering, and
+the fixed-seed complete-state/RNG differential. Chromium verifies a real fresh
+Mud click (HP 100 to 80) and the captured 61,000 ms idle break, including visible
+Money, Gems, HP, Story notification, persisted pre-refresh save, and RNG draw
+count. The pinned reference corpus verified against
+`0e0f4bf5a9c66e5603cda2ce4bd54213023dae21`; the focused Vitest passed 12/12 and
+the two targeted Playwright E2Es passed 2/2. This closes the row's browser action/timer integration gap; visual
+state coverage remains in the separate rendering/UI rows. Git metadata is
+read-only in this managed checkout, so this documentation update is uncommitted.
+
+Procedural-object certification on 2026-10-03: the pinned corpus still contains
+920 complete generated-object records and a 128-ID xorshift64* sample; no
+samples were added. Four Playwright cases load existing source captures at IDs
+80, 150, 600, and 769 through the Beyond v1 save and Mining route. They cover
+the three source generation regions and the first sparse high-ID probe, compare
+the displayed object number/name and drop kind, and require the matching Canvas
+level to render nontransparent pixels. The focused Chromium suite passed 4/4;
+`reference-probe verify` had already confirmed the fixture against the pinned
+Remix commit. Mine-rendering pixel combinations remain a separate In-progress
+row. Git metadata is read-only in this managed checkout, so this slice is
+uncommitted.
+
+Offline elapsed-time formula coverage was re-evaluated against the sampled-domain rule. The ten pinned boundary cases already cover the strict threshold, caps, suppression, zero/negative inputs, and ordered effects; the oracle now also captures a reproducible 16-value elapsed-time sample (xorshift32 seed 0x4f46464c) from pinned loadGame(). Beyond compares each complete load result, clock read, message, and save effect. The magnitude domain is qualified; browser suspension/clock discontinuity remains a separate environment gap, so the broader row stays In progress. No further samples were added to already-qualified formula/RNG areas. reference:update offlineProgressionSemantics, oracle verification, the focused offline unit suite (5/5), Chromium E2E (1/1), traceability (36 areas), docs (85 Markdown files), format, TypeScript/Svelte, lint, and git diff --check passed. Git metadata remains read-only in this managed checkout, so this validated slice is uncommitted.
+
+The source-to-test pass corrected the AD Prime boundary to the pinned sieve's actual last prime, 9973; added 16 source-derived inputs for every `ALL` dispatch slot; proved all 33 Shi table characters are reached; added Chinese boundaries for exponents 4/52 and suffix switch 288; and mapped Zalgo, Haha Funny, Evil, Nice, Coronavirus replacement paths, and all Greek Letters symbols/base-49 loop paths. The corpus now has 359 direct values, retaining its 32-value fixed-seed sample.
+`reference-probe verify`, the formatter unit suite (27/27), reference-corpus
+parity (3/3), Chromium formatter E2E (1/1), `parity:traceability` (36 areas),
+`docs:check` (85 Markdown files), targeted Prettier, and `git diff --check`
+passed. At that intermediate checkpoint, other per-class AD and AD Community
+branches remained open along with formatter UI/visual evidence; subsequent
+source captures close the class-branch gaps, leaving UI/visual evidence as the
+formatter row's remaining work.
+
+The 2026-10-03 formatter branch follow-up covers Japanese notation's complete
+18-entry suffix table, the optional residual suffix, and the `<72` versus
+`>=72` exponent path with 23 source-runtime inputs. The direct corpus remains at
+359 values and the 32-value fixed-seed sample is unchanged. `reference:update`
+and corpus verification, the Japanese unit boundary test, and Chromium formatter
+E2E passed. Japanese is removed from the remaining class-specific gap list. A
+follow-on source fixture covers Omega and Omega Short amount transitions, Omega
+order thresholds at 3/6, and the safe-integer fallback in 27 targeted inputs;
+their focused unit and Chromium comparisons pass. At this intermediate checkpoint,
+Elemental, Precise Prime, and AD Imperial still had unmapped paths; UI/visual
+evidence also remained open.
+
+The Tritetrated class now has ten pinned method inputs for the `[0, 16]` search,
+the strict comparison, convergence tolerance, and four-decimal result. Its
+remaining coverage is the existing 32-value seeded formatter corpus; no random
+sample was added. `reference:update notationSemantics` and oracle verification
+passed; the focused unit test passed 1/1, and the Chromium foundation suite
+passed 5/5, including exact fixture comparison. Targeted typecheck, lint,
+formatting, docs, and traceability checks passed. Number formatting stays In
+progress for the other unmapped classes and formatter UI/visual evidence.
+Staging the validated audit changes failed because Git could not create
+`.git/index.lock` (`Permission denied`); the work remains uncommitted.
+
+The Flags formatter now has a pinned source capture for its complete ordered
+258-entry emoji table, eleven `CustomNotation.transcribe` engineering-exponent
+boundaries, and 267 formatted inputs covering every single-flag index plus
+zero/negative exponents, remainder-zero transitions, and multi-position carry.
+The existing 32-value seeded sample was not expanded. Vitest compares the table,
+transcribe outputs, and formatted strings; Chromium compares the same capture.
+At this intermediate checkpoint, AD Imperial and AD Community Precise Prime
+remain source gaps; the
+formatter row also lacks its broader UI/visual evidence. The pinned method
+returns an undefined table entry at nonpositive normalized exponents, which the
+JSON fixture records as `null` inside the result array.
+`reference-probe verify`, the Flags-focused Vitest (1/1), Chromium foundation E2E
+(5/5), TypeScript/Svelte checks, lint, traceability (36 areas), docs check (85
+Markdown files), targeted Prettier, and `git diff --check` passed. The existing
+`.git` mount still denies index writes, so this validated slice remains local and
+uncommitted.
+
+The Elemental class now has 118 source-captured `getAbbreviationAndValue`
+results, one midpoint for each symbol across the eight pinned element lists;
+the test asserts all 118 symbols are reached. Captured method and formatter
+cases cover zero/no-parts, one through four assembled parts, the four-part cap,
+under-1000 and `formatDecimal` paths, one-versus-many part labels, and Infinity.
+At this checkpoint the notation row no longer lists Elemental as a source gap;
+AD Imperial was still the final unmapped formatter class-specific path. Formatter
+UI/visual evidence remains independent of the source-path audit.
+The pinned corpus verifies; Elemental and Flags focused unit tests each pass
+(1/1), and the Chromium foundation E2E passes 5/5. Full `pnpm check` passes:
+content/assets, traceability (36 areas), formatting, lint, TypeScript/Svelte,
+44 unit tests, 150 parity tests across 34 files, web build, and site build. The
+current `.git` mount is read-only, so this worktree update is uncommitted.
+
+Precise Prime now has source captures for the factorization helpers, repeated
+factors, parenthesization, power towers, MAX_SAFE_INTEGER transitions, and the
+finite Decimal ceiling. The tests preserve the source's 10,000 trial-factor cap,
+including its composite residual, and verify that the third tower tier lies
+outside finite Decimal inputs. The focused Node and Chromium comparisons pass;
+at this point, UI/visual evidence remained open alongside the AD Imperial source
+gap. `reference-probe verify`, the focused formatter test, Chromium formatter
+E2E, `pnpm typecheck`, and the pinned traceability audit passed for this
+follow-up.
+
+The Imperial source gap is now covered against the pinned base AD Notations
+1.6.0 bundle. The fixture records all 17 volume units, 19 adjectives, 50 unit
+search boundaries, strict maximum/reduction transitions, small-unit rounding,
+almost/short-of cases, and high-unit remainder decomposition including the
+third-unit count cap. Focused tests compare every source method result in Node
+and Chromium; the existing 32-value fixed-seed formatter sample did not change.
+The notation row remains In progress only for formatter UI/visual evidence.
+Validation for this slice: `reference-probe verify`, 34 formatting unit tests,
+the pinned formatter Chromium E2E, TypeScript/Svelte checks, docs/traceability,
+targeted Prettier, and `git diff --check` pass. Git metadata remains read-only in
+this checkout, so the work is uncommitted.
+
+The 2026-10-02 sampled-domain re-evaluation confirmed qualified formula/RNG evidence for Decimal operation boundaries, upgrade prices/effects and caps, procedural object regions, drop/resource and damage formulas, Powers, crafting/pickaxe naming, RNG consumers, and Story condition predicates. These domains have their source-defined boundaries, recorded fixed-seed samples, and no-divergence source comparisons documented in the [trace-map audit](parity-traceability/README.md). Big-number math and serialization is now Certified alongside Random distributions and RNG: its boundary corpus, 16-pair fixed-seed source differential, mapped Decimal operations, and JSON round-trip property pass; UI/visual evidence does not apply to this component row. Formatter source cases cover shared AD notation dispatch, all 16 `ALL` dispatch slots, all 33 Shi table characters, Chinese magnitude/suffix boundaries, Zalgo transform/sentinel RNG paths, Haha Funny zero/reciprocal/base-69 loop boundaries, Evil strict-distance/even/odd power branches, Nice log/sign/sentinel paths, all Coronavirus digit-replacement branches, all 49 Greek Letters table characters and base-49 loop boundaries, and formatExponent thresholds, Standard abbreviation, Scientific/Engineering rollover, Mixed Logarithm cutoffs, Clock base-12 branches, Hex signed/finite encoding and terminal tie-rounding (all-ones guard proven unreachable), Prime factorization and logarithmic boundaries, Custom Base Binary/Hexadecimal digit rounding and carry, Mixed/Infinity/Brackets/Dots/Blind/YesNo/Roman/Letters/Cancer/Logarithm paths, and the Remix Idle Mine/SI formatters across 359 direct inputs, including a fixed-seed 32-value sample. At the 2026-10-02 checkpoint, some class-specific notation branches were still gaps; the later formatter branch audit closed those source-method gaps. Formatter UI and visual evidence remain open. Other `Sampled` labels describe separate state, save, time/environment, platform, or visual scopes. Route traces document only the user-selected natural segments and controlled Chapter 7-9 starts. Other matrix rows still have separately named open evidence layers; numeric sample exhaustiveness is not their blocker.
+
+The Decimal source-boundary slice adds a pinned-runtime fixture for add/sub zero identities and exponent gaps 16/17/18, scalar multiplication around ±1e307, rounding/string cutoffs, and MAX/MIN sentinels. Sixteen operand pairs regenerated from fixed seed `487530534` compare add/subtract/multiply/divide/compare outputs. `pnpm reference:update decimalBranchSemantics`, corpus verification, the focused Decimal parity file (3/3), and TypeScript/Svelte checks pass; this closes the named arithmetic-boundary gap without claiming exhaustive Decimal values.
+
+Beyond's seeded core route replay validates eight captured natural Story route segments through Chapter 6 with complete normalized simulation state and RNG-cursor comparisons at 3,833,896 checkpoints. For each of the three controlled Remix phase-start saves for Chapters 7-9, the fixture pairs three fixed game-RNG seeds with three independent action-sequence seeds (three pairs per save, not a Cartesian product); each pair replays 10,000 actions, totaling nine traces and 90,000 complete `RemixSimulationState`/RNG checkpoints after every action. `pnpm reference:phase-differentials` re-executed the pinned Remix runtime and verified all nine trace hashes; the focused Vitest file passed 10/10. On 2026-10-02, `pnpm check` passed with 34 parity test files / 15 unit and 150 parity tests, lint, strict TypeScript/Svelte checks, and web/site builds. `pnpm test:reference` verified the pinned corpus, Story runtime, all nine differential traces, 47 Canvas goldens, and 32 priority visual states. The complete `pnpm test:e2e` passed 108/108, including the preserved Linux Story cases and the shop/Powers/Mining viewport comparisons. `pnpm test:site` passed 14/14. Chapters 7-9 are controlled-save segments, not natural progression claims.
+
+The notation boundary corpus captures 359 direct inputs for the pinned 40-formatter registry, including 32 generated cases from xorshift32 seed `0x494d4231`, positive/negative Decimal.MAX_VALUE cutoffs, shared formatExponent thresholds, Scientific/Engineering mantissa carries, Standard abbreviation groups/replacements, Mixed Logarithm thresholds, Clock base-12 thresholds and loop/clamp paths, Hex signed/finite encoding and terminal tie-rounding paths, Prime factorization/logarithmic boundary paths, Custom Base Binary/Hexadecimal rounding and carry paths, Infinity precision transition, the Brackets base-six loop, Dots rounding/recursion/cutoff, Roman threshold/fraction/cutoff, Haha Funny reciprocal/base-69 loop, Evil threshold/parity paths, Nice log/sentinel paths, Coronavirus replacement branches, and all Greek Letters symbol/base-49 loop paths, all 16 ALL dispatch slots, Zalgo seeded sentinels, and shared Letters/Cancer base-26 carry boundaries. Source tests map every YesNo base-dispatch path and zero/nonzero outcome plus each `ALL` dispatch slot. Four Zalgo sentinel calls account for the recorded 32 Math.random draws; the focused Zalgo source test compares zero, very-small, under-1000/1000, large finite, and signed sentinel outputs and asserts those 32 seeded calls. The pinned capture records two expected `RangeError: Invalid string length` outputs for negative near-MAX values in the two SI formatters. `pnpm reference:update notationSemantics` updated only this field; `pnpm exec node scripts/reference-probe.mjs verify` passed (359 formatter boundary values). The focused formatter unit suite passed (27/27), reference-corpus parity passed (3/3), and Chromium corpus E2E passed (1/1). The full parity suite passed (34 files, 150 tests). `pnpm test:reference` passed the pinned corpus, Story, 90,000 state/RNG checkpoints, 47 Canvas goldens, Mining/crafting captures, and tracked priority visual hashes. `pnpm parity:traceability` verifies all 36 areas. The later 2026-10-03 formatter audit closes those cited source-method gaps; formatter UI and visual evidence remain open in the current trace map.
+
+The traceability audit found and corrected a Beyond-only blur behavior that diverged from Remix: Beyond previously cleared held modifiers on window blur, while the pinned runtime keeps them held until keyup. Source fixtures and Chromium E2E verify that lifecycle, global ArrowLeft/ArrowRight selection, bounds, repeats, default prevention, and focused-input behavior. Function/branch-to-test tables cover all 36 areas, including save/load/recovery, offline timing, themes, visual slices, progression, RNG, and simulation/content. The checker requires source/evidence/assertion rows, existing assertion-test links, pinned Remix references, and the exact Planet Coin HTML gate; Certified rows may retain only qualified formula/RNG samples. Live shop tests cover Money/Gem/Planet Coin/Wisdom dispatch and the Planet Coin tab 89/90 gate; browser tests cover Story previews not mining and zero active damage. The pinned RNG inventory includes seeded and direct Math.random call sites, including Blacksmith Expertise. Pickaxe name boundaries are now captured in 119 source crafts; Chromium compares all exact outputs because Node and Chromium Math.log can differ at an exact quality threshold.
+
+The procedural corpus now contains 920 source outputs: IDs 0-768 dense, 23 explicit boundaries, and 128 fixed-seed safe-integer probes. Core corpus tests, pinned-source verification, and Chromium comparison pass. This non-exhaustive procedural domain is qualified because its source regions/boundaries are covered and every captured record matches; the matrix row remains In progress for app integration evidence. Four actual source route-end saves from Chapters 3-6 match every legacy-export field and their exact encoded strings after import under captured session context, then pass Beyond v1 encode/decode/restore checks; the route set reaches 443,818,759 active clicks by Chapter 6. These results do not imply historical-save or full-state visual parity.
+
+## Current local Git state
+
+Latest full validation on 2026-10-03: `pnpm check` passed content/assets,
+traceability (36 areas), formatting, lint, TypeScript/Svelte, 39 unit tests, 150
+parity tests across 34 files, web build, and site build. The focused formatter
+Chromium E2E passed 5/5; the source corpus verified at pinned Remix commit
+`0e0f4bf5a9c66e5603cda2ce4bd54213023dae21` with 920 objects and 359 notation
+boundary values. `pnpm docs:check`, focused Prettier, and `git diff --check`
+passed after the last documentation update.
+
+The 2026-10-02 traceability, differential, keyboard-input, and visual-test work remains uncommitted because this session's `.git` mount is read-only (`Unable to create .git/index.lock: Permission denied` on the prior staging attempt). Current validation passed: `pnpm check` (34 parity files / 15 unit and 150 parity tests), `pnpm test:reference` (including 47 Canvas goldens and all 32 visual source states), `pnpm test:e2e` (108/108), `pnpm test:site` (14/14), `pnpm docs:check` (85 Markdown files), `pnpm skills:check`, and `pnpm research:check`. The final traceability closeout also passed `pnpm parity:traceability` (36 areas), `pnpm format:check`, `pnpm docs:check`, and the five-file RNG consumer parity suite (17 tests). The light and dark controlled full craft-panel source states and screenshot hashes passed `pnpm reference:mining-screen`; focused Craft E2E passed (1/1) with both Windows full-screen baselines at zero differing pixels. Linux checks selector behavior without a panel screenshot. No commit or push was made; stage and commit this validated tree from an environment with writable Git metadata. See [Codex workflow](codex-workflow.md) for commit discipline.
+
+Latest sampled-domain checks on 2026-10-02 passed `pnpm parity:traceability` (36 areas), `pnpm docs:check` (85 Markdown files), `pnpm format:check`, `pnpm research:check`, `pnpm skills:check`, and the focused formula/RNG parity suite (11 files, 49 tests). The first-Mud timeout was caused by the reference probe suppressing `requestAnimationFrame`: Chromium fetched the dark CSS but did not apply the stylesheet until a rendering frame. The probe now waits for the stylesheet `load` and advances one preserved native frame without restarting the game loop. `pnpm reference:story-first-mud` passes against the pinned fixture in both themes on Chromium 153, and the full `pnpm reference:story-runtime` now passes for the natural milestones through Spooky Bone plus all nine unlocked pages. The aggregate `pnpm test:reference` now passes after the fix, including the pinned corpus and Story markup/runtime, all three 10,000-action phase differentials, 47 Canvas goldens, Mining/craft source captures, and all tracked priority visual hashes across the selected viewports.
 
 ## Compatibility target
+
+Phase 8 controlled craft-panel update (2026-10-02): the pinned Remix and Beyond match at zero pixels for the Gem Waster 1/2 save, selected cost 3, and full Mining screen at 1440x900 in light and dark themes on Windows. Reference sidecars record each theme, complete source state, and screenshot SHA-256; Linux verifies the same state and does not capture a panel screenshot. Other panel states and viewports remain open.
 
 Phase 8 priority visual status (2026-10-01): captured 32 additional Windows source/implementation pairs. They cover all three upgrade tabs, the controlled Powers unlock boundary, and three Space/Wisdom/galaxy Mining states at 1440x900 in both themes, plus Mining, Story, and Settings at 1366x768, 1920x1080, and 2560x1440 in both themes. Source captures replay from the pinned Remix revision. Tauri WebView save/reload remains deferred until native packaging. The Linux Story screenshots in commit 669618e remain preserved; no Linux captures were attempted for this new visual set.
 
@@ -18,7 +186,7 @@ Idle Mine: Remix, repository default branch main, commit **0e0f4bf5a9c66e5603cda
 
 ## Completed foundation and compatibility work
 
-- Added source-backed random pickaxe candidate generation, minimum/average previews, and the craft transaction in `packages/core/src/remix-pickaxe-crafting.ts`. Five controlled candidate outputs, two deterministic previews, and seven transaction scenarios compare exact RNG counts, Gem state, replacement/dud behavior, selected Gem cost, bulk attempts, formatted feedback, and every intermediate save snapshot against the pinned runtime. A seeded distribution corpus now compares two states over three seeds and 512 crafts per seed for exact RNG/streak histograms, name forms, and Power/Quality/Damage summaries; a five-sigma check validates the selected samples against the source probabilities. The probe also verifies that Blacksmith Expertise consumes a draw at level zero and may consume a second at positive levels. The Mining button now dispatches stochastic crafts; session tests cover feedback/save ordering and bulk snapshots. Playwright verifies replacement, persistence, source log order, insufficient-Gem no-RNG retry, and the captured Shift x3 bulk case including intermediate save/reload state. The Gem Waster selector has a pinned four-state browser capture, a source-gated core action, a Mining route E2E, and a pixel-exact source screenshot at light 1440x900; full-panel visual comparison remains open.
+- Added source-backed random pickaxe candidate generation, minimum/average previews, and the craft transaction in `packages/core/src/remix-pickaxe-crafting.ts`. Five controlled candidate outputs, two deterministic previews, and seven transaction scenarios compare exact RNG counts, Gem state, replacement/dud behavior, selected Gem cost, bulk attempts, formatted feedback, and every intermediate save snapshot against the pinned runtime. A seeded distribution corpus now compares two states over three seeds and 512 crafts per seed for exact RNG/streak histograms, name forms, and Power/Quality/Damage summaries; a five-sigma check validates the selected samples against the source probabilities. The probe also verifies that Blacksmith Expertise consumes a draw at level zero and may consume a second at positive levels. The Mining button now dispatches stochastic crafts; session tests cover feedback/save ordering and bulk snapshots. Playwright verifies replacement, persistence, source log order, insufficient-Gem no-RNG retry, and the captured Shift x3 bulk case including intermediate save/reload state. The Gem Waster selector has a pinned four-state browser capture, a source-gated core action, a Mining route E2E, and a pixel-exact source screenshot at light 1440x900. A controlled Clay state with the selected Gem cost 3 matches as a full Mining screenshot at zero pixels in both themes on Windows; alternate viewports and other panel states remain open.
 - Added `createInitialRemixSimulationState()` in `packages/core/src/remix-simulation-state.ts` to create the source-observed fresh core state from the pinned content catalog. Tests compare starting resources, progress, all upgrade levels, Powers, pickaxe, timers, and Story progress against `initialState`, and confirm new instances do not share mutable state.
 - Added `performRemixSimulationAction()` to compose active clicks and idle frames with mining, save effects, and post-save Story refresh, plus all 14 single/bulk upgrade-purchase cases and seven stochastic pickaxe-crafting cases. Crafting uses injected RNG and the source-selected Gem cost; bulk replacement preserves each ordered intermediate save snapshot. Three pinned-runtime frame cases still protect same-frame break/autosave/notification ordering and verify the save captures Story counters before that frame's notification update.
 - Assimilated the initial research into this knowledge base and created a section-by-section trace.
@@ -27,7 +195,7 @@ Idle Mine: Remix, repository default branch main, commit **0e0f4bf5a9c66e5603cda
 - Created the pnpm workspace, SvelteKit static SPA shell, Tauri 2 shell, strict TypeScript checks, lint/format tooling, and CI without gameplay.
 - Added unit/parity Vitest smoke tests, a Playwright browser smoke test, and a local Remix oracle browser workflow.
 - Added six project-local Skills, registered the three requested MCP servers, and verified their protocol initialization; Playwright and Chrome DevTools navigated to the public Remix deployment.
-- Extracted a controlled oracle corpus for all IDs 0-768, 23 high-index boundary probes, and 128 deterministic full-range safe-integer samples through `Number.MAX_SAFE_INTEGER`, the initial game state, base formula outputs, upgrade level-0→1 values, 40 formatter outputs at 67 values plus wrapper boundaries, and Decimal arithmetic/rounding/serialization edges. `pnpm test:reference` replays it from the pinned runtime and hash-pinned CDN snapshots.
+- Extracted a controlled oracle corpus for all IDs 0-768, 23 high-index boundary probes, and 128 deterministic full-range safe-integer samples through `Number.MAX_SAFE_INTEGER`, the initial game state, base formula outputs, upgrade level-0→1 values, 40 formatter outputs at 359 direct inputs (including 32 fixed-seed inputs and all 16 `ALL` dispatch slots, Scientific/Engineering and Mixed Logarithm cutoffs, Clock/Standard/Infinity/Brackets/Dots/Prime/Roman/Letters/Cancer branch boundaries, and MAX_VALUE boundaries) plus wrapper boundaries, and Decimal arithmetic/rounding/serialization edges. `pnpm test:reference` replays it from the pinned runtime and hash-pinned CDN snapshots.
 - Added `break_infinity.js@2.2.0` as the core's only Decimal boundary. The parity suite matches its captured arithmetic/serialization corpus and property-checks safe-integer JSON round-trips; damage/progression simulation remains unimplemented.
 - Added `RemixRandom`, an explicit-seed port of the canonical `Random` stream. Fifteen seeds spanning object-region boundaries are golden-tested, including source sequence exhaustion; property tests cover repeatable finite streams for safe nonnegative seeds.
 - Added `packages/content` with 72 base objects, 78 special anchors, 25 skin-layer counts, and the 498-word source dictionary. `getRemixMineObject` reproduces source lookup and all three generation branches; Chromium and the core now match all 920 captured object probes (0-768 dense, 23 explicit boundaries, and 128 deterministic full-range samples); the Node repeatability property samples nonnegative safe integers, and the dense capture exposed and fixed a Greek-name encoding mismatch.
@@ -50,7 +218,7 @@ Idle Mine: Remix, repository default branch main, commit **0e0f4bf5a9c66e5603cda
 
 ## Not complete
 
-- No complete system extraction, complete playable Beyond game, full-featured UI, native WebView save/reload certification, PWA, or parity certification. Object and rate corpora remain partial; complete reward distributions, broader crafting distributions beyond the two sampled states, historical save compatibility, broad Settings/upgrade save-export combinations, complete Story/Powers visual certification, broader prestige persistence/recovery cases, and full progression are not implemented. No full gameplay matrix row is certified.
+- No complete system extraction, complete playable Beyond game, full-featured UI, native WebView save/reload certification, PWA, or parity-v1 release. Six focused matrix areas are Certified, including player-facing simulation initialization, action composition, damage, and procedural-object generation, but no complete game system, phase, or release is certified. Object and rate corpora remain partial; historical save compatibility, broad Settings/upgrade save-export combinations, complete Story/Powers visual coverage, broader prestige persistence/recovery cases, and full progression remain open. Exhaustive reward/crafting probability tables are not required for qualified formula/RNG coverage, but named boundaries, seeded outcomes, and differential checks remain required.
 - No accepted behavioral exceptions.
 - No Android/iOS SDK or mobile build setup.
 - No upstream game JavaScript has been copied. The unmodified `stone_new.png` atlas is bundled for the source-compatible Canvas adapter with provenance and an adjacent Remix MIT notice; rights to inherited original-game art remain unverified. Source-derived mine and Story data is provenance-recorded under `packages/content`.
@@ -69,7 +237,7 @@ Idle Mine: Remix, repository default branch main, commit **0e0f4bf5a9c66e5603cda
 - Playwright browser discovery prefers the installed Playwright Chromium, then auto-discovers Chrome at common Windows/macOS/Linux paths; `PLAYWRIGHT_CHROMIUM_EXECUTABLE` overrides discovery. Every launch passes `--font-render-hinting=none`. Story runtime and Canvas captures require pinned Chromium `153.0.8010.12`. Canvas-golden checks compare decompressed pixels because gzip headers record the host OS. After changing the Playwright web server to launch Vite directly, `CI=true pnpm exec playwright test --workers=1` passed 11/11 on Windows and `CI=true pnpm test:e2e` passed 11/11 on Ubuntu 24.04 WSL and exited normally. The full CI sequence for `8380f4d85affb66ec1e9f0eaa17bcf910151e19a` passed from an ext4 WSL checkout, including pinned Story markup/runtime and all 47 Canvas goldens on Linux LF source.
 - This session's direct `node scripts/research.mjs check`, `node scripts/check-docs.mjs`, `node scripts/check-skills.mjs`, `node scripts/reference-probe.mjs verify`, and `node scripts/sync-mine-content.mjs --check` all pass. Pinned source checkouts and CDN response snapshots are clean/hash-verified and ignored by Git.
 - On this Windows host, `pnpm native:check` and `pnpm native:build` pass. The build emits an unbranded transparent placeholder icon and is not a release package.
-- GitHub MCP reads and Actions queries work; repository metadata reports `admin`, `maintain`, `pull`, and `push` permission for `Jovinull/idle-mine-beyond`. The repo-scoped Git helper is configured at `.git/codex-auth/idle-mine-beyond-git-credential.cjs`. Documentation commit `922305048bbe838d2148dd32914b4348e8f73e77` passed run [36631802086](https://github.com/Jovinull/idle-mine-beyond/actions/runs/36631802086) on `ubuntu-latest`, including install, source checks, the corpus, and E2E. Source-probe commit `00838f756cacfae4ddf69297aa2053de580bbf9a` passed run [36631467161](https://github.com/Jovinull/idle-mine-beyond/actions/runs/36631467161), including the four live-rate `loadGame()` captures. Android SDK/JDK setup and macOS/Xcode remain platform prerequisites for future mobile builds.
+- GitHub MCP reads and Actions queries work; repository metadata reports `admin`, `maintain`, `pull`, and `push` permission for `Jovinull/idle-mine-beyond`. The repo-scoped Git helper is configured at `.git/codex-auth/idle-mine-beyond-git-credential.cjs`. Documentation commit `922305048bbe838d2148dd33514b4348e8f73e77` passed run [36631802086](https://github.com/Jovinull/idle-mine-beyond/actions/runs/36631802086) on `ubuntu-latest`, including install, source checks, the corpus, and E2E. Source-probe commit `00838f756cacfae4ddf69297aa2053de580bbf9a` passed run [36631467161](https://github.com/Jovinull/idle-mine-beyond/actions/runs/36631467161), including the four live-rate `loadGame()` captures. Android SDK/JDK setup and macOS/Xcode remain platform prerequisites for future mobile builds.
 
 - During the 2026-09-30 Gem Waster selector slice, the pinned browser probe update and verification, all 122 unit/parity tests, formatting and documentation checks, all 24 Playwright tests, and the exact selector screenshot regression passed. At that point Svelte-check and ESLint could not load because partial `node_modules` lacked `@jridgewell/gen-mapping`; a later final rerun in this session passed both `pnpm.cmd lint` and `pnpm.cmd typecheck` (zero Svelte errors or warnings). The browser tests reused the already-running local Vite server. The current sandbox mounts `.git` read-only, so this slice has no local commit or push; the earlier repository-scoped API write was rejected and that path remains closed. This does not certify the rest of the dirty worktree.
 - During the 2026-09-30 repeated-sample crafting slice, `node scripts/reference-probe.mjs update pickaxeCraftingSemantics` changed only that pinned corpus field, and `node scripts/reference-probe.mjs verify` passed against `0e0f4bf5a9c66e5603cda2ce4bd54213023dae21`. Final validation passed `pnpm.cmd test` (6 unit, 117 parity), `pnpm.cmd lint`, `pnpm.cmd typecheck` (zero Svelte errors/warnings), docs check, formatting, and `git diff --check`. The probe covers two craft states, three deterministic seeds, and 512 samples per seed; it confirms the source's level-zero Expertise draw and optional positive-level bonus draw. `.git` remains read-only in this session, so this slice cannot yet be committed or pushed.
@@ -115,7 +283,7 @@ Idle Mine: Remix, repository default branch main, commit **0e0f4bf5a9c66e5603cda
 
 On 2026-10-01, the pinned Remix route from the captured Chapter 5 endpoint to first Chapter 6 eligibility was captured with seed 7454 and starting RNG cursor 37,097, then replayed in Beyond with complete state/RNG comparisons at 3,751,241 checkpoints. The route contains 1,249,998 iterations, 443,818,759 active clicks, 733 craft attempts, and 1,249,979 farm breaks. The replay passed in 760.18 seconds, and its light 1440x900 Chapter 6 screenshot matched at zero pixels on Windows. This brings natural route replay through Chapter 6 to eight segments and 3,833,896 total checkpoints.
 
-Chapters 7-9 now have pinned-source controlled saves at page 6 / object 124 (`hyperSaturn`), page 7 / object 169 (`reachWisdomEssence`), and page 8 / object 198 (`mineSmallGalaxy`). Each saved state is followed by 3,000 reproducibly randomized source actions; Beyond matches all 9,000 full-state/RNG checkpoints. The fixture setup injects test resources and pickaxe power before calling Remix's own `saveGame()`; these are controlled action-test starts and do not claim authentic historical saves or natural progression routes. The source probe, Brotli traces, and Beyond differential tests pass. See [Story](story.md) and [testing and parity](testing-and-parity.md) for the boundaries and reproduction commands.
+Chapters 7-9 use pinned-source controlled saves at page 6 / object 124 (`hyperSaturn`), page 7 / object 169 (`reachWisdomEssence`), and page 8 / object 198 (`mineSmallGalaxy`). Each save uses three paired game-RNG/action-sequence seed combinations (not a Cartesian product), with 10,000 reproducibly randomized source actions per pair; across all saves Beyond compares every simulation-state field and RNG cursor at all 90,000 checkpoints. The fixture setup injects test resources and pickaxe power before calling Remix's own `saveGame()`; these are controlled action-test starts and do not claim authentic historical saves or natural progression routes. The source probe, Brotli traces, and Beyond differential tests pass. See [Story](story.md) and [testing and parity](testing-and-parity.md) for the boundaries and reproduction commands.
 
 The managed Windows session attempted the native WebView smoke: `pnpm native:dev` failed with `Access denied (os error 5)` using the default profile path. An ignored `.research/native-smoke` app-directory override let the Tauri window start, but did not return a native invoke probe result; no WebView read/write/reload certification is claimed. `tauri-driver` and `msedgedriver` are absent here. See [testing and parity](testing-and-parity.md) for the reproducible next requirements and official Tauri links.
 
@@ -127,10 +295,12 @@ Latest closeout update on 2026-10-01: `pnpm.cmd check` passed formatting, lint, 
 
 Git closeout on 2026-10-01: `git add -A` failed before staging with `fatal: Unable to create 'C:/Workspace/idle-mine-beyond/.git/index.lock': Permission denied`. No commit or push was created. The managed checkout allows reading Git metadata but blocks writing it; leave the validated changes in the working tree for a writable session rather than bypassing that boundary.
 
-Parity-depth follow-up on 2026-10-01: the pinned corpus now verifies 792 object outputs (IDs 0–768 dense plus 23 high-index boundary probes), and Chromium matches every output. Four natural Chapter 3–6 `getSaveString()` route endpoints match every legacy export field and exact encoded string under captured session selections, then pass Beyond v1 restore checks. Focused save/object/visual-inventory parity tests pass 14/14; Story visual E2E passes 42/42, priority visual E2E 32/32, and `reference:priority-visuals` verifies all 32 source hashes. Final format, lint, typecheck, docs, research, and oracle verification pass. The sidecar inventory test now classifies the 32 source-fixture-driven Windows-only priority captures alongside the four Windows-only natural Chapter 3–6 screenshots; all 45 existing Linux sidecars validate. A targeted `git add` after this update again failed before staging with `.git/index.lock: Permission denied`; no commit or push was created.
+Parity-depth follow-up on 2026-10-01: the pinned corpus verifies 920 object outputs (IDs 0–768 dense, 23 high-index boundaries, and 128 deterministic safe-integer samples), and Chromium matches every output. Four natural Chapter 3–6 `getSaveString()` route endpoints match every legacy export field and exact encoded string under captured session selections, then pass Beyond v1 restore checks. Focused save/object/visual-inventory parity tests pass 14/14; Story visual E2E passes 42/42, priority visual E2E 32/32, and `reference:priority-visuals` verifies all 32 source hashes. Final format, lint, typecheck, docs, research, and oracle verification pass. The sidecar inventory test now classifies the 32 source-fixture-driven Windows-only priority captures alongside the four Windows-only natural Chapter 3–6 screenshots; all 45 existing Linux sidecars validate. A targeted `git add` after this update again failed before staging with `.git/index.lock: Permission denied`; no commit or push was created.
 
 Current focused revalidation on 2026-10-01: the natural Chapter 5-to-Chapter 6 replay passed all 3,751,241 checkpoints in 563.91 seconds. The three phase-differential cases and the visual-sidecar inventory passed (5/5 tests); all 32 pinned priority visual PNG hashes/source captures verified. pnpm.cmd test:e2e printed all 103/103 cases as passed, including Chapter 6, priority viewport cases, and Story cases, but the runner stayed in teardown without a final summary for over two minutes and was interrupted. Record the E2E cases as passed with an incomplete runner exit, not as a clean command exit. The Linux sidecars were preserved and the inventory test validates all 45. Tauri WebView validation remains deferred until native packaging.
 
 Malformed-save compatibility closeout on 2026-10-02: the pinned probe now records exact TypeError names/messages for all sixteen field-application failures, alongside their complete source-ordered partial states. Beyond compares every state/effect snapshot; a Settings import adopts the partial state and earlier theme effect, shows the error, and does not write storage. The focused save suite passed 46/46 and the Settings E2E passed 1/1 with a clean runner exit. `pnpm.cmd check` passed 15 unit and 142 parity tests, formatting, lint, TypeScript/Svelte checks, content/assets, and web/site builds. `pnpm.cmd test:reference` passed the corpus, Story runtime, phase starts, 47 Canvas goldens, and priority visual captures. `pnpm.cmd docs:check` checked 79 Markdown files, `pnpm.cmd skills:check` validated six Skills, and `git diff --check` passed. Historical saves and exhaustive malformed-input ordering remain open. The managed `.git` mount is read-only, so these validated changes could not be committed or pushed in this session.
 
 Trace size, CI time, and Linux closeout on 2026-10-01: the Chapter 6 route trace was made compact and the long source check was moved out of CI. The tracked trace shrank from 43 MB to 1.9 MB: every event stays, 1,660 of 3,751,241 records keep the full state/RNG checkpoint, and each kept record carries a SHA-256 chain over every checkpoint up to it. The Beyond replay in `pnpm check` still compares every step and passed in 189 seconds on Ubuntu WSL (280 seconds with the full trace). The full trace's hash is pinned as `sourceRawSha256`. `extract-story-runtime --check`, `--check-pixel-goldens`, and therefore `pnpm test:reference` no longer recapture the Chapter 6 route, which takes hours; `pnpm reference:story-chapter6:check` does it on request. The 32 priority visual cases gained Linux source screenshots, so Linux CI compares them at zero pixels; the corpus has 81 Windows and 77 Linux sidecars. These changes were committed with the parity-depth follow-up from a separate worktree; each commit passed `pnpm check` in Ubuntu 24.04 WSL, and the final tree passed the Linux CI sequence (docs, Skills, research, `pnpm check`, `pnpm test:reference`, E2E, and site tests) before the push.
+
+Craft-panel Linux and commit closeout on 2026-10-03: both controlled full craft-panel screenshots gained `-linux` source baselines from Ubuntu 24.04 WSL, so Linux E2E now compares them at zero pixels; the corpus has 83 Windows and 79 Linux sidecars, and only the natural Chapter 3-6 captures are Windows-only. The three unseeded phase-differential traces that the multi-seed traces replaced were removed. Each commit of this batch passed `pnpm check` in Ubuntu 24.04 WSL, and the final tree passed the Linux CI sequence before the push.

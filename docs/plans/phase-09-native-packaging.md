@@ -1,6 +1,6 @@
 # Phase 9 — Native packaging
 
-Status: Not started.
+Status: Not started; explicitly outside the web `parity-v1` gate.
 
 ## Outcome
 
@@ -8,8 +8,8 @@ Package the shared web application with Tauri 2 and implement only platform adap
 
 ## Entry evidence
 
-Web parity behavior and save model are stable; platform permissions and distribution requirements have current official references.
+Web `parity-v1` is reviewed first. Platform permissions and distribution requirements have current official references for the target being packaged.
 
 ## Validation
 
-Build and launch each supported native target, verify save location and recovery, and run platform E2E checks. Android/iOS require their current SDKs and signing setup.
+Build and launch each supported native target, verify native save location and recovery in the running WebView, and run platform E2E checks. These are native-release gates, not web `parity-v1` requirements. Android/iOS require their current SDKs and signing setup.

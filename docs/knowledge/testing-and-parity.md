@@ -8,6 +8,10 @@ Every behavior implementation follows:
 
 “Looks plausible” is not parity evidence.
 
+### Global keyboard selection
+
+The pinned Remix installs `keydown`/`keyup` handlers on `window`, so ArrowLeft and ArrowRight change the selected mine object even while a text input is focused. Both arrows prevent the browser default; selection is clamped to `[0, highestMineObjectLevel]`, repeated keydowns apply repeated steps, and `keyup` removes the key from the modifier map. The source has no window-blur cleanup: a held modifier stays active across blur until its `keyup` event. The `keyboardInputSemantics` source fixture records these cases. `tests/e2e/remix-app.spec.ts` compares focused-input arrow selection, default prevention, selected level/name, bounds, repeats, modifier purchase behavior, held state across blur, and keyup cleanup. Physical keyboard layouts, IME behavior, and browser-generated key-event variants remain open input-domain questions rather than untested source branches.
+
 ## Test layers
 
 - **Unit tests:** exact formulas and edge cases inside platform-independent packages.
@@ -63,7 +67,9 @@ The captured Windows images have matching Beyond screenshots at zero pixels for 
 
 The selected visual matrix uses 1366x768, 1440x900, 1920x1080, and 2560x1440 in light and dark themes. At 1440x900 it covers chosen Story progression, all nine controlled Story pages, Mining, Settings, all upgrade tabs, Powers at its controlled unlock boundary, and representative Space/Wisdom/galaxy Mining states. At the three other viewports it covers only the primary Mining, Story, and Settings screens. This is selected visual evidence, not exhaustive screen/state certification.
 
-Playwright is capped at two workers in playwright.config.ts; a cold six-worker run on this Windows host produced blank app pages before hydration. Full-screen comparisons wait for fonts and Canvas rendering before measuring Story scroll geometry. The 103-case E2E suite passed completely on Windows on 2026-10-01. Long source-ordered routes have a 120-second test budget; the scrolled-millionaire geometry check waits for loaded fonts before reading element bounds. Windows full-screen Story, Mining, Settings, selected shop/Powers/mining, and viewport comparisons require zero differing pixels. Linux screenshot comparisons remain available for all-unlocked Story, the eleven selected Story progression states (22 theme captures), Mining, Settings, and the craft-selector crop. Linux also compares the 32 priority visual cases at zero pixels against their `-linux` baselines. Only the Chapter 3-6 natural eligibility captures are Windows-only; Linux still runs their state/DOM assertions. Preserve the Linux images and sidecars already tracked. To refresh Story progression Linux baselines, run node scripts/extract-story-runtime.mjs --write in Ubuntu, copy each .research/outputs/story-runtime/<name>.png to tests/fixtures/visual/<name>-linux.png, and mirror the Windows sidecar with the Linux path and SHA-256. pnpm reference:mining-screen verifies both fresh Mining captures against the pinned runtime. pnpm reference:story-runtime:capture recreates Story source screenshots in ignored .research/outputs/story-runtime/; review each tracked state sidecar before changing a baseline. The explicit Mining baseline recapture command remains pnpm reference:mining-screen:capture.
+The Powers boundary screenshot is derived from the captured Wisdom phase-start save in `remix-phase-differentials.json`. If that pinned save changes, run `pnpm reference:priority-visuals:capture` and review the resulting source-state fixture plus screenshot hashes; the check compares the complete encoded save and reports the first differing JSON path. A matching screenshot alone does not establish that the underlying source state is still synchronized.
+
+Playwright is capped at two workers in playwright.config.ts; a cold six-worker run on this Windows host produced blank app pages before hydration. Full-screen comparisons wait for fonts and Canvas rendering before measuring Story scroll geometry. The 103-case E2E suite passed completely on Windows on 2026-10-01. Long source-ordered routes have a 120-second test budget; the scrolled-millionaire geometry check waits for loaded fonts before reading element bounds. Windows full-screen Story, Mining, Settings, selected shop/Powers/mining, the controlled craft-panel state in both themes, and viewport comparisons require zero differing pixels. Linux screenshot comparisons remain available for all-unlocked Story, the eleven selected Story progression states (22 theme captures), Mining, Settings, and the craft-selector crop. Linux also compares the 32 priority visual cases at zero pixels against their `-linux` baselines. Both controlled full craft-panel screenshots also have `-linux` pairs, captured with `node scripts/capture-remix-mining-screen.mjs --write` in Ubuntu 24.04 WSL. Only the selected natural Chapter 3-6 eligibility captures are Windows-only; Linux still runs their state/DOM assertions. Preserve the Linux images and sidecars already tracked. To refresh Story progression Linux baselines, run node scripts/extract-story-runtime.mjs --write in Ubuntu, copy each .research/outputs/story-runtime/<name>.png to tests/fixtures/visual/<name>-linux.png, and mirror the Windows sidecar with the Linux path and SHA-256. pnpm reference:mining-screen verifies both fresh Mining captures and both controlled full craft-panel source states against the pinned runtime. pnpm reference:story-runtime:capture recreates Story source screenshots in ignored .research/outputs/story-runtime/; review each tracked state sidecar before changing a baseline. The explicit Mining baseline recapture command remains pnpm reference:mining-screen:capture.
 
 ## Current reference and compatibility harnesses
 
@@ -97,7 +103,7 @@ The same action boundary now composes all 14 captured `upgradeSemantics.purchase
 
 `pickaxeCraftingSemantics` captures five source-controlled random candidate outputs, minimum/average display outputs, and seven `functions.craftPick()` transaction cases. Vitest compares exact Power, Quality, Damage, generated names, draw counts, Gem balances, equipped pickaxes, feedback messages/colors, event order, and every save snapshot. Coverage includes the 15-roll quality cap, Expertise bonus, generated-word branch, ID 210 special-anchor naming fallback, strict equal-damage duds, insufficient Gems without RNG use, bulk crafting, fractional Gem rounding, and selected Gem-cost behavior. `performRemixSimulationAction` is compared against all seven crafting cases. The web-session test also checks formatted success/dud/insufficient feedback interleaved with replacement saves and compares both persisted snapshots from a bulk attempt. Playwright injects the captured random sequence through the Mining Craft button, verifies the replacement and newest-first feedback, reads the Beyond save, then checks insufficient Gems leaves RNG untouched. Repeated-sample distribution analysis and full craft-panel visual comparison remain open. The Gem Waster selector has four captured boundary cases, a core action comparison, and an exact source crop screenshot at light 1440x900.
 
-The offline-load corpus contains ten controlled source calls with injected per-second rates: exact/over-threshold boundaries, the default and upgraded caps, `nooffline`, missing/future timestamps, zero rates, and advancing clock reads. Unit and Chromium tests compare elapsed and capped duration, resource deltas and maxima, formatted log effects, source-ordered clock reads, and the state passed to the save effect. A composed Vitest test sends all nine captured mining formula states through `performRemixSimulationAction()` and checks offline resource deltas against the exact captured MPS/GPS/PCPS outputs, including the upgrade multipliers and save snapshot. Four pinned-browser cases load controlled saves with real `getMPS()`, `getGPS()`, and `getPCPS()` calls; a fifth loads a complete distinct save, grants offline rewards, and records exact clock and effect order plus the stored state. `loadRemixLegacySaveIntoState()` passes the eager timestamp fallback into the core action and compares the combined result with that capture. `loadRemixBeyondSaveIntoState()` restores the captured pre-reward fields from v1 and matches the same reward state, message, four clock reads, and write-before-confirmation order. Rate calculation remains lazy after the threshold/noOffline branch. The persistence coordinator owns save writes and confirmation; the web route currently drives frames and the session owns ordered writes.
+The offline-load corpus contains ten controlled boundary calls plus sixteen elapsed-time samples generated with xorshift32 seed `0x4f46464c`. Pinned Remix captures every sampled result; unit and Chromium tests compare state, resources, maxima, messages, clock reads, timestamps, and writes without divergence. The boundary cases cover exact/over-threshold values, default/upgraded caps, `nooffline`, missing/future timestamps, zero rates, and advancing clock reads. Unit and Chromium tests compare elapsed and capped duration, resource deltas and maxima, formatted log effects, source-ordered clock reads, and the state passed to the save effect. A composed Vitest test sends all nine captured mining formula states through `performRemixSimulationAction()` and checks offline resource deltas against the exact captured MPS/GPS/PCPS outputs, including the upgrade multipliers and save snapshot. Four pinned-browser cases load controlled saves with real `getMPS()`, `getGPS()`, and `getPCPS()` calls; a fifth loads a complete distinct save, grants offline rewards, and records exact clock and effect order plus the stored state. `loadRemixLegacySaveIntoState()` passes the eager timestamp fallback into the core action and compares the combined result with that capture. `loadRemixBeyondSaveIntoState()` restores the captured pre-reward fields from v1 and matches the same reward state, message, four clock reads, and write-before-confirmation order. Rate calculation remains lazy after the threshold/noOffline branch. The persistence coordinator owns save writes and confirmation; the web route currently drives frames and the session owns ordered writes.
 
 `saveSemantics` in the oracle corpus records the pinned current save's top-level/nested keys, Decimal JSON values, omitted upgrade functions, storage key, encode/decode order, absent and empty optional groups, five malformed/partial-load outcomes, Base64 whitespace/padding variants, and controlled ASCII/Unicode codec vectors. `saveExportSemantics` stores full serialized objects for fresh and controlled loaded states, plus hashes and changing fields for five procedural object IDs covering all three generation branches, a capped message log, and a state varying all upgrade groups, resources, Story, Power values, and Settings. `saveApplicationSemantics` captures a distinct current save applied through the pinned browser loader; `saveOfflineApplicationSemantics` captures that boundary followed by real live-rate offline rewards, the exact four clock reads, event order, and stored snapshot. `@idle-mine-beyond/persistence` decodes the wrapper, applies captured fields, and composes the offline transition in `loadRemixLegacySaveIntoState()`; Beyond v1 loading repeats the offline transition through `loadRemixBeyondSaveIntoState()`. Vitest compares both paths, all fifteen full-save source captures (two complete objects and thirteen variants), and the full source codec snapshots; Chromium compares codec vectors and exercises Settings import/export with the captured current save. The Beyond recovery route exports all three raw slots without mutation and gates both legacy-save and Beyond-file recovery on copy acknowledgement. Direct v1 files and recovery bundles use strict validation, primary-first/valid-backup selection, future-version refusal, and never treat the bundled legacy key as a Beyond save; unit, session, and Playwright tests cover these boundaries. Historical save variants, uncovered malformed shapes and exhaustive error ordering, exhaustive state-to-object export parity, and native WebView runtime remain open; Beyond schema validation, backup recovery, browser/native adapters, and both recovery-import workflows are implemented.
 
@@ -107,7 +113,7 @@ The natural millionaire visual capture has two source views per theme. The initi
 
 The pinned natural-millionaire corpus records both the initial zero-damage Coal boundary and a later source-interaction route from that save. The route buys Blacksmith from level 2 to 47 and Active Power from level 0 to 7 with `Upgrade.buy()`, performs one seeded one-Gem craft with `functions.craftPick()`, then uses legal object selection, `clickMineObject()`, and source `update()` calls to break IDs 5 through 12 in 71 clicks. It reaches highest mine-object level 13 and unlocks `firstSpookyBone` without injecting progress or resources. Vitest asserts the purchases, exact pickaxe result, per-object click counts, final save-like state, and Story entry. At page entry the Bone milestone is directly visible and the next objective is `Reach Emerald`, while `highestUnlocked` remains 9 and notifications remain zero because the source scan does not revisit milestone index 8 after `millionaire` advances it to index 9. This is a single fixed-seed source route, not a craft-distribution claim; the newly reached Story screen now matches the pinned source in light and dark at zero pixel difference on Windows.
 
-`pnpm test:reference` is a separate read-only browser probe. It loads the pinned Remix checkout, substitutes the SHA-verified CDN response snapshots recorded in `sources/runtime-dependencies.json`, fixes the clock and RNG, suppresses the animation loop, and compares the result with the checked-in oracle corpus. `pnpm reference:preview` writes a disposable capture under ignored `.research/outputs/`. `pnpm reference:extend <field>` adds new fields only if every existing field still matches; `pnpm reference:update <field>` replaces exactly one named field after checking all others. Review every proposed fixture change. These commands never modify the canonical checkout or implement Beyond behavior. Story runtime and pixel checks also require the browser version recorded in the fixture; capture only with Playwright's pinned Chromium, never a system Chrome, and review all proposed golden changes.
+`pnpm test:reference` is a separate read-only browser probe. It loads the pinned Remix checkout, substitutes the SHA-verified CDN response snapshots recorded in `sources/runtime-dependencies.json`, fixes the clock and RNG, suppresses the animation loop, and compares the result with the checked-in oracle corpus. `pnpm reference:preview` writes a disposable capture under ignored `.research/outputs/`. `pnpm reference:extend <field>` adds new fields only if every existing field still matches; `pnpm reference:update <field[,field...]>` replaces explicitly selected fields after checking that every unselected field still matches. Use a field list only when the reviewed capture changes are causally coupled; for example, rendering Zalgo's infinite label in the notation corpus consumes seeded RNG and also changes `probeRuntime`. Review every proposed fixture change. These commands never modify the canonical checkout or implement Beyond behavior. Story runtime and pixel checks also require the browser version recorded in the fixture; capture only with Playwright's pinned Chromium, never a system Chrome, and review all proposed golden changes.
 
 Cross-platform safeguards protect this oracle: the Story markup extractor normalizes CRLF and CR to LF before calculating template offsets, so a Windows checkout with `core.autocrlf=true` cannot produce a platform-specific fixture. Its regression test compares LF and CRLF inputs. Canvas checks compare decompressed RGBA pixels and preserve the pinned gzip bytes when they match, because gzip headers record the host OS. Playwright starts Vite directly from the web-app directory; on Linux, wrapping the server in `pnpm exec` left a child process group alive and prevented the browser run from exiting.
 
@@ -131,20 +137,126 @@ Route replay uses the parity-only `performRemixSimulationActiveClickBatch` helpe
 
 For a long Chapter 6 source capture, `pnpm reference:story-chapter6:resume` resumes from the last complete ignored trace checkpoint after checking the restored full state and RNG cursor. If its configured iteration limit is reached, `pnpm reference:story-chapter6:merge` joins the finished continuation segment to the route prefix in `.research/`, then `pnpm reference:story-chapter6:resume` continues from that new prefix. Once the source runtime fixture has its completed route and screenshot, `pnpm reference:story-chapter6:visual` copies the pinned-source screenshot into the tracked visual fixtures, records its SHA-256 metadata, and normalizes the route-start save's selected tab to the capture-time `main` tab. `--resume-chapter6` writes the compact fixture. These commands do not edit the canonical Remix checkout.
 
+`pnpm reference:story-first-mud` runs only the first-Mud source mining/Story check and compares both theme states with the pinned fixture. The Story probe suppresses the game's animation-frame loop for deterministic state; it preserves one native browser animation frame only to commit a dynamically loaded theme stylesheet before reading computed styles.
+
 Recapturing the Chapter 6 route takes hours, so `pnpm reference:story-runtime`, `pnpm reference:story-pixels`, and `pnpm test:reference` skip it and compare the rest of the Story runtime fixture. `pnpm reference:story-chapter6:check` is the opt-in source check: it recaptures the route and compares its compact form with the tracked trace.
 
 Natural-route replay reaches first eligibility through Chapter 6. Chapters 3-6 each have a selected light 1440x900 source baseline and zero-pixel Beyond comparison on Windows; these chapter screenshots do not have Linux counterparts. Do not create fresh-game routes for Chapters 7-9.
 
 ### Chapter 7-9 phase-start differential tests
 
-`remix-phase-differentials.json` contains three controlled saves made and saved through the pinned Remix runtime: Space/Hyperplanets at object 124, Wisdom/stars at 169, and the first galaxy objective at 198. They are purpose-built source-runtime states, not historical player saves; their resource/pickaxe inputs are recorded as fixture construction and are not balance assertions. Each Brotli JSONL trace has 3,000 fixed-seed randomized source actions (clicks, idle frames, object selection, purchases, and crafts), with the full normalized state and RNG cursor immediately after each action. `tests/parity/endgame-phase-differentials.test.ts` loads those source saves through Beyond's legacy loader and checks all 9,000 checkpoints. `pnpm reference:phase-differentials` re-executes the source sequence and verifies the pinned save and trace hashes; capture them explicitly with `pnpm reference:phase-differentials:capture`. Both new source files are included in `pnpm test:reference`.
+`remix-phase-differentials.json` contains three controlled saves made and saved through the pinned Remix runtime: Space/Hyperplanets at object 124, Wisdom/stars at 169, and the first galaxy objective at 198. They are purpose-built source-runtime states, not historical player saves; their resource/pickaxe inputs are recorded as fixture construction and are not balance assertions. Each save is replayed under three paired `(game-RNG seed, action-sequence seed)` combinations from the fixture (not the 3-by-3 Cartesian product). The nine Brotli JSONL traces contain 10,000 randomized source actions each (clicks, idle frames, object selection, purchases, and crafts), with every field in `RemixSimulationState` and the RNG cursor immediately after each action: 90,000 full state/RNG checkpoints total. `tests/parity/endgame-phase-differentials.test.ts` reloads each source save through Beyond's legacy loader and compares every checkpoint. The test also requires every action kind to occur in every trace. `pnpm reference:phase-differentials` re-executes all source sequences and verifies save and trace hashes; capture them explicitly with `pnpm reference:phase-differentials:capture`. The source saves and all nine traces are included in `pnpm test:reference`. This covers the simulation state model; source message-log and DOM effects remain mapped to their separate tests.
 
 The chosen start conditions come from `Scripts/Define/game.js`: Chapter 7 / “Hyperplanets” opens at `hyperSaturn` level 124; Chapter 8 / “The Wisdom Era” opens at `reachWisdomEssence` level 169 and its first star objective is level 171; Chapter 9 / “Cosmic Superstructures” opens at `mineStarGroup` level 192. The phase-start fixture for the first galaxy objective begins at level 198 (`mineSmallGalaxy`). The source objective at level 198 says “Small Magellanic Cloud,” while object ID 198 is named “Large Magellanic Cloud”; preserve this mismatch. The controlled differential segments expand action coverage from captured phase starts, but they do not certify natural paths into these chapters. Route-level parity remains partial until remaining compatibility areas are validated.
 
 ## Completion rule
 
-Code presence is not completion. Update the [parity matrix](PARITY_MATRIX.md) only when source understanding, fixture coverage, automated tests, UI/E2E, and visual evidence meet the row's criteria.
+Code presence is not completion. Every matrix area has a source-function/branch-to-test map in [parity traceability](parity-traceability/README.md). A relevant path without a source-backed assertion is a gap and stays open until a fixture/test covers it. A non-exhaustive formula or RNG sample may support certification only under the qualification rule in the map: relevant source boundaries, a recorded fixed-seed generated sample, and a no-divergence differential. Exhaustive numeric enumeration is not required after that evidence passes. Do not certify state, save, platform, or visual domains by borrowing that formula/RNG rule. Update the map, [parity matrix](PARITY_MATRIX.md), and project status together when evidence changes. The `parity-v1` release gate covers the web build only; native packaging, native storage, and Tauri WebView behavior are separate post-v1 work.
+
+The first-pass branch audit now has an inventory for all 36 matrix rows and
+uses source-boundary tests rather than arbitrary probe expansion. For a
+formula/RNG domain, `Sampled (qualified)` is acceptable after relevant
+boundaries, fixed-seed generated cases, and a no-divergence full-state/RNG
+differential pass; the remaining non-exhaustive domain alone does not block
+certification. A missing relevant boundary remains a gap. `pnpm parity:traceability`
+requires an inventory table and existing test link for each mapped path, checks
+the pinned source references, and rejects Certified rows that retain `Gap` or
+an unqualified formula/RNG `Sampled`. It is a structural guard, not semantic
+proof: reviewers must open the named fixture and assertion. Save, visual,
+browser-storage, and platform state domains keep their own explicit coverage
+requirements. Record unreachable generic helper branches separately with
+pinned definitions/call sites proving they are not part of player-facing
+parity.
+
+The pickaxe quality-name boundary fixture contains 119 source crafts. Chromium
+is the exact browser oracle: at exact `1.4^5`, the pinned runtime names the
+result `Epic`, while Node's `Math.log` can round the ratio to 5 and name it
+`Legendary`. The focused Node test checks one-sided boundary values; the
+Playwright browser harness compares all 119 exact captures in Chromium. Keep
+both results visible rather than weakening or rewriting the pinned browser
+fixture.
 
 ### Gameplay-generated route-end save import and reload
 
 `tests/fixtures/parity/remix-story-runtime.json` already contains full `getSaveString()` outputs captured after the naturally replayed Chapter 3–6 routes. The source routes include 1,249,998 loop iterations and 443,818,759 active clicks by the Chapter 6 endpoint; these are gameplay-generated source saves, distinct from the controlled Chapter 7–9 phase-start saves and the synthetic high-exponent Decimal save. `tests/parity/long-running-save-roundtrip.test.ts` reconstructs the original pre-import JSON from the pinned save wrapper, confirms the source encoding round-trip, imports each route-end save, compares every full legacy export field and the exact encoded string, then verifies a Beyond v1 encode/decode/restore round-trip. To reproduce the original source session it supplies the captured active tab, upgrade tab, export text, craft selector, and message log; Remix `loadGame()` itself does not restore those selections. The test reuses the pinned route captures and does not replay the multi-million-action source route. Historical save formats and other long-run states remain open.
+
+### Community notation source boundaries
+
+The Japanese formatter's additional fixture captures its entire 18-entry suffix
+lookup through the pinned `@antimatter-dimensions/notations@1.6.0` runtime,
+including the empty suffix at input 1000. It also covers whether the residual
+four-digit group is omitted or appended and the `value.exponent < 72` versus
+`>=72` formatting path. `pnpm reference:update notationSemantics` records the
+23 named values without changing the 359-input corpus or its fixed-seed sample;
+`pnpm exec vitest run --project unit packages/formatting/src/index.test.ts -t
+Japanese` checks Beyond against the captured output, and the formatting case in
+`tests/e2e/foundation.spec.ts` compares those exact values in Chromium.
+
+The same pinned community bundle probe captures Omega and Omega Short inputs at
+the omega-amount transitions 0/1/2/3/4/9/10, both sides of Omega's logarithmic
+order thresholds 3 and 6, and both sides of the `Number.MAX_SAFE_INTEGER` step
+fallback. The focused unit case compares both formatter outputs at all 27
+named inputs; the Chromium formatter E2E compares the same source capture.
+
+The Tritetrated probe calls the pinned `tritetrated()` method directly at ten
+targeted inputs covering zero, the inverse-tetration root at one, both sides of
+the strict comparison at input value 16 (whose root is near two), and large values. The standard
+359-value formatter corpus already supplies its fixed-seed sample. Unit tests
+compare method outputs and generic formatting; Chromium compares both captured
+results. This closes the Tritetrated class branch without adding random probes.
+
+The Flags follow-up captures the complete ordered 258-entry emoji alphabet,
+including duplicates, plus eleven `CustomNotation.transcribe` inputs at negative
+and zero exponents, the first/last single-entry positions, the base transition,
+zero and nonzero remainders, and a multi-position carry. The fixture also checks
+267 formatted values: every single-flag exponent and those named boundaries.
+Vitest compares the table and direct method outputs; the Chromium foundation
+test compares the same captured data. The existing 32-value seeded formatter
+sample is unchanged. At nonpositive normalized exponents the pinned method
+selects an undefined table entry; the fixture's JSON representation is `null`
+inside the array, while formatted output reflects the source's `join` behavior.
+
+The Elemental fixture invokes the pinned `getAbbreviationAndValue()` method at
+midpoints for all 118 entries across its eight element lists, then checks the
+one/two-part label method and the complete `elemental()` assembly routes: no
+parts, one part, multiple parts, and the four-part output cap. Inputs also cover
+zero, negative formatting, the under-1000 handoff, the `formatDecimal` path, and
+Infinity. Vitest asserts that all 118 distinct symbols are reached and compares
+captured outputs; the Chromium foundation E2E checks the same fixture. The
+existing fixed-seed formatter sample is unchanged. At the time of this
+Elemental extraction, AD Imperial and Precise Prime still had unmapped branches;
+Precise Prime has since been covered as described below, and the Imperial
+follow-up closes the final class-specific source gap. Formatter UI/visual
+evidence remains an independent open layer.
+
+The Precise Prime fixture captures the helper-level behavior of
+`primesFromInt`, `formatFromList`, `formatPowerTower`, `maybeParenthesize`, and
+`primify`, plus the public under-1000, Decimal, and Infinity paths. Cases include
+the 10,000 trial-factor cap and its composite residual (`10007 × 10009`), repeated
+prime factors, parenthesization, tower exponent transitions, values on both sides
+of MAX_SAFE_INTEGER and its square/cube transitions, and the largest finite
+Decimal input. The finite Decimal exponent ceiling proves the source's third
+tower tier is unreachable for finite Decimal values; this does not remove the
+direct helper branch from the source map. The fixture also preserves the
+source-observed `Primefinity?` label for Decimal infinity. Focused Vitest and the
+Chromium foundation probe compare every captured result; the general 32-value
+fixed-seed formatter sample is unchanged.
+
+The Imperial fixture covers the canonical base AD Notations bundle loaded by
+Remix at `@antimatter-dimensions/notations@1.6.0/dist/ad-notations.umd.js`.
+Beyond imports the ESM build from the same pinned package for direct method
+comparisons. The fixture records all
+17 `VOLUME_UNITS`, all 19 adjectives, the derived `MAX_VOLUME`, and
+`REDUCE_RATIO`. The 50 `findVolumeUnit` cases assert below/at/above every unit
+threshold. Direct method outputs cover `formatUnder1000`, all three `formatMetric`
+ranges, `formatDecimal` on both sides of the strict `MAX_VOLUME` comparison and
+the `logValue > REDUCE_RATIO` loop boundary, `checkSmallUnits` at its strict 9.5-
+minim and 50.5-minim thresholds, and `checkAlmost` almost/short/undefined paths.
+`convertToVolume` cases cover metric and small-unit paths, upper-unit and
+remainder approximations, the zero-remainder cutoff, and third-unit selection;
+the 100-gallon remainder reaches the source's `numThird > 9` early break, while
+the 36-gallon remainder records exact-error selection. Phrase helpers test
+singular/plural and vowel/consonant article choices. The max finite Decimal
+result, including its adjective scaling, is preserved. Vitest and the Chromium
+probe compare every captured method result. The existing fixed-seed formatter
+sample remains unchanged.

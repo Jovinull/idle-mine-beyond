@@ -1,0 +1,185 @@
+{
+  "matrix": "docs/knowledge/PARITY_MATRIX.md",
+  "areas": [
+    {
+      "name": "Big-number math and serialization",
+      "document": "simulation-and-content.md",
+      "heading": "Big-number math and serialization"
+    },
+    {
+      "name": "Fresh simulation-state initialization",
+      "document": "simulation-and-content.md",
+      "heading": "Fresh simulation-state initialization"
+    },
+    {
+      "name": "Simulation action composition",
+      "document": "simulation-and-content.md",
+      "heading": "Simulation action composition"
+    },
+    {
+      "name": "Number formatting and notations",
+      "document": "simulation-and-content.md",
+      "heading": "Number formatting and notations"
+    },
+    {
+      "name": "Fixed mine objects",
+      "document": "simulation-and-content.md",
+      "heading": "Fixed mine objects"
+    },
+    {
+      "name": "Special mine objects",
+      "document": "simulation-and-content.md",
+      "heading": "Special mine objects"
+    },
+    {
+      "name": "Procedural mine objects",
+      "document": "simulation-and-content.md",
+      "heading": "Procedural mine objects"
+    },
+    {
+      "name": "Object drops and random outcomes",
+      "document": "simulation-and-content.md",
+      "heading": "Object drops and random outcomes"
+    },
+    {
+      "name": "Mine rendering and compositing",
+      "document": "simulation-and-content.md",
+      "heading": "Mine rendering and compositing"
+    },
+    {
+      "name": "Active and idle damage",
+      "document": "simulation-and-content.md",
+      "heading": "Active and idle damage"
+    },
+    {
+      "name": "Money and money upgrades",
+      "document": "simulation-and-content.md",
+      "heading": "Money and money upgrades"
+    },
+    {
+      "name": "Gems and gem upgrades",
+      "document": "simulation-and-content.md",
+      "heading": "Gems and gem upgrades"
+    },
+    {
+      "name": "Planet Coins and upgrades",
+      "document": "simulation-and-content.md",
+      "heading": "Planet Coins and upgrades"
+    },
+    {
+      "name": "Wisdom and Powers",
+      "document": "progression-systems.md",
+      "heading": "Wisdom and Powers"
+    },
+    {
+      "name": "Upgrade costs, caps, and effects",
+      "document": "progression-systems.md",
+      "heading": "Upgrade costs, caps, and effects"
+    },
+    {
+      "name": "Pickaxe crafting RNG",
+      "document": "progression-systems.md",
+      "heading": "Pickaxe crafting RNG"
+    },
+    {
+      "name": "Pickaxe naming and replacement",
+      "document": "progression-systems.md",
+      "heading": "Pickaxe naming and replacement"
+    },
+    {
+      "name": "Random distributions and RNG",
+      "document": "progression-systems.md",
+      "heading": "Random distributions and RNG"
+    },
+    {
+      "name": "Story and notifications",
+      "document": "progression-systems.md",
+      "heading": "Story and notifications"
+    },
+    {
+      "name": "Save encoding and save shape",
+      "document": "persistence-and-time.md",
+      "heading": "Save encoding and save shape"
+    },
+    {
+      "name": "Legacy save import and recovery",
+      "document": "persistence-and-time.md",
+      "heading": "Legacy save import and recovery"
+    },
+    {
+      "name": "Save export and round-trip",
+      "document": "persistence-and-time.md",
+      "heading": "Save export and round-trip"
+    },
+    {
+      "name": "Beyond versioned save schema",
+      "document": "persistence-and-time.md",
+      "heading": "Beyond versioned save schema"
+    },
+    {
+      "name": "Beyond save storage and recovery",
+      "document": "persistence-and-time.md",
+      "heading": "Beyond save storage and recovery"
+    },
+    {
+      "name": "Native save adapter",
+      "document": "persistence-and-time.md",
+      "heading": "Native save adapter"
+    },
+    {
+      "name": "Offline progression and time",
+      "document": "persistence-and-time.md",
+      "heading": "Offline progression and time"
+    },
+    {
+      "name": "Settings and input controls",
+      "document": "web-presentation-and-scope.md",
+      "heading": "Settings and input controls"
+    },
+    {
+      "name": "Light and dark themes",
+      "document": "web-presentation-and-scope.md",
+      "heading": "Light and dark themes"
+    },
+    {
+      "name": "Desktop UI and visual parity",
+      "document": "web-presentation-and-scope.md",
+      "heading": "Desktop UI and visual parity"
+    },
+    {
+      "name": "Native packaging and platforms",
+      "document": "web-presentation-and-scope.md",
+      "heading": "Native packaging and platforms"
+    },
+    {
+      "name": "Natural progression route replay",
+      "document": "progression-systems.md",
+      "heading": "Natural progression route replay"
+    },
+    {
+      "name": "Visual slice",
+      "document": "web-presentation-and-scope.md",
+      "heading": "Visual slice"
+    },
+    {
+      "name": "Upgrade shop",
+      "document": "web-presentation-and-scope.md",
+      "heading": "Visual slice: upgrade shop"
+    },
+    {
+      "name": "Powers",
+      "document": "web-presentation-and-scope.md",
+      "heading": "Visual slice: Powers"
+    },
+    {
+      "name": "Mining",
+      "document": "web-presentation-and-scope.md",
+      "heading": "Visual slice: Mining"
+    },
+    {
+      "name": "Primary screens",
+      "document": "web-presentation-and-scope.md",
+      "heading": "Visual slice: primary screens"
+    }
+  ]
+}

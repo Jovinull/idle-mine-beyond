@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "pnpm --dir apps/web dev",
     "build": "pnpm --dir apps/web build",
-    "check": "pnpm content:check && pnpm assets:check && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm site:build",
+    "check": "pnpm content:check && pnpm assets:check && pnpm parity:traceability && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm site:build",
     "format": "prettier --plugin prettier-plugin-svelte --write .",
     "format:check": "prettier --plugin prettier-plugin-svelte --check .",
     "lint": "eslint apps packages tests scripts eslint.config.js playwright.config.ts vite.config.ts",
@@ -22,6 +22,7 @@
     "test:e2e": "playwright test",
     "research:setup": "node scripts/research.mjs setup",
     "research:check": "node scripts/research.mjs check",
+    "parity:traceability": "node scripts/check-parity-traceability.mjs",
     "reference:capture": "node scripts/reference-probe.mjs capture",
     "reference:extend": "node scripts/reference-probe.mjs extend",
     "reference:update": "node scripts/reference-probe.mjs update",

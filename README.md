@@ -4,7 +4,7 @@ Idle Mine Beyond is a compatibility-focused reimplementation of the final **Idle
 
 ## Project phase
 
-**Phase 1 ? Deterministic core and behavioral slices (in progress).** The web shell exercises source-backed Mining, random pickaxe crafting, upgrades, Powers/Wisdom, Story, Settings, save import/export and recovery. Simulation and save boundaries have focused parity tests, and selected full-screen Mining, Story, and Settings states match the pinned source exactly in both themes at 1440x900. This is ongoing implementation work, not a complete game or parity certification.
+**Phase 1 ? Deterministic core and behavioral slices (in progress).** The web shell exercises source-backed Mining, random pickaxe crafting, upgrades, Powers/Wisdom, Story, Settings, save import/export and recovery. Simulation and save boundaries have focused parity tests, selected screens have visual comparisons, and every parity-matrix area is being audited from source branch to assertion. No area is Certified yet. `parity-v1` targets the web version; native packaging and storage are outside that gate.
 
 The canonical source target is pinned in [`docs/knowledge/sources/reference-manifest.json`](docs/knowledge/sources/reference-manifest.json). Original Idle Mine is historical lineage; `idle-mine-remux` is prior art only.
 
@@ -21,7 +21,7 @@ pnpm test:e2e
 
 For a first browser run, install Playwright's Chromium with `pnpm exec playwright install chromium`. If its browser binary is unavailable locally, the browser checks fall back to installed Chrome; set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to select a nonstandard Chrome path. CI installs and uses Playwright's pinned Chromium.
 
-Useful focused commands include `pnpm test:unit`, `pnpm test:parity`, `pnpm test:e2e`, `pnpm test:reference`, `pnpm content:check`, `pnpm content:sync`, `pnpm build`, `pnpm research:setup`, and `pnpm native:check`. `pnpm test:reference` launches the pinned Remix checkout read-only with hash-pinned runtime dependencies and checks the tracked oracle corpus. `pnpm content:sync` derives the reviewed product catalog from that oracle; `pnpm content:check` confirms the tracked catalog is reproducible. See `pnpm run` and the canonical [project status](docs/knowledge/project-status.md) for scope.
+Useful focused commands include `pnpm test:unit`, `pnpm test:parity`, `pnpm test:e2e`, `pnpm test:reference`, `pnpm parity:traceability`, `pnpm content:check`, `pnpm content:sync`, `pnpm build`, `pnpm research:setup`, and `pnpm native:check`. `pnpm parity:traceability` confirms each matrix area has a mapped source/test section. `pnpm test:reference` launches the pinned Remix checkout read-only with hash-pinned runtime dependencies and checks the tracked oracle corpus. `pnpm content:sync` derives the reviewed product catalog from that oracle; `pnpm content:check` confirms the tracked catalog is reproducible. See `pnpm run` and the canonical [project status](docs/knowledge/project-status.md) for scope.
 
 ## Project site
 
