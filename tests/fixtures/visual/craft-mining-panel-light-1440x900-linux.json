@@ -1,0 +1,40 @@
+{
+  "source": {
+    "name": "Idle Mine: Remix",
+    "repository": "https://github.com/veprogames/idle-mine-remix",
+    "commit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21"
+  },
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": [
+    "index.html",
+    "main.css",
+    "Themes/light.css",
+    "Scripts/Define/functions.js",
+    "Scripts/Define/game.js"
+  ],
+  "browser": "Chromium 153.0.8010.12",
+  "playwright": "1.63.0",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "theme": "light",
+  "state": {
+    "tab": "main",
+    "theme": "light",
+    "mineObjectLevel": 3,
+    "currentObjectName": "Clay",
+    "money": "123.50000000000001",
+    "gems": "1000",
+    "moneyGemWasterLevel": 1,
+    "gemUpgradeWasterLevel": 2,
+    "usedGemsLevel": 1,
+    "displayedGemCost": "3",
+    "showMinCraftDamage": false,
+    "storyNotifications": 6
+  },
+  "captureMethod": "read-only pinned Remix checkout, local reference server, Playwright Chromium",
+  "screenshotPath": "craft-mining-panel-light-1440x900-linux.png",
+  "screenshotSha256": "517f2127e5dd431a1139f2406d383f4ef38276683e1a2ffcb5d7c5a2947f1ff7",
+  "capturedOn": "2026-10-03"
+}

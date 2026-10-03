@@ -105,6 +105,12 @@ const corpus = JSON.parse(
       thresholdSeconds: number;
       defaultOfflineHours: number;
       moneyMultiplier: number;
+      fixedSeedSample: {
+        algorithm: "xorshift32";
+        seed: string;
+        count: number;
+        elapsedSeconds: number[];
+      };
       scenarios: {
         name: string;
         input: {
@@ -182,6 +188,22 @@ it("extracts the pinned offline progression threshold, caps, and load effects", 
   expect(semantics.thresholdSeconds).toBe(300);
   expect(semantics.defaultOfflineHours).toBe(6);
   expect(semantics.moneyMultiplier).toBe(0.5);
+  expect(semantics.fixedSeedSample).toMatchObject({
+    algorithm: "xorshift32",
+    seed: "0x4f46464c",
+    count: 16,
+  });
+  const sampledScenarios = semantics.scenarios.slice(
+    -semantics.fixedSeedSample.count,
+  );
+  expect(sampledScenarios.map(({ input }) => input.elapsedSeconds)).toEqual(
+    semantics.fixedSeedSample.elapsedSeconds,
+  );
+  expect(
+    semantics.fixedSeedSample.elapsedSeconds.every(
+      (seconds) => seconds > semantics.thresholdSeconds && seconds < 8 * 3600,
+    ),
+  ).toBe(true);
 
   const formatter = createRemixFormatters().find(
     (candidate) => candidate.name === "Standard",

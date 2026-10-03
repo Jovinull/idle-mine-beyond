@@ -1,11 +1,29 @@
 import { expect, test } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
+import { createFreshBeyondVisualSave } from "./visual-state.js";
 
 type StoryRuntimeFixture = {
   freshGame: {
     chapterHeading: string;
     objectiveHtml: string;
+  };
+};
+
+type FreshGameReferenceFixture = {
+  data: {
+    initialState: {
+      resources: {
+        money: { decimal: string };
+        gems: { decimal: string };
+      };
+      pickaxe: {
+        name: string;
+        pow: { decimal: string };
+        quality: { decimal: string };
+      };
+      settings: { theme: string };
+    };
   };
 };
 
@@ -21,6 +39,35 @@ type SettingsRuntimeFixture = {
         theme: string;
       };
       story: { highestUnlocked: number };
+    };
+    keyboardInputSemantics: {
+      sourcePaths: string[];
+      modifierLifecycle: {
+        key: string;
+        target: string;
+        output: {
+          shiftPressedAfterKeyDown: boolean;
+          shiftPressedAfterWindowBlur: boolean;
+          shiftPressedAfterKeyUp: boolean;
+        };
+      };
+      scenarios: {
+        name: string;
+        input: {
+          key: string;
+          startLevel: number;
+          highestLevel: number;
+          keyDownCount: number;
+          target: string;
+        };
+        output: {
+          keyDownEvents: { defaultPrevented: boolean }[];
+          selectedLevel: number;
+          selectedObjectName: string;
+          activeInputRetained: boolean;
+          keyUpDefaultPrevented: boolean;
+        };
+      }[];
     };
     saveApplicationSemantics: {
       inputJson: string;
@@ -99,15 +146,113 @@ type SettingsRuntimeFixture = {
   };
 };
 
+test("Story object previews do not dispatch Mining clicks", async ({
+  page,
+}) => {
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as { data: { saveApplicationSemantics: { inputJson: string } } };
+  const sourceSave = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as {
+    lastActive: number;
+    story: { page: number; scrollY: number };
+    settings: { tab: string };
+  };
+  sourceSave.lastActive = 1_700_000_000_000;
+  sourceSave.story.page = 0;
+  sourceSave.story.scrollY = 0;
+  sourceSave.settings.tab = "story";
+
+  await page.addInitScript((encodedSave) => {
+    localStorage.clear();
+    localStorage.setItem("IdleMine", encodedSave);
+    Date.now = () => 1_700_000_000_000;
+  }, encodeRemixLegacySave(sourceSave));
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+
+  const miningTab = page.locator("[data-game-tab='mining']");
+  await miningTab.click();
+  const levelBefore = await page
+    .locator("[data-mine-object-level]")
+    .innerText();
+  const hpBefore = await page.locator("[data-mine-object-hp]").innerText();
+  const moneyBefore = await page.locator("header > span").first().innerText();
+
+  await page.locator("[data-game-tab='story']").click();
+  const preview = page.locator(".story-milestones canvas.mine-object").first();
+  await expect(preview).toHaveAttribute("data-rendered", "true");
+  await expect(preview).toHaveClass(/nodmg/);
+  await preview.click();
+  await miningTab.click();
+
+  await expect(page.locator("[data-mine-object-level]")).toHaveText(
+    levelBefore,
+  );
+  await expect(page.locator("[data-mine-object-hp]")).toHaveText(hpBefore);
+  await expect(page.locator("header > span").first()).toHaveText(moneyBefore);
+});
+
+test("marks a zero-active-damage Mining canvas unavailable", async ({
+  page,
+}) => {
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as { data: { saveApplicationSemantics: { inputJson: string } } };
+  const sourceSave = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as {
+    lastActive: number;
+    pickaxe: { pow: string; quality: string };
+    settings: { tab: string };
+  };
+  sourceSave.lastActive = 1_700_000_000_000;
+  sourceSave.pickaxe.pow = "0";
+  sourceSave.settings.tab = "main";
+
+  await page.addInitScript((encodedSave) => {
+    localStorage.clear();
+    localStorage.setItem("IdleMine", encodedSave);
+    Date.now = () => 1_700_000_000_000;
+  }, encodeRemixLegacySave(sourceSave));
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+
+  const canvas = page.locator(".mineobject canvas.mine-object");
+  await expect(canvas).toHaveAttribute("data-damageable", "false");
+  await expect(canvas).toHaveClass(/nodmg/);
+});
+
 test("connects the persistent game session to mining and the Story tab", async ({
   page,
 }) => {
-  const story = JSON.parse(
-    await readFile(
+  const [story, reference] = await Promise.all([
+    readFile(
       new URL("../fixtures/parity/remix-story-runtime.json", import.meta.url),
       "utf8",
-    ),
-  ) as StoryRuntimeFixture;
+    ).then((value) => JSON.parse(value) as StoryRuntimeFixture),
+    readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ).then((value) => JSON.parse(value) as FreshGameReferenceFixture),
+  ]);
+  const fresh = reference.data.initialState;
   await page.addInitScript(() => {
     localStorage.clear();
     Date.now = () => 1_700_000_000_000;
@@ -116,10 +261,32 @@ test("connects the persistent game session to mining and the Story tab", async (
   await page.goto("/");
 
   await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+  await expect(page.locator("#app")).toHaveAttribute(
+    "data-theme",
+    fresh.settings.theme,
+  );
   await expect(
     page.getByRole("heading", { name: "Idle Mine: Remix" }),
   ).toBeVisible();
+  await expect(page.locator("#app")).toHaveAttribute(
+    "data-number-formatter",
+    "Standard",
+  );
+  await expect(page.locator("header > span").first()).toHaveText(
+    `${fresh.resources.money.decimal} $`,
+  );
+  await expect(page.locator("header .inline-resource").first()).toHaveText(
+    fresh.resources.gems.decimal,
+  );
+  await expect(page.locator(".mineobject h2")).toHaveText("Mud");
   await expect(page.locator("[data-mine-object-hp]")).toHaveText("HP: 100");
+  await expect(page.locator(".stats")).toContainText(fresh.pickaxe.name);
+  await expect(page.locator(".stats")).toContainText(
+    `P: ${fresh.pickaxe.pow.decimal}`,
+  );
+  await expect(page.locator(".stats")).toContainText(
+    `Q: ${Number(fresh.pickaxe.quality.decimal) * 100}%`,
+  );
 
   await page.locator("canvas.mine-object[data-damageable='true']").click();
   await expect(page.locator("[data-mine-object-hp]")).toHaveText("HP: 80");
@@ -348,6 +515,222 @@ test("updates Story notifications after an actual idle mining break", async ({
   await expect(page.locator(".objective")).toContainText(
     "Mine a piece of Paper",
   );
+});
+
+test("matches the pinned idle-break save and Story order in the browser frame", async ({
+  page,
+}) => {
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as {
+    data: {
+      simulationFrameSemantics: {
+        cases: {
+          name: string;
+          input: {
+            pickaxePower?: string;
+            elapsedMilliseconds: number;
+            autoPickaxeTimer: number;
+            saveTimer: number;
+            story: {
+              page: number;
+              highestUnlocked: number;
+              notifications: number;
+            };
+            randomValues: number[];
+          };
+          result: {
+            hitDamage: { decimal: string };
+            currentObjectHp: { decimal: string };
+            resources: Record<string, { decimal: string }>;
+            highestMineObjectLevel: number;
+            autoPickaxeTimer: number;
+            saveTimer: number;
+            story: {
+              page: number;
+              highestUnlocked: number;
+              notifications: number;
+            };
+            randomCalls: number;
+            frameEvents: string[];
+            savedSnapshot: null | {
+              mineObjectLevel: number;
+              highestMineObjectLevel: number;
+              resources: Record<string, { decimal: string }>;
+              miningPower: { decimal: string };
+              timer: { autoPickaxe: number; save: number };
+              story: {
+                page: number;
+                highestUnlocked: number;
+                notifications: number;
+              };
+            };
+          };
+        }[];
+      };
+    };
+  };
+  const scenario = reference.data.simulationFrameSemantics.cases.find(
+    ({ name }) => name === "full-health-idle-break-saves-before-story-refresh",
+  );
+  if (!scenario?.input.pickaxePower || !scenario.result.savedSnapshot) {
+    throw new Error("The pinned full-health idle-break case is missing.");
+  }
+  expect(scenario.result.frameEvents).toEqual([
+    "save",
+    "refreshStoryNotifications",
+  ]);
+
+  const startTime = 1_700_000_000_000;
+  const beyondSave = JSON.parse(
+    await createFreshBeyondVisualSave({
+      clockMs: startTime,
+      theme: "light",
+      tab: "main",
+    }),
+  ) as {
+    state: {
+      simulation: {
+        pickaxe: { power: string };
+        autoPickaxeTimer: number;
+        saveTimer: number;
+        story: {
+          page: number;
+          highestUnlocked: number;
+          notifications: number;
+        };
+      };
+    };
+  };
+  beyondSave.state.simulation.pickaxe.power = scenario.input.pickaxePower;
+  beyondSave.state.simulation.autoPickaxeTimer =
+    scenario.input.autoPickaxeTimer;
+  beyondSave.state.simulation.saveTimer = scenario.input.saveTimer;
+  beyondSave.state.simulation.story = { ...scenario.input.story };
+
+  await page.addInitScript(
+    ({ serializedSave, initialNow }) => {
+      localStorage.clear();
+      localStorage.setItem("IdleMineBeyond", serializedSave);
+      let now = initialNow;
+      Object.defineProperty(window, "__idleMineFrameTestNow", {
+        configurable: false,
+        get: () => now,
+        set: (next: number) => {
+          now = next;
+        },
+      });
+      Date.now = () => now;
+    },
+    { serializedSave: JSON.stringify(beyondSave), initialNow: startTime },
+  );
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+  await expect(page.locator(".mineobject h2")).toHaveText("Mud");
+  await expect(
+    page.locator("[data-game-tab='story'] span.notification"),
+  ).toHaveText(String(scenario.input.story.notifications));
+
+  await page.evaluate((randomValues) => {
+    let draws = 0;
+    const testWindow = window as Window & {
+      __idleMineFrameRandomDraws?: () => number;
+    };
+    testWindow.__idleMineFrameRandomDraws = () => draws;
+    Math.random = () => {
+      const value = randomValues[draws];
+      if (value === undefined) {
+        throw new Error("The pinned idle-break RNG fixture was exhausted.");
+      }
+      draws += 1;
+      return value;
+    };
+  }, scenario.input.randomValues);
+  await page.evaluate((elapsedMilliseconds) => {
+    const testWindow = window as Window & {
+      __idleMineFrameTestNow?: number;
+    };
+    if (testWindow.__idleMineFrameTestNow === undefined) {
+      throw new Error("The controlled frame clock is missing.");
+    }
+    testWindow.__idleMineFrameTestNow += elapsedMilliseconds;
+  }, scenario.input.elapsedMilliseconds);
+
+  await expect(page.locator("header > span").first()).toHaveText(
+    `${scenario.result.resources["money"]!.decimal} $`,
+  );
+  await expect(page.locator("header .inline-resource").first()).toHaveText(
+    scenario.result.resources["gems"]!.decimal,
+  );
+  await expect(page.locator("[data-mine-object-hp]")).toHaveText(
+    `HP: ${scenario.result.currentObjectHp.decimal}`,
+  );
+  await expect(
+    page.locator("[data-game-tab='story'] span.notification"),
+  ).toHaveText(String(scenario.result.story.notifications));
+  await expect(page.locator(".messagelog p")).toHaveText(["Game Saved!"]);
+
+  const persisted = await page.evaluate(() => {
+    const serialized = localStorage.getItem("IdleMineBeyond");
+    if (!serialized) throw new Error("The idle frame did not persist a save.");
+    const parsed = JSON.parse(serialized) as {
+      state: {
+        simulation: {
+          mineObjectLevel: number;
+          highestMineObjectLevel: number;
+          resources: Record<string, string>;
+          powers: Record<string, string>;
+          pickaxe: { name: string; power: string; quality: string };
+          autoPickaxeTimer: number;
+          saveTimer: number;
+          lastActiveMs?: number;
+          story: {
+            page: number;
+            highestUnlocked: number;
+            notifications: number;
+          };
+        };
+      };
+    };
+    const testWindow = window as Window & {
+      __idleMineFrameRandomDraws?: () => number;
+      __idleMineFrameTestNow?: number;
+    };
+    return {
+      simulation: parsed.state.simulation,
+      randomDraws: testWindow.__idleMineFrameRandomDraws?.(),
+      now: testWindow.__idleMineFrameTestNow,
+    };
+  });
+  const sourceSave = scenario.result.savedSnapshot;
+  expect(persisted.simulation).toMatchObject({
+    mineObjectLevel: sourceSave.mineObjectLevel,
+    highestMineObjectLevel: sourceSave.highestMineObjectLevel,
+    resources: Object.fromEntries(
+      Object.entries(sourceSave.resources).map(([key, value]) => [
+        key,
+        value.decimal,
+      ]),
+    ),
+    powers: { mining: sourceSave.miningPower.decimal },
+    pickaxe: {
+      name: "Toy Pickaxe",
+      power: scenario.input.pickaxePower,
+      quality: "1",
+    },
+    autoPickaxeTimer: sourceSave.timer.autoPickaxe,
+    saveTimer: sourceSave.timer.save,
+    lastActiveMs: startTime + scenario.input.elapsedMilliseconds,
+    story: sourceSave.story,
+  });
+  expect(persisted.randomDraws).toBe(scenario.result.randomCalls);
+  expect(persisted.now).toBe(startTime + scenario.input.elapsedMilliseconds);
 });
 
 test("persists Story page and scroll through a Beyond save and reload", async ({
@@ -631,7 +1014,10 @@ test("crafts and persists a source-compatible stochastic pickaxe", async ({
   ).toBe(drawsAfterReplacement);
 });
 
-test("matches the pinned Remix Gem Waster craft controls", async ({ page }) => {
+test("matches the pinned Remix Gem Waster craft controls", async ({
+  page,
+  browser,
+}) => {
   const reference = JSON.parse(
     await readFile(
       new URL(
@@ -692,6 +1078,54 @@ test("matches the pinned Remix Gem Waster craft controls", async ({ page }) => {
     "craft-selector-light-1440x900.png",
     { animations: "disabled", maxDiffPixels: 0 },
   );
+  // Windows and Linux each have a pinned source screenshot (`-linux` on Linux).
+  if (process.platform === "win32" || process.platform === "linux") {
+    await page.mouse.move(1439, 899);
+    await expect(page).toHaveScreenshot(
+      "craft-mining-panel-light-1440x900.png",
+      { animations: "disabled", maxDiffPixels: 0 },
+    );
+    const darkContext = await browser.newContext({
+      viewport: { width: 1440, height: 900 },
+      deviceScaleFactor: 1,
+    });
+    try {
+      const darkPage = await darkContext.newPage();
+      const darkSave = {
+        ...save,
+        settings: { ...save.settings, theme: "dark" },
+      };
+      await darkPage.addInitScript((legacyJson) => {
+        localStorage.clear();
+        localStorage.setItem(
+          "IdleMine",
+          btoa(escape(encodeURIComponent(legacyJson))),
+        );
+        Date.now = () => 1_700_000_000_000;
+      }, JSON.stringify(darkSave));
+      await darkPage.goto("/");
+      await expect(darkPage.locator("#app")).toHaveAttribute(
+        "data-app-state",
+        "ready",
+      );
+      await expect(darkPage.locator("#app")).toHaveAttribute(
+        "data-theme",
+        "dark",
+      );
+      await darkPage.locator('[data-craft-gem-level="increase"]').click();
+      await darkPage.evaluate(() => {
+        (document.activeElement as HTMLElement | null)?.blur();
+        return document.fonts.ready;
+      });
+      await darkPage.mouse.move(1439, 899);
+      await expect(darkPage).toHaveScreenshot(
+        "craft-mining-panel-dark-1440x900.png",
+        { animations: "disabled", maxDiffPixels: 0 },
+      );
+    } finally {
+      await darkContext.close();
+    }
+  }
   await expect(decrease).toBeEnabled();
   await expect(decrease.locator("img")).toHaveAttribute(
     "src",
@@ -842,6 +1276,18 @@ test("Shift crafts follow the captured bulk attempts and intermediate save", asy
 test("buys the source-priced Blacksmith with single and modifier controls", async ({
   page,
 }) => {
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as SettingsRuntimeFixture;
+  const modifierLifecycle =
+    reference.data.keyboardInputSemantics.modifierLifecycle;
+
   await page.addInitScript(() => {
     const save = {
       money: "1e100",
@@ -864,9 +1310,23 @@ test("buys the source-priced Blacksmith with single and modifier controls", asyn
   await blacksmith.click();
   await expect(blacksmith).toHaveAttribute("data-upgrade-level", "1");
   await page.keyboard.down("Shift");
+  expect(modifierLifecycle.key).toBe("Shift");
+  expect(modifierLifecycle.target).toBe("focused-text-input");
+  expect(modifierLifecycle.output.shiftPressedAfterKeyDown).toBe(true);
   await expect(
     page.locator('[data-upgrade-details="blacksmith"] .multibuy.active'),
   ).toHaveText("Hold SHIFT to buy 10");
+  await page.evaluate(() => window.dispatchEvent(new Event("blur")));
+  expect(modifierLifecycle.output.shiftPressedAfterWindowBlur).toBe(true);
+  await expect(
+    page.locator('[data-upgrade-details="blacksmith"] .multibuy.active'),
+  ).toHaveText("Hold SHIFT to buy 10");
+  await page.keyboard.up("Shift");
+  expect(modifierLifecycle.output.shiftPressedAfterKeyUp).toBe(false);
+  await expect(
+    page.locator('[data-upgrade-details="blacksmith"] .multibuy.active'),
+  ).toHaveCount(0);
+  await page.keyboard.down("Shift");
   await blacksmith.click();
   await expect(blacksmith).toHaveAttribute("data-upgrade-level", "10");
 
@@ -878,6 +1338,303 @@ test("buys the source-priced Blacksmith with single and modifier controls", asyn
   await expect(blacksmith).toHaveAttribute("data-upgrade-level", "100");
   await page.keyboard.up("Control");
   await page.keyboard.up("Shift");
+});
+
+test("routes Gem and Planet Coin shop purchases to their source resource", async ({
+  page,
+}) => {
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as {
+    data: {
+      saveApplicationSemantics: { inputJson: string };
+      upgradeSemantics: {
+        purchaseSemantics: {
+          name: string;
+          group: "gems" | "planetCoins";
+          key: string;
+          startingLevel: number;
+          startingResources: {
+            gems: { decimal: string };
+            planetCoins: { decimal: string };
+          };
+          endingLevel: number;
+          endingResources: {
+            gems: { decimal: string };
+            planetCoins: { decimal: string };
+          };
+        }[];
+      };
+    };
+  };
+  const cases = ["buy-uses-gem-resource", "buy-uses-planet-coin-resource"].map(
+    (name) => {
+      const scenario = reference.data.upgradeSemantics.purchaseSemantics.find(
+        (candidate) => candidate.name === name,
+      );
+      if (!scenario) throw new Error(`Missing source purchase case ${name}.`);
+      return scenario;
+    },
+  );
+
+  const sourceSave = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as {
+    gemUpgrades: Record<string, { level: number }>;
+    gems: string;
+    highestMineObjectLevel: number;
+    lastActive: number;
+    mineObjectLevel: number;
+    planetCoinUpgrades: Record<string, { level: number }>;
+    planetCoins: string;
+    settings: { tab: string; upgradeTab: string };
+  };
+  sourceSave.highestMineObjectLevel = 90;
+  sourceSave.mineObjectLevel = 90;
+  sourceSave.settings.tab = "main";
+  sourceSave.settings.upgradeTab = "money";
+  sourceSave.lastActive = 1_700_000_000_000;
+
+  await page.addInitScript((encodedSave) => {
+    if (sessionStorage.getItem("upgrade-groups-seeded") !== "true") {
+      localStorage.clear();
+      localStorage.setItem("IdleMine", encodedSave);
+      sessionStorage.setItem("upgrade-groups-seeded", "true");
+    }
+    Date.now = () => 1_700_000_000_000;
+  }, encodeRemixLegacySave(sourceSave));
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+
+  for (const scenario of cases) {
+    sourceSave.gems = scenario.startingResources.gems.decimal;
+    sourceSave.planetCoins = scenario.startingResources.planetCoins.decimal;
+    const upgradeGroup =
+      scenario.group === "gems"
+        ? sourceSave.gemUpgrades
+        : sourceSave.planetCoinUpgrades;
+    if (!upgradeGroup) {
+      throw new Error(`Source save omitted the ${scenario.group} group.`);
+    }
+    upgradeGroup[scenario.key] = { level: scenario.startingLevel };
+    sourceSave.settings.upgradeTab = "money";
+    sourceSave.settings.tab = "main";
+
+    await page.evaluate((encodedSave) => {
+      localStorage.clear();
+      localStorage.setItem("IdleMine", encodedSave);
+    }, encodeRemixLegacySave(sourceSave));
+    await page.reload();
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+
+    await page.locator(`[data-upgrade-tab='${scenario.group}']`).click();
+    const card = page.locator(
+      `[data-upgrade-group='${scenario.group}'][data-upgrade-key='${scenario.key}']`,
+    );
+    await expect(card).toHaveAttribute(
+      "data-upgrade-level",
+      String(scenario.startingLevel),
+    );
+    await expect(card).not.toHaveClass(/cantafford/);
+    await card.click();
+    await expect(card).toHaveAttribute(
+      "data-upgrade-level",
+      String(scenario.endingLevel),
+    );
+    await expect(card).toHaveClass(/cantafford/);
+    await expect(
+      page
+        .locator("header .inline-resource")
+        .nth(scenario.group === "gems" ? 0 : 1),
+    ).toHaveText(
+      scenario.endingResources[
+        scenario.group === "gems" ? "gems" : "planetCoins"
+      ].decimal,
+    );
+  }
+});
+
+test("gates the Planet Coin shop at the source mine-level boundary", async ({
+  page,
+}) => {
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as { data: { saveApplicationSemantics: { inputJson: string } } };
+  const sourceSave = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as {
+    highestMineObjectLevel: number;
+    lastActive: number;
+    mineObjectLevel: number;
+    settings: { tab: string; upgradeTab: string };
+  };
+  sourceSave.highestMineObjectLevel = 89;
+  sourceSave.mineObjectLevel = 89;
+  sourceSave.lastActive = 1_700_000_000_000;
+  sourceSave.settings.tab = "main";
+  sourceSave.settings.upgradeTab = "money";
+
+  await page.addInitScript((encodedSave) => {
+    if (sessionStorage.getItem("planet-coin-shop-gate-seeded") !== "true") {
+      localStorage.clear();
+      localStorage.setItem("IdleMine", encodedSave);
+      sessionStorage.setItem("planet-coin-shop-gate-seeded", "true");
+    }
+    Date.now = () => 1_700_000_000_000;
+  }, encodeRemixLegacySave(sourceSave));
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+  await expect(page.locator("[data-upgrade-tab='planetCoins']")).toHaveCount(0);
+
+  sourceSave.highestMineObjectLevel = 90;
+  sourceSave.mineObjectLevel = 90;
+  await page.evaluate((encodedSave) => {
+    localStorage.clear();
+    localStorage.setItem("IdleMine", encodedSave);
+  }, encodeRemixLegacySave(sourceSave));
+  await page.reload();
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+  await expect(page.locator("[data-upgrade-tab='planetCoins']")).toBeVisible();
+});
+
+test("matches pinned Remix arrow-key selection while a text field has focus", async ({
+  page,
+}) => {
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as SettingsRuntimeFixture;
+  const keyboard = reference.data.keyboardInputSemantics;
+  expect(keyboard.sourcePaths).toEqual([
+    "Scripts/main.js",
+    "Scripts/Define/functions.js",
+    "Scripts/utils.js",
+  ]);
+
+  const legacySave = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as {
+    mineObjectLevel: number;
+    highestMineObjectLevel: number;
+    lastActive: number;
+    settings: { tab: string; showMineObjLevel: boolean };
+  };
+  legacySave.mineObjectLevel = 1;
+  legacySave.highestMineObjectLevel = 3;
+  legacySave.lastActive = 1_700_000_000_000;
+  legacySave.settings.tab = "main";
+  legacySave.settings.showMineObjLevel = true;
+  await page.addInitScript((encodedSave) => {
+    localStorage.clear();
+    localStorage.setItem("IdleMine", encodedSave);
+    Date.now = () => 1_700_000_000_000;
+  }, encodeRemixLegacySave(legacySave));
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+  await expect(page.locator("[data-mine-object-level]")).toHaveText("#2");
+
+  await page.locator("[data-game-tab='settings']").click();
+  const saveField = page.locator("[data-settings-save-field]");
+  await expect(saveField).toBeVisible();
+
+  let selectedLevel = 1;
+  for (const scenario of keyboard.scenarios) {
+    expect(scenario.input.startLevel).toBe(selectedLevel);
+    expect(scenario.input.highestLevel).toBe(3);
+    expect(scenario.input.target).toBe("focused-text-input");
+
+    const result = await page.evaluate(
+      ({ key, keyDownCount }) => {
+        const target = document.querySelector<HTMLTextAreaElement>(
+          "[data-settings-save-field]",
+        );
+        if (!target) throw new Error("Remix save text field is missing.");
+        target.focus();
+        const keyDownEvents = [];
+        for (let index = 0; index < keyDownCount; index++) {
+          const event = new KeyboardEvent("keydown", {
+            key,
+            bubbles: true,
+            cancelable: true,
+            repeat: index > 0,
+          });
+          target.dispatchEvent(event);
+          keyDownEvents.push({
+            defaultPrevented: event.defaultPrevented,
+            focusRetained: document.activeElement === target,
+          });
+        }
+        const keyUp = new KeyboardEvent("keyup", {
+          key,
+          bubbles: true,
+          cancelable: true,
+        });
+        target.dispatchEvent(keyUp);
+        return {
+          keyDownEvents,
+          activeInputRetained: document.activeElement === target,
+          keyUpDefaultPrevented: keyUp.defaultPrevented,
+        };
+      },
+      {
+        key: scenario.input.key,
+        keyDownCount: scenario.input.keyDownCount,
+      },
+    );
+
+    expect(
+      result.keyDownEvents.map(({ defaultPrevented }) => defaultPrevented),
+    ).toEqual(
+      scenario.output.keyDownEvents.map(
+        ({ defaultPrevented }) => defaultPrevented,
+      ),
+    );
+    expect(
+      result.keyDownEvents.every(({ focusRetained }) => focusRetained),
+    ).toBe(scenario.output.activeInputRetained);
+    expect(result.activeInputRetained).toBe(
+      scenario.output.activeInputRetained,
+    );
+    expect(result.keyUpDefaultPrevented).toBe(
+      scenario.output.keyUpDefaultPrevented,
+    );
+
+    await page.locator("[data-game-tab='mining']").click();
+    await expect(page.locator("[data-mine-object-level]")).toHaveText(
+      `#${scenario.output.selectedLevel + 1}`,
+    );
+    await expect(page.locator(".mineobject h2")).toHaveText(
+      scenario.output.selectedObjectName,
+    );
+    selectedLevel = scenario.output.selectedLevel;
+
+    if (keyboard.scenarios.at(-1) !== scenario) {
+      await page.locator("[data-game-tab='settings']").click();
+      await expect(saveField).toBeVisible();
+    }
+  }
 });
 
 test("applies and saves source-backed Settings preferences", async ({

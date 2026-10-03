@@ -63,6 +63,31 @@ it("constructs the source-observed fresh simulation state", () => {
   expect(state.currentObject.hp.toString()).toBe(
     state.currentObject.totalHp.toString(),
   );
+  const initialObject = corpus.data.mineObjectCatalog.base.find(
+    ({ id }) => id === 0,
+  );
+  if (!initialObject) throw new Error("The pinned catalog has no Mud entry.");
+  expect({
+    id: state.currentObject.id,
+    name: state.currentObject.name,
+    hp: state.currentObject.hp.toString(),
+    totalHp: state.currentObject.totalHp.toString(),
+    defense: state.currentObject.defense.toString(),
+    value: state.currentObject.value.toString(),
+    colors: state.currentObject.colors,
+    skin: state.currentObject.skin,
+    drops: state.currentObject.drops,
+  }).toEqual({
+    id: initialObject.id,
+    name: initialObject.name,
+    hp: initialObject.hp.decimal,
+    totalHp: initialObject.totalHp.decimal,
+    defense: initialObject.defense.decimal,
+    value: initialObject.value.decimal,
+    colors: initialObject.colors,
+    skin: initialObject.skin,
+    drops: {},
+  });
   expect(
     Object.fromEntries(
       Object.entries(state.resources).map(([key, value]) => [

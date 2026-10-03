@@ -86,36 +86,175 @@ test("bundles the pinned formatter boundary in a browser", async ({ page }) => {
       "utf8",
     ),
   ) as {
+    metadata: { random: { seed: number } };
     data: {
       notationSemantics: {
         formatterRegistry: { name: string }[];
+        randomCallsBeforeDirectOutputs: number;
+        randomCallsAfterDirectOutputs: number;
         directFormatterOutputs: unknown;
         formatNumberScenarios: unknown;
         formatThousands: unknown;
         formatPercent: unknown;
+        adMethodOutputs: { imperialNotation: unknown };
+        communityMethodOutputs: {
+          japaneseFormatter: {
+            sourcePath: string;
+            values: { input: string; output: string | { error: string } }[];
+          };
+          omegaNotations: {
+            sourcePath: string;
+            formatters: {
+              notation: string;
+              values: {
+                input: string;
+                output: string | { error: string };
+              }[];
+            }[];
+          };
+          tritetratedNotation: {
+            sourcePath: string;
+            values: { input: string; output: string | { error: string } }[];
+          };
+          flagsNotation: {
+            sourcePath: string;
+            base: number;
+            letters: string[];
+            transcriptionBoundaries: {
+              engineeringExponent: number;
+              output: (string | null)[] | { error: string };
+            }[];
+            values: { input: string; output: string | { error: string } }[];
+          };
+          elementalNotation: {
+            sourcePath: string;
+            listLengths: number[];
+            lookups: {
+              listIndex: number;
+              elementIndex: number;
+              input: number;
+              output: [string, number] | { error: string };
+            }[];
+            partFormatting: {
+              abbreviation: string;
+              amount: number;
+              output: string | { error: string };
+            }[];
+            methodValues: {
+              input: string;
+              output: string | { error: string };
+            }[];
+            formattedValues: {
+              input: string;
+              output: string | { error: string };
+            }[];
+            infinite: string;
+          };
+          precisePrimeNotation: {
+            sourcePath: string;
+            constants: {
+              maxSafeInteger: number;
+              maxFactor: number;
+              maxSafeIntegerLog10: number;
+              decimalMaxMantissa: number;
+              decimalMaxExponent: number;
+              decimalMaxLog10: number;
+              decimalMaxTowerExponent: number;
+            };
+            primeFactorizations: {
+              input: number;
+              output: number[] | { error: string };
+            }[];
+            factorListFormatting: {
+              factors: number[];
+              output: string | { error: string };
+            }[];
+            parenthesization: {
+              value: string;
+              parenthesize: boolean;
+              output: string | { error: string };
+            }[];
+            powerTowers: {
+              exponents: number[];
+              output: string | { error: string };
+            }[];
+            primifyValues: {
+              input: string;
+              output: string | { error: string };
+            }[];
+            maxFinitePrimify: string | { error: string };
+            maxFiniteFormatted: string | { error: string };
+            formatUnder1000Values: {
+              input: number;
+              output: string | { error: string };
+            }[];
+            formattedValues: {
+              input: string;
+              output: string | { error: string };
+            }[];
+            infinite: string;
+          };
+        };
         exponentFormatterInputs: unknown;
         exponentFormatterOutputs: unknown;
       };
     };
   };
   const reference = corpus.data.notationSemantics;
+  await page.evaluate((seed) => {
+    let state = seed >>> 0;
+    let calls = 0;
+    Math.random = () => {
+      state = (Math.imul(state, 1_664_525) + 1_013_904_223) >>> 0;
+      calls++;
+      return state / 0x1_0000_0000;
+    };
+    (
+      window as Window & { __formattingRandomCalls?: () => number }
+    ).__formattingRandomCalls = () => calls;
+  }, corpus.metadata.random.seed);
   const observed = await page.evaluate((fixture) => {
     const probe = (
       window as Window & {
         __idleMineFormattingProbe?: (value: typeof fixture) => unknown;
+        __formattingRandomCalls?: () => number;
       }
     ).__idleMineFormattingProbe;
     if (!probe) throw new Error("Browser formatting probe did not initialize.");
-    return probe(fixture);
+    const formatted = probe(fixture);
+    return {
+      formatted,
+      randomCalls: (
+        window as Window & { __formattingRandomCalls?: () => number }
+      ).__formattingRandomCalls?.(),
+    };
   }, reference);
 
   expect(observed).toEqual({
-    formatterNames: reference.formatterRegistry.map(({ name }) => name),
-    directFormatterOutputs: reference.directFormatterOutputs,
-    formatNumberScenarios: reference.formatNumberScenarios,
-    formatThousands: reference.formatThousands,
-    formatPercent: reference.formatPercent,
-    exponentFormatterOutputs: reference.exponentFormatterOutputs,
+    formatted: {
+      formatterNames: reference.formatterRegistry.map(({ name }) => name),
+      directFormatterOutputs: reference.directFormatterOutputs,
+      formatNumberScenarios: reference.formatNumberScenarios,
+      formatThousands: reference.formatThousands,
+      formatPercent: reference.formatPercent,
+      adMethodOutputs: {
+        imperialNotation: reference.adMethodOutputs.imperialNotation,
+      },
+      communityMethodOutputs: {
+        japaneseFormatter: reference.communityMethodOutputs.japaneseFormatter,
+        omegaNotations: reference.communityMethodOutputs.omegaNotations,
+        tritetratedNotation:
+          reference.communityMethodOutputs.tritetratedNotation,
+        flagsNotation: reference.communityMethodOutputs.flagsNotation,
+        elementalNotation: reference.communityMethodOutputs.elementalNotation,
+        precisePrimeNotation:
+          reference.communityMethodOutputs.precisePrimeNotation,
+      },
+      exponentFormatterOutputs: reference.exponentFormatterOutputs,
+    },
+    randomCalls:
+      reference.randomCallsAfterDirectOutputs -
+      reference.randomCallsBeforeDirectOutputs,
   });
 });
 

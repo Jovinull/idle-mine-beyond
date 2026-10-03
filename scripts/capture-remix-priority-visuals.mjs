@@ -224,8 +224,68 @@ function makeCaptureCases() {
 
 function difference(actual, expected, label) {
   if (JSON.stringify(actual) !== JSON.stringify(expected)) {
-    throw new Error(`${label} differs from its pinned capture.`);
+    throw new Error(
+      `${label} differs from its pinned capture: ${findFirstDifference(actual, expected)}.`,
+    );
   }
+}
+
+function findFirstDifference(actual, expected, location = "$") {
+  if (Object.is(actual, expected)) return undefined;
+  if (typeof actual === "string" && typeof expected === "string") {
+    let index = 0;
+    while (
+      index < actual.length &&
+      index < expected.length &&
+      actual[index] === expected[index]
+    ) {
+      index++;
+    }
+    const start = Math.max(0, index - 32);
+    const end = index + 32;
+    return `${location}: strings differ at ${index} (expected length ${expected.length}, got ${actual.length}); expected ${JSON.stringify(expected.slice(start, end))}, got ${JSON.stringify(actual.slice(start, end))}`;
+  }
+  if (actual === null || expected === null) {
+    return `${location}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`;
+  }
+  if (Array.isArray(actual) || Array.isArray(expected)) {
+    if (!Array.isArray(actual) || !Array.isArray(expected)) {
+      return `${location}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`;
+    }
+    if (actual.length !== expected.length) {
+      return `${location}.length: expected ${expected.length}, got ${actual.length}`;
+    }
+    for (let index = 0; index < actual.length; index++) {
+      const result = findFirstDifference(
+        actual[index],
+        expected[index],
+        `${location}[${index}]`,
+      );
+      if (result) return result;
+    }
+    return undefined;
+  }
+  if (typeof actual === "object" && typeof expected === "object") {
+    const actualRecord = actual;
+    const expectedRecord = expected;
+    const keys = new Set([
+      ...Object.keys(actualRecord),
+      ...Object.keys(expectedRecord),
+    ]);
+    for (const key of keys) {
+      if (!(key in actualRecord) || !(key in expectedRecord)) {
+        return `${location}.${key}: expected ${JSON.stringify(expectedRecord[key])}, got ${JSON.stringify(actualRecord[key])}`;
+      }
+      const result = findFirstDifference(
+        actualRecord[key],
+        expectedRecord[key],
+        `${location}.${key}`,
+      );
+      if (result) return result;
+    }
+    return undefined;
+  }
+  return `${location}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`;
 }
 
 // Chromium rasterizes text differently on Linux, so Linux keeps its own

@@ -276,6 +276,174 @@ async function captureCraftSelector(page, browser, reference) {
   process.stdout.write(
     `${mode === "--write" ? "Wrote" : "Verified"} pinned Remix craft selector at ${reference.pinnedCommit} in Chromium ${browser.version()}; SHA-256 ${screenshotSha256}.\n${relativeToRoot(paths.researchImage)}\n`,
   );
+
+  const referenceCorpus = JSON.parse(
+    await readFile(
+      path.join(root, "tests/fixtures/parity/remix-reference-corpus.json"),
+      "utf8",
+    ),
+  );
+  const legacySave = JSON.parse(
+    referenceCorpus.data.saveApplicationSemantics.inputJson,
+  );
+  legacySave.gems = "1000";
+  legacySave.lastActive = fixedClock;
+  legacySave.settings = {
+    ...legacySave.settings,
+    theme: "light",
+    showMinCraftDamage: false,
+  };
+  legacySave.upgrades.gemWaster = { level: 1 };
+  legacySave.gemUpgrades.gemWaster = { level: 2 };
+  await page.evaluate((serialized) => {
+    localStorage.setItem(
+      "IdleMine",
+      btoa(escape(encodeURIComponent(serialized))),
+    );
+  }, JSON.stringify(legacySave));
+  await page.reload({ waitUntil: "load" });
+  await page.waitForFunction(
+    "Boolean(window.game && window.functions && window.app?.$el)",
+  );
+  await page.waitForFunction("window.imgLoaded === true");
+  await page.waitForFunction(
+    "document.querySelector('canvas.mine-object')?.width === 256",
+  );
+  await page.locator(".craft-pickaxe > button.level-change").nth(1).click();
+  await page.evaluate(() => document.fonts.ready);
+  const panelState = await page.evaluate(() => {
+    const game = window.game;
+    return {
+      tab: game.settings.tab,
+      theme: game.settings.theme,
+      mineObjectLevel: game.mineObjectLevel,
+      currentObjectId: game.currentMineObject.id,
+      currentObjectName: game.currentMineObject.name,
+      money: game.money.toString(),
+      gems: game.gems.toString(),
+      moneyGemWasterLevel: game.upgrades.gemWaster.level,
+      gemUpgradeWasterLevel: game.gemUpgrades.gemWaster.level,
+      usedGemsLevel: game.usedGemsLevel,
+      displayedGemCost: window.functions.formatThousands(
+        window.functions.getUsedGems(),
+      ),
+      showMinCraftDamage: game.settings.showMinCraftDamage,
+      storyNotifications: game.story.notifications,
+    };
+  });
+
+  for (const theme of ["light", "dark"]) {
+    if (theme === "dark") {
+      await page.evaluate(() => window.functions.setTheme("dark"));
+      await page.waitForFunction(
+        () =>
+          document.querySelector("#css_theme")?.getAttribute("href") ===
+            "Themes/dark.css" &&
+          getComputedStyle(document.body).backgroundColor === "rgb(54, 54, 54)",
+      );
+    }
+    const state = { ...panelState, theme };
+    const panelPaths = baselinePaths(`craft-mining-panel-${theme}-1440x900`);
+    const panelMetadata = {
+      source: {
+        name: "Idle Mine: Remix",
+        repository: reference.canonicalUrl,
+        commit: reference.pinnedCommit,
+      },
+      sourceCommit: reference.pinnedCommit,
+      sourcePaths: [
+        "index.html",
+        "main.css",
+        `Themes/${theme}.css`,
+        "Scripts/Define/functions.js",
+        "Scripts/Define/game.js",
+      ],
+      browser: `Chromium ${browser.version()}`,
+      playwright: "1.63.0",
+      viewport,
+      theme,
+      state,
+      captureMethod:
+        "read-only pinned Remix checkout, local reference server, Playwright Chromium",
+    };
+
+    // Linux keeps its own `-linux` screenshot; its source state must still
+    // match the Windows reference fixture.
+    if (process.platform !== "win32") {
+      const windowsMetadata = JSON.parse(
+        await readFile(
+          path.join(
+            root,
+            `tests/fixtures/visual/craft-mining-panel-${theme}-1440x900.json`,
+          ),
+          "utf8",
+        ),
+      );
+      if (
+        windowsMetadata.sourceCommit !== reference.pinnedCommit ||
+        JSON.stringify(windowsMetadata.state) !== JSON.stringify(state) ||
+        JSON.stringify(windowsMetadata.viewport) !== JSON.stringify(viewport)
+      ) {
+        throw new Error(
+          `Pinned full craft Mining panel ${theme} state differs from its Windows reference fixture.`,
+        );
+      }
+    }
+
+    await page.mouse.move(viewport.width - 1, viewport.height - 1);
+    await page.evaluate(() => document.fonts.ready);
+    await page.evaluate(async () => {
+      await new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve)),
+      );
+    });
+    const panelScreenshot = await page.screenshot({
+      animations: "disabled",
+      fullPage: false,
+    });
+    const panelScreenshotSha256 = sha256(panelScreenshot);
+    const recordedPanelMetadata = {
+      ...panelMetadata,
+      screenshotPath: path.basename(panelPaths.image),
+      screenshotSha256: panelScreenshotSha256,
+    };
+    await writeFile(panelPaths.researchImage, panelScreenshot);
+
+    if (mode === "--write") {
+      await writeFile(panelPaths.image, panelScreenshot);
+      await writeFile(
+        panelPaths.metadata,
+        `${JSON.stringify(
+          {
+            ...recordedPanelMetadata,
+            capturedOn: new Date().toISOString().slice(0, 10),
+          },
+          null,
+          2,
+        )}\n`,
+        "utf8",
+      );
+    } else {
+      const [baseline, baselineMetadata] = await Promise.all([
+        readFile(panelPaths.image),
+        readFile(panelPaths.metadata, "utf8").then(JSON.parse),
+      ]);
+      if (
+        sha256(baseline) !== panelScreenshotSha256 ||
+        baselineMetadata.screenshotSha256 !== panelScreenshotSha256 ||
+        baselineMetadata.sourceCommit !== reference.pinnedCommit ||
+        JSON.stringify(baselineMetadata.state) !== JSON.stringify(state) ||
+        JSON.stringify(baselineMetadata.viewport) !== JSON.stringify(viewport)
+      ) {
+        throw new Error(
+          `Pinned full craft Mining panel ${theme} differs from its reviewed source baseline. Review the runtime and capture before updating the visual fixture.`,
+        );
+      }
+    }
+    process.stdout.write(
+      `${mode === "--write" ? "Wrote" : "Verified"} pinned Remix full craft Mining panel ${theme} at ${reference.pinnedCommit} in Chromium ${browser.version()}; SHA-256 ${panelScreenshotSha256}.\n${relativeToRoot(panelPaths.researchImage)}\n`,
+    );
+  }
 }
 
 async function main() {

@@ -383,22 +383,460 @@ async function capture(reference, dependencies, dependencySnapshots) {
         }
         game.numberFormatter = originalFormatter;
 
+        const aroundDotsBoundary = (boundary) =>
+          [-0.000001, 0, 0.000001].map((offset) => String(boundary + offset));
+        const dotsBoundaryInputs = [
+          ...aroundDotsBoundary(253.5 / 254),
+          ...aroundDotsBoundary(64515.5 / 254),
+          "254",
+          "16387063.997",
+          "16387063.9980315",
+          "16387063.999",
+        ];
+        const bracketsBoundaryInputs = [
+          "46655.999",
+          "46656",
+          "46656.001",
+          "1.03144247984904e28",
+          "1.03144247984905e28",
+          "1.03144247984906e28",
+        ];
+        const standardAbbreviationBoundaryInputs = [
+          "1e303",
+          "1e306",
+          "1e3003",
+          "1e30003",
+          "1e3000003",
+          "1e3000000003",
+          "1e3000000000003",
+          "1e3000000000000003",
+        ];
+        const infinityNotationBoundaryInputs = ["1e308254", "1e308255"];
+        const clockBoundaryInputsForExponent = (exponent) => {
+          const boundary = new Decimal(12).pow(exponent);
+          const factors =
+            exponent < 200
+              ? ["0.99999999999999", "1", "1.00000000000001"]
+              : ["0.999999999", "1", "1.000000001"];
+          return factors.map((factor) => boundary.times(factor).toString());
+        };
+        const clockBoundaryInputs = [
+          "11.9",
+          "11.999999999999",
+          "12",
+          "12.000000000001",
+          ...clockBoundaryInputsForExponent(13),
+          ...clockBoundaryInputsForExponent(157),
+          ...clockBoundaryInputsForExponent(301),
+          ...clockBoundaryInputsForExponent(2029),
+          ...clockBoundaryInputsForExponent(22765),
+          "1e8999999999999999",
+        ];
+        const customBaseBoundaryInputs = [
+          "1.4999999999999",
+          "1.5",
+          "1.5000000000001",
+          "15.4999999999999",
+          "15.5",
+          "15.5000000000001",
+          "1919.999999999",
+          "1920",
+          "1920.000000001",
+          "4095.499999999999",
+          "4095.5",
+          "4095.500000000001",
+        ];
+        const scientificEngineeringRolloverInputs = [
+          "9.9949999999999e12",
+          "9.995e12",
+          "9.9950000000001e12",
+          "999.994999999999e6",
+          "999.995e6",
+          "999.995000000001e6",
+        ];
+        const aroundRomanBoundary = (boundary) =>
+          [boundary - 0.01, boundary, boundary + 0.01].map(String);
+        const aroundRomanFractionBoundary = (boundary) =>
+          [boundary - 0.001, boundary, boundary + 0.001].map(String);
+        const romanSymbolThresholds = [
+          1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000, 4000, 5000,
+          9000, 10000, 40000, 50000, 90000, 100000, 400000, 500000, 900000,
+          1000000,
+        ];
+        const romanBoundaryInputs = [
+          ...romanSymbolThresholds.flatMap(aroundRomanBoundary),
+          ...Array.from({ length: 9 }, (_, index) =>
+            aroundRomanFractionBoundary((index + 1) / 10),
+          ).flat(),
+          ...aroundRomanBoundary(4000000),
+          ...aroundRomanBoundary(-4000000),
+          "0",
+        ];
+        const letterTranscriptionBoundaryInputs = [
+          "1e75",
+          "1e78",
+          "1e81",
+          "1e153",
+          "1e156",
+          "1e159",
+          "1e2106",
+          "1e2109",
+          "1e2112",
+          "1e4131",
+          "1e4134",
+          "1e4137",
+        ];
+        const allNotationDispatchBoundaryInputs = Array.from(
+          { length: 16 },
+          (_, index) => {
+            if (index === 0) return "0.5";
+            if (index === 1) return "4";
+            if (index === 2) return "16";
+            if (index === 3) return "256";
+            if (index === 4) return "65536";
+            if (index === 5) return "4294967296";
+            return `1e${Math.floor(Math.log10(2) * 2 ** index) + 1}`;
+          },
+        );
+        const chineseNotationBoundaryInputs = [
+          "0",
+          "10",
+          "9999",
+          "10000",
+          "10005.999",
+          "1e51",
+          "1e52",
+          "1.2345e52",
+          "1e287",
+          "1e288",
+          "1e289",
+        ];
+        const hahaFunnyLoopBoundaryInputs = [
+          new Decimal(69).pow(68.999).toString(),
+          new Decimal(69).pow(69).toString(),
+        ];
+        // 2^(2^x) for x = 5.49, 5.749, 5.75, 6, 6.25, 6.251, 6.749, 6.75, 7,
+        // 7.249, 7.25, 7.251, as Chromium computes it on Windows. Math.pow can
+        // round the last digit differently on Linux, so the inputs are fixed
+        // strings and every platform probes the same values.
+        const evilNotationBoundaryInputs = [
+          "33803456882871.05",
+          "15467399121698596",
+          "15872408465076820",
+          "18446744073709552000",
+          "8.150210226254984e+22",
+          "8.453861495791969e+22",
+          "2.392404355899225e+32",
+          "2.519333504822423e+32",
+          "3.4028236692093845e+38",
+          "6.174289704363879e+45",
+          "6.642592673215133e+45",
+          "7.146777419003405e+45",
+        ];
+        const greekLetterBoundaryInputs = [
+          "1e3",
+          "1e102",
+          "1e105",
+          "1e111",
+          "1e117",
+          "1e135",
+          "1e141",
+          "1e144",
+          "1e147",
+          "1e7197",
+          "1e7200",
+          "1e7203",
+        ];
+        const coronavirusInfectInputs = [
+          "01234.0",
+          "01234.1",
+          "01234.2",
+          "01234.3",
+          "01234.4",
+          "01234.5",
+          "01234.6",
+          "01234.7",
+          "01234.8",
+          "01234.9",
+        ];
+        const japaneseNotationBoundaryInputs = [
+          "1000",
+          ...Array.from({ length: 17 }, (_, index) => `1e${(index + 1) * 4}`),
+          "1.0001e8",
+          "1.2345e8",
+          "1e71",
+          "1e72",
+          "1e73",
+        ];
+        const omegaOrderBoundaryInputs = (order) => {
+          const boundary = new Decimal(8000).pow(order);
+          const factors = ["0.999999999", "1", "1.000000001"];
+          return factors.map((factor) => boundary.times(factor).toString());
+        };
+        const omegaNotationBoundaryInputs = [
+          "0",
+          "7999",
+          "8000",
+          "8001",
+          "15999",
+          "16000",
+          "16001",
+          "23999",
+          "24000",
+          "24001",
+          "31999",
+          "32000",
+          "32001",
+          "71999",
+          "72000",
+          "72001",
+          "79999",
+          "80000",
+          "80001",
+          ...omegaOrderBoundaryInputs(3),
+          ...omegaOrderBoundaryInputs(6),
+          new Decimal(Number.MAX_SAFE_INTEGER).times(1000).toString(),
+          new Decimal(Number.MAX_SAFE_INTEGER).add(1).times(1000).toString(),
+        ];
+        const tritetratedBoundaryInputs = [
+          "0",
+          "0.5",
+          "0.9999999",
+          "1",
+          "1.0000001",
+          "15.999999",
+          "16",
+          "16.000001",
+          "1e6",
+          "1e100",
+        ];
+        const flagsFormatter = game.numberFormatters.find(
+          (formatter) => formatter.name === "Flags",
+        );
+        if (
+          !flagsFormatter ||
+          !Array.isArray(flagsFormatter.letters) ||
+          typeof flagsFormatter.transcribe !== "function"
+        ) {
+          throw new Error("Pinned Flags formatter methods are unavailable.");
+        }
+        const flagsBase = flagsFormatter.letters.length;
+        const flagsEngineeringExponents = [
+          -3,
+          0,
+          3,
+          (flagsBase - 1) * 3,
+          flagsBase * 3,
+          (flagsBase + 1) * 3,
+          (flagsBase * 2 - 1) * 3,
+          flagsBase * 2 * 3,
+          (flagsBase * 2 + 1) * 3,
+          flagsBase * flagsBase * 3,
+          (flagsBase * flagsBase + 1) * 3,
+        ];
+        const flagsNotationInputs = [
+          ...new Set([
+            "1e-3",
+            "1",
+            ...Array.from(
+              { length: flagsBase },
+              (_, index) => `1e${(index + 1) * 3}`,
+            ),
+            ...flagsEngineeringExponents.map((exponent) => `1e${exponent}`),
+          ]),
+        ];
+        const elementalFormatter = game.numberFormatters.find(
+          (formatter) => formatter.name === "Elemental",
+        );
+        if (
+          !elementalFormatter ||
+          typeof elementalFormatter.getAbbreviationAndValue !== "function" ||
+          typeof elementalFormatter.formatElementalPart !== "function" ||
+          typeof elementalFormatter.elemental !== "function"
+        ) {
+          throw new Error(
+            "Pinned Elemental formatter methods are unavailable.",
+          );
+        }
+        const elementalListLengths = [1, 8, 8, 18, 18, 32, 32, 1];
+        const elementalLookupInputs = elementalListLengths.flatMap(
+          (listLength, listIndex) =>
+            Array.from({ length: listLength }, (_, elementIndex) => {
+              const exponent = listIndex + (elementIndex + 0.5) / listLength;
+              return {
+                listIndex,
+                elementIndex,
+                input: Math.pow(118, exponent),
+              };
+            }),
+        );
+        const elementalMethodInputs = [
+          "0",
+          "0.5",
+          "1",
+          "117.999999",
+          "118",
+          "118.000001",
+          "999.999999",
+          "1000",
+          new Decimal(118).pow(119).toString(),
+          new Decimal(118).pow(200).toString(),
+          new Decimal(118).pow(10000).toString(),
+          new Decimal(118).pow(1000000).toString(),
+        ];
+        const elementalFormatInputs = [
+          "-1",
+          ...elementalMethodInputs,
+          "Infinity",
+        ];
+        const elementalPartInputs = [
+          { abbreviation: "H", amount: 1 },
+          { abbreviation: "H", amount: 2 },
+        ];
+        const precisePrimeFormatter = game.numberFormatters.find(
+          (formatter) => formatter.name === "Precise Prime",
+        );
+        const precisePrimeMethods = [
+          "primify",
+          "maybeParenthesize",
+          "formatPowerTower",
+          "formatFromList",
+          "primesFromInt",
+        ];
+        if (
+          !precisePrimeFormatter ||
+          precisePrimeMethods.some(
+            (method) => typeof precisePrimeFormatter[method] !== "function",
+          )
+        ) {
+          throw new Error(
+            "Pinned Precise Prime formatter methods are unavailable.",
+          );
+        }
+        const precisePrimeMaxInt = Number.MAX_SAFE_INTEGER;
+        const precisePrimeMaxIntDecimal = new Decimal(precisePrimeMaxInt);
+        const precisePrimeSquared = precisePrimeMaxIntDecimal.pow(2);
+        const precisePrimeCubed = precisePrimeMaxIntDecimal.pow(3);
+        const precisePrimePrimeInputs = [
+          2,
+          3,
+          4,
+          6,
+          8,
+          9,
+          10,
+          12,
+          30,
+          49,
+          77,
+          121,
+          169,
+          9973,
+          10007,
+          10000 * 10000,
+          10007 * 10009,
+          100020001,
+        ];
+        const precisePrimeFactorLists = [
+          [],
+          [2],
+          [2, 2],
+          [2, 3],
+          [2, 2, 3, 3, 3, 5, 5],
+        ];
+        const precisePrimePowerTowers = [
+          [2, 2],
+          [4, 2],
+          [12, 5],
+          [12, 4],
+          [12, 6],
+          [120, 5],
+          [120, 4, 2],
+          [360, 5, 7],
+        ];
+        const precisePrimePrimifyInputs = [
+          "0",
+          "0.5",
+          "1",
+          "1.9",
+          "2",
+          "2.99",
+          "3",
+          "12",
+          (precisePrimeMaxInt - 1).toString(),
+          precisePrimeMaxInt.toString(),
+          (precisePrimeMaxInt + 1).toString(),
+          precisePrimeSquared.times("0.999999").toString(),
+          precisePrimeSquared.toString(),
+          precisePrimeSquared.times("1.000001").toString(),
+          precisePrimeCubed.times("0.999999").toString(),
+          precisePrimeCubed.toString(),
+          precisePrimeCubed.times("1.000001").toString(),
+          "1e100",
+        ];
+        const precisePrimeFormatInputs = [
+          "-Infinity",
+          "-1",
+          "0",
+          "0.5",
+          "1",
+          "2",
+          "16",
+          "999.999",
+          "1000",
+          ...precisePrimePrimifyInputs.slice(8),
+          "Infinity",
+        ];
         const notationBoundaryInputs = [
           ...new Set([
+            ...allNotationDispatchBoundaryInputs,
+            ...chineseNotationBoundaryInputs,
+            ...hahaFunnyLoopBoundaryInputs,
+            ...evilNotationBoundaryInputs,
+            ...greekLetterBoundaryInputs,
+            ...dotsBoundaryInputs,
+            ...bracketsBoundaryInputs,
+            ...standardAbbreviationBoundaryInputs,
+            ...infinityNotationBoundaryInputs,
+            ...scientificEngineeringRolloverInputs,
+            ...clockBoundaryInputs,
+            ...customBaseBoundaryInputs,
+            ...romanBoundaryInputs,
+            ...letterTranscriptionBoundaryInputs,
             "0",
+            "-0.5",
+            "-1",
+            "-999.999",
+            "-1000",
             "-1e-301",
+            "32769.75524902344",
+            "-1e-300",
+            "-1e-299",
             "1e-301",
             "1e-300",
             "1e-299",
+            "2",
             "0.999",
             "1",
             "9.999",
             "10",
+            "999.999",
             "999.49",
             "999.5",
             "999.999",
             "1000",
             "1000.001",
+            "8192",
+            "8193",
+            "9972",
+            "9973",
+            "9974",
+            "10005.999",
+            "10006",
+            "10006.001",
+            "4.041554734111906e+40026",
+            "4.041554738153461e+40026",
+            "4.041554742195015e+40026",
             "999999",
             "1000000",
             "999999999",
@@ -409,16 +847,66 @@ async function capture(reference, dependencies, dependencySnapshots) {
             "1e15",
             "1e18",
             "1e24",
+            "1e26",
             "1e27",
             "1e30",
+            "1e32",
             "1e33",
+            "1e34",
             "1e60",
             "1e100",
+            "1e108",
+            "1e109",
+            "1e110",
+            "1e146",
+            "1e147",
+            "1e148",
+            "1e182",
+            "1e183",
+            "1e184",
+            "1e303",
+            "1e306",
             "1e308",
             "1e309",
             "1e10000",
+            "1e8999999999999999",
+            "-1e8999999999999999",
+            "1e9000000000000000",
+            "-1e9000000000000000",
+            "1e9000000000000001",
+            "-1e9000000000000001",
+            "1e99999",
+            "1e100000",
+            "1e100001",
+            "1e999999999",
+            "1e1000000000",
+            "1e1000000001",
             ...Array.from({ length: 33 }, (_, index) => `1e${(index + 1) * 3}`),
             ...Array.from({ length: 11 }, (_, index) => `1e${10 + index * 9}`),
+          ]),
+        ];
+        const notationSampleSeed = 0x494d4231;
+        let notationSampleState = notationSampleSeed >>> 0;
+        const nextNotationSample = () => {
+          let value = notationSampleState;
+          value ^= value << 13;
+          value ^= value >>> 17;
+          value ^= value << 5;
+          notationSampleState = value >>> 0;
+          return notationSampleState / 0x100000000;
+        };
+        const notationSeededSampleInputs = Array.from({ length: 32 }, () => {
+          const sign = nextNotationSample() < 0.25 ? "-" : "";
+          const mantissaDigits =
+            100000 + Math.floor(nextNotationSample() * 900000);
+          const mantissa = `${Math.floor(mantissaDigits / 100000)}.${String(mantissaDigits % 100000).padStart(5, "0")}`;
+          const exponent = Math.floor(nextNotationSample() * 12001) - 6000;
+          return `${sign}${mantissa}e${exponent}`;
+        });
+        const allNotationInputs = [
+          ...new Set([
+            ...notationBoundaryInputs,
+            ...notationSeededSampleInputs,
           ]),
         ];
         const wrapperInputs = [
@@ -440,6 +928,308 @@ async function capture(reference, dependencies, dependencySnapshots) {
         const exponentInputs = [
           99999, 100000, 100001, 999999999, 1000000000, 1000000001,
         ];
+        const notationRandomCallsBeforeDirectOutputs =
+          window.__idleMineProbe.randomCalls;
+        const coronavirusFormatter = game.numberFormatters.find(
+          (formatter) => formatter.name === "Coronavirus",
+        );
+        const japaneseFormatter = game.numberFormatters.find(
+          (formatter) => formatter.name === "Japanese",
+        );
+        const omegaFormatters = ["Omega", "Omega (Short)"].map((name) => {
+          const formatter = game.numberFormatters.find(
+            (candidate) => candidate.name === name,
+          );
+          if (!formatter) {
+            throw new Error(`Pinned ${name} formatter is unavailable.`);
+          }
+          return formatter;
+        });
+        const tritetratedFormatter = game.numberFormatters.find(
+          (formatter) => formatter.name === "Tritetrated",
+        );
+        if (
+          !coronavirusFormatter ||
+          typeof coronavirusFormatter.infect !== "function"
+        ) {
+          throw new Error(
+            "Pinned Coronavirus formatter method is unavailable.",
+          );
+        }
+        if (!japaneseFormatter) {
+          throw new Error("Pinned Japanese formatter is unavailable.");
+        }
+        if (
+          !tritetratedFormatter ||
+          typeof tritetratedFormatter.tritetrated !== "function"
+        ) {
+          throw new Error(
+            "Pinned Tritetrated formatter method is unavailable.",
+          );
+        }
+        const imperialFormatter = game.numberFormatters.find(
+          (formatter) => formatter.name === "Imperial",
+        );
+        const imperialMethodNames = [
+          "formatUnder1000",
+          "formatDecimal",
+          "convertToVolume",
+          "formatMetric",
+          "checkSmallUnits",
+          "findVolumeUnit",
+          "checkAlmost",
+          "bigAndSmall",
+          "almost",
+          "almostOrShortOf",
+          "shortOf",
+          "pluralOrArticle",
+          "addArticle",
+        ];
+        if (
+          !imperialFormatter ||
+          imperialMethodNames.some(
+            (method) => typeof imperialFormatter[method] !== "function",
+          )
+        ) {
+          throw new Error("Pinned Imperial formatter methods are unavailable.");
+        }
+        const imperialMinim = 61611520;
+        const imperialGallon = imperialMinim * 60 * 8 * 4 * 2 * 2 * 2 * 4;
+        const imperialVolumeUnits = [
+          [0, "pL", 0],
+          [imperialMinim, "minim", 0],
+          [imperialMinim * 60, "dram", 1],
+          [imperialMinim * 60 * 8, "ounce", 2],
+          [imperialMinim * 60 * 8 * 4, "gill", 2],
+          [imperialMinim * 60 * 8 * 4 * 2, "cup", 3],
+          [imperialMinim * 60 * 8 * 4 * 2 * 2, "pint", 4],
+          [imperialMinim * 60 * 8 * 4 * 2 * 2 * 2, "quart", 4],
+          [imperialGallon, "gallon", 4],
+          [imperialGallon * 4.5, "pin", 3],
+          [imperialGallon * 9, "firkin", 3],
+          [imperialGallon * 18, "kilderkin", 4],
+          [imperialGallon * 36, "barrel", 4],
+          [imperialGallon * 54, "hogshead", 5],
+          [imperialGallon * 72, "puncheon", 6],
+          [imperialGallon * 108, "butt", 7],
+          [imperialGallon * 216, "tun", 7],
+        ];
+        const imperialAdjectives = [
+          "minute ",
+          "tiny ",
+          "petite ",
+          "small ",
+          "modest ",
+          "medium ",
+          "generous ",
+          "large ",
+          "great ",
+          "grand ",
+          "huge ",
+          "gigantic ",
+          "immense ",
+          "colossal ",
+          "vast ",
+          "galactic ",
+          "cosmic ",
+          "infinite ",
+          "eternal ",
+        ];
+        const imperialMaxVolume =
+          10 * imperialVolumeUnits[imperialVolumeUnits.length - 1][0];
+        const imperialLogMaxVolume = Math.log10(imperialMaxVolume);
+        const imperialReduceRatio = Math.log10(
+          imperialMaxVolume / imperialMinim,
+        );
+        const imperialUnitBoundaries = [
+          { label: "zero", value: 0, expectedIndex: 0 },
+          ...imperialVolumeUnits.slice(1).flatMap((unit, offset) => {
+            const unitIndex = offset + 1;
+            return [-1, 0, 1].map((delta) => ({
+              label: `${unit[1]}-${delta < 0 ? "below" : delta > 0 ? "above" : "at"}`,
+              value: unit[0] + delta,
+              expectedIndex: delta < 0 ? unitIndex - 1 : unitIndex,
+            }));
+          }),
+          {
+            label: "above-largest-unit",
+            value: imperialVolumeUnits[imperialVolumeUnits.length - 1][0] + 1,
+            expectedIndex: imperialVolumeUnits.length - 1,
+          },
+        ];
+        const imperialSmallUnitBoundaries = [
+          ...[1, 2, 3].flatMap((volumeIndex) => {
+            const boundary =
+              imperialVolumeUnits[volumeIndex + 1][0] - 9.5 * imperialMinim;
+            return [-1, 0, 1].map((delta) => ({
+              label: `vol-${volumeIndex}-next-unit-9.5-minims-${delta < 0 ? "below" : delta > 0 ? "above" : "at"}`,
+              adjective: "minute ",
+              value: boundary + delta,
+              volumeIndex,
+            }));
+          }),
+          {
+            label: "minim-article",
+            adjective: "minute ",
+            value: imperialMinim,
+            volumeIndex: 1,
+          },
+          {
+            label: "minim-one-decimal-place",
+            adjective: "minute ",
+            value: imperialMinim * 5,
+            volumeIndex: 1,
+          },
+          {
+            label: "minim-zero-decimal-places",
+            adjective: "minute ",
+            value: imperialMinim * 12,
+            volumeIndex: 1,
+          },
+          {
+            label: "dram-remainder-at-50-minims",
+            adjective: "minute ",
+            value: imperialVolumeUnits[2][0] + 50 * imperialMinim,
+            volumeIndex: 2,
+          },
+          {
+            label: "dram-remainder-at-50.5-minims",
+            adjective: "minute ",
+            value: imperialVolumeUnits[2][0] + 50.5 * imperialMinim,
+            volumeIndex: 2,
+          },
+          {
+            label: "dram-remainder-at-51-minims",
+            adjective: "minute ",
+            value: imperialVolumeUnits[2][0] + 51 * imperialMinim,
+            volumeIndex: 2,
+          },
+          {
+            label: "other-volume-index-returns-undefined",
+            adjective: "minute ",
+            value: imperialVolumeUnits[4][0],
+            volumeIndex: 4,
+          },
+        ];
+        const imperialCheckAlmostCases = [
+          ...imperialVolumeUnits.slice(2).flatMap((big, offset) => {
+            const bigIndex = offset + 2;
+            const firstSmall = imperialVolumeUnits[bigIndex - big[2]][0];
+            const secondSmall = imperialVolumeUnits[bigIndex + 1 - big[2]][0];
+            const almostBoundary = big[0] - firstSmall;
+            const shortBoundary = big[0] - secondSmall;
+            return [
+              ...[-1, 0, 1].map((delta) => ({
+                label: `unit-${bigIndex}-almost-${delta < 0 ? "below" : delta > 0 ? "above" : "at"}`,
+                adjective: "minute ",
+                value: almostBoundary + delta,
+                numBig: 1,
+                bigIndex,
+              })),
+              ...[-1, 0, 1]
+                .map((delta) => ({
+                  label: `unit-${bigIndex}-short-${delta < 0 ? "below" : delta > 0 ? "above" : "at"}`,
+                  adjective: "minute ",
+                  value: shortBoundary + delta,
+                  numBig: 1,
+                  bigIndex,
+                }))
+                .filter((entry) => entry.value >= 0),
+              ...(bigIndex >= 3
+                ? [
+                    {
+                      label: `unit-${bigIndex}-no-match`,
+                      adjective: "minute ",
+                      value: 0,
+                      numBig: 1,
+                      bigIndex,
+                    },
+                  ]
+                : []),
+            ];
+          }),
+        ];
+        const imperialUpperAlmostCases = imperialVolumeUnits
+          .slice(2)
+          .flatMap((big, offset) => {
+            const bigIndex = offset + 2;
+            const previousIndex = bigIndex - 1;
+            const firstSmall = imperialVolumeUnits[bigIndex - big[2]][0];
+            const secondSmall = imperialVolumeUnits[bigIndex + 1 - big[2]][0];
+            return [
+              {
+                label: `volume-${previousIndex}-almost-next-${big[1]}`,
+                value: big[0] - firstSmall,
+                adjective: "minute ",
+              },
+              {
+                label: `volume-${previousIndex}-short-of-next-${big[1]}`,
+                value: big[0] - secondSmall,
+                adjective: "minute ",
+              },
+            ].filter(
+              (entry) =>
+                entry.value >= imperialVolumeUnits[previousIndex][0] &&
+                entry.value < big[0] &&
+                imperialFormatter.checkSmallUnits(
+                  entry.adjective,
+                  entry.value,
+                  previousIndex,
+                ) === undefined,
+            );
+          });
+        const imperialTun = imperialVolumeUnits[16][0];
+        const imperialMinimRemainder = imperialVolumeUnits[9][0];
+        const imperialFirkinRemainder = imperialVolumeUnits[10][0];
+        const imperialConvertInputs = [
+          { label: "metric-zero", value: 0 },
+          { label: "metric-sub-10", value: 9.999 },
+          { label: "metric-integer", value: 10 },
+          { label: "metric-nanolitre", value: 1000 },
+          { label: "metric-microlitre", value: 1_000_000 },
+          ...imperialVolumeUnits.slice(1).flatMap((unit) => {
+            return [-1, 0, 1].map((delta) => ({
+              label: `${unit[1]}-${delta < 0 ? "below" : delta > 0 ? "above" : "at"}`,
+              value: unit[0] + delta,
+            }));
+          }),
+          ...imperialUpperAlmostCases,
+          {
+            label: "near-next-tun-almost",
+            value: 2 * imperialTun + (imperialTun - imperialMinimRemainder),
+          },
+          {
+            label: "near-next-tun-short-of",
+            value: 2 * imperialTun + (imperialTun - imperialFirkinRemainder),
+          },
+          {
+            label: "tun-only-below-small-unit",
+            value: 2 * imperialTun + imperialMinimRemainder - 1,
+          },
+          {
+            label: "third-unit-count-over-9-break",
+            value: 2 * imperialTun + 100 * imperialGallon,
+          },
+          {
+            label: "third-unit-exact-error",
+            value: 2 * imperialTun + 36 * imperialGallon,
+          },
+        ];
+        const imperialFormatDecimalInputs = [
+          "0",
+          "1",
+          "9.99",
+          (imperialMaxVolume - 1).toString(),
+          imperialMaxVolume.toString(),
+          (imperialMaxVolume + 1).toString(),
+          ...["0.999999", "1", "1.000001"].map((factor) =>
+            new Decimal(10)
+              .pow(imperialLogMaxVolume + imperialReduceRatio)
+              .times(factor)
+              .toString(),
+          ),
+          "1e100",
+        ];
         const notationSemantics = {
           formatterRegistry: game.numberFormatters.map((formatter) => {
             const methodNames = new Set();
@@ -459,12 +1249,17 @@ async function capture(reference, dependencies, dependencySnapshots) {
               methods: [...methodNames].sort(),
             };
           }),
-          directFormatterInputs: notationBoundaryInputs,
+          directFormatterInputs: allNotationInputs,
+          seededSample: {
+            algorithm: "xorshift32",
+            seed: notationSampleSeed,
+            inputs: notationSeededSampleInputs,
+          },
           directFormatterOutputs: game.numberFormatters.map((formatter) => {
             game.numberFormatter = formatter;
             return {
               notation: formatter.name,
-              values: notationBoundaryInputs.map((input) => ({
+              values: allNotationInputs.map((input) => ({
                 input,
                 output: captureResult(() =>
                   formatter.format(new Decimal(input), 2, 0),
@@ -472,6 +1267,274 @@ async function capture(reference, dependencies, dependencySnapshots) {
               })),
             };
           }),
+          adMethodOutputs: {
+            imperialNotation: {
+              sourcePath:
+                "@antimatter-dimensions/notations@1.6.0/dist/ad-notations.umd.js",
+              constants: {
+                volumeUnits: imperialVolumeUnits,
+                adjectives: imperialAdjectives,
+                maxVolume: imperialMaxVolume,
+                logMaxVolume: imperialLogMaxVolume,
+                reduceRatio: imperialReduceRatio,
+              },
+              findVolumeUnit: imperialUnitBoundaries.map((entry) => ({
+                ...entry,
+                output: captureResult(() =>
+                  imperialFormatter.findVolumeUnit(entry.value),
+                ),
+              })),
+              formatMetric: [
+                0, 9.999, 10, 999.999, 1000, 999_999.999, 1_000_000, 1_000_001,
+              ].map((input) => ({
+                input,
+                output: captureResult(() =>
+                  imperialFormatter.formatMetric(input),
+                ),
+              })),
+              checkSmallUnits: imperialSmallUnitBoundaries.map((entry) => ({
+                ...entry,
+                output: captureResult(() =>
+                  imperialFormatter.checkSmallUnits(
+                    entry.adjective,
+                    entry.value,
+                    entry.volumeIndex,
+                  ),
+                ),
+              })),
+              checkAlmost: imperialCheckAlmostCases.map((entry) => ({
+                ...entry,
+                output: captureResult(() =>
+                  imperialFormatter.checkAlmost(
+                    entry.adjective,
+                    entry.value,
+                    entry.numBig,
+                    entry.bigIndex,
+                  ),
+                ),
+              })),
+              convertToVolume: imperialConvertInputs.map(
+                ({ label, value }) => ({
+                  label,
+                  value,
+                  volumeIndex: imperialFormatter.findVolumeUnit(value),
+                  output: captureResult(() =>
+                    imperialFormatter.convertToVolume(value, "minute "),
+                  ),
+                }),
+              ),
+              formatUnder1000: [0, 0.5, 1, 9.999, 999.999].map((input) => ({
+                input,
+                output: captureResult(() =>
+                  imperialFormatter.formatUnder1000(input),
+                ),
+              })),
+              formatDecimal: imperialFormatDecimalInputs.map((input) => ({
+                input,
+                output: captureResult(() =>
+                  imperialFormatter.formatDecimal(new Decimal(input)),
+                ),
+              })),
+              maxFiniteFormatDecimal: captureResult(() =>
+                imperialFormatter.formatDecimal(Decimal.MAX_VALUE),
+              ),
+              formattedValues: [
+                "-1",
+                "0",
+                "9.99",
+                "999.999",
+                "1000",
+                ...imperialFormatDecimalInputs,
+                "1e100",
+              ].map((input) => ({
+                input,
+                output: captureResult(() =>
+                  imperialFormatter.format(new Decimal(input), 2, 0),
+                ),
+              })),
+              phrases: [
+                { method: "pluralOrArticle", num: 1, value: "ounce" },
+                { method: "pluralOrArticle", num: 1, value: "minim" },
+                { method: "pluralOrArticle", num: 2, value: "ounce" },
+                { method: "pluralOrArticle", num: 0, value: "tun" },
+                { method: "addArticle", value: "ounce" },
+                { method: "addArticle", value: "Apple" },
+                { method: "addArticle", value: "pint" },
+              ].map((entry) => ({
+                ...entry,
+                output: captureResult(() =>
+                  entry.method === "addArticle"
+                    ? imperialFormatter.addArticle(entry.value)
+                    : imperialFormatter.pluralOrArticle(entry.num, entry.value),
+                ),
+              })),
+              infinite: imperialFormatter.infinite,
+            },
+          },
+          communityMethodOutputs: {
+            coronavirusInfect: {
+              sourcePath: "Scripts/adcommunitynotations.js",
+              values: coronavirusInfectInputs.map((input) => ({
+                input,
+                output: captureResult(() => coronavirusFormatter.infect(input)),
+              })),
+            },
+            japaneseFormatter: {
+              sourcePath:
+                "@antimatter-dimensions/notations@1.6.0/dist/ad-notations.community.esm.js",
+              values: japaneseNotationBoundaryInputs.map((input) => ({
+                input,
+                output: captureResult(() =>
+                  japaneseFormatter.format(new Decimal(input), 2, 0),
+                ),
+              })),
+            },
+            omegaNotations: {
+              sourcePath:
+                "@antimatter-dimensions/notations@1.6.0/dist/ad-notations.community.esm.js",
+              formatters: omegaFormatters.map((formatter) => ({
+                notation: formatter.name,
+                values: omegaNotationBoundaryInputs.map((input) => ({
+                  input,
+                  output: captureResult(() =>
+                    formatter.format(new Decimal(input), 2, 0),
+                  ),
+                })),
+              })),
+            },
+            tritetratedNotation: {
+              sourcePath:
+                "@antimatter-dimensions/notations@1.6.0/dist/ad-notations.community.esm.js",
+              values: tritetratedBoundaryInputs.map((input) => ({
+                input,
+                output: captureResult(() =>
+                  tritetratedFormatter.tritetrated(new Decimal(input)),
+                ),
+              })),
+            },
+            flagsNotation: {
+              sourcePath:
+                "@antimatter-dimensions/notations@1.6.0/dist/ad-notations.community.esm.js",
+              base: flagsBase,
+              letters: [...flagsFormatter.letters],
+              transcriptionBoundaries: flagsEngineeringExponents.map(
+                (engineeringExponent) => ({
+                  engineeringExponent,
+                  output: captureResult(() =>
+                    flagsFormatter.transcribe(engineeringExponent),
+                  ),
+                }),
+              ),
+              values: flagsNotationInputs.map((input) => ({
+                input,
+                output: captureResult(() =>
+                  flagsFormatter.format(new Decimal(input), 2, 0),
+                ),
+              })),
+            },
+            elementalNotation: {
+              sourcePath:
+                "@antimatter-dimensions/notations@1.6.0/dist/ad-notations.community.esm.js",
+              listLengths: elementalListLengths,
+              lookups: elementalLookupInputs.map((entry) => ({
+                ...entry,
+                output: captureResult(() =>
+                  elementalFormatter.getAbbreviationAndValue(entry.input),
+                ),
+              })),
+              partFormatting: elementalPartInputs.map((entry) => ({
+                ...entry,
+                output: captureResult(() =>
+                  elementalFormatter.formatElementalPart(
+                    entry.abbreviation,
+                    entry.amount,
+                  ),
+                ),
+              })),
+              methodValues: elementalMethodInputs.map((input) => ({
+                input,
+                output: captureResult(() =>
+                  elementalFormatter.elemental(new Decimal(input), 2),
+                ),
+              })),
+              formattedValues: elementalFormatInputs.map((input) => ({
+                input,
+                output: captureResult(() =>
+                  elementalFormatter.format(new Decimal(input), 2, 0),
+                ),
+              })),
+              infinite: elementalFormatter.infinite,
+            },
+            precisePrimeNotation: {
+              sourcePath:
+                "@antimatter-dimensions/notations@1.6.0/dist/ad-notations.community.esm.js",
+              constants: {
+                maxSafeInteger: precisePrimeMaxInt,
+                maxFactor: 10000,
+                maxSafeIntegerLog10: Math.log10(precisePrimeMaxInt),
+                decimalMaxMantissa: Decimal.MAX_VALUE.mantissa,
+                decimalMaxExponent: Decimal.MAX_VALUE.exponent,
+                decimalMaxLog10: Decimal.MAX_VALUE.log10(),
+                decimalMaxTowerExponent:
+                  Decimal.MAX_VALUE.log10() / Math.log10(precisePrimeMaxInt),
+              },
+              primeFactorizations: precisePrimePrimeInputs.map((input) => ({
+                input,
+                output: captureResult(() =>
+                  precisePrimeFormatter.primesFromInt(input),
+                ),
+              })),
+              factorListFormatting: precisePrimeFactorLists.map((factors) => ({
+                factors,
+                output: captureResult(() =>
+                  precisePrimeFormatter.formatFromList(factors),
+                ),
+              })),
+              parenthesization: [false, true].map((parenthesize) => ({
+                value: "2×3",
+                parenthesize,
+                output: captureResult(() =>
+                  precisePrimeFormatter.maybeParenthesize("2×3", parenthesize),
+                ),
+              })),
+              powerTowers: precisePrimePowerTowers.map((exponents) => ({
+                exponents,
+                output: captureResult(() =>
+                  precisePrimeFormatter.formatPowerTower(exponents),
+                ),
+              })),
+              primifyValues: precisePrimePrimifyInputs.map((input) => ({
+                input,
+                output: captureResult(() =>
+                  precisePrimeFormatter.primify(new Decimal(input)),
+                ),
+              })),
+              maxFinitePrimify: captureResult(() =>
+                precisePrimeFormatter.primify(Decimal.MAX_VALUE),
+              ),
+              maxFiniteFormatted: captureResult(() =>
+                precisePrimeFormatter.format(Decimal.MAX_VALUE, 2, 0),
+              ),
+              formatUnder1000Values: [0, 0.5, 1, 2.99, 999.999].map(
+                (input) => ({
+                  input,
+                  output: captureResult(() =>
+                    precisePrimeFormatter.formatUnder1000(input, 0),
+                  ),
+                }),
+              ),
+              formattedValues: precisePrimeFormatInputs.map((input) => ({
+                input,
+                output: captureResult(() =>
+                  precisePrimeFormatter.format(new Decimal(input), 2, 0),
+                ),
+              })),
+              infinite: precisePrimeFormatter.infinite,
+            },
+          },
+          randomCallsBeforeDirectOutputs:
+            notationRandomCallsBeforeDirectOutputs,
+          randomCallsAfterDirectOutputs: window.__idleMineProbe.randomCalls,
           formatNumberInputs: wrapperInputs,
           formatNumberScenarios: game.numberFormatters.map((formatter) => {
             game.numberFormatter = formatter;
@@ -669,6 +1732,133 @@ async function capture(reference, dependencies, dependencySnapshots) {
           powers,
           logarithms,
         };
+
+        const decimalBranchSemantics = (() => {
+          const additionZeroCases = [
+            { left: "0", right: "1e100" },
+            { left: "1e100", right: "0" },
+            { left: "0", right: "0" },
+          ].map(({ left: leftInput, right: rightInput }) => {
+            const left = new Decimal(leftInput);
+            const right = new Decimal(rightInput);
+            return {
+              left: leftInput,
+              right: rightInput,
+              add: captureResult(() => left.add(right)),
+              subtract: captureResult(() => left.sub(right)),
+            };
+          });
+          const additionExponentGapCases = [16, 17, 18].map((exponentGap) => {
+            const leftInput = "1.23456789012345e100";
+            const rightInput = `6e${100 - exponentGap}`;
+            const left = new Decimal(leftInput);
+            const right = new Decimal(rightInput);
+            return {
+              exponentGap,
+              left: leftInput,
+              right: rightInput,
+              add: captureResult(() => left.add(right)),
+              subtract: captureResult(() => left.sub(right)),
+            };
+          });
+          const numericMultiplicationLimitCases = [
+            "9.999999999999998e306",
+            "1e307",
+            "1.0000000000000002e307",
+            "-9.999999999999998e306",
+            "-1e307",
+            "-1.0000000000000002e307",
+          ].map((multiplier) => ({
+            multiplier,
+            result: captureResult(() =>
+              new Decimal("1.23456789012345").mul(Number(multiplier)),
+            ),
+          }));
+          const roundingExponentBoundaryCases = [
+            "1e-2",
+            "-1e-2",
+            "1e-1",
+            "-1e-1",
+            "1e16",
+            "-1e16",
+            "1e17",
+            "-1e17",
+          ].map((input) => {
+            const value = new Decimal(input);
+            return {
+              input,
+              floor: captureResult(() => Decimal.floor(value)),
+              ceil: captureResult(() => Decimal.ceil(value)),
+              round: captureResult(() => Decimal.round(value)),
+              trunc: captureResult(() => Decimal.trunc(value)),
+              toFixed0: captureResult(() => value.toFixed(0)),
+            };
+          });
+          const stringExponentBoundaryCases = [
+            "1e-8",
+            "1e-7",
+            "1e-6",
+            "1e20",
+            "1e21",
+          ].map((input) => {
+            const value = new Decimal(input);
+            return {
+              input,
+              toString: captureResult(() => value.toString()),
+              json: captureResult(() => JSON.stringify(value)),
+            };
+          });
+          const extremeSentinelCases = [
+            ["MAX_VALUE", Decimal.MAX_VALUE],
+            ["MIN_VALUE", Decimal.MIN_VALUE],
+          ].map(([name, value]) => ({
+            name,
+            value: normalizedDecimal(value),
+            toString: captureResult(() => value.toString()),
+            toFixed0: captureResult(() => value.toFixed(0)),
+          }));
+          const seed = 0x1d0f2026;
+          let randomState = seed;
+          const nextUint32 = () => {
+            randomState = (Math.imul(1664525, randomState) + 1013904223) >>> 0;
+            return randomState;
+          };
+          const nextInput = () => {
+            const sign = (nextUint32() & 1) === 0 ? "" : "-";
+            const mantissaDigits = 1_000_000 + (nextUint32() % 9_000_000);
+            const exponent = (nextUint32() % 101) - 50;
+            const mantissa = `${Math.floor(mantissaDigits / 1_000_000)}.${String(mantissaDigits % 1_000_000).padStart(6, "0")}`;
+            return `${sign}${mantissa}e${exponent}`;
+          };
+          const seededOperandSample = Array.from({ length: 16 }, () => {
+            const leftInput = nextInput();
+            const rightInput = nextInput();
+            const left = new Decimal(leftInput);
+            const right = new Decimal(rightInput);
+            return {
+              left: leftInput,
+              right: rightInput,
+              add: captureResult(() => left.add(right)),
+              subtract: captureResult(() => left.sub(right)),
+              multiply: captureResult(() => left.mul(right)),
+              divide: captureResult(() => left.div(right)),
+              compare: captureResult(() => left.cmp(right)),
+            };
+          });
+          return {
+            additionZeroCases,
+            additionExponentGapCases,
+            numericMultiplicationLimitCases,
+            roundingExponentBoundaryCases,
+            stringExponentBoundaryCases,
+            extremeSentinelCases,
+            seededOperandSample: {
+              algorithm: "LCG32(Math.imul(1664525, state) + 1013904223)",
+              seed,
+              cases: seededOperandSample,
+            },
+          };
+        })();
 
         const randomSemantics = [
           -1,
@@ -1568,6 +2758,23 @@ async function capture(reference, dependencies, dependencySnapshots) {
         })();
         const offlineProgressionSemantics = (() => {
           const nowMs = Date.now();
+          const sampleSeed = 0x4f46464c;
+          let sampleState = sampleSeed;
+          const nextSampleUint32 = () => {
+            let value = sampleState;
+            value ^= value << 13;
+            value ^= value >>> 17;
+            value ^= value << 5;
+            sampleState = value >>> 0;
+            return sampleState;
+          };
+          const seededElapsedScenarios = Array.from({ length: 16 }, (_, i) => ({
+            name: `fixed-seed-elapsed-${String(i + 1).padStart(2, "0")}`,
+            elapsedSeconds: 301 + (nextSampleUint32() % (8 * 60 * 60 - 301)),
+            noOffline: false,
+            rates: { money: "2", gems: "100", planetCoins: "100" },
+            upgrades: { offlineTime: 1, offlineGems: 2, offlinePC: 3 },
+          }));
           const scenarios = [
             {
               name: "exactly-five-minutes-does-not-earn-offline-rewards",
@@ -1641,6 +2848,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
               rates: { money: "2", gems: "100", planetCoins: "100" },
               upgrades: { offlineTime: 0, offlineGems: 2, offlinePC: 2 },
             },
+            ...seededElapsedScenarios,
           ];
           const originalMethods = {
             getMPS: functions.getMPS,
@@ -1669,6 +2877,14 @@ async function capture(reference, dependencies, dependencySnapshots) {
               thresholdSeconds: 300,
               defaultOfflineHours: 6,
               moneyMultiplier: 0.5,
+              fixedSeedSample: {
+                algorithm: "xorshift32",
+                seed: `0x${sampleSeed.toString(16)}`,
+                count: seededElapsedScenarios.length,
+                elapsedSeconds: seededElapsedScenarios.map(
+                  ({ elapsedSeconds }) => elapsedSeconds,
+                ),
+              },
               scenarios: scenarios.map((scenario) => {
                 functions.loadGame(window.initialGame, false, true);
                 functions.getMPS = () => new Decimal(scenario.rates.money);
@@ -4046,6 +5262,17 @@ async function capture(reference, dependencies, dependencySnapshots) {
               randomValues: [0.99],
             },
             {
+              name: "full-health-idle-break-saves-before-story-refresh",
+              action: "idleFrame",
+              currentHp: "100",
+              pickaxePower: "1000",
+              elapsedMilliseconds: 61000,
+              autoPickaxeTimer: 0,
+              saveTimer: 60,
+              story: { page: 0, highestUnlocked: 0, notifications: 1 },
+              randomValues: [0.99],
+            },
+            {
               name: "equal-idle-threshold-refreshes-game-start-without-saving",
               action: "idleFrame",
               currentHp: "100",
@@ -4117,7 +5344,11 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 game.highestMineObjectLevel = 0;
                 game.currentMineObject = functions.getMineObject(0);
                 game.currentMineObject.hp = new Decimal(scenario.currentHp);
-                game.pickaxe = new Pickaxe("Toy Pickaxe", 20, 1);
+                game.pickaxe = new Pickaxe(
+                  "Toy Pickaxe",
+                  scenario.pickaxePower ?? 20,
+                  1,
+                );
                 game.powers.data.values = Array.from(
                   { length: 5 },
                   () => new Decimal(1),
@@ -4178,6 +5409,9 @@ async function capture(reference, dependencies, dependencySnapshots) {
                     action: scenario.action,
                     currentHp: scenario.currentHp,
                     elapsedMilliseconds: scenario.elapsedMilliseconds,
+                    ...(scenario.pickaxePower === undefined
+                      ? {}
+                      : { pickaxePower: scenario.pickaxePower }),
                     autoPickaxeTimer: scenario.autoPickaxeTimer,
                     saveTimer: scenario.saveTimer,
                     story: scenario.story,
@@ -5408,6 +6642,227 @@ async function capture(reference, dependencies, dependencySnapshots) {
             }
           }
         })();
+        const pickaxeQualityNameBoundaries = (() => {
+          const originalRandom = Math.random;
+          const previousHighestMineObjectLevel = game.highestMineObjectLevel;
+          const upgradeGroups = {
+            money: game.upgrades,
+            gems: game.gemUpgrades,
+            planetCoins: game.planetCoinUpgrades,
+            wisdom: game.powers.upgrades,
+          };
+          const previousLevels = Object.fromEntries(
+            Object.entries(upgradeGroups).map(([group, upgrades]) => [
+              group,
+              Object.fromEntries(
+                Object.entries(upgrades).map(([key, upgrade]) => [
+                  key,
+                  upgrade.level,
+                ]),
+              ),
+            ]),
+          );
+          const previousPowers = [...game.powers.data.values];
+          for (const upgrades of Object.values(upgradeGroups)) {
+            for (const upgrade of Object.values(upgrades)) {
+              upgrade.level = 0;
+            }
+          }
+          game.powers.data.values = [1, 1, 1, 1, 1].map(
+            (value) => new Decimal(value),
+          );
+          const qualityNames = [
+            "Bad",
+            "Sturdy",
+            "Normal",
+            "Rare",
+            "Epic",
+            "Legendary",
+            "Superb",
+            "Cosmic",
+            "Divine",
+            "Ultimate",
+            "Godly",
+            "Demigodly",
+            "Supergodly",
+            "OMEGA",
+          ];
+          const gems = 4_000_000;
+          const cases = [];
+          const addCase = ({
+            name,
+            targetQuality,
+            qualityTierRoll,
+            expectedTier,
+            boundary,
+          }) => {
+            const input = {
+              gems: String(gems),
+              highestMineObjectLevel: 0,
+              powers: ["1", "1", "1", "1", "1"],
+              upgradeLevels: {},
+              randomValues: [
+                ((targetQuality / 0.9 - 1) * 20) / gems,
+                0.9,
+                0.1,
+                0,
+                0.5,
+                qualityTierRoll,
+                0,
+                0.5,
+                0,
+                0,
+              ],
+            };
+            game.highestMineObjectLevel = 0;
+            let randomCalls = 0;
+            Math.random = () => {
+              const value = input.randomValues[randomCalls];
+              if (value === undefined) {
+                throw new Error(
+                  "Pickaxe quality boundary " +
+                    name +
+                    " consumed an uncaptured RNG draw.",
+                );
+              }
+              randomCalls++;
+              return value;
+            };
+            try {
+              const pickaxe = Pickaxe.craft(new Decimal(gems), false);
+              const result = {
+                name: pickaxe.name,
+                power: normalizedDecimal(pickaxe.pow),
+                quality: normalizedDecimal(pickaxe.quality),
+                damage: normalizedDecimal(pickaxe.getDamage()),
+              };
+              const sourceQualityTier = Math.max(
+                0,
+                Math.min(
+                  Math.floor(
+                    Math.log(pickaxe.quality.toNumber()) / Math.log(1.4) +
+                      qualityTierRoll * 2,
+                  ),
+                  13,
+                ),
+              );
+              const capturedExpectedTier =
+                boundary.position === "at" ? sourceQualityTier : expectedTier;
+              const actualQualityName = result.name.split(" ")[0];
+              if (actualQualityName !== qualityNames[capturedExpectedTier]) {
+                throw new Error(
+                  "Pickaxe quality boundary " +
+                    name +
+                    " expected source tier " +
+                    capturedExpectedTier +
+                    " but generated " +
+                    actualQualityName +
+                    " at quality " +
+                    JSON.stringify(result.quality) +
+                    " (number " +
+                    pickaxe.quality.toNumber() +
+                    ", target " +
+                    targetQuality +
+                    ", roll " +
+                    input.randomValues[0] +
+                    ").",
+                );
+              }
+              cases.push({
+                name,
+                boundary,
+                targetQuality,
+                qualityTierRoll,
+                expectedTier: capturedExpectedTier,
+                expectedQualityName: actualQualityName,
+                input,
+                randomCalls,
+                result,
+              });
+            } finally {
+              Math.random = originalRandom;
+            }
+          };
+
+          addCase({
+            name: "quality-name-lower-limit",
+            boundary: { axis: "quality", position: "lower-limit", index: 0 },
+            targetQuality: 0.9,
+            qualityTierRoll: 0,
+            expectedTier: 0,
+          });
+          for (let index = 1; index <= 13; index++) {
+            const boundaryQuality = 1.4 ** index;
+            const epsilon = 1e-8;
+            for (const [position, factor, expectedTier] of [
+              ["below", 1 - epsilon, index - 1],
+              ["at", 1, index],
+              ["above", 1 + epsilon, index],
+            ]) {
+              addCase({
+                name: "quality-name-quality-" + index + "-" + position,
+                boundary: { axis: "quality", position, index },
+                targetQuality: boundaryQuality * factor,
+                qualityTierRoll: 0,
+                expectedTier,
+              });
+            }
+          }
+          addCase({
+            name: "quality-name-upper-cap",
+            boundary: { axis: "quality", position: "above-cap", index: 14 },
+            targetQuality: 1.4 ** 14 * (1 + 1e-8),
+            qualityTierRoll: 0,
+            expectedTier: 13,
+          });
+
+          for (let index = 0; index <= 12; index++) {
+            const targetQuality = 1.4 ** (index + 0.25);
+            for (const [thresholdIndex, threshold] of [
+              0.375, 0.875,
+            ].entries()) {
+              const lowerTier = index + thresholdIndex;
+              for (const [position, offset, expectedTier] of [
+                ["below", -1e-8, lowerTier],
+                ["at", 0, lowerTier + 1],
+                ["above", 1e-8, lowerTier + 1],
+              ]) {
+                addCase({
+                  name:
+                    "quality-name-rng-" +
+                    index +
+                    "-" +
+                    thresholdIndex +
+                    "-" +
+                    position,
+                  boundary: {
+                    axis: "quality-tier-rng",
+                    position,
+                    qualityRegion: index,
+                    transition: thresholdIndex,
+                  },
+                  targetQuality,
+                  qualityTierRoll: threshold + offset,
+                  expectedTier: Math.min(expectedTier, 13),
+                });
+              }
+            }
+          }
+
+          Math.random = originalRandom;
+          game.highestMineObjectLevel = previousHighestMineObjectLevel;
+          game.powers.data.values = previousPowers;
+          for (const [group, levels] of Object.entries(previousLevels)) {
+            for (const [key, level] of Object.entries(levels)) {
+              upgradeGroups[group][key].level = level;
+            }
+          }
+          return {
+            sourcePaths: ["Scripts/pickaxe.js:Pickaxe.generateName"],
+            qualityNames,
+            cases,
+          };
+        })();
         const hardResetSemantics = (() => {
           const previousConfirm = window.confirm;
           const previousStorage = Array.from(
@@ -5585,14 +7040,175 @@ async function capture(reference, dependencies, dependencySnapshots) {
             confirmed,
           };
         })();
+        const keyboardInputSemantics = (() => {
+          const cases = [
+            {
+              name: "arrow-right-within-range",
+              key: "ArrowRight",
+              startLevel: 1,
+              highestLevel: 3,
+              keyDownCount: 1,
+            },
+            {
+              name: "arrow-left-to-reset-repeat",
+              key: "ArrowLeft",
+              startLevel: 2,
+              highestLevel: 3,
+              keyDownCount: 1,
+            },
+            {
+              name: "arrow-right-repeated-while-held",
+              key: "ArrowRight",
+              startLevel: 1,
+              highestLevel: 3,
+              keyDownCount: 2,
+            },
+            {
+              name: "arrow-right-at-high-water",
+              key: "ArrowRight",
+              startLevel: 3,
+              highestLevel: 3,
+              keyDownCount: 1,
+            },
+            {
+              name: "arrow-left-within-range",
+              key: "ArrowLeft",
+              startLevel: 3,
+              highestLevel: 3,
+              keyDownCount: 1,
+            },
+            {
+              name: "arrow-left-repeated-to-zero",
+              key: "ArrowLeft",
+              startLevel: 2,
+              highestLevel: 3,
+              keyDownCount: 2,
+            },
+            {
+              name: "arrow-left-at-zero",
+              key: "ArrowLeft",
+              startLevel: 0,
+              highestLevel: 3,
+              keyDownCount: 1,
+            },
+            {
+              name: "unbound-key-in-text-input",
+              key: "a",
+              startLevel: 0,
+              highestLevel: 3,
+              keyDownCount: 1,
+            },
+          ];
+          const scenarios = cases.map((scenario) => {
+            functions.loadGame(window.initialGame, false, true);
+            game.highestMineObjectLevel = scenario.highestLevel;
+            functions.setMineObjectLevel(scenario.startLevel);
+            window.keymap = [];
+
+            const input = document.createElement("input");
+            input.type = "text";
+            document.body.append(input);
+            input.focus();
+            const keyDownEvents = [];
+            for (let index = 0; index < scenario.keyDownCount; index++) {
+              const event = new KeyboardEvent("keydown", {
+                key: scenario.key,
+                bubbles: true,
+                cancelable: true,
+                repeat: index > 0,
+              });
+              input.dispatchEvent(event);
+              keyDownEvents.push({
+                defaultPrevented: event.defaultPrevented,
+                keyPressed: window.keymap.includes(scenario.key),
+              });
+            }
+            const selectedLevel = game.mineObjectLevel;
+            const selectedObjectName = game.currentMineObject.name;
+            const activeInputRetained = document.activeElement === input;
+            const keyUp = new KeyboardEvent("keyup", {
+              key: scenario.key,
+              bubbles: true,
+              cancelable: true,
+            });
+            input.dispatchEvent(keyUp);
+            const keyPressedAfterKeyUp = window.keymap.includes(scenario.key);
+            input.remove();
+            return {
+              name: scenario.name,
+              input: {
+                key: scenario.key,
+                startLevel: scenario.startLevel,
+                highestLevel: scenario.highestLevel,
+                keyDownCount: scenario.keyDownCount,
+                target: "focused-text-input",
+              },
+              output: {
+                keyDownEvents,
+                selectedLevel,
+                selectedObjectName,
+                activeInputRetained,
+                keyUpDefaultPrevented: keyUp.defaultPrevented,
+                keyPressedAfterKeyUp,
+              },
+            };
+          });
+
+          const modifierInput = document.createElement("input");
+          modifierInput.type = "text";
+          document.body.append(modifierInput);
+          modifierInput.focus();
+          modifierInput.dispatchEvent(
+            new KeyboardEvent("keydown", {
+              key: "Shift",
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+          const shiftPressedAfterKeyDown = window.keymap.includes("Shift");
+          window.dispatchEvent(new Event("blur"));
+          const shiftPressedAfterWindowBlur = window.keymap.includes("Shift");
+          modifierInput.dispatchEvent(
+            new KeyboardEvent("keyup", {
+              key: "Shift",
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+          const shiftPressedAfterKeyUp = window.keymap.includes("Shift");
+          modifierInput.remove();
+
+          functions.loadGame(window.initialGame, false, true);
+          window.keymap = [];
+          return {
+            sourcePaths: [
+              "Scripts/main.js",
+              "Scripts/Define/functions.js",
+              "Scripts/utils.js",
+            ],
+            scenarios,
+            modifierLifecycle: {
+              key: "Shift",
+              target: "focused-text-input",
+              output: {
+                shiftPressedAfterKeyDown,
+                shiftPressedAfterWindowBlur,
+                shiftPressedAfterKeyUp,
+              },
+            },
+          };
+        })();
+
         return {
           initialState,
+          keyboardInputSemantics,
           powersTableSemantics,
           hardResetSemantics,
           initialRates: rates,
           notationOutputs,
           notationSemantics,
           decimalSemantics,
+          decimalBranchSemantics,
           randomSemantics,
           randomSequenceExhaustion,
           mineObjectCatalog,
@@ -5610,6 +7226,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           storySemantics,
           upgradeSemantics,
           pickaxeCraftingSemantics,
+          pickaxeQualityNameBoundaries,
           objects: uniqueObjectIds.map(snapshotObject),
           probeRuntime: normalize(window.__idleMineProbe),
           currentObjectHpAfterCapture: normalizedDecimal(current.hp),
@@ -5747,7 +7364,7 @@ async function main() {
     mode !== "preview"
   ) {
     throw new Error(
-      "Use `capture` for the initial corpus, `extend` to add fields, `update <field>` to replace one reviewed field, `preview` for a disposable capture, or `verify` to compare the fixture.",
+      "Use `capture` for the initial corpus, `extend` to add fields, `update <field[,field...]>` to replace explicitly selected fields, `preview` for a disposable capture, or `verify` to compare the fixture.",
     );
   }
   const references = JSON.parse(await readFile(referenceManifestPath, "utf8"));
@@ -5839,8 +7456,19 @@ async function main() {
   }
 
   if (mode === "update") {
-    const field = process.argv[3];
-    if (!field) throw new Error("Name the one fixture field to update.");
+    const fields = [
+      ...new Set(
+        (process.argv[3] ?? "")
+          .split(",")
+          .map((field) => field.trim())
+          .filter(Boolean),
+      ),
+    ];
+    if (fields.length === 0) {
+      throw new Error(
+        "Name one fixture field or a comma-separated set of coupled fields to update.",
+      );
+    }
     const expected = JSON.parse(await readFile(fixturePath, "utf8"));
     if (expected.metadata.sourceCommit !== reference.pinnedCommit) {
       throw new Error(
@@ -5855,34 +7483,57 @@ async function main() {
         "Fixture runtime dependencies differ from the frozen snapshots.",
       );
     }
-    if (!(field in expected.data) || !(field in result.data)) {
+    const expectedFieldNames = Object.keys(expected.data);
+    const capturedFieldNames = Object.keys(result.data);
+    if (
+      expectedFieldNames.length !== capturedFieldNames.length ||
+      expectedFieldNames.some((field) => !capturedFieldNames.includes(field))
+    ) {
       throw new Error(
-        `Fixture field ${field} does not exist in both captures.`,
+        "Reference corpus fields differ. Investigate source and probe inputs before updating selected fields.",
       );
     }
     for (const [key, value] of Object.entries(expected.data)) {
       if (
-        key !== field &&
+        !fields.includes(key) &&
         JSON.stringify(value) !== JSON.stringify(result.data[key])
       ) {
         throw new Error(
-          `Unselected fixture field ${key} changed. Update exactly one reviewed field at a time.`,
+          `Unselected fixture field ${key} changed. Include it only if the reviewed capture change is causally coupled.`,
         );
       }
     }
-    if (
-      JSON.stringify(expected.data[field]) ===
-      JSON.stringify(result.data[field])
-    ) {
-      throw new Error(`Fixture field ${field} already matches the capture.`);
+    for (const field of fields) {
+      if (!(field in expected.data) || !(field in result.data)) {
+        throw new Error(
+          `Fixture field ${field} does not exist in both captures.`,
+        );
+      }
+    }
+    const changedFields = fields.filter(
+      (field) =>
+        JSON.stringify(expected.data[field]) !==
+        JSON.stringify(result.data[field]),
+    );
+    if (changedFields.length === 0) {
+      throw new Error(
+        `Fixture field${fields.length === 1 ? "" : "s"} ${fields.join(", ")} already match the capture.`,
+      );
     }
 
     const updated = {
       ...expected,
-      data: { ...expected.data, [field]: result.data[field] },
+      data: Object.fromEntries(
+        Object.entries(expected.data).map(([key, value]) => [
+          key,
+          fields.includes(key) ? result.data[key] : value,
+        ]),
+      ),
     };
     await writeFile(fixturePath, await renderJson(updated));
-    process.stdout.write(`Updated only reference field ${field}.\n`);
+    process.stdout.write(
+      `Updated reviewed reference field${changedFields.length === 1 ? "" : "s"}: ${changedFields.join(", ")}.\n`,
+    );
     return;
   }
 

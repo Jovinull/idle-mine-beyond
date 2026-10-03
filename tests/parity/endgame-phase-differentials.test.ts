@@ -97,10 +97,14 @@ type PhaseDifferential = {
   milestone: string;
   milestoneUnlocked: boolean;
   nextObjective: string;
-  sequenceSeed: number;
   saveString: string;
   start: { state: SimulationSnapshot; random: RandomCursor };
-  trace: { file: string; records: number; rawSha256: string };
+  traces: {
+    id: string;
+    rngSeed: number;
+    sequenceSeed: number;
+    trace: { file: string; records: number; rawSha256: string };
+  }[];
 };
 type PhaseFixture = {
   source: {
@@ -109,8 +113,9 @@ type PhaseFixture = {
     browser: { name: string; version: string };
     capturedOn: string;
     captureKind: string;
-    actionCountPerPhase: number;
-    rngSeed: number;
+    actionCountPerTrace: number;
+    rngSeeds: number[];
+    sequenceSeeds: number[];
     traceNote: string;
   };
   phases: PhaseDifferential[];
@@ -172,6 +177,18 @@ class SourceMathRandom {
 
   cursor(): RandomCursor {
     return { seed: this.seed, draws: this.draws, state: this.state };
+  }
+}
+
+class DifferentialClock {
+  constructor(private currentTimeMs: number) {}
+
+  advance(seconds: number) {
+    this.currentTimeMs += seconds * 1000;
+  }
+
+  now() {
+    return this.currentTimeMs;
   }
 }
 
@@ -255,13 +272,14 @@ function loadPhaseStart(phase: PhaseDifferential) {
   expect(state.mineObjectLevel).toBe(phase.mineObjectLevel);
   expect(state.story.page).toBe(phase.storyPage);
   expect(phase.milestoneUnlocked).toBe(true);
-  return { state, random: new SourceMathRandom(phase.start.random) };
+  return state;
 }
 
 function applyDifferentialAction(
   state: RemixSimulationState,
   random: SourceMathRandom,
   event: DifferentialAction,
+  clock: DifferentialClock,
 ) {
   if (event.type === "select") {
     return selectRemixMineObject(state, event.level, catalog);
@@ -318,20 +336,35 @@ function applyDifferentialAction(
       random,
     }).state;
   }
-  return performRemixSimulationAction({
+  if (event.type === "idleFrame") {
+    clock.advance(event.deltaSeconds);
+  }
+  const result = performRemixSimulationAction({
     state,
     action: event,
     catalog,
     storyMilestones: storyMilestones.milestones,
     random,
-  }).state;
+  });
+  return result.effects.some((effect) => effect.type === "save")
+    ? { ...result.state, lastActiveMs: clock.now() }
+    : result.state;
 }
 
-async function replayPhase(phase: PhaseDifferential) {
-  const { state: initialState, random } = loadPhaseStart(phase);
+async function replayPhase(
+  phase: PhaseDifferential,
+  seedTrace: PhaseDifferential["traces"][number],
+) {
+  const initialState = loadPhaseStart(phase);
+  const random = new SourceMathRandom({
+    seed: seedTrace.rngSeed,
+    draws: 0,
+    state: seedTrace.rngSeed,
+  });
+  const clock = new DifferentialClock(fixedClock);
   let state = initialState;
   const filePath = new URL(
-    `../fixtures/parity/${phase.trace.file}`,
+    `../fixtures/parity/${seedTrace.trace.file}`,
     import.meta.url,
   );
   const lines = createInterface({
@@ -340,6 +373,7 @@ async function replayPhase(phase: PhaseDifferential) {
   });
   const rawHash = createHash("sha256");
   let count = 0;
+  const actionTypes = new Set<DifferentialAction["type"]>();
   for await (const line of lines) {
     rawHash.update(`${line}\n`);
     const record = JSON.parse(line) as {
@@ -347,22 +381,28 @@ async function replayPhase(phase: PhaseDifferential) {
       checkpoint: DifferentialCheckpoint;
     };
     count++;
+    actionTypes.add(record.event.type);
     expect(record.checkpoint.label).toBe(`phase-action-${count}`);
-    state = applyDifferentialAction(state, random, record.event);
+    state = applyDifferentialAction(state, random, record.event, clock);
     expect(
       simulationSnapshot(state),
-      `${phase.id} state after action ${count} (${record.event.type})`,
+      `${phase.id}/${seedTrace.id} state after action ${count} (${record.event.type})`,
     ).toEqual(record.checkpoint.state);
-    expect(random.cursor(), `${phase.id} RNG after action ${count}`).toEqual(
-      record.checkpoint.random,
-    );
+    expect(
+      random.cursor(),
+      `${phase.id}/${seedTrace.id} RNG after action ${count}`,
+    ).toEqual(record.checkpoint.random);
   }
-  expect(count, `${phase.id} action checkpoint count`).toBe(
-    phase.trace.records,
+  expect(count, `${phase.id}/${seedTrace.id} action checkpoint count`).toBe(
+    seedTrace.trace.records,
   );
-  expect(rawHash.digest("hex"), `${phase.id} source action trace hash`).toBe(
-    phase.trace.rawSha256,
+  expect([...actionTypes].sort()).toEqual(
+    ["activeClick", "craftPickaxe", "idleFrame", "purchase", "select"].sort(),
   );
+  expect(
+    rawHash.digest("hex"),
+    `${phase.id}/${seedTrace.id} source action trace hash`,
+  ).toBe(seedTrace.trace.rawSha256);
 }
 
 it("pins the controlled endgame phase starts to the Remix source", () => {
@@ -381,18 +421,32 @@ it("pins the controlled endgame phase starts to the Remix source", () => {
     "wisdom-stars",
     "galaxies",
   ]);
-  expect(fixture.phases.map(({ trace }) => trace.records)).toEqual([
-    fixture.source.actionCountPerPhase,
-    fixture.source.actionCountPerPhase,
-    fixture.source.actionCountPerPhase,
-  ]);
+  expect(fixture.source.rngSeeds).toEqual([7454, 2026, 0xdeadbeef]);
+  expect(fixture.phases.every(({ traces }) => traces.length === 3)).toBe(true);
+  for (const phase of fixture.phases) {
+    expect(phase.traces.map(({ rngSeed }) => rngSeed)).toEqual(
+      fixture.source.rngSeeds,
+    );
+    expect(phase.traces.map(({ sequenceSeed }) => sequenceSeed)).toEqual(
+      fixture.source.sequenceSeeds,
+    );
+  }
+  expect(
+    fixture.phases.flatMap(({ traces }) =>
+      traces.map(({ trace }) => trace.records),
+    ),
+  ).toEqual(Array(9).fill(fixture.source.actionCountPerTrace));
   expect(
     fixture.phases.every(({ milestoneUnlocked }) => milestoneUnlocked),
   ).toBe(true);
 });
 
-it.each(fixture.phases)(
-  "replays $id from its captured Remix phase-start save after every seeded randomized action",
-  async (phase) => replayPhase(phase),
+it.each(
+  fixture.phases.flatMap((phase) =>
+    phase.traces.map((seedTrace) => ({ phase, seedTrace })),
+  ),
+)(
+  "replays $phase.id from its captured Remix save with $seedTrace.id after every randomized action",
+  async ({ phase, seedTrace }) => replayPhase(phase, seedTrace),
   1_800_000,
 );

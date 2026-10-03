@@ -37,6 +37,9 @@ function compatibilityBrowserHarness(): Plugin {
   const storyPanelModule = fileURLToPath(
     new URL("./tests/story-panel-smoke.ts", import.meta.url),
   ).replaceAll("\\", "/");
+  const pickaxeQualityModule = fileURLToPath(
+    new URL("./tests/pickaxe-quality-smoke.ts", import.meta.url),
+  ).replaceAll("\\", "/");
   const harnessModules = new Map([
     ["/__test__/formatting", smokeModule],
     ["/__test__/mine-objects", mineObjectModule],
@@ -48,6 +51,7 @@ function compatibilityBrowserHarness(): Plugin {
     ["/__test__/save-codec", saveCodecModule],
     ["/__test__/mine-object-renderer", mineObjectRendererModule],
     ["/__test__/story-panel", storyPanelModule],
+    ["/__test__/pickaxe-quality", pickaxeQualityModule],
   ]);
 
   return {

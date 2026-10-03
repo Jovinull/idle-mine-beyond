@@ -70,6 +70,24 @@ type CraftAttemptCase = {
   };
 };
 
+type PickaxeQualityNameBoundaryCase = {
+  name: string;
+  boundary: {
+    axis: string;
+    position: string;
+    index?: number;
+    qualityRegion?: number;
+    transition?: number;
+  };
+  targetQuality: number;
+  qualityTierRoll: number;
+  expectedTier: number;
+  expectedQualityName: string;
+  input: CraftInput;
+  randomCalls: number;
+  result: PickaxeSnapshot;
+};
+
 type DistributionMetrics = {
   min: number;
   p10: number;
@@ -125,9 +143,15 @@ const corpus = JSON.parse(
   data: {
     mineObjectCatalog: RemixMineObjectCatalog;
     pickaxeCraftingSemantics: PickaxeCraftingFixture;
+    pickaxeQualityNameBoundaries: {
+      sourcePaths: string[];
+      qualityNames: string[];
+      cases: PickaxeQualityNameBoundaryCase[];
+    };
   };
 };
 const fixture = corpus.data.pickaxeCraftingSemantics;
+const qualityNameBoundaryFixture = corpus.data.pickaxeQualityNameBoundaries;
 
 function snapshot(value: Decimal): DecimalSnapshot {
   const safeNumber = (number: number): number | string => {
@@ -219,6 +243,90 @@ it("matches source-controlled stochastic pickaxe crafts and RNG draw counts", ()
     expect(randomCalls, scenario.name).toBe(scenario.randomCalls);
     expect(snapshotPickaxe(pickaxe), scenario.name).toEqual(scenario.result);
   }
+});
+
+it("matches source-captured pickaxe quality-name formula boundaries", () => {
+  const cases = qualityNameBoundaryFixture.cases;
+  const casesByName = new Map(
+    cases.map((scenario) => [scenario.name, scenario]),
+  );
+  const observedTiers = new Set<number>();
+
+  expect(qualityNameBoundaryFixture.sourcePaths).toContain(
+    "Scripts/pickaxe.js:Pickaxe.generateName",
+  );
+  expect(cases).toHaveLength(119);
+  expect(casesByName.has("quality-name-lower-limit")).toBe(true);
+  expect(casesByName.has("quality-name-upper-cap")).toBe(true);
+
+  for (let index = 1; index <= 13; index++) {
+    for (const position of ["below", "at", "above"]) {
+      expect(
+        casesByName.has("quality-name-quality-" + index + "-" + position),
+      ).toBe(true);
+    }
+  }
+  for (let index = 0; index <= 12; index++) {
+    for (let transition = 0; transition <= 1; transition++) {
+      for (const position of ["below", "at", "above"]) {
+        expect(
+          casesByName.has(
+            "quality-name-rng-" + index + "-" + transition + "-" + position,
+          ),
+        ).toBe(true);
+      }
+    }
+  }
+
+  for (const scenario of cases) {
+    // Math.log can land on opposite sides of an exact integer in Node and
+    // Chromium. The canonical exact-threshold comparison runs in the browser
+    // harness; this unit test checks the source-captured values on both sides.
+    if (scenario.boundary.position === "at") continue;
+
+    let randomCalls = 0;
+    const random = {
+      nextDouble(): number {
+        const value = scenario.input.randomValues?.[randomCalls];
+        if (value === undefined) {
+          throw new Error(
+            `${scenario.name} consumed an uncaptured pickaxe RNG draw.`,
+          );
+        }
+        randomCalls++;
+        return value;
+      },
+    };
+    const pickaxe = calculateRemixPickaxeCraft({
+      gems: scenario.input.gems,
+      context: createContext(scenario.input),
+      mode: {
+        kind: "random",
+        random,
+        mineObjectName: (level) => {
+          const base = corpus.data.mineObjectCatalog.base[level];
+          return base
+            ? base.name
+            : generateRemixMineObject(level, corpus.data.mineObjectCatalog)
+                .name;
+        },
+      },
+    });
+
+    expect(randomCalls, scenario.name).toBe(scenario.randomCalls);
+    expect(snapshotPickaxe(pickaxe), scenario.name).toEqual(scenario.result);
+    expect(pickaxe.name.split(" ")[0], scenario.name).toBe(
+      scenario.expectedQualityName,
+    );
+    expect(qualityNameBoundaryFixture.qualityNames[scenario.expectedTier]).toBe(
+      scenario.expectedQualityName,
+    );
+    observedTiers.add(scenario.expectedTier);
+  }
+
+  expect([...observedTiers].sort((left, right) => left - right)).toEqual(
+    Array.from({ length: 14 }, (_, index) => index),
+  );
 });
 
 it("matches seeded pickaxe craft distributions and legacy RNG consumption", () => {

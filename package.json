@@ -30,6 +30,7 @@
     "reference:story-markup:capture": "node scripts/extract-story-markup.mjs --write",
     "reference:story-runtime": "node scripts/extract-story-runtime.mjs --check",
     "reference:story-runtime:capture": "node scripts/extract-story-runtime.mjs --write",
+    "reference:story-first-mud": "node scripts/extract-story-runtime.mjs --check-first-mud",
     "reference:phase-differentials": "node scripts/extract-story-runtime.mjs --check-phase-differentials",
     "reference:phase-differentials:capture": "node scripts/extract-story-runtime.mjs --write-phase-differentials",
     "reference:story-chapter6:check": "node scripts/extract-story-runtime.mjs --check-chapter6",

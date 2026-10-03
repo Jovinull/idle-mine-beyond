@@ -9,6 +9,58 @@ type DecimalValue = {
   exponent: number | string;
 };
 
+type DecimalBranchSemantics = {
+  additionZeroCases: {
+    left: string;
+    right: string;
+    add: DecimalValue;
+    subtract: DecimalValue;
+  }[];
+  additionExponentGapCases: {
+    exponentGap: number;
+    left: string;
+    right: string;
+    add: DecimalValue;
+    subtract: DecimalValue;
+  }[];
+  numericMultiplicationLimitCases: {
+    multiplier: string;
+    result: DecimalValue;
+  }[];
+  roundingExponentBoundaryCases: {
+    input: string;
+    floor: DecimalValue;
+    ceil: DecimalValue;
+    round: DecimalValue;
+    trunc: DecimalValue;
+    toFixed0: string;
+  }[];
+  stringExponentBoundaryCases: {
+    input: string;
+    toString: string;
+    json: string;
+  }[];
+  extremeSentinelCases: {
+    name: string;
+    value: DecimalValue;
+    toString: string;
+    toFixed0: string;
+  }[];
+  seededOperandSample: {
+    algorithm: string;
+    seed: number;
+    cases: {
+      left: string;
+      right: string;
+      add: DecimalValue;
+      subtract: DecimalValue;
+      multiply: DecimalValue;
+      divide: DecimalValue;
+      compare: number;
+    }[];
+  };
+};
+
 const fixture = JSON.parse(
   await readFile(
     new URL("../fixtures/parity/remix-reference-corpus.json", import.meta.url),
@@ -17,6 +69,7 @@ const fixture = JSON.parse(
 ) as {
   metadata: { sourceCommit: string };
   data: {
+    decimalBranchSemantics: DecimalBranchSemantics;
     decimalSemantics: {
       constants: Record<string, DecimalValue>;
       inputs: {
@@ -174,4 +227,127 @@ it("round-trips safe integer values through the legacy JSON string format", () =
       },
     ),
   );
+});
+
+function seededDecimalOperandPairs(seed: number, count: number) {
+  let randomState = seed >>> 0;
+  const nextUint32 = () => {
+    randomState = (Math.imul(1664525, randomState) + 1013904223) >>> 0;
+    return randomState;
+  };
+  const nextInput = () => {
+    const sign = (nextUint32() & 1) === 0 ? "" : "-";
+    const mantissaDigits = 1_000_000 + (nextUint32() % 9_000_000);
+    const exponent = (nextUint32() % 101) - 50;
+    const mantissa = `${Math.floor(mantissaDigits / 1_000_000)}.${String(mantissaDigits % 1_000_000).padStart(6, "0")}`;
+    return `${sign}${mantissa}e${exponent}`;
+  };
+  return Array.from({ length: count }, () => ({
+    left: nextInput(),
+    right: nextInput(),
+  }));
+}
+
+it("matches source addition exponent-gap boundaries and a recorded seeded sample", () => {
+  const expected = fixture.data.decimalBranchSemantics;
+  const additionZeroCases = expected.additionZeroCases.map(
+    ({ left, right }) => {
+      const lhs = new Decimal(left);
+      const rhs = new Decimal(right);
+      return {
+        left,
+        right,
+        add: snapshotDecimal(lhs.add(rhs)),
+        subtract: snapshotDecimal(lhs.sub(rhs)),
+      };
+    },
+  );
+  const additionExponentGapCases = expected.additionExponentGapCases.map(
+    ({ exponentGap, left, right }) => {
+      const lhs = new Decimal(left);
+      const rhs = new Decimal(right);
+      return {
+        exponentGap,
+        left,
+        right,
+        add: snapshotDecimal(lhs.add(rhs)),
+        subtract: snapshotDecimal(lhs.sub(rhs)),
+      };
+    },
+  );
+  const numericMultiplicationLimitCases =
+    expected.numericMultiplicationLimitCases.map(({ multiplier }) => ({
+      multiplier,
+      result: snapshotDecimal(
+        new Decimal("1.23456789012345").mul(Number(multiplier)),
+      ),
+    }));
+  const roundingExponentBoundaryCases =
+    expected.roundingExponentBoundaryCases.map(({ input }) => {
+      const value = new Decimal(input);
+      return {
+        input,
+        floor: snapshotDecimal(Decimal.floor(value)),
+        ceil: snapshotDecimal(Decimal.ceil(value)),
+        round: snapshotDecimal(Decimal.round(value)),
+        trunc: snapshotDecimal(Decimal.trunc(value)),
+        toFixed0: value.toFixed(0),
+      };
+    });
+  const stringExponentBoundaryCases = expected.stringExponentBoundaryCases.map(
+    ({ input }) => {
+      const value = new Decimal(input);
+      return {
+        input,
+        toString: value.toString(),
+        json: JSON.stringify(value),
+      };
+    },
+  );
+  const extremeSentinelCases = [
+    { name: "MAX_VALUE", value: Decimal.MAX_VALUE },
+    { name: "MIN_VALUE", value: Decimal.MIN_VALUE },
+  ].map(({ name, value }) => ({
+    name,
+    value: snapshotDecimal(value),
+    toString: value.toString(),
+    toFixed0: value.toFixed(0),
+  }));
+  const seeded = expected.seededOperandSample;
+  const seededInputs = seededDecimalOperandPairs(
+    seeded.seed,
+    seeded.cases.length,
+  );
+  expect(seeded.algorithm).toBe(
+    "LCG32(Math.imul(1664525, state) + 1013904223)",
+  );
+  expect(seeded.cases.map(({ left, right }) => ({ left, right }))).toEqual(
+    seededInputs,
+  );
+  const seededOperandSample = seededInputs.map(({ left, right }) => {
+    const lhs = new Decimal(left);
+    const rhs = new Decimal(right);
+    return {
+      left,
+      right,
+      add: snapshotDecimal(lhs.add(rhs)),
+      subtract: snapshotDecimal(lhs.sub(rhs)),
+      multiply: snapshotDecimal(lhs.mul(rhs)),
+      divide: snapshotDecimal(lhs.div(rhs)),
+      compare: lhs.cmp(rhs),
+    };
+  });
+  expect(additionZeroCases).toEqual(expected.additionZeroCases);
+  expect(additionExponentGapCases).toEqual(expected.additionExponentGapCases);
+  expect(numericMultiplicationLimitCases).toEqual(
+    expected.numericMultiplicationLimitCases,
+  );
+  expect(roundingExponentBoundaryCases).toEqual(
+    expected.roundingExponentBoundaryCases,
+  );
+  expect(stringExponentBoundaryCases).toEqual(
+    expected.stringExponentBoundaryCases,
+  );
+  expect(extremeSentinelCases).toEqual(expected.extremeSentinelCases);
+  expect(seededOperandSample).toEqual(seeded.cases);
 });

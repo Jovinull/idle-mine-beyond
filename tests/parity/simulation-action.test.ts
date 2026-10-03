@@ -25,6 +25,7 @@ type SimulationFrameCase = {
   input: {
     action: "activeClick" | "idleFrame";
     currentHp: string;
+    pickaxePower?: string;
     elapsedMilliseconds: number;
     autoPickaxeTimer: number;
     saveTimer: number;
@@ -255,7 +256,7 @@ it("composes Remix clicks, idle frames, saves, and Story notifications", () => {
     "Scripts/mineobject.js",
   ]);
   expect(semantics.randomSource).toBe("Math.random");
-  expect(semantics.cases).toHaveLength(3);
+  expect(semantics.cases).toHaveLength(4);
 
   for (const scenario of semantics.cases) {
     const state = createInitialRemixSimulationState(
@@ -265,6 +266,9 @@ it("composes Remix clicks, idle frames, saves, and Story notifications", () => {
       ...state.currentObject,
       hp: new Decimal(scenario.input.currentHp),
     };
+    if (scenario.input.pickaxePower !== undefined) {
+      state.pickaxe.power = new Decimal(scenario.input.pickaxePower);
+    }
     state.autoPickaxeTimer = scenario.input.autoPickaxeTimer;
     state.saveTimer = scenario.input.saveTimer;
     state.story = { ...scenario.input.story };

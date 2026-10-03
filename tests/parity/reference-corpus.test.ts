@@ -8,6 +8,26 @@ type DecimalValue = {
 };
 type FormatterValue = { input: string; output: string | { error: string } };
 
+function generateNotationSample(seed: number, count: number): string[] {
+  let state = seed >>> 0;
+  const next = () => {
+    let value = state;
+    value ^= value << 13;
+    value ^= value >>> 17;
+    value ^= value << 5;
+    state = value >>> 0;
+    return state / 0x100000000;
+  };
+
+  return Array.from({ length: count }, () => {
+    const sign = next() < 0.25 ? "-" : "";
+    const mantissaDigits = 100000 + Math.floor(next() * 900000);
+    const mantissa = `${Math.floor(mantissaDigits / 100000)}.${String(mantissaDigits % 100000).padStart(5, "0")}`;
+    const exponent = Math.floor(next() * 12001) - 6000;
+    return `${sign}${mantissa}e${exponent}`;
+  });
+}
+
 const fixture = JSON.parse(
   await readFile(
     new URL("../fixtures/parity/remix-reference-corpus.json", import.meta.url),
@@ -52,7 +72,14 @@ const fixture = JSON.parse(
     notationOutputs: { notation: string; values: unknown[] }[];
     notationSemantics: {
       formatterRegistry: { name: string }[];
+      randomCallsBeforeDirectOutputs: number;
+      randomCallsAfterDirectOutputs: number;
       directFormatterInputs: string[];
+      seededSample: {
+        algorithm: string;
+        seed: number;
+        inputs: string[];
+      };
       directFormatterOutputs: {
         notation: string;
         values: FormatterValue[];
@@ -228,6 +255,50 @@ it("captures formatting boundaries for every registered Remix formatter", () => 
     names,
   );
   expect(notation.exponentFormatterOutputs).toHaveLength(names.length);
+  expect(notation.randomCallsBeforeDirectOutputs).toBe(0);
+  expect(notation.randomCallsAfterDirectOutputs).toBe(32);
+  expect(notation.seededSample).toEqual({
+    algorithm: "xorshift32",
+    seed: 0x494d4231,
+    inputs: generateNotationSample(0x494d4231, 32),
+  });
+  expect(notation.directFormatterInputs).toEqual(
+    expect.arrayContaining(notation.seededSample.inputs),
+  );
+  expect(notation.directFormatterInputs).toEqual(
+    expect.arrayContaining([
+      "-1e-300",
+      "-1e-299",
+      "-999.999",
+      "999.999",
+      "1e26",
+      "1e32",
+      "1e34",
+      "1e108",
+      "1e109",
+      "1e110",
+      "1e146",
+      "1e147",
+      "1e148",
+      "1e182",
+      "1e183",
+      "1e184",
+      "1e303",
+      "1e306",
+      "1e8999999999999999",
+      "-1e8999999999999999",
+      "1e9000000000000000",
+      "-1e9000000000000000",
+      "1e9000000000000001",
+      "-1e9000000000000001",
+      "1e99999",
+      "1e100000",
+      "1e100001",
+      "1e999999999",
+      "1e1000000000",
+      "1e1000000001",
+    ]),
+  );
   expect(notation.directFormatterInputs).toContain("1e100");
   expect(notation.directFormatterInputs).toContain("1e91");
   expect(notation.directFormatterInputs).toContain("1e99");

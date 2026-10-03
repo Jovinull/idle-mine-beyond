@@ -81,7 +81,6 @@ const endgamePhases = [
     planetCoins: "1000",
     wisdom: "0",
     pickaxePower: "1e62",
-    sequenceSeed: 1_256_245_121,
   },
   {
     id: "wisdom-stars",
@@ -94,7 +93,6 @@ const endgamePhases = [
     planetCoins: "1e8",
     wisdom: "10",
     pickaxePower: "1e104",
-    sequenceSeed: 1_256_245_122,
   },
   {
     id: "galaxies",
@@ -107,10 +105,14 @@ const endgamePhases = [
     planetCoins: "1e14",
     wisdom: "1e8",
     pickaxePower: "1e135",
-    sequenceSeed: 1_256_245_123,
   },
 ];
-const phaseDifferentialActionCount = 3_000;
+const phaseDifferentialActionCount = 10_000;
+const phaseDifferentialSeeds = [
+  { id: "seed-7454", rngSeed: 7_454, sequenceSeed: 1_256_245_121 },
+  { id: "seed-2026", rngSeed: 2_026, sequenceSeed: 0x5eed0001 },
+  { id: "seed-deadbeef", rngSeed: 0xdeadbeef, sequenceSeed: 0x5eed0002 },
+];
 const phaseDifferentialTraceBatchSize = 100;
 
 function sha256(contents) {
@@ -1077,10 +1079,50 @@ async function captureFirstMudProgression(page, captureScreenshots) {
   const storyStates = [];
   const screenshotMetrics = [];
   for (const theme of ["light", "dark"]) {
-    await page.evaluate((selectedTheme) => {
+    const expectedBodyColor =
+      theme === "dark" ? "rgb(54, 54, 54)" : "rgb(250, 250, 250)";
+    const themeState = await page.evaluate(async (selectedTheme) => {
+      const themeLink = document.getElementById("css_theme");
+      if (!themeLink)
+        throw new Error("Remix theme stylesheet link is missing.");
+      const expectedHref = new URL(
+        `Themes/${selectedTheme}.css`,
+        document.location.href,
+      ).href;
+      const nextStylesheetLoad =
+        themeLink.href === expectedHref
+          ? undefined
+          : new Promise((resolve, reject) => {
+              themeLink.addEventListener("load", resolve, { once: true });
+              themeLink.addEventListener(
+                "error",
+                () =>
+                  reject(
+                    new Error(`Remix ${selectedTheme} CSS failed to load.`),
+                  ),
+                { once: true },
+              );
+            });
       window.functions.setTheme(selectedTheme);
+      if (nextStylesheetLoad) await nextStylesheetLoad;
+      await new Promise((resolve) =>
+        window.__idleMineBeyondNativeAnimationFrame(resolve),
+      );
+      return {
+        href: themeLink.href,
+        stylesheetHref: themeLink.sheet?.href ?? null,
+        bodyBackground: getComputedStyle(document.body).backgroundColor,
+      };
     }, theme);
-    await page.waitForTimeout(100);
+    if (
+      !themeState.href.endsWith(`/Themes/${theme}.css`) ||
+      themeState.stylesheetHref !== themeState.href ||
+      themeState.bodyBackground !== expectedBodyColor
+    ) {
+      throw new Error(
+        `Remix ${theme} stylesheet did not apply before the Story capture: ${JSON.stringify(themeState)}.`,
+      );
+    }
     const storyState = await page.evaluate(() => {
       const scroller = document.querySelector(".story-milestones");
       if (!scroller)
@@ -1105,8 +1147,6 @@ async function captureFirstMudProgression(page, captureScreenshots) {
         bodyBackground: getComputedStyle(document.body).backgroundColor,
       };
     });
-    const expectedBodyColor =
-      theme === "dark" ? "rgb(54, 54, 54)" : "rgb(250, 250, 250)";
     if (
       storyState.tab !== "story" ||
       storyState.theme !== theme ||
@@ -3712,8 +3752,8 @@ async function captureMillionaireProgression(
   return capture;
 }
 
-function createPhaseDifferentialActions(phase) {
-  let state = phase.sequenceSeed >>> 0;
+function createPhaseDifferentialActions(phase, sequenceSeed) {
+  let state = sequenceSeed >>> 0;
   const next = () => {
     state = (Math.imul(state, 1_664_525) + 1_013_904_223) >>> 0;
     return state / 0x1_0000_0000;
@@ -3826,75 +3866,135 @@ async function captureEndgamePhaseDifferentials(page, browserVersion) {
         seed: randomSeed,
       },
     );
-    const actions = createPhaseDifferentialActions(phase);
-    const traceName = `remix-phase-${phase.id}.jsonl.br`;
-    const tracePath = path.join(outputDirectory, traceName);
-    await mkdir(outputDirectory, { recursive: true });
-    const compressor = createBrotliCompress(routeTraceCompressionOptions);
-    const output = createWriteStream(tracePath);
-    const finished = pipeline(compressor, output);
-    const rawHash = createHash("sha256");
-    let records = 0;
-    for (
-      let offset = 0;
-      offset < actions.length;
-      offset += phaseDifferentialTraceBatchSize
-    ) {
-      const batch = actions.slice(
-        offset,
-        offset + phaseDifferentialTraceBatchSize,
-      );
-      const recordsBatch = await page.evaluate(
-        ({ sourceActions, startIndex }) => {
+    const traces = [];
+    for (const seedCase of phaseDifferentialSeeds) {
+      const reset = await page.evaluate(
+        ({ saveString, seed, clock, timers }) => {
           const { game, functions } = window;
-          const upgradeGroups = {
-            money: game.upgrades,
-            gems: game.gemUpgrades,
-            planetCoins: game.planetCoinUpgrades,
-            wisdom: game.powers.upgrades,
-          };
-          return sourceActions.map((event, index) => {
-            switch (event.type) {
-              case "activeClick":
-                functions.clickMineObject();
-                break;
-              case "idleFrame":
-                window.__idleMineBeyondProbe.advanceClock(
-                  event.deltaSeconds * 1000,
-                );
-                window.update();
-                break;
-              case "select":
-                functions.setMineObjectLevel(event.level);
-                break;
-              case "purchase":
-                upgradeGroups[event.group][event.key].buy();
-                break;
-              case "craftPickaxe":
-                functions.craftPick(1);
-                break;
-            }
-            return {
-              event,
-              checkpoint: window.__idleMineBeyondProbe.checkpoint(
-                `phase-action-${startIndex + index + 1}`,
-              ),
-            };
+          window.__idleMineBeyondProbe.setClock(clock);
+          window.deltaTimeNew = clock;
+          window.deltaTimeOld = clock;
+          functions.loadGame(saveString, true, true);
+          game.timer.autoPickaxe = timers.autoPickaxeTimer;
+          game.timer.save = timers.saveTimer;
+          window.__idleMineBeyondProbe.restoreRandomCursor({
+            seed,
+            draws: 0,
+            state: seed,
           });
+          return {
+            state: window.__idleMineBeyondProbe.simulationState(),
+            random: window.__idleMineBeyondProbe.randomCursor(),
+          };
         },
-        { sourceActions: batch, startIndex: offset },
+        {
+          saveString: startingState.saveString,
+          seed: seedCase.rngSeed,
+          clock: fixedClock,
+          timers: {
+            autoPickaxeTimer: startingState.state.autoPickaxeTimer,
+            saveTimer: startingState.state.saveTimer,
+          },
+        },
       );
-      const contents = `${recordsBatch.map((record) => JSON.stringify(record)).join("\n")}\n`;
-      rawHash.update(contents);
-      await new Promise((resolve, reject) => {
-        compressor.write(contents, (error) =>
-          error ? reject(error) : resolve(),
+      if (JSON.stringify(reset.state) !== JSON.stringify(startingState.state)) {
+        throw new Error(
+          `${phase.id} source save did not restore before ${seedCase.id}: ${findFirstDifference(startingState.state, reset.state)}.`,
         );
+      }
+      if (
+        reset.random.seed !== seedCase.rngSeed ||
+        reset.random.draws !== 0 ||
+        reset.random.state !== seedCase.rngSeed
+      ) {
+        throw new Error(
+          `${phase.id} did not start ${seedCase.id} at its seed.`,
+        );
+      }
+
+      const actions = createPhaseDifferentialActions(
+        phase,
+        seedCase.sequenceSeed,
+      );
+      const traceName = `remix-phase-${phase.id}-${seedCase.id}.jsonl.br`;
+      const tracePath = path.join(outputDirectory, traceName);
+      await mkdir(outputDirectory, { recursive: true });
+      const compressor = createBrotliCompress(routeTraceCompressionOptions);
+      const output = createWriteStream(tracePath);
+      const finished = pipeline(compressor, output);
+      const rawHash = createHash("sha256");
+      let records = 0;
+      for (
+        let offset = 0;
+        offset < actions.length;
+        offset += phaseDifferentialTraceBatchSize
+      ) {
+        const batch = actions.slice(
+          offset,
+          offset + phaseDifferentialTraceBatchSize,
+        );
+        const recordsBatch = await page.evaluate(
+          ({ sourceActions, startIndex }) => {
+            const { game, functions } = window;
+            const upgradeGroups = {
+              money: game.upgrades,
+              gems: game.gemUpgrades,
+              planetCoins: game.planetCoinUpgrades,
+              wisdom: game.powers.upgrades,
+            };
+            return sourceActions.map((event, index) => {
+              switch (event.type) {
+                case "activeClick":
+                  functions.clickMineObject();
+                  break;
+                case "idleFrame":
+                  window.__idleMineBeyondProbe.advanceClock(
+                    event.deltaSeconds * 1000,
+                  );
+                  window.update();
+                  break;
+                case "select":
+                  functions.setMineObjectLevel(event.level);
+                  break;
+                case "purchase":
+                  upgradeGroups[event.group][event.key].buy();
+                  break;
+                case "craftPickaxe":
+                  functions.craftPick(1);
+                  break;
+              }
+              return {
+                event,
+                checkpoint: window.__idleMineBeyondProbe.checkpoint(
+                  `phase-action-${startIndex + index + 1}`,
+                ),
+              };
+            });
+          },
+          { sourceActions: batch, startIndex: offset },
+        );
+        const contents = `${recordsBatch.map((record) => JSON.stringify(record)).join("\n")}\n`;
+        rawHash.update(contents);
+        await new Promise((resolve, reject) => {
+          compressor.write(contents, (error) =>
+            error ? reject(error) : resolve(),
+          );
+        });
+        records += recordsBatch.length;
+      }
+      compressor.end();
+      await finished;
+      traces.push({
+        id: seedCase.id,
+        rngSeed: seedCase.rngSeed,
+        sequenceSeed: seedCase.sequenceSeed,
+        trace: {
+          file: traceName,
+          records,
+          rawSha256: rawHash.digest("hex"),
+        },
       });
-      records += recordsBatch.length;
     }
-    compressor.end();
-    await finished;
     captured.push({
       id: phase.id,
       heading: startingState.chapterHeading,
@@ -3910,17 +4010,12 @@ async function captureEndgamePhaseDifferentials(page, browserVersion) {
         pickaxePower: phase.pickaxePower,
       },
       nextObjective: startingState.nextObjective,
-      sequenceSeed: phase.sequenceSeed,
       saveString: startingState.saveString,
       start: {
         state: startingState.state,
         random: startingState.random,
       },
-      trace: {
-        file: traceName,
-        records,
-        rawSha256: rawHash.digest("hex"),
-      },
+      traces,
     });
   }
 
@@ -3931,10 +4026,13 @@ async function captureEndgamePhaseDifferentials(page, browserVersion) {
       browser: { name: "Playwright Chromium", version: browserVersion },
       capturedOn: new Date().toISOString().slice(0, 10),
       captureKind: "controlled Remix runtime phase-start save",
-      actionCountPerPhase: phaseDifferentialActionCount,
-      rngSeed: randomSeed,
+      actionCountPerTrace: phaseDifferentialActionCount,
+      rngSeeds: phaseDifferentialSeeds.map(({ rngSeed }) => rngSeed),
+      sequenceSeeds: phaseDifferentialSeeds.map(
+        ({ sequenceSeed }) => sequenceSeed,
+      ),
       traceNote:
-        "Every checkpoint follows one action generated by the recorded independent sequence seed. Game state, RNG cursor, save start, and actions are preserved; controlled resource/pickaxe setup is test fixture construction, not natural progression.",
+        "Each captured Remix phase-start save is restored independently for every RNG seed. Every trace contains a long reproducible action sequence generated from its separate sequence seed; the complete normalized simulation state and RNG cursor are recorded after every action. Controlled resource/pickaxe setup is test fixture construction, not natural progression.",
     },
     phases: captured,
   };
@@ -3948,6 +4046,7 @@ async function captureStory(
   includePixelData = false,
   resumeChapter6 = false,
   phaseDifferentialsOnly = false,
+  firstMudOnly = false,
 ) {
   const sourceRoot = await verifySource(reference);
   const { server, url } = await startReadOnlyServer(sourceRoot);
@@ -3965,12 +4064,20 @@ async function captureStory(
     });
     await context.addInitScript(
       ({ clock, seed }) => {
+        // Keep one native paint callback available for dynamic stylesheet swaps.
+        const nativeRequestAnimationFrame =
+          window.requestAnimationFrame.bind(window);
+        Object.defineProperty(window, "__idleMineBeyondNativeAnimationFrame", {
+          configurable: false,
+          value: nativeRequestAnimationFrame,
+        });
         Object.defineProperty(Date, "now", {
           configurable: true,
           value: () => clockNow,
         });
         let clockNow = clock;
-        let randomState = seed >>> 0;
+        let randomSeed = seed >>> 0;
+        let randomState = randomSeed;
         let randomDrawCount = 0;
         Math.random = () => {
           randomState =
@@ -3982,16 +4089,17 @@ async function captureStory(
           configurable: false,
           value: {
             randomCursor: () => ({
-              seed,
+              seed: randomSeed,
               draws: randomDrawCount,
               state: randomState,
             }),
             restoreRandomCursor: (cursor) => {
-              if (cursor.seed !== seed) {
-                throw new Error("Cannot restore a different Story RNG seed.");
-              }
+              randomSeed = cursor.seed >>> 0;
               randomState = cursor.state >>> 0;
               randomDrawCount = cursor.draws;
+            },
+            setClock: (timestamp) => {
+              clockNow = timestamp;
             },
             advanceClock: (deltaMs) => {
               clockNow += deltaMs;
@@ -4107,6 +4215,9 @@ async function captureStory(
     }
     if (phaseDifferentialsOnly) {
       return await captureEndgamePhaseDifferentials(page, browser.version());
+    }
+    if (firstMudOnly) {
+      return await captureFirstMudProgression(page, false);
     }
 
     const sourceCapture = await page.evaluate(
@@ -4903,10 +5014,11 @@ async function main() {
       "--merge-chapter6-continuation",
       "--write-phase-differentials",
       "--check-phase-differentials",
+      "--check-first-mud",
     ].includes(mode)
   ) {
     throw new Error(
-      "Use --check/--write for the Story runtime or --check-pixel-goldens/--write-pixel-goldens for source Canvas baselines.",
+      "Use --check/--write for the full Story runtime, --check-first-mud for the focused first-Mud state, or --check-pixel-goldens/--write-pixel-goldens for source Canvas baselines.",
     );
   }
   captureChapter6Route = mode === "--check-chapter6";
@@ -4972,7 +5084,23 @@ async function main() {
     mode === "--resume-chapter6",
     mode === "--write-phase-differentials" ||
       mode === "--check-phase-differentials",
+    mode === "--check-first-mud",
   );
+
+  if (mode === "--check-first-mud") {
+    const expected = JSON.parse(await readFile(fixturePath, "utf8"));
+    if (
+      JSON.stringify(captured) !== JSON.stringify(expected.firstMudProgression)
+    ) {
+      throw new Error(
+        `First-Mud runtime fixture differs: ${findFirstDifference(captured, expected.firstMudProgression)}.`,
+      );
+    }
+    process.stdout.write(
+      "Verified the pinned Remix first-Mud mining and Story state in both themes.\n",
+    );
+    return;
+  }
 
   if (
     mode === "--write-phase-differentials" ||
@@ -5002,41 +5130,61 @@ async function main() {
         const stored = expected.phases[index];
         const actualStable = {
           ...actual,
-          trace: undefined,
+          traces: undefined,
         };
         const storedStable = {
           ...stored,
-          trace: undefined,
+          traces: undefined,
         };
         if (JSON.stringify(actualStable) !== JSON.stringify(storedStable)) {
           throw new Error(
             `Phase differential ${actual.id} save differs: ${findFirstDifference(actualStable, storedStable)}.`,
           );
         }
-        const records = await assertStoryRouteTracesMatch(
-          storyRouteTraceOutputPath(actual.trace.file),
-          storyRouteTraceFixturePath(stored.trace.file),
-        );
-        if (
-          records !== stored.trace.records ||
-          actual.trace.rawSha256 !== stored.trace.rawSha256
+        if (actual.traces.length !== stored.traces?.length) {
+          throw new Error(`${actual.id} has a different number of RNG traces.`);
+        }
+        for (
+          let traceIndex = 0;
+          traceIndex < actual.traces.length;
+          traceIndex++
         ) {
-          throw new Error(
-            `Phase differential ${actual.id} trace metadata differs.`,
+          const actualRun = actual.traces[traceIndex];
+          const storedRun = stored.traces[traceIndex];
+          if (
+            actualRun.id !== storedRun.id ||
+            actualRun.rngSeed !== storedRun.rngSeed ||
+            actualRun.sequenceSeed !== storedRun.sequenceSeed
+          ) {
+            throw new Error(`${actual.id} RNG trace seed metadata differs.`);
+          }
+          const records = await assertStoryRouteTracesMatch(
+            storyRouteTraceOutputPath(actualRun.trace.file),
+            storyRouteTraceFixturePath(storedRun.trace.file),
           );
+          if (
+            records !== storedRun.trace.records ||
+            actualRun.trace.rawSha256 !== storedRun.trace.rawSha256
+          ) {
+            throw new Error(
+              `Phase differential ${actual.id}/${actualRun.id} trace metadata differs.`,
+            );
+          }
         }
       }
       process.stdout.write(
-        `Verified ${captured.phases.length} pinned Remix phase starts and ${captured.source.actionCountPerPhase} source actions per phase.\n`,
+        `Verified ${captured.phases.length} pinned Remix phase starts, ${captured.source.rngSeeds.length} RNG seeds, and ${captured.source.actionCountPerTrace} actions per trace.\n`,
       );
       return;
     }
 
     for (const phase of captured.phases) {
-      await copyFile(
-        storyRouteTraceOutputPath(phase.trace.file),
-        storyRouteTraceFixturePath(phase.trace.file),
-      );
+      for (const run of phase.traces) {
+        await copyFile(
+          storyRouteTraceOutputPath(run.trace.file),
+          storyRouteTraceFixturePath(run.trace.file),
+        );
+      }
     }
     await writeFile(
       phaseDifferentialFixturePath,
@@ -5044,7 +5192,7 @@ async function main() {
       "utf8",
     );
     process.stdout.write(
-      `Captured ${captured.phases.length} controlled pinned Remix phase-start saves and ${captured.source.actionCountPerPhase} randomized source actions per phase.\n`,
+      `Captured ${captured.phases.length} controlled pinned Remix phase-start saves across ${captured.source.rngSeeds.length} RNG seeds with ${captured.source.actionCountPerTrace} actions per trace.\n`,
     );
     return;
   }

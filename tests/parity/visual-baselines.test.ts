@@ -13,7 +13,7 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
   const windowsSidecars = sidecars.filter(
     (name) => !name.endsWith("-linux.json"),
   );
-  expect(windowsSidecars).toHaveLength(81);
+  expect(windowsSidecars).toHaveLength(83);
   const linuxSidecars = sidecars.filter((name) => name.endsWith("-linux.json"));
   // Linux still runs state assertions for these selected Windows-only captures.
   const windowsOnlyCaptures = new Set([
@@ -23,10 +23,12 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
     "story-natural-chapter-6-light-1440x900.json",
   ]);
   const missingLinuxBaselines = windowsSidecars
-    .filter((name) => !sidecars.includes(name.replace(/.json$/, "-linux.json")))
+    .filter(
+      (name) => !sidecars.includes(name.replace(/\.json$/, "-linux.json")),
+    )
     .sort();
   expect(missingLinuxBaselines).toEqual([...windowsOnlyCaptures].sort());
-  expect(linuxSidecars).toHaveLength(77);
+  expect(linuxSidecars).toHaveLength(79);
 
   for (const sidecarName of sidecars) {
     const metadata = JSON.parse(
