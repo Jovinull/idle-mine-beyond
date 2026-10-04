@@ -37,7 +37,9 @@ class InvalidBase64Error extends Error {
   override name = "InvalidCharacterError";
 
   constructor() {
-    super("The input is not valid Base64.");
+    super(
+      "Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded.",
+    );
   }
 }
 
@@ -93,8 +95,9 @@ function decodeBase64Binary(input: string): string {
 }
 
 function legacyUnescape(input: string): string {
-  return input.replace(/%u([0-9a-f]{4})|%([0-9a-f]{2})/gi, (_, wide, byte) =>
-    String.fromCharCode(Number.parseInt(wide ?? byte, 16)),
+  return input.replace(
+    /%u([0-9a-fA-F]{4})|%([0-9a-fA-F]{2})/g,
+    (_, wide, byte) => String.fromCharCode(Number.parseInt(wide ?? byte, 16)),
   );
 }
 
