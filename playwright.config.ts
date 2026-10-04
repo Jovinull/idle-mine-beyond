@@ -10,6 +10,8 @@ export default defineConfig({
   snapshotPathTemplate: `{testDir}/../fixtures/visual/{arg}${visualBaselineSuffix}{ext}`,
   fullyParallel: true,
   workers: 2,
+  // Minutes-long live differentials run only through `pnpm test:e2e:slow`.
+  grepInvert: /@slow/,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? "github" : "list",

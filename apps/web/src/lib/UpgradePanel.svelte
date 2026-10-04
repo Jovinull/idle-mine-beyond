@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import {
     REMIX_UPGRADE_KEYS,
     type RemixSimulationState,
@@ -14,7 +15,10 @@
   type Props = {
     simulation: RemixSimulationState;
     selectedNotation: NotationFormatter;
+    selectedGroup: RemixShopUpgradeGroup;
     pressedKeys: readonly string[];
+    refreshRevision: number;
+    onGroupChange: (group: RemixShopUpgradeGroup) => void;
     onPurchase: (action: RemixUpgradePurchaseSimulationAction) => void;
   };
 
@@ -30,10 +34,23 @@
     groups: Record<RemixShopUpgradeGroup, Record<string, UpgradePresentation>>;
   };
 
-  let { simulation, selectedNotation, pressedKeys, onPurchase }: Props =
-    $props();
-  let selectedGroup = $state<RemixShopUpgradeGroup>("money");
+  let {
+    simulation,
+    selectedNotation,
+    selectedGroup,
+    pressedKeys,
+    refreshRevision,
+    onGroupChange,
+    onPurchase,
+  }: Props = $props();
   let highlightedKey = $state<string | null>(null);
+  let displayedPressedKeys = $state<string[]>([]);
+
+  $effect(() => {
+    if (refreshRevision >= 0) {
+      displayedPressedKeys = untrack(() => [...pressedKeys]);
+    }
+  });
 
   const presentation = upgradePresentation as UpgradePresentationData;
   const shopGroups = {
@@ -61,6 +78,7 @@
   }
 
   function buyUpgrade(key: string) {
+    displayedPressedKeys = [...pressedKeys];
     const operation = pressedKeys.includes("Control")
       ? { method: "buy100" as const }
       : pressedKeys.includes("Shift")
@@ -84,8 +102,9 @@
             data-upgrade-tab={group}
             aria-pressed={selectedGroup === group}
             onclick={() => {
-              selectedGroup = group as RemixShopUpgradeGroup;
+              displayedPressedKeys = [...pressedKeys];
               highlightedKey = null;
+              onGroupChange(group as RemixShopUpgradeGroup);
             }}
           >
             <span class="inline-resource">
@@ -115,7 +134,10 @@
           data-upgrade-group={selectedGroup}
           data-upgrade-key={key}
           data-upgrade-level={level}
-          onmouseenter={() => (highlightedKey = key)}
+          onmouseenter={() => {
+            displayedPressedKeys = [...pressedKeys];
+            highlightedKey = key;
+          }}
           onmouseleave={() => {
             if (highlightedKey === key) highlightedKey = null;
           }}
@@ -146,12 +168,13 @@
           <p>
             <span
               class="multibuy"
-              class:active={pressedKeys.includes("Shift") &&
-                !pressedKeys.includes("Control")}>Hold SHIFT to buy 10</span
+              class:active={displayedPressedKeys.includes("Shift") &&
+                !displayedPressedKeys.includes("Control")}
+              >Hold SHIFT to buy 10</span
             ><br />
             <span
               class="multibuy"
-              class:active={pressedKeys.includes("Control")}
+              class:active={displayedPressedKeys.includes("Control")}
               >Hold CTRL to buy 100</span
             >
           </p>
@@ -203,7 +226,7 @@
   }
 
   .upgrade.gem:hover {
-    background-color: #7dbbc6;
+    background-color: #7dbbc6 !important;
   }
 
   .upgrade.pc {
@@ -211,7 +234,7 @@
   }
 
   .upgrade.pc:hover {
-    background-color: #7c7dce;
+    background-color: #7c7dce !important;
   }
 
   .upgrade .lvl {
@@ -242,6 +265,11 @@
     line-height: 1.1em;
   }
 
+  .highlightedupgrade h3 {
+    margin: 0;
+    font-family: Montserrat, sans-serif;
+  }
+
   .highlightedupgrade .multibuy {
     color: #505050;
     font-size: 80%;
@@ -265,7 +293,7 @@
   }
 
   :global(body[data-theme="dark"]) .upgrade.gem:hover {
-    background-color: #0071a4;
+    background-color: #0071a4 !important;
   }
 
   :global(body[data-theme="dark"]) .upgrade.pc {
@@ -273,7 +301,7 @@
   }
 
   :global(body[data-theme="dark"]) .upgrade.pc:hover {
-    background-color: #2c3dc3;
+    background-color: #2c3dc3 !important;
   }
 
   :global(body[data-theme="dark"]) .upg-tabs button {
@@ -282,10 +310,10 @@
   }
 
   :global(body[data-theme="dark"]) .upg-tabs button:hover {
-    background-color: #777777;
+    background-color: #636363;
   }
 
-  :global(body[data-theme="dark"]) .highlightedupgrade .multibuy {
+  :global(body[data-theme="dark"]) .highlightedupgrade .multibuy:not(.active) {
     color: #c1c1c1;
   }
 </style>

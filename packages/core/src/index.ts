@@ -1,6 +1,10 @@
 export { Decimal } from "./decimal.js";
 export type { DecimalSource } from "./decimal.js";
-export { generateRemixMineObject, getRemixMineObject } from "./mine-objects.js";
+export {
+  calculateRemixWisdomDropAmount,
+  generateRemixMineObject,
+  getRemixMineObject,
+} from "./mine-objects.js";
 export type {
   MineObject,
   NormalizedDecimal,

@@ -1,5 +1,6 @@
 import { mount, unmount } from "svelte";
 import MineObjectCanvas from "../src/lib/MineObjectCanvas.svelte";
+import { drawRemixMineObjectCanvas } from "../src/lib/mine-object-rendering.js";
 
 type PixelReference = {
   level: number;
@@ -21,6 +22,8 @@ type RenderedPreview = {
   alphaMismatchPixels: number;
 };
 
+type RenderedPng = { level: number; pngBase64: string };
+
 const output = document.querySelector<HTMLPreElement>("#result");
 if (!output)
   throw new Error("Mine-object renderer probe failed to initialize.");
@@ -33,6 +36,25 @@ const browserWindow = window as Window & {
   __idleMineObjectRendererProbe?: (
     references: PixelReference[],
   ) => Promise<RenderedPreview[]>;
+  __idleMineObjectPngProbe?: (levels: number[]) => Promise<RenderedPng[]>;
+};
+
+browserWindow.__idleMineObjectPngProbe = async (levels) => {
+  host.replaceChildren();
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 224;
+  host.append(canvas);
+
+  const rendered: RenderedPng[] = [];
+  for (const level of levels) {
+    await drawRemixMineObjectCanvas(canvas, level);
+    rendered.push({
+      level,
+      pngBase64: canvas.toDataURL("image/png").split(",")[1] ?? "",
+    });
+  }
+  return rendered;
 };
 
 browserWindow.__idleMineObjectRendererProbe = async (references) => {

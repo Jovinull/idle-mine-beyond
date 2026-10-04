@@ -1,0 +1,48 @@
+{
+  "repository": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": [
+    "index.html",
+    "main.css",
+    "Scripts/Define/functions.js",
+    "Scripts/mineobject.js",
+    "Scripts/Components/mine-object.js",
+    "Scripts/Components/powers-table.js"
+  ],
+  "browserName": "Chromium",
+  "browserVersion": "153.0.8010.12",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "browserColorScheme": "light",
+  "gameTheme": "dark",
+  "locale": "en-US",
+  "timezoneId": "UTC",
+  "clockMs": 1704067200000,
+  "phaseSaveId": null,
+  "controlledBoundary": false,
+  "dropCaseName": "planet-coin-drop-roll-follows-gem-roll",
+  "state": {
+    "tab": "main",
+    "upgradeTab": "money",
+    "theme": "dark",
+    "mineObjectLevel": 90,
+    "highestMineObjectLevel": 91,
+    "currentObjectName": "Tiny Asteroid",
+    "money": "3e+61",
+    "gems": "5",
+    "planetCoins": "5",
+    "wisdom": "2",
+    "story": {
+      "page": 2,
+      "highestUnlocked": 47,
+      "notifications": 16
+    },
+    "randomDraws": 2
+  },
+  "screenshotSha256": "31d7fdade6649a9c1b088368be4badceece08dc1c104b08b35314716598506ee",
+  "capturedOn": "2026-10-03",
+  "screenshotPath": "tests/fixtures/visual/remix-mine-drop-planet-coins-dark-1440x900.png"
+}

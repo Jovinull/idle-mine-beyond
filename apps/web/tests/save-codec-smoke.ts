@@ -9,6 +9,21 @@ type CodecVector = {
   encoded: string;
   decodedJson: string;
 };
+type CodecBoundaryVector = {
+  name: string;
+  wrapper: "canonical" | "single-uri-encoded";
+  sourceSaveSha256: string;
+  sourceDecodedSha256: string;
+  sourceNameCodeUnits: number[];
+  decodedNameCodeUnits: number[];
+  importedNameCodeUnits: number[];
+  base64InputRemainder: number;
+};
+type CodecBoundarySourceSave = {
+  settings: { tab: string };
+  pickaxe: { name: string };
+  [key: string]: unknown;
+};
 
 type LoadErrorInput = { name: string; encoded: string };
 type Base64Variant = {
@@ -19,11 +34,58 @@ type Base64Variant = {
 
 type ProbeInput = {
   codecVectors: CodecVector[];
+  codecBoundaryVectors: CodecBoundaryVector[];
+  codecBoundarySourceSave: CodecBoundarySourceSave;
   base64Variants: Base64Variant[];
   loadErrors: LoadErrorInput[];
 };
 
-function evaluate(input: ProbeInput) {
+function codeUnits(value: string): number[] {
+  return Array.from({ length: value.length }, (_, index) =>
+    value.charCodeAt(index),
+  );
+}
+
+async function sha256(value: string): Promise<string> {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(digest)]
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function evaluate(input: ProbeInput) {
+  const codecBoundaryVectors = await Promise.all(
+    input.codecBoundaryVectors.map(async (vector) => {
+      const sourceValue = structuredClone(input.codecBoundarySourceSave);
+      sourceValue.settings.tab = "settings";
+      sourceValue.pickaxe.name = String.fromCharCode(
+        ...vector.sourceNameCodeUnits,
+      );
+      const encoded =
+        vector.wrapper === "canonical"
+          ? encodeRemixLegacySave(sourceValue)
+          : btoa(encodeURIComponent(JSON.stringify(sourceValue)));
+      const decoded = decodeRemixLegacySave(encoded);
+      const decodedValue =
+        decoded.status === "success"
+          ? (decoded.value as typeof sourceValue)
+          : undefined;
+      return {
+        name: vector.name,
+        wrapper: vector.wrapper,
+        sourceSaveSha256: await sha256(encoded),
+        sourceDecodedSha256:
+          decoded.status === "success" ? await sha256(decoded.json) : null,
+        sourceNameCodeUnits: codeUnits(sourceValue.pickaxe.name),
+        decodedNameCodeUnits: decodedValue
+          ? codeUnits(decodedValue.pickaxe.name)
+          : null,
+        base64InputRemainder: atob(encoded).length % 3,
+      };
+    }),
+  );
+
   return {
     codecVectors: input.codecVectors.map((vector) => {
       const result = decodeRemixLegacySave(vector.encoded);
@@ -34,6 +96,7 @@ function evaluate(input: ProbeInput) {
         value: result.status === "success" ? result.value : null,
       };
     }),
+    codecBoundaryVectors,
     base64Variants: input.base64Variants.map((variant) => {
       const result = decodeRemixLegacySave(variant.encoded);
       return {
@@ -49,11 +112,26 @@ function evaluate(input: ProbeInput) {
         status: result.status,
         decodeErrorName:
           result.status === "invalidEncoding" ? result.decodeError.name : null,
+        decodeErrorMessage:
+          result.status === "invalidEncoding"
+            ? result.decodeError.message
+            : null,
         parseErrorName:
           result.status === "invalidEncoding" || result.status === "invalidJson"
             ? result.parseError.name
             : null,
+        parseErrorMessage:
+          result.status === "invalidEncoding" || result.status === "invalidJson"
+            ? result.parseError.message
+            : null,
         effects: result.effects.map((effect) => effect.type),
+        alertMessages:
+          result.status === "invalidEncoding"
+            ? result.effects.map(
+                () =>
+                  `Error loading Game: ${result.decodeError.name}: ${result.decodeError.message}`,
+              )
+            : [],
       };
     }),
   };

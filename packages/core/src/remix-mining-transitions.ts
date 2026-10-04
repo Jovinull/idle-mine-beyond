@@ -1,6 +1,10 @@
 import { Decimal, type DecimalSource } from "./decimal.js";
-import type { MineObject, RemixMineObjectCatalog } from "./mine-objects.js";
-import { getRemixMineObject } from "./mine-objects.js";
+import {
+  calculateRemixWisdomDropAmount,
+  getRemixMineObject,
+  type MineObject,
+  type RemixMineObjectCatalog,
+} from "./mine-objects.js";
 import {
   calculateRemixActiveDamage,
   calculateRemixIdleDamage,
@@ -148,7 +152,7 @@ export function applyRemixMiningHit(input: {
     const wisdomDrop = state.currentObject.drops["wisdom"];
     if (wisdomDrop !== undefined && random.nextDouble() < wisdomDrop.chance) {
       resources.wisdom = new Decimal(resources.wisdom).add(
-        new Decimal(wisdomDrop.amount).mul(state.powers.wisdom),
+        calculateRemixWisdomDropAmount(wisdomDrop.amount, state.powers.wisdom),
       );
       resources.maxWisdom = Decimal.max(resources.wisdom, resources.maxWisdom);
     }

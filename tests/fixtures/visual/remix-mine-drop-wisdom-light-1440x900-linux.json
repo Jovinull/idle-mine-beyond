@@ -1,0 +1,48 @@
+{
+  "repository": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": [
+    "index.html",
+    "main.css",
+    "Scripts/Define/functions.js",
+    "Scripts/mineobject.js",
+    "Scripts/Components/mine-object.js",
+    "Scripts/Components/powers-table.js"
+  ],
+  "browserName": "Chromium",
+  "browserVersion": "153.0.8010.12",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "browserColorScheme": "light",
+  "gameTheme": "light",
+  "locale": "en-US",
+  "timezoneId": "UTC",
+  "clockMs": 1704067200000,
+  "phaseSaveId": null,
+  "controlledBoundary": false,
+  "dropCaseName": "wisdom-drop-scales-with-power-wisdom",
+  "state": {
+    "tab": "powers",
+    "upgradeTab": "money",
+    "theme": "light",
+    "mineObjectLevel": 169,
+    "highestMineObjectLevel": 170,
+    "currentObjectName": "ESSENCE OF WISDOM",
+    "money": "1e+146",
+    "gems": "5",
+    "planetCoins": "4",
+    "wisdom": "5",
+    "story": {
+      "page": 2,
+      "highestUnlocked": 47,
+      "notifications": 32
+    },
+    "randomDraws": 2
+  },
+  "screenshotSha256": "d9b6d42667ffad9da665f57a49ee84c7c7156e0d79757f62640a3b5a9ed26e6f",
+  "capturedOn": "2026-10-04",
+  "screenshotPath": "tests/fixtures/visual/remix-mine-drop-wisdom-light-1440x900-linux.png"
+}

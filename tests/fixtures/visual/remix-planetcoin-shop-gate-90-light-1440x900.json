@@ -1,0 +1,41 @@
+{
+  "repository": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": ["index.html", "main.css"],
+  "browserName": "Chromium",
+  "browserVersion": "153.0.8010.12",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "browserColorScheme": "light",
+  "gameTheme": "light",
+  "locale": "en-US",
+  "timezoneId": "UTC",
+  "clockMs": 1704067200000,
+  "phaseSaveId": null,
+  "controlledBoundary": true,
+  "mineLevelBoundary": 90,
+  "state": {
+    "tab": "main",
+    "upgradeTab": "money",
+    "theme": "light",
+    "mineObjectLevel": 90,
+    "highestMineObjectLevel": 90,
+    "currentObjectName": "Tiny Asteroid",
+    "money": "123.50000000000001",
+    "gems": "23",
+    "planetCoins": "17",
+    "wisdom": "101",
+    "story": {
+      "page": 2,
+      "highestUnlocked": 47,
+      "notifications": 16
+    },
+    "planetCoinTabVisible": true
+  },
+  "screenshotSha256": "ea5cee063fd2e9634dbc4ee1d1b2baf222b744e36553f00df722e4bf592f378f",
+  "capturedOn": "2026-10-03",
+  "screenshotPath": "tests/fixtures/visual/remix-planetcoin-shop-gate-90-light-1440x900.png"
+}

@@ -23,6 +23,10 @@ const phaseFixturePath = path.join(
   root,
   "tests/fixtures/parity/remix-phase-differentials.json",
 );
+const referenceCorpusPath = path.join(
+  root,
+  "tests/fixtures/parity/remix-reference-corpus.json",
+);
 const stateFixturePath = path.join(
   root,
   "tests/fixtures/parity/remix-priority-visual-states.json",
@@ -32,10 +36,22 @@ const visualDirectory = path.join(root, "tests/fixtures/visual");
 const fixedClock = 1_704_067_200_000;
 const defaultViewport = { width: 1440, height: 900 };
 const mode = process.argv[2] ?? "--check";
+const dropOnly = mode.endsWith("-drop-only");
+const shopGateOnly = mode.endsWith("-shop-gate-only");
+const writeMode = mode.startsWith("--write");
 
-if (mode !== "--check" && mode !== "--write") {
+if (
+  ![
+    "--check",
+    "--write",
+    "--check-drop-only",
+    "--write-drop-only",
+    "--check-shop-gate-only",
+    "--write-shop-gate-only",
+  ].includes(mode)
+) {
   throw new Error(
-    "Usage: node scripts/capture-remix-priority-visuals.mjs [--check|--write]",
+    "Usage: node scripts/capture-remix-priority-visuals.mjs [--check|--write|--check-drop-only|--write-drop-only|--check-shop-gate-only|--write-shop-gate-only]",
   );
 }
 
@@ -178,6 +194,20 @@ function makeCaptureCases() {
       });
     }
   }
+  for (const mineObjectLevel of [89, 90]) {
+    for (const theme of ["light", "dark"]) {
+      cases.push({
+        id: `planetcoin-shop-gate-${mineObjectLevel}-${theme}-1440x900`,
+        family: "shop-gate",
+        viewport: defaultViewport,
+        theme,
+        gameTab: "main",
+        mineObjectLevel,
+        highestMineObjectLevel: mineObjectLevel,
+        controlledBoundary: true,
+      });
+    }
+  }
   for (const theme of ["light", "dark"]) {
     cases.push({
       id: `powers-wisdom-stars-${theme}-1440x900`,
@@ -198,6 +228,22 @@ function makeCaptureCases() {
         theme,
         gameTab: "main",
         phaseId,
+      });
+    }
+  }
+  for (const [dropCaseName, dropId, afterDropTab] of [
+    ["planet-coin-drop-roll-follows-gem-roll", "planet-coins", undefined],
+    ["wisdom-drop-scales-with-power-wisdom", "wisdom", "powers"],
+  ]) {
+    for (const theme of ["light", "dark"]) {
+      cases.push({
+        id: `mine-drop-${dropId}-${theme}-1440x900`,
+        family: "drops",
+        viewport: defaultViewport,
+        theme,
+        gameTab: "main",
+        dropCaseName,
+        afterDropTab,
       });
     }
   }
@@ -311,6 +357,42 @@ function platformNeutralStates(states) {
   };
 }
 
+function compareCaptureIds(left, right) {
+  const gateCapture = /^planetcoin-shop-gate-(\d+)-(light|dark)-/.exec(left.id);
+  const otherGateCapture = /^planetcoin-shop-gate-(\d+)-(light|dark)-/.exec(
+    right.id,
+  );
+  if (gateCapture && otherGateCapture) {
+    const levelDifference =
+      Number(gateCapture[1]) - Number(otherGateCapture[1]);
+    if (levelDifference !== 0) return levelDifference;
+    return gateCapture[2] === otherGateCapture[2]
+      ? 0
+      : gateCapture[2] === "light"
+        ? -1
+        : 1;
+  }
+  return left.id < right.id ? -1 : left.id > right.id ? 1 : 0;
+}
+
+async function captureStableScreenshot(page, captureId) {
+  let previous;
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    const screenshot = await page.screenshot({ fullPage: false });
+    if (previous?.equals(screenshot)) return screenshot;
+    previous = screenshot;
+    await page.evaluate(
+      () =>
+        new Promise((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(resolve)),
+        ),
+    );
+  }
+  throw new Error(
+    `${captureId} did not produce two consecutive identical screenshots.`,
+  );
+}
+
 async function main() {
   if (process.platform !== "win32" && process.platform !== "linux") {
     process.stdout.write(
@@ -319,11 +401,12 @@ async function main() {
     return;
   }
 
-  const [referenceManifest, dependencyManifest, phaseFixture] =
+  const [referenceManifest, dependencyManifest, phaseFixture, referenceCorpus] =
     await Promise.all([
       readFile(manifestPath, "utf8").then(JSON.parse),
       readFile(dependencyManifestPath, "utf8").then(JSON.parse),
       readFile(phaseFixturePath, "utf8").then(JSON.parse),
+      readFile(referenceCorpusPath, "utf8").then(JSON.parse),
     ]);
   const reference = referenceManifest.references.find(
     ({ name }) => name === "Idle Mine: Remix",
@@ -338,7 +421,20 @@ async function main() {
       headless: true,
       ...getChromiumLaunchOptions(),
     });
-    const context = await browser.newContext({
+    const pageErrors = [];
+    const routeCdnSnapshot = async (route) => {
+      const contents = snapshots.get(route.request().url());
+      if (!contents) {
+        await route.abort("blockedbyclient");
+        return;
+      }
+      await route.fulfill({
+        body: contents,
+        contentType: "application/javascript; charset=utf-8",
+        status: 200,
+      });
+    };
+    let context = await browser.newContext({
       colorScheme: "light",
       deviceScaleFactor: 1,
       locale: "en-US",
@@ -351,21 +447,9 @@ async function main() {
         value: () => clock,
       });
     }, fixedClock);
-    const page = await context.newPage();
-    const pageErrors = [];
+    let page = await context.newPage();
     page.on("pageerror", (error) => pageErrors.push(error.message));
-    await page.route("https://cdn.jsdelivr.net/**", async (route) => {
-      const contents = snapshots.get(route.request().url());
-      if (!contents) {
-        await route.abort("blockedbyclient");
-        return;
-      }
-      await route.fulfill({
-        body: contents,
-        contentType: "application/javascript; charset=utf-8",
-        status: 200,
-      });
-    });
+    await page.route("https://cdn.jsdelivr.net/**", routeCdnSnapshot);
     await page.goto(url, { waitUntil: "load" });
     await page.waitForFunction(
       "Boolean(window.game && window.functions && window.app?.$el)",
@@ -383,7 +467,7 @@ async function main() {
       phaseFixture.phases.map((phase) => [phase.id, phase]),
     );
     const priorStates =
-      mode === "--check"
+      !dropOnly && !shopGateOnly && mode === "--check"
         ? await readFile(stateFixturePath, "utf8").then(JSON.parse)
         : undefined;
     const powersState = {
@@ -399,8 +483,53 @@ async function main() {
     const generatedMetadata = [];
     await mkdir(outputDirectory, { recursive: true });
     await mkdir(visualDirectory, { recursive: true });
+    let isolatedShopGateContext = false;
 
-    for (const capture of makeCaptureCases()) {
+    // Shop-gate captures stay Windows-only: on Linux the pinned Remix renders
+    // the level-90 gate in one of two states that differ by one pixel.
+    const captureCases = makeCaptureCases().filter((capture) => {
+      if (dropOnly) return capture.family === "drops";
+      if (shopGateOnly) {
+        return capture.family === "shop-gate" && process.platform === "win32";
+      }
+      if (capture.family === "shop-gate") return process.platform === "win32";
+      return true;
+    });
+    for (const capture of captureCases) {
+      if (
+        capture.family === "shop-gate" &&
+        !shopGateOnly &&
+        !isolatedShopGateContext
+      ) {
+        await context.close();
+        context = await browser.newContext({
+          colorScheme: "light",
+          deviceScaleFactor: 1,
+          locale: "en-US",
+          timezoneId: "UTC",
+          viewport: defaultViewport,
+        });
+        await context.addInitScript((clock) => {
+          Object.defineProperty(Date, "now", {
+            configurable: true,
+            value: () => clock,
+          });
+        }, fixedClock);
+        page = await context.newPage();
+        page.on("pageerror", (error) => pageErrors.push(error.message));
+        await page.route("https://cdn.jsdelivr.net/**", routeCdnSnapshot);
+        await page.goto(url, { waitUntil: "load" });
+        await page.waitForFunction(
+          "Boolean(window.game && window.functions && window.app?.$el)",
+        );
+        await page.waitForFunction("window.imgLoaded === true");
+        await page.evaluate(() => document.fonts.ready);
+        await page.addStyleTag({
+          content:
+            'img[src$="wisdom.png"] { animation: none !important; transform: none !important; }',
+        });
+        isolatedShopGateContext = true;
+      }
       const sourceSave = capture.phaseId
         ? phases.get(capture.phaseId)?.saveString
         : freshSave;
@@ -408,10 +537,66 @@ async function main() {
         throw new Error(`Missing source save for visual case ${capture.id}.`);
       }
       await page.setViewportSize(capture.viewport);
+      let dropSaveData;
+      let dropRandomValues;
+      let shopGateSaveData;
+      if (capture.family === "drops") {
+        const sourceCase = referenceCorpus.data.miningHitSemantics.cases.find(
+          ({ name }) => name === capture.dropCaseName,
+        );
+        if (!sourceCase) {
+          throw new Error(
+            `Pinned drop case ${capture.dropCaseName} is missing.`,
+          );
+        }
+        dropSaveData = JSON.parse(
+          referenceCorpus.data.saveApplicationSemantics.inputJson,
+        );
+        dropSaveData.mineObjectLevel = sourceCase.input.objectId;
+        dropSaveData.highestMineObjectLevel = sourceCase.input.objectId;
+        dropSaveData.money = sourceCase.input.resources.money;
+        dropSaveData.highestMoney = sourceCase.input.resources.highestMoney;
+        dropSaveData.gems = sourceCase.input.resources.gems;
+        dropSaveData.planetCoins = sourceCase.input.resources.planetCoins;
+        dropSaveData.maxPlanetCoins = sourceCase.input.resources.maxPlanetCoins;
+        dropSaveData.wisdom = sourceCase.input.resources.wisdom;
+        dropSaveData.maxWisdom = sourceCase.input.resources.maxWisdom;
+        dropSaveData.powers.data.values = [...sourceCase.input.powers];
+        dropSaveData.pickaxe.pow = sourceCase.input.pickaxe.power;
+        dropSaveData.pickaxe.quality = sourceCase.input.pickaxe.quality;
+        dropSaveData.lastActive = fixedClock;
+        dropSaveData.settings.theme = capture.theme;
+        dropSaveData.settings.tab = "main";
+        dropSaveData.settings.showMineObjLevel = true;
+        dropRandomValues = sourceCase.input.randomValues;
+      }
+      if (capture.family === "shop-gate") {
+        shopGateSaveData = JSON.parse(
+          referenceCorpus.data.saveApplicationSemantics.inputJson,
+        );
+        shopGateSaveData.mineObjectLevel = capture.mineObjectLevel;
+        shopGateSaveData.highestMineObjectLevel =
+          capture.highestMineObjectLevel;
+        shopGateSaveData.lastActive = fixedClock;
+        shopGateSaveData.settings.theme = capture.theme;
+        shopGateSaveData.settings.tab = "main";
+        shopGateSaveData.settings.upgradeTab = "money";
+      }
       const setup = await page.evaluate(
         async ({ captureCase, serializedSave }) => {
           const { game, functions } = window;
-          functions.loadGame(serializedSave, true, true);
+          const nativeRandom =
+            window.__idleMineCaptureNativeRandom ?? Math.random;
+          window.__idleMineCaptureNativeRandom = nativeRandom;
+          Math.random = nativeRandom;
+          const controlledSaveData =
+            captureCase.dropSaveData ?? captureCase.shopGateSaveData;
+          const sourceSave = controlledSaveData
+            ? btoa(
+                escape(encodeURIComponent(JSON.stringify(controlledSaveData))),
+              )
+            : serializedSave;
+          functions.loadGame(sourceSave, true, true);
           await window.app.$nextTick();
           game.messageLog = [];
           game.highlightedUpgrade = null;
@@ -427,6 +612,37 @@ async function main() {
             functions.changeTab("story");
           } else {
             game.settings.tab = captureCase.gameTab;
+          }
+          let randomDraws;
+          if (captureCase.family === "drops") {
+            await window.app.$nextTick();
+            // Remix refreshes Story notifications on each main-loop frame.
+            // Wait for the loaded Mining view to reach the same visible,
+            // initialized state used by the Beyond browser interaction.
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+            await window.app.$nextTick();
+            randomDraws = 0;
+            Object.defineProperty(window, "__idleMineDropDrawCount", {
+              configurable: true,
+              value: () => randomDraws,
+            });
+            Math.random = () => {
+              const value = captureCase.dropRandomValues[randomDraws];
+              if (value === undefined) {
+                throw new Error("The pinned source drop RNG was exhausted.");
+              }
+              randomDraws += 1;
+              return value;
+            };
+            const mineCanvas = document.querySelector(".mineobject canvas");
+            if (!(mineCanvas instanceof HTMLCanvasElement)) {
+              throw new Error("Pinned Remix Mining Canvas is missing.");
+            }
+            mineCanvas.click();
+            await window.app.$nextTick();
+            if (captureCase.afterDropTab) {
+              game.settings.tab = captureCase.afterDropTab;
+            }
           }
           if (captureCase.upgradeTab) {
             const upgradeIndex = {
@@ -459,6 +675,14 @@ async function main() {
               highestUnlocked: game.story.highestUnlocked,
               notifications: game.story.notifications,
             },
+            ...(captureCase.family === "shop-gate"
+              ? {
+                  planetCoinTabVisible:
+                    document.querySelector(".upg-tabs button:nth-child(3)") !==
+                    null,
+                }
+              : {}),
+            ...(captureCase.family === "drops" ? { randomDraws } : {}),
           };
           return {
             state,
@@ -467,7 +691,16 @@ async function main() {
               : undefined,
           };
         },
-        { captureCase: capture, serializedSave: sourceSave },
+        {
+          captureCase: {
+            ...capture,
+            dropSaveData,
+            dropRandomValues,
+            shopGateSaveData,
+            afterDropTab: capture.afterDropTab,
+          },
+          serializedSave: sourceSave,
+        },
       );
       if (capture.family === "powers") {
         powersState.saveString = setup.controlledSave;
@@ -492,7 +725,40 @@ async function main() {
           animation.currentTime = 0;
         }
       });
-      const screenshot = await page.screenshot({ fullPage: false });
+      if (capture.family === "shop-gate") {
+        await page.evaluate(
+          () =>
+            new Promise((resolve) =>
+              requestAnimationFrame(() => requestAnimationFrame(resolve)),
+            ),
+        );
+        const layout = await page.evaluate(() =>
+          ["header", ".upg-tabs", ".upgradelist", ".upgradelist .upgrade"].map(
+            (selector) => {
+              const element = document.querySelector(selector);
+              if (!(element instanceof HTMLElement)) {
+                throw new Error(`Pinned Remix layout is missing ${selector}.`);
+              }
+              const rect = element.getBoundingClientRect();
+              return {
+                selector,
+                width: rect.width,
+                height: rect.height,
+                transform: getComputedStyle(element).transform,
+              };
+            },
+          ),
+        );
+        if (layout.some(({ width, height }) => width <= 0 || height <= 0)) {
+          throw new Error(`${capture.id} source layout did not settle.`);
+        }
+      }
+      // The 90-object gate changes header/tab layout after a legacy save loads.
+      // Require a settled source paint before comparing its exact PNG hash.
+      const screenshot =
+        capture.family === "shop-gate"
+          ? await captureStableScreenshot(page, capture.id)
+          : await page.screenshot({ fullPage: false });
       const screenshotSha256 = sha256(screenshot);
       const imagePath = fixturePath(
         `remix-${capture.id}${platformSuffix}`,
@@ -505,7 +771,19 @@ async function main() {
       const metadata = {
         repository: reference.canonicalUrl,
         sourceCommit: reference.pinnedCommit,
-        sourcePaths: ["index.html", "main.css", "Scripts/Define/game.js"],
+        sourcePaths:
+          capture.family === "drops"
+            ? [
+                "index.html",
+                "main.css",
+                "Scripts/Define/functions.js",
+                "Scripts/mineobject.js",
+                "Scripts/Components/mine-object.js",
+                "Scripts/Components/powers-table.js",
+              ]
+            : capture.family === "shop-gate"
+              ? ["index.html", "main.css"]
+              : ["index.html", "main.css", "Scripts/Define/game.js"],
         browserName: "Chromium",
         browserVersion: browser.version(),
         viewport: capture.viewport,
@@ -516,13 +794,22 @@ async function main() {
         timezoneId: "UTC",
         clockMs: fixedClock,
         phaseSaveId: capture.phaseId ?? null,
-        controlledBoundary: capture.controlledPowersBoundary ?? false,
+        controlledBoundary:
+          capture.controlledPowersBoundary ??
+          capture.controlledBoundary ??
+          false,
+        ...(capture.family === "shop-gate"
+          ? { mineLevelBoundary: capture.mineObjectLevel }
+          : {}),
+        ...(capture.family === "drops"
+          ? { dropCaseName: capture.dropCaseName }
+          : {}),
         state: setup.state,
         screenshotSha256,
       };
       const outputImagePath = path.join(outputDirectory, `${capture.id}.png`);
       await writeFile(outputImagePath, screenshot);
-      if (mode === "--write") {
+      if (writeMode) {
         await writeFile(imagePath, screenshot);
         await writeFile(
           metadataPath,
@@ -548,14 +835,16 @@ async function main() {
         delete expectedMetadata.screenshotPath;
         difference(metadata, expectedMetadata, capture.id);
       }
-      generatedMetadata.push({
-        id: capture.id,
-        fixture: relativeToRoot(imagePath),
-        state: setup.state,
-        screenshotSha256,
-      });
+      if (capture.family !== "drops") {
+        generatedMetadata.push({
+          id: capture.id,
+          fixture: relativeToRoot(imagePath),
+          state: setup.state,
+          screenshotSha256,
+        });
+      }
       process.stdout.write(
-        `${mode === "--write" ? "Captured" : "Verified"} pinned Remix ${capture.id}: ${screenshotSha256}\n`,
+        `${writeMode ? "Captured" : "Verified"} pinned Remix ${capture.id}: ${screenshotSha256}\n`,
       );
     }
 
@@ -565,24 +854,63 @@ async function main() {
     const generatedStates = {
       sourceCommit: reference.pinnedCommit,
       powers: powersState,
-      captures: generatedMetadata,
+      // Keep the shared state fixture order independent from capture execution
+      // order, which may group cases for efficient oracle setup. Gate views
+      // retain their source-capture order: light then dark at each boundary.
+      captures: [...generatedMetadata].sort(compareCaptureIds),
     };
     // The shared state list records the Windows screenshots; Linux checks
     // that it reached the same source states.
-    if (mode === "--write" && !platformSuffix) {
+    if (shopGateOnly) {
+      const stored = await readFile(stateFixturePath, "utf8").then(JSON.parse);
+      const gateIds = new Set(generatedMetadata.map(({ id }) => id));
+      if (writeMode && !platformSuffix) {
+        const mergedCaptures = stored.captures.filter(
+          ({ id }) => !gateIds.has(id),
+        );
+        const insertionIndex = mergedCaptures.findIndex(({ id }) =>
+          id.startsWith("powers-"),
+        );
+        mergedCaptures.splice(
+          insertionIndex < 0 ? mergedCaptures.length : insertionIndex,
+          0,
+          ...generatedMetadata,
+        );
+        await writeFile(
+          stateFixturePath,
+          await formatJson({ ...stored, captures: mergedCaptures }),
+          "utf8",
+        );
+      } else if (!writeMode) {
+        const expected = {
+          captures: stored.captures.filter(({ id }) => gateIds.has(id)),
+        };
+        const actual = { captures: generatedMetadata };
+        difference(
+          platformSuffix ? platformNeutralStates(actual) : actual,
+          platformSuffix ? platformNeutralStates(expected) : expected,
+          "Planet Coin shop gate source states",
+        );
+      }
+    } else if (!dropOnly && writeMode && !platformSuffix) {
       await writeFile(
         stateFixturePath,
         await formatJson(generatedStates),
         "utf8",
       );
-    } else if (mode === "--check" || platformSuffix) {
+    } else if (!dropOnly && (mode === "--check" || platformSuffix)) {
       const stored =
         priorStates ??
         (await readFile(stateFixturePath, "utf8").then(JSON.parse));
       if (platformSuffix) {
+        const generatedIds = new Set(generatedMetadata.map(({ id }) => id));
+        const platformStored = {
+          ...stored,
+          captures: stored.captures.filter(({ id }) => generatedIds.has(id)),
+        };
         difference(
           platformNeutralStates(generatedStates),
-          platformNeutralStates(stored),
+          platformNeutralStates(platformStored),
           "Priority visual source states",
         );
       } else {

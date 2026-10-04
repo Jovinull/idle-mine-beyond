@@ -45,6 +45,14 @@ export type MineObject = {
   drops: Record<string, { chance: number; amount: number | string | Decimal }>;
 };
 
+/** Returns the Wisdom amount shown/awarded for a drop at the current Power. */
+export function calculateRemixWisdomDropAmount(
+  amount: DecimalSource,
+  wisdomPower: DecimalSource,
+): Decimal {
+  return new Decimal(amount).mul(wisdomPower);
+}
+
 const MINE_OBJECT_NAMES = [
   "",
   "Salt",

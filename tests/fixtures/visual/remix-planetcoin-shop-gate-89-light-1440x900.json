@@ -1,0 +1,41 @@
+{
+  "repository": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": ["index.html", "main.css"],
+  "browserName": "Chromium",
+  "browserVersion": "153.0.8010.12",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "browserColorScheme": "light",
+  "gameTheme": "light",
+  "locale": "en-US",
+  "timezoneId": "UTC",
+  "clockMs": 1704067200000,
+  "phaseSaveId": null,
+  "controlledBoundary": true,
+  "mineLevelBoundary": 89,
+  "state": {
+    "tab": "main",
+    "upgradeTab": "money",
+    "theme": "light",
+    "mineObjectLevel": 89,
+    "highestMineObjectLevel": 89,
+    "currentObjectName": "PORTAL TO SPACE",
+    "money": "123.50000000000001",
+    "gems": "23",
+    "planetCoins": "17",
+    "wisdom": "101",
+    "story": {
+      "page": 2,
+      "highestUnlocked": 47,
+      "notifications": 15
+    },
+    "planetCoinTabVisible": false
+  },
+  "screenshotSha256": "e521eb9976bd9830c306947b7da2e1442f269007f0a398ce1f2762b913a4782f",
+  "capturedOn": "2026-10-03",
+  "screenshotPath": "tests/fixtures/visual/remix-planetcoin-shop-gate-89-light-1440x900.png"
+}

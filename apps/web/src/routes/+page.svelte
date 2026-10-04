@@ -4,6 +4,7 @@
     Decimal,
     calculateRemixPickaxeCraft,
     calculateRemixMiningRates,
+    calculateRemixWisdomDropAmount,
     getRemixCraftGemSelectionControls,
     isRemixPowersUnlocked,
     resolveRemixMiningInput,
@@ -66,6 +67,8 @@
   const formatters = createRemixFormatters();
 
   let appState = $state<RemixLegacySaveApplicationState>();
+  let powerTableRefreshRevision = $state(0);
+  let upgradeFeedbackRevision = $state(0);
   let gameSession: RemixWebGameSession | undefined;
   let sessionStatus = $state<SessionStatus>("loading");
   let recoveryMessage = $state("");
@@ -82,6 +85,16 @@
   let recoveryReader: (() => Promise<string>) | undefined;
 
   const simulation = $derived(appState?.simulation);
+  const selectedUpgradeGroup = $derived.by(() => {
+    switch (appState?.settings.upgradeTab) {
+      case "gems":
+        return "gems" as const;
+      case "planetcoins":
+        return "planetCoins" as const;
+      default:
+        return "money" as const;
+    }
+  });
   const craftGemSelection = $derived.by(() =>
     simulation ? getRemixCraftGemSelectionControls(simulation) : undefined,
   );
@@ -156,6 +169,15 @@
             : "The save could not be loaded safely.";
       } else {
         appState = result.state;
+        if (action.type !== "idleFrame") upgradeFeedbackRevision += 1;
+        if (
+          action.type === "idleFrame" &&
+          result.result.type === "mining" &&
+          result.result.hitOccurred
+        ) {
+          powerTableRefreshRevision += 1;
+          upgradeFeedbackRevision += 1;
+        }
         if (result.status === "persistenceFailed") {
           actionError = `Save failed: ${result.persistence.status}`;
         }
@@ -172,14 +194,24 @@
   ) {
     if (!gameSession) return;
     const result = await gameSession.updateApplicationState(update);
-    if (result.status === "updated") appState = result.state;
-    else {
+    if (result.status === "updated") {
+      appState = result.state;
+      upgradeFeedbackRevision += 1;
+    } else {
       sessionStatus = "recovery";
       recoveryMessage =
         result.initialization.status === "recoveryRequired"
           ? result.initialization.reason
           : "The save could not be loaded safely.";
     }
+  }
+
+  async function changeUpgradeGroup(group: "money" | "gems" | "planetCoins") {
+    const upgradeTab = group === "planetCoins" ? "planetcoins" : group;
+    await updateApplicationState((state) => ({
+      ...state,
+      settings: { ...state.settings, upgradeTab },
+    }));
   }
 
   async function changeNumberFormatter(index: number) {
@@ -766,6 +798,7 @@
         <PowersPanel
           {simulation}
           powerValueExtras={appState.powerValueExtras}
+          {powerTableRefreshRevision}
           {selectedNotation}
           {pressedKeys}
           {formatNumber}
@@ -832,7 +865,10 @@
                   <span class="inline-resource">
                     <img class="inline" src="/Images/wisdom.png" alt="Wisdom" />
                     {formatNumber(
-                      simulation.currentObject.drops.wisdom.amount,
+                      calculateRemixWisdomDropAmount(
+                        simulation.currentObject.drops.wisdom.amount,
+                        simulation.powers.wisdom,
+                      ),
                       2,
                       "1e9",
                     )}
@@ -859,7 +895,10 @@
           <UpgradePanel
             {simulation}
             {selectedNotation}
+            selectedGroup={selectedUpgradeGroup}
             {pressedKeys}
+            refreshRevision={upgradeFeedbackRevision}
+            onGroupChange={changeUpgradeGroup}
             onPurchase={(action) => void dispatch(action)}
           />
 
@@ -1109,6 +1148,10 @@
     background-color: #636363;
   }
 
+  :global(body[data-theme="dark"]) button:not(.chapter-control button) {
+    background-color: #636363;
+  }
+
   #app {
     display: grid;
     grid-template-rows: 8vh 84vh 8vh;
@@ -1227,8 +1270,6 @@
 
   .main {
     display: grid;
-    box-sizing: border-box;
-    height: 84vh;
     padding: 1.5em;
     grid-template-columns: 45vw auto;
     grid-template-rows: 45vh auto;
@@ -1302,6 +1343,10 @@
     color: #a90500;
   }
 
+  :global(body[data-theme="dark"]) .red {
+    color: #ff6c68;
+  }
+
   .activity {
     margin-top: 3.5rem;
   }
@@ -1358,6 +1403,10 @@
   .craft-pickaxe img.level-change:active {
     transform: scaleX(0.7);
     filter: brightness(0.9);
+  }
+
+  :global(body[data-theme="dark"]) .craft-pickaxe button.level-change {
+    background-color: transparent;
   }
 
   :global(body[data-theme="dark"]) .craft-pickaxe button.level-change:hover {

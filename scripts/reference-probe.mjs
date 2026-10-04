@@ -3697,6 +3697,18 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 value: { money: "123", story: { page: 3 } },
               },
               {
+                name: "base64-padding-none",
+                value: { v: "" },
+              },
+              {
+                name: "base64-padding-double",
+                value: { v: "x" },
+              },
+              {
+                name: "base64-padding-single",
+                value: { v: "xx" },
+              },
+              {
                 name: "unicode-json",
                 value: {
                   pickaxe: { name: "Probe \u2014 \u00c5 \u03a9 \u2192" },
@@ -3712,6 +3724,189 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 decodedJson: unescape(decodeURIComponent(atob(encoded))),
               };
             });
+
+            const codecBoundaryInputs = [
+              {
+                name: "legacy-escape-safe-set-and-punctuation",
+                pickaxeName: String.fromCharCode(
+                  0x21,
+                  0x27,
+                  0x28,
+                  0x29,
+                  0x2a,
+                  0x2b,
+                  0x2d,
+                  0x2e,
+                  0x2f,
+                  0x40,
+                  0x5f,
+                  0x7e,
+                ),
+              },
+              {
+                name: "utf8-two-byte-limits",
+                pickaxeName: String.fromCharCode(0x80, 0x07ff),
+              },
+              {
+                name: "utf8-three-byte-limits",
+                pickaxeName: String.fromCharCode(0x0800, 0xffff),
+              },
+              {
+                name: "utf8-four-byte-limits",
+                pickaxeName: String.fromCodePoint(0x10000, 0x10ffff),
+              },
+              {
+                name: "json-escaped-lone-surrogates",
+                pickaxeName: String.fromCharCode(0xd800, 0x41, 0xdc00),
+              },
+              {
+                name: "json-string-control-escapes",
+                pickaxeName: String.fromCharCode(
+                  0,
+                  8,
+                  9,
+                  10,
+                  12,
+                  13,
+                  0x22,
+                  0x5c,
+                ),
+              },
+              {
+                name: "legacy-unescape-lowercase-u",
+                wrapper: "single-uri-encoded",
+                pickaxeName: String.fromCharCode(
+                  0x25,
+                  0x75,
+                  0x30,
+                  0x30,
+                  0x34,
+                  0x31,
+                ),
+              },
+              {
+                name: "legacy-unescape-uppercase-u-remains-literal",
+                wrapper: "single-uri-encoded",
+                pickaxeName: String.fromCharCode(
+                  0x25,
+                  0x55,
+                  0x30,
+                  0x30,
+                  0x34,
+                  0x31,
+                ),
+              },
+              {
+                name: "legacy-unescape-uppercase-hex",
+                wrapper: "single-uri-encoded",
+                pickaxeName: String.fromCharCode(
+                  0x25,
+                  0x75,
+                  0x30,
+                  0x30,
+                  0x41,
+                  0x46,
+                ),
+              },
+              {
+                name: "legacy-unescape-uppercase-byte",
+                wrapper: "single-uri-encoded",
+                pickaxeName: String.fromCharCode(0x25, 0x41, 0x42),
+              },
+              {
+                name: "legacy-unescape-invalid-hex-remains-literal",
+                wrapper: "single-uri-encoded",
+                pickaxeName: String.fromCharCode(
+                  0x25,
+                  0x75,
+                  0x30,
+                  0x30,
+                  0x47,
+                  0x31,
+                ),
+              },
+              {
+                name: "legacy-unescape-literal-percent",
+                wrapper: "single-uri-encoded",
+                pickaxeName: String.fromCharCode(0x25),
+              },
+              {
+                name: "legacy-unescape-short-byte-token",
+                wrapper: "single-uri-encoded",
+                pickaxeName: String.fromCharCode(0x25, 0x41),
+              },
+              {
+                name: "legacy-unescape-short-unicode-token",
+                wrapper: "single-uri-encoded",
+                pickaxeName: String.fromCharCode(0x25, 0x75, 0x30, 0x30, 0x33),
+              },
+              {
+                name: "legacy-unescape-byte-token-trailing-char",
+                wrapper: "single-uri-encoded",
+                pickaxeName: String.fromCharCode(0x25, 0x41, 0x42, 0x46),
+              },
+              {
+                name: "legacy-unescape-unicode-token-trailing-char",
+                wrapper: "single-uri-encoded",
+                pickaxeName: String.fromCharCode(
+                  0x25,
+                  0x75,
+                  0x30,
+                  0x30,
+                  0x34,
+                  0x31,
+                  0x42,
+                ),
+              },
+              {
+                name: "legacy-unescape-surrogate-pair",
+                wrapper: "single-uri-encoded",
+                pickaxeName: String.fromCharCode(
+                  0x25,
+                  0x75,
+                  0x44,
+                  0x38,
+                  0x33,
+                  0x44,
+                  0x25,
+                  0x75,
+                  0x44,
+                  0x45,
+                  0x30,
+                  0x30,
+                ),
+              },
+            ];
+            const codeUnits = (value) =>
+              Array.from({ length: value.length }, (_, index) =>
+                value.charCodeAt(index),
+              );
+            const codecBoundaryVectors = codecBoundaryInputs.map(
+              ({ name, pickaxeName, wrapper = "canonical" }) => {
+                functions.loadGame(window.initialGame, false, true);
+                game.pickaxe.name = pickaxeName;
+                const sourceJson = JSON.stringify(game);
+                const encoded =
+                  wrapper === "canonical"
+                    ? functions.getSaveString()
+                    : btoa(encodeURIComponent(sourceJson));
+                const decodedJson = unescape(decodeURIComponent(atob(encoded)));
+                const decodedName = JSON.parse(decodedJson).pickaxe.name;
+                functions.loadGame(encoded, undefined, true);
+                const importedName = game.pickaxe.name;
+                return {
+                  name,
+                  wrapper,
+                  sourceJson,
+                  encoded,
+                  decodedJson,
+                  sourceNameCodeUnits: codeUnits(pickaxeName),
+                  decodedNameCodeUnits: codeUnits(decodedName),
+                  importedNameCodeUnits: codeUnits(importedName),
+                  base64InputRemainder: atob(encoded).length % 3,
+                };
+              },
+            );
 
             functions.loadGame(window.initialGame, false, true);
             game.settings.tab = "settings";
@@ -3770,9 +3965,24 @@ async function capture(reference, dependencies, dependencySnapshots) {
             const loadErrorScenarios = [
               { name: "empty-base64", encoded: "" },
               { name: "invalid-base64", encoded: "%%%" },
+              { name: "invalid-base64-remainder-one", encoded: "A" },
+              { name: "invalid-base64-padding-too-long", encoded: "A===" },
+              { name: "invalid-base64-padding-interior", encoded: "AA=A" },
+              {
+                name: "invalid-base64-trailing-after-padding",
+                encoded: "AA==A",
+              },
+              {
+                name: "invalid-non-ascii-whitespace",
+                encoded: "AA\u00a0AA",
+              },
               {
                 name: "invalid-uri-escape",
                 encoded: btoa("%ZZ"),
+              },
+              {
+                name: "invalid-uri-utf8",
+                encoded: btoa("%E2%28"),
               },
               { name: "valid-base64-invalid-json", encoded: btoa("not-json") },
               {
@@ -3787,20 +3997,34 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 game.money = new Decimal(77);
                 const alerts = [];
                 window.alert = (message) => alerts.push(String(message));
+                let decodeErrorName = null;
+                let decodeErrorMessage = null;
+                try {
+                  unescape(decodeURIComponent(atob(scenario.encoded)));
+                } catch (error) {
+                  decodeErrorName = error.name;
+                  decodeErrorMessage = error.message;
+                }
                 let thrownErrorName = null;
+                let thrownErrorMessage = null;
                 try {
                   functions.loadGame(scenario.encoded, undefined, true);
                 } catch (error) {
                   thrownErrorName = error.name;
+                  thrownErrorMessage = error.message;
                 }
                 return {
                   name: scenario.name,
                   encoded: scenario.encoded,
+                  decodeErrorName,
+                  decodeErrorMessage,
+                  alertMessages: alerts,
                   alertCount: alerts.length,
                   alertHasDecodeErrorPrefix: alerts.some((message) =>
                     message.startsWith("Error loading Game: "),
                   ),
                   thrownErrorName,
+                  thrownErrorMessage,
                   money: normalizedDecimal(game.money),
                   mineObjectLevel: game.mineObjectLevel,
                 };
@@ -4022,15 +4246,34 @@ async function capture(reference, dependencies, dependencySnapshots) {
               money: "5",
               story: { page: 3 },
             });
+            const unpaddedValues = [
+              { name: "unpadded-remainder-zero", suffix: "" },
+              { name: "unpadded-remainder-two", suffix: "x" },
+              { name: "unpadded-remainder-three", suffix: "xx" },
+            ].map(({ name, suffix }) => {
+              const value = {
+                money: "5",
+                story: { page: 3 },
+                paddingProbe: suffix,
+              };
+              return {
+                name,
+                encoded: encodeProbeSave(value).replace(/=+$/, ""),
+                expectedJson: JSON.stringify(value),
+              };
+            });
             const base64Variants = [
               {
-                name: "ascii-whitespace",
-                encoded: `${variantEncoded.slice(0, 4)} \n${variantEncoded.slice(4)}`,
+                name: "all-ascii-whitespace",
+                encoded: `${variantEncoded.slice(0, 4)}\t\n\f\r ${variantEncoded.slice(4)}`,
+                expectedJson: variantJson,
               },
               {
-                name: "unpadded-base64",
+                name: "unpadded-existing-zero-remainder",
                 encoded: variantEncoded.replace(/=+$/, ""),
+                expectedJson: variantJson,
               },
+              ...unpaddedValues,
             ].map((variant) => {
               functions.loadGame(window.initialGame, false, true);
               game.money = new Decimal(77);
@@ -4047,7 +4290,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
               return {
                 name: variant.name,
                 encoded: variant.encoded,
-                expectedJson: variantJson,
+                expectedJson: variant.expectedJson,
                 alertCount,
                 thrownErrorName,
                 money: normalizedDecimal(game.money),
@@ -4139,6 +4382,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
               missingOptionalGroups,
               emptyPresentGroups,
               codecVectors,
+              codecBoundaryVectors,
               base64Variants,
               loadErrors,
               fieldApplicationErrors,
@@ -7235,6 +7479,26 @@ async function capture(reference, dependencies, dependencySnapshots) {
       { selectedPostUniverseIds: postUniverseIds, fixedClock },
     );
 
+    for (const vector of data.saveSemantics.codecBoundaryVectors) {
+      const reconstructed = structuredClone(
+        data.saveExportSemantics.fresh.object,
+      );
+      reconstructed.settings.tab = "settings";
+      reconstructed.pickaxe.name = String.fromCharCode(
+        ...vector.sourceNameCodeUnits,
+      );
+      if (JSON.stringify(reconstructed) !== vector.sourceJson) {
+        throw new Error(
+          `${vector.name} source save does not derive from the pinned fresh save fixture.`,
+        );
+      }
+      vector.sourceSaveSha256 = sha256(vector.encoded);
+      vector.sourceDecodedSha256 = sha256(vector.decodedJson);
+      delete vector.sourceJson;
+      delete vector.encoded;
+      delete vector.decodedJson;
+    }
+
     for (const name of ["fresh", "controlled"]) {
       const snapshot = data.saveExportSemantics[name];
       const objectJson = JSON.stringify(snapshot.object);
@@ -7620,6 +7884,8 @@ async function main() {
     expected.data.offlineLoadRateCompositionSemantics?.scenarios.length ?? 0;
   const saveCodecVectorCount =
     expected.data.saveSemantics?.codecVectors.length ?? 0;
+  const saveCodecBoundaryVectorCount =
+    expected.data.saveSemantics?.codecBoundaryVectors.length ?? 0;
   const saveLoadErrorCount =
     expected.data.saveSemantics?.loadErrors.length ?? 0;
   const saveFieldApplicationErrorCount =
@@ -7632,7 +7898,7 @@ async function main() {
   const saveExportVariantCount =
     expected.data.saveExportSemantics?.variants?.length ?? 0;
   process.stdout.write(
-    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases / ${miningHitCaseCount} mining-hit cases / ${updateFrameCaseCount} update-frame cases / ${simulationFrameCaseCount} composed simulation-frame cases / ${storySemantics.chapters.length} story chapters / ${storySemantics.milestones.length} milestones / ${storyBoundarySampleCount} condition-boundary samples / ${storySemantics.notificationScenarios.length} notification scenarios / ${storySemantics.notificationSequence.length} sequenced notification stages / ${storyMineLevelObjectiveCount} mine-level objective outputs / ${storyNotationObjectiveCount} notation-dependent objective outputs / ${payUSDebtCaseCount} debt-interaction cases / ${storyTabCaseCount} story-tab cases / ${offlineScenarioCount} offline-progression cases / ${offlineRateCompositionScenarioCount} live-rate offline-load cases / ${saveCodecVectorCount} save codec vectors / ${saveLoadErrorCount} decode/load error branches / ${saveFieldApplicationErrorCount} malformed field-application cases / ${saveApplicationCount} complete save-application captures / ${saveOfflineApplicationCount} composed save/offline-load captures / ${saveExportVariantCount} full-save export variants).\n`,
+    `Verified the reference corpus against ${reference.pinnedCommit} (${expected.data.objects.length} objects; ${expected.data.decimalSemantics?.inputs.length ?? 0} Decimal inputs; ${expected.data.notationSemantics?.formatterRegistry.length ?? 0} formatters and ${expected.data.notationSemantics?.directFormatterInputs.length ?? 0} boundary values; ${capturedUpgrades.length} upgrades / ${upgradeSampleCount} price-effect level samples / ${effectInteractions.length} interaction scenarios with ${interactionEffectCount} effects / ${stochasticSampleCount} stochastic RNG cases / ${purchaseCaseCount} purchase cases / ${miningHitCaseCount} mining-hit cases / ${updateFrameCaseCount} update-frame cases / ${simulationFrameCaseCount} composed simulation-frame cases / ${storySemantics.chapters.length} story chapters / ${storySemantics.milestones.length} milestones / ${storyBoundarySampleCount} condition-boundary samples / ${storySemantics.notificationScenarios.length} notification scenarios / ${storySemantics.notificationSequence.length} sequenced notification stages / ${storyMineLevelObjectiveCount} mine-level objective outputs / ${storyNotationObjectiveCount} notation-dependent objective outputs / ${payUSDebtCaseCount} debt-interaction cases / ${storyTabCaseCount} story-tab cases / ${offlineScenarioCount} offline-progression cases / ${offlineRateCompositionScenarioCount} live-rate offline-load cases / ${saveCodecVectorCount} save codec vectors / ${saveCodecBoundaryVectorCount} live save codec boundary captures / ${saveLoadErrorCount} decode/load error branches / ${saveFieldApplicationErrorCount} malformed field-application cases / ${saveApplicationCount} complete save-application captures / ${saveOfflineApplicationCount} composed save/offline-load captures / ${saveExportVariantCount} full-save export variants).\n`,
   );
 }
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import {
     Decimal,
     REMIX_UPGRADE_KEYS,
@@ -15,6 +16,7 @@
   type Props = {
     simulation: RemixSimulationState;
     powerValueExtras: readonly DecimalSource[];
+    powerTableRefreshRevision: number;
     selectedNotation: NotationFormatter;
     pressedKeys: readonly string[];
     formatNumber: (
@@ -34,6 +36,7 @@
   let {
     simulation,
     powerValueExtras,
+    powerTableRefreshRevision,
     selectedNotation,
     pressedKeys,
     formatNumber,
@@ -43,9 +46,20 @@
 
   const presentation = upgradePresentation as PowerPresentation;
   const upgradeKeys = REMIX_UPGRADE_KEYS.wisdom;
-  const prestigeRows = $derived(
-    getRemixPowerPrestigeRows(simulation, powerValueExtras),
+  // Remix's prestige handler uses direct array-index writes, which Vue 2 does
+  // not observe. Keep those values until this panel remounts or an idle hit
+  // triggers the source's Vue.set update to Power of Mining.
+  let prestigeRows = $state.raw(
+    untrack(() => getRemixPowerPrestigeRows(simulation, powerValueExtras)),
   );
+  let lastRefreshRevision = untrack(() => powerTableRefreshRevision);
+  $effect(() => {
+    if (powerTableRefreshRevision === lastRefreshRevision) return;
+    lastRefreshRevision = powerTableRefreshRevision;
+    prestigeRows = untrack(() =>
+      getRemixPowerPrestigeRows(simulation, powerValueExtras),
+    );
+  });
   const buyAmount = $derived(
     pressedKeys.includes("Control")
       ? 100

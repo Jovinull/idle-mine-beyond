@@ -135360,16 +135360,214 @@
           "decodedJson": "{\"money\":\"123\",\"story\":{\"page\":3}}"
         },
         {
+          "name": "base64-padding-none",
+          "json": "{\"v\":\"\"}",
+          "encoded": "JTI1N0IlMjUyMnYlMjUyMiUyNTNBJTI1MjIlMjUyMiUyNTdE",
+          "decodedJson": "{\"v\":\"\"}"
+        },
+        {
+          "name": "base64-padding-double",
+          "json": "{\"v\":\"x\"}",
+          "encoded": "JTI1N0IlMjUyMnYlMjUyMiUyNTNBJTI1MjJ4JTI1MjIlMjU3RA==",
+          "decodedJson": "{\"v\":\"x\"}"
+        },
+        {
+          "name": "base64-padding-single",
+          "json": "{\"v\":\"xx\"}",
+          "encoded": "JTI1N0IlMjUyMnYlMjUyMiUyNTNBJTI1MjJ4eCUyNTIyJTI1N0Q=",
+          "decodedJson": "{\"v\":\"xx\"}"
+        },
+        {
           "name": "unicode-json",
           "json": "{\"pickaxe\":{\"name\":\"Probe — Å Ω →\"}}",
           "encoded": "JTI1N0IlMjUyMnBpY2theGUlMjUyMiUyNTNBJTI1N0IlMjUyMm5hbWUlMjUyMiUyNTNBJTI1MjJQcm9iZSUyNTIwJTI1RTIlMjU4MCUyNTk0JTI1MjAlMjVDMyUyNTg1JTI1MjAlMjVDRSUyNUE5JTI1MjAlMjVFMiUyNTg2JTI1OTIlMjUyMiUyNTdEJTI1N0Q=",
           "decodedJson": "{\"pickaxe\":{\"name\":\"Probe â Ã Î© â\"}}"
         }
       ],
+      "codecBoundaryVectors": [
+        {
+          "name": "legacy-escape-safe-set-and-punctuation",
+          "wrapper": "canonical",
+          "sourceNameCodeUnits": [
+            33, 39, 40, 41, 42, 43, 45, 46, 47, 64, 95, 126
+          ],
+          "decodedNameCodeUnits": [
+            33, 39, 40, 41, 42, 43, 45, 46, 47, 64, 95, 126
+          ],
+          "importedNameCodeUnits": [
+            33, 39, 40, 41, 42, 43, 45, 46, 47, 64, 95, 126
+          ],
+          "base64InputRemainder": 0,
+          "sourceSaveSha256": "2c2b9180d08914fee5acd86ece786eb17049da24b0bad4d28043a5520bb0263d",
+          "sourceDecodedSha256": "7404bbfb89148e3afe6eaa87831d20a611ba2b7a134fc283cbaa0d7f0baa588b"
+        },
+        {
+          "name": "utf8-two-byte-limits",
+          "wrapper": "canonical",
+          "sourceNameCodeUnits": [128, 2047],
+          "decodedNameCodeUnits": [194, 128, 223, 191],
+          "importedNameCodeUnits": [194, 128, 223, 191],
+          "base64InputRemainder": 1,
+          "sourceSaveSha256": "ce9f13c59de026d9b9fe3421d23b3e720a4aef48598e69721616963044101bf9",
+          "sourceDecodedSha256": "44cf6a11b75d9bdf015c67ebed0bc695a67faa60b4b6ed11af43f982d5ae83ac"
+        },
+        {
+          "name": "utf8-three-byte-limits",
+          "wrapper": "canonical",
+          "sourceNameCodeUnits": [2048, 65535],
+          "decodedNameCodeUnits": [224, 160, 128, 239, 191, 191],
+          "importedNameCodeUnits": [224, 160, 128, 239, 191, 191],
+          "base64InputRemainder": 2,
+          "sourceSaveSha256": "ee8afa7538d14652f411973cbd68dec73d8d30db97527694cb0f1eba29864173",
+          "sourceDecodedSha256": "acbb845b787784e62f5747833bf3343b283f8891dde407b59d78129cd65ffa32"
+        },
+        {
+          "name": "utf8-four-byte-limits",
+          "wrapper": "canonical",
+          "sourceNameCodeUnits": [55296, 56320, 56319, 57343],
+          "decodedNameCodeUnits": [240, 144, 128, 128, 244, 143, 191, 191],
+          "importedNameCodeUnits": [240, 144, 128, 128, 244, 143, 191, 191],
+          "base64InputRemainder": 0,
+          "sourceSaveSha256": "bde04f59471d0c95bf9e18ba90d8b277892383744fd97bd567e5656edef2ae34",
+          "sourceDecodedSha256": "6170a13f61a9b2782454d0523cf224c9ed6a510df4f5c715eb8a4adb2d6d6972"
+        },
+        {
+          "name": "json-escaped-lone-surrogates",
+          "wrapper": "canonical",
+          "sourceNameCodeUnits": [55296, 65, 56320],
+          "decodedNameCodeUnits": [55296, 65, 56320],
+          "importedNameCodeUnits": [55296, 65, 56320],
+          "base64InputRemainder": 2,
+          "sourceSaveSha256": "1cda002702340468791ea50f00a07bcb531c2a57f13a250ca4519089716fc312",
+          "sourceDecodedSha256": "ef9eea003238e0f6a6a178ce4167149698a555be8564409d997e600c8fdaff6a"
+        },
+        {
+          "name": "json-string-control-escapes",
+          "wrapper": "canonical",
+          "sourceNameCodeUnits": [0, 8, 9, 10, 12, 13, 34, 92],
+          "decodedNameCodeUnits": [0, 8, 9, 10, 12, 13, 34, 92],
+          "importedNameCodeUnits": [0, 8, 9, 10, 12, 13, 34, 92],
+          "base64InputRemainder": 2,
+          "sourceSaveSha256": "686db47c04892021038c8efa4256f59b1c0ea2e251b5f12e7847dfb0d5b7526a",
+          "sourceDecodedSha256": "7b6e9cbb3a99d087c9d7be7a713a09a8358aa05de426442abbcc62f1d5f02eb3"
+        },
+        {
+          "name": "legacy-unescape-lowercase-u",
+          "wrapper": "single-uri-encoded",
+          "sourceNameCodeUnits": [37, 117, 48, 48, 52, 49],
+          "decodedNameCodeUnits": [65],
+          "importedNameCodeUnits": [65],
+          "base64InputRemainder": 2,
+          "sourceSaveSha256": "2e3d090da78c3ad22e8139a24c690620fa20d9ba9bf97979eabb504df9a4c16a",
+          "sourceDecodedSha256": "feced3343a63d0802cd3f1ac73cb743ec3b5cc605774c51ff2f60f81d6cf0897"
+        },
+        {
+          "name": "legacy-unescape-uppercase-u-remains-literal",
+          "wrapper": "single-uri-encoded",
+          "sourceNameCodeUnits": [37, 85, 48, 48, 52, 49],
+          "decodedNameCodeUnits": [37, 85, 48, 48, 52, 49],
+          "importedNameCodeUnits": [37, 85, 48, 48, 52, 49],
+          "base64InputRemainder": 2,
+          "sourceSaveSha256": "c379fbba179843e216fd509ccfa8dbf831117b63d0582548161eec5529e49ccb",
+          "sourceDecodedSha256": "41d4f5a6143cf0ccb8611e833f90eb06e2992c8dd8e6151c9bd2b3ae6af10828"
+        },
+        {
+          "name": "legacy-unescape-uppercase-hex",
+          "wrapper": "single-uri-encoded",
+          "sourceNameCodeUnits": [37, 117, 48, 48, 65, 70],
+          "decodedNameCodeUnits": [175],
+          "importedNameCodeUnits": [175],
+          "base64InputRemainder": 2,
+          "sourceSaveSha256": "adcbdbfac921d754e454a0695a3ba578a118507d8ff52310e85ea1ed8032a55e",
+          "sourceDecodedSha256": "07011ad9dd18e7f19f352e8e2523f4fb5ae38751163b144584bf53922a3bf553"
+        },
+        {
+          "name": "legacy-unescape-uppercase-byte",
+          "wrapper": "single-uri-encoded",
+          "sourceNameCodeUnits": [37, 65, 66],
+          "decodedNameCodeUnits": [171],
+          "importedNameCodeUnits": [171],
+          "base64InputRemainder": 2,
+          "sourceSaveSha256": "dfe0f30f958fa58d6c53ed1bc181289b68fe6f831a19ad38938f8fed5fefe762",
+          "sourceDecodedSha256": "be3e26f6687c946be72b281ddd7972e5ad276ad9fe38fef4c107ca869bc3c6e1"
+        },
+        {
+          "name": "legacy-unescape-invalid-hex-remains-literal",
+          "wrapper": "single-uri-encoded",
+          "sourceNameCodeUnits": [37, 117, 48, 48, 71, 49],
+          "decodedNameCodeUnits": [37, 117, 48, 48, 71, 49],
+          "importedNameCodeUnits": [37, 117, 48, 48, 71, 49],
+          "base64InputRemainder": 2,
+          "sourceSaveSha256": "84ab62c9f47a1df76a477d916e7dd37461454c3dd292c81d0e2199549a049ce6",
+          "sourceDecodedSha256": "4a85edd46a70f634be622f3341eb14d51a18f88a12c3eefa97e5b81bd634f38b"
+        },
+        {
+          "name": "legacy-unescape-literal-percent",
+          "wrapper": "single-uri-encoded",
+          "sourceNameCodeUnits": [37],
+          "decodedNameCodeUnits": [37],
+          "importedNameCodeUnits": [37],
+          "base64InputRemainder": 0,
+          "sourceSaveSha256": "9fd57e6653fbcad0bb7b3eba579a9162f62bcdb16725ab7eaa980d4d278648eb",
+          "sourceDecodedSha256": "b6785e64fb68495a72aef14cf9087057735455f094eb4642d904e7d37a62c5d4"
+        },
+        {
+          "name": "legacy-unescape-short-byte-token",
+          "wrapper": "single-uri-encoded",
+          "sourceNameCodeUnits": [37, 65],
+          "decodedNameCodeUnits": [37, 65],
+          "importedNameCodeUnits": [37, 65],
+          "base64InputRemainder": 1,
+          "sourceSaveSha256": "c159354bb4bf3abf23d71a757924533fc4c583355d86e439d7db2cf79484feba",
+          "sourceDecodedSha256": "b8940a2c1e7dd421c4b28d07676c223df16353e83159c9115ae68aebfa3159b3"
+        },
+        {
+          "name": "legacy-unescape-short-unicode-token",
+          "wrapper": "single-uri-encoded",
+          "sourceNameCodeUnits": [37, 117, 48, 48, 51],
+          "decodedNameCodeUnits": [37, 117, 48, 48, 51],
+          "importedNameCodeUnits": [37, 117, 48, 48, 51],
+          "base64InputRemainder": 1,
+          "sourceSaveSha256": "38f84b5d094130cf26166fa841bac694fe3a5a467c6c23b840797efea01ba316",
+          "sourceDecodedSha256": "f42be62758c4d9a0b42dd754a779bc8cde058ec2bb3abe3680b32f43ec9ba485"
+        },
+        {
+          "name": "legacy-unescape-byte-token-trailing-char",
+          "wrapper": "single-uri-encoded",
+          "sourceNameCodeUnits": [37, 65, 66, 70],
+          "decodedNameCodeUnits": [171, 70],
+          "importedNameCodeUnits": [171, 70],
+          "base64InputRemainder": 0,
+          "sourceSaveSha256": "197088998c21a5f823157425e8e687e1f2262cba39266298ce78910d44179d1b",
+          "sourceDecodedSha256": "468dfa6a75c6262803852cfbc540013dca670bc78f5b407994c3f938ef4e2402"
+        },
+        {
+          "name": "legacy-unescape-unicode-token-trailing-char",
+          "wrapper": "single-uri-encoded",
+          "sourceNameCodeUnits": [37, 117, 48, 48, 52, 49, 66],
+          "decodedNameCodeUnits": [65, 66],
+          "importedNameCodeUnits": [65, 66],
+          "base64InputRemainder": 0,
+          "sourceSaveSha256": "5ac4c0d52e76f5569b517c6e3fb890e621ffe521a6646f277041c7add71e53dc",
+          "sourceDecodedSha256": "2bc93f68d832c2ab2fe8dfa57f29c0a1970a3b7aa48d3d6aa02b5cd749ea9ff8"
+        },
+        {
+          "name": "legacy-unescape-surrogate-pair",
+          "wrapper": "single-uri-encoded",
+          "sourceNameCodeUnits": [
+            37, 117, 68, 56, 51, 68, 37, 117, 68, 69, 48, 48
+          ],
+          "decodedNameCodeUnits": [55357, 56832],
+          "importedNameCodeUnits": [55357, 56832],
+          "base64InputRemainder": 1,
+          "sourceSaveSha256": "168c9fd87caea6950a81cab998800373625ee83534ce5b4a7041961b320aafdc",
+          "sourceDecodedSha256": "da3b68d493fae8255056a78f25d576ea3d97a76e53c991e21859b1a41d9761b3"
+        }
+      ],
       "base64Variants": [
         {
-          "name": "ascii-whitespace",
-          "encoded": "JTI1 \nN0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMnN0b3J5JTI1MjIlMjUzQSUyNTdCJTI1MjJwYWdlJTI1MjIlMjUzQTMlMjU3RCUyNTdE",
+          "name": "all-ascii-whitespace",
+          "encoded": "JTI1\t\n\f\r N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMnN0b3J5JTI1MjIlMjUzQSUyNTdCJTI1MjJwYWdlJTI1MjIlMjUzQTMlMjU3RCUyNTdE",
           "expectedJson": "{\"money\":\"5\",\"story\":{\"page\":3}}",
           "alertCount": 0,
           "thrownErrorName": null,
@@ -135381,9 +135579,48 @@
           "storyPage": 3
         },
         {
-          "name": "unpadded-base64",
+          "name": "unpadded-existing-zero-remainder",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMnN0b3J5JTI1MjIlMjUzQSUyNTdCJTI1MjJwYWdlJTI1MjIlMjUzQTMlMjU3RCUyNTdE",
           "expectedJson": "{\"money\":\"5\",\"story\":{\"page\":3}}",
+          "alertCount": 0,
+          "thrownErrorName": null,
+          "money": {
+            "decimal": "5",
+            "mantissa": 5,
+            "exponent": 0
+          },
+          "storyPage": 3
+        },
+        {
+          "name": "unpadded-remainder-zero",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMnN0b3J5JTI1MjIlMjUzQSUyNTdCJTI1MjJwYWdlJTI1MjIlMjUzQTMlMjU3RCUyNTJDJTI1MjJwYWRkaW5nUHJvYmUlMjUyMiUyNTNBJTI1MjIlMjUyMiUyNTdE",
+          "expectedJson": "{\"money\":\"5\",\"story\":{\"page\":3},\"paddingProbe\":\"\"}",
+          "alertCount": 0,
+          "thrownErrorName": null,
+          "money": {
+            "decimal": "5",
+            "mantissa": 5,
+            "exponent": 0
+          },
+          "storyPage": 3
+        },
+        {
+          "name": "unpadded-remainder-two",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMnN0b3J5JTI1MjIlMjUzQSUyNTdCJTI1MjJwYWdlJTI1MjIlMjUzQTMlMjU3RCUyNTJDJTI1MjJwYWRkaW5nUHJvYmUlMjUyMiUyNTNBJTI1MjJ4JTI1MjIlMjU3RA",
+          "expectedJson": "{\"money\":\"5\",\"story\":{\"page\":3},\"paddingProbe\":\"x\"}",
+          "alertCount": 0,
+          "thrownErrorName": null,
+          "money": {
+            "decimal": "5",
+            "mantissa": 5,
+            "exponent": 0
+          },
+          "storyPage": 3
+        },
+        {
+          "name": "unpadded-remainder-three",
+          "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyNSUyNTIyJTI1MkMlMjUyMnN0b3J5JTI1MjIlMjUzQSUyNTdCJTI1MjJwYWdlJTI1MjIlMjUzQTMlMjU3RCUyNTJDJTI1MjJwYWRkaW5nUHJvYmUlMjUyMiUyNTNBJTI1MjJ4eCUyNTIyJTI1N0Q",
+          "expectedJson": "{\"money\":\"5\",\"story\":{\"page\":3},\"paddingProbe\":\"xx\"}",
           "alertCount": 0,
           "thrownErrorName": null,
           "money": {
@@ -135398,9 +135635,13 @@
         {
           "name": "empty-base64",
           "encoded": "",
+          "decodeErrorName": null,
+          "decodeErrorMessage": null,
+          "alertMessages": [],
           "alertCount": 0,
           "alertHasDecodeErrorPrefix": false,
           "thrownErrorName": "SyntaxError",
+          "thrownErrorMessage": "Unexpected end of JSON input",
           "money": {
             "decimal": "77",
             "mantissa": 7.7,
@@ -135411,9 +135652,110 @@
         {
           "name": "invalid-base64",
           "encoded": "%%%",
+          "decodeErrorName": "InvalidCharacterError",
+          "decodeErrorMessage": "Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded.",
+          "alertMessages": [
+            "Error loading Game: InvalidCharacterError: Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded."
+          ],
           "alertCount": 1,
           "alertHasDecodeErrorPrefix": true,
           "thrownErrorName": "SyntaxError",
+          "thrownErrorMessage": "\"undefined\" is not valid JSON",
+          "money": {
+            "decimal": "77",
+            "mantissa": 7.7,
+            "exponent": 1
+          },
+          "mineObjectLevel": 0
+        },
+        {
+          "name": "invalid-base64-remainder-one",
+          "encoded": "A",
+          "decodeErrorName": "InvalidCharacterError",
+          "decodeErrorMessage": "Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded.",
+          "alertMessages": [
+            "Error loading Game: InvalidCharacterError: Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded."
+          ],
+          "alertCount": 1,
+          "alertHasDecodeErrorPrefix": true,
+          "thrownErrorName": "SyntaxError",
+          "thrownErrorMessage": "\"undefined\" is not valid JSON",
+          "money": {
+            "decimal": "77",
+            "mantissa": 7.7,
+            "exponent": 1
+          },
+          "mineObjectLevel": 0
+        },
+        {
+          "name": "invalid-base64-padding-too-long",
+          "encoded": "A===",
+          "decodeErrorName": "InvalidCharacterError",
+          "decodeErrorMessage": "Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded.",
+          "alertMessages": [
+            "Error loading Game: InvalidCharacterError: Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded."
+          ],
+          "alertCount": 1,
+          "alertHasDecodeErrorPrefix": true,
+          "thrownErrorName": "SyntaxError",
+          "thrownErrorMessage": "\"undefined\" is not valid JSON",
+          "money": {
+            "decimal": "77",
+            "mantissa": 7.7,
+            "exponent": 1
+          },
+          "mineObjectLevel": 0
+        },
+        {
+          "name": "invalid-base64-padding-interior",
+          "encoded": "AA=A",
+          "decodeErrorName": "InvalidCharacterError",
+          "decodeErrorMessage": "Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded.",
+          "alertMessages": [
+            "Error loading Game: InvalidCharacterError: Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded."
+          ],
+          "alertCount": 1,
+          "alertHasDecodeErrorPrefix": true,
+          "thrownErrorName": "SyntaxError",
+          "thrownErrorMessage": "\"undefined\" is not valid JSON",
+          "money": {
+            "decimal": "77",
+            "mantissa": 7.7,
+            "exponent": 1
+          },
+          "mineObjectLevel": 0
+        },
+        {
+          "name": "invalid-base64-trailing-after-padding",
+          "encoded": "AA==A",
+          "decodeErrorName": "InvalidCharacterError",
+          "decodeErrorMessage": "Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded.",
+          "alertMessages": [
+            "Error loading Game: InvalidCharacterError: Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded."
+          ],
+          "alertCount": 1,
+          "alertHasDecodeErrorPrefix": true,
+          "thrownErrorName": "SyntaxError",
+          "thrownErrorMessage": "\"undefined\" is not valid JSON",
+          "money": {
+            "decimal": "77",
+            "mantissa": 7.7,
+            "exponent": 1
+          },
+          "mineObjectLevel": 0
+        },
+        {
+          "name": "invalid-non-ascii-whitespace",
+          "encoded": "AA AA",
+          "decodeErrorName": "InvalidCharacterError",
+          "decodeErrorMessage": "Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded.",
+          "alertMessages": [
+            "Error loading Game: InvalidCharacterError: Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded."
+          ],
+          "alertCount": 1,
+          "alertHasDecodeErrorPrefix": true,
+          "thrownErrorName": "SyntaxError",
+          "thrownErrorMessage": "\"undefined\" is not valid JSON",
           "money": {
             "decimal": "77",
             "mantissa": 7.7,
@@ -135424,9 +135766,30 @@
         {
           "name": "invalid-uri-escape",
           "encoded": "JVpa",
+          "decodeErrorName": "URIError",
+          "decodeErrorMessage": "URI malformed",
+          "alertMessages": ["Error loading Game: URIError: URI malformed"],
           "alertCount": 1,
           "alertHasDecodeErrorPrefix": true,
           "thrownErrorName": "SyntaxError",
+          "thrownErrorMessage": "\"undefined\" is not valid JSON",
+          "money": {
+            "decimal": "77",
+            "mantissa": 7.7,
+            "exponent": 1
+          },
+          "mineObjectLevel": 0
+        },
+        {
+          "name": "invalid-uri-utf8",
+          "encoded": "JUUyJTI4",
+          "decodeErrorName": "URIError",
+          "decodeErrorMessage": "URI malformed",
+          "alertMessages": ["Error loading Game: URIError: URI malformed"],
+          "alertCount": 1,
+          "alertHasDecodeErrorPrefix": true,
+          "thrownErrorName": "SyntaxError",
+          "thrownErrorMessage": "\"undefined\" is not valid JSON",
           "money": {
             "decimal": "77",
             "mantissa": 7.7,
@@ -135437,9 +135800,13 @@
         {
           "name": "valid-base64-invalid-json",
           "encoded": "bm90LWpzb24=",
+          "decodeErrorName": null,
+          "decodeErrorMessage": null,
+          "alertMessages": [],
           "alertCount": 0,
           "alertHasDecodeErrorPrefix": false,
           "thrownErrorName": "SyntaxError",
+          "thrownErrorMessage": "Unexpected token 'o', \"not-json\" is not valid JSON",
           "money": {
             "decimal": "77",
             "mantissa": 7.7,
@@ -135450,9 +135817,13 @@
         {
           "name": "missing-story-after-resource-fields",
           "encoded": "JTI1N0IlMjUyMm1vbmV5JTI1MjIlMjUzQSUyNTIyMTIzJTI1MjIlMjUyQyUyNTIybWluZU9iamVjdExldmVsJTI1MjIlMjUzQTAlMjU3RA==",
+          "decodeErrorName": null,
+          "decodeErrorMessage": null,
+          "alertMessages": [],
           "alertCount": 0,
           "alertHasDecodeErrorPrefix": false,
           "thrownErrorName": "TypeError",
+          "thrownErrorMessage": "Cannot read properties of undefined (reading 'page')",
           "money": {
             "decimal": "123",
             "mantissa": 1.23,

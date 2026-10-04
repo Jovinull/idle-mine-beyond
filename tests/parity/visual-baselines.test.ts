@@ -9,11 +9,12 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
   const sidecars = (await readdir(visualDirectory))
     .filter((name) => name.endsWith(".json"))
     .sort();
-  // Every screenshot has a Linux pair except the selected natural chapter captures.
+  // Every screenshot has a Linux pair except the natural chapter captures and
+  // the Planet Coin shop gates, whose level-90 source render is unstable on Linux.
   const windowsSidecars = sidecars.filter(
     (name) => !name.endsWith("-linux.json"),
   );
-  expect(windowsSidecars).toHaveLength(83);
+  expect(windowsSidecars).toHaveLength(91);
   const linuxSidecars = sidecars.filter((name) => name.endsWith("-linux.json"));
   // Linux still runs state assertions for these selected Windows-only captures.
   const windowsOnlyCaptures = new Set([
@@ -21,6 +22,10 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
     "story-natural-chapter-4-light-1440x900.json",
     "story-natural-chapter-5-light-1440x900.json",
     "story-natural-chapter-6-light-1440x900.json",
+    "remix-planetcoin-shop-gate-89-light-1440x900.json",
+    "remix-planetcoin-shop-gate-89-dark-1440x900.json",
+    "remix-planetcoin-shop-gate-90-light-1440x900.json",
+    "remix-planetcoin-shop-gate-90-dark-1440x900.json",
   ]);
   const missingLinuxBaselines = windowsSidecars
     .filter(
@@ -28,7 +33,7 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
     )
     .sort();
   expect(missingLinuxBaselines).toEqual([...windowsOnlyCaptures].sort());
-  expect(linuxSidecars).toHaveLength(79);
+  expect(linuxSidecars).toHaveLength(83);
 
   for (const sidecarName of sidecars) {
     const metadata = JSON.parse(

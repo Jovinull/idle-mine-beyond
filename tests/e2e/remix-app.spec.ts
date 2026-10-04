@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
 import { createFreshBeyondVisualSave } from "./visual-state.js";
+import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
 type StoryRuntimeFixture = {
   freshGame: {
@@ -146,6 +147,27 @@ type SettingsRuntimeFixture = {
   };
 };
 
+type FormatterUiFixture = {
+  data: {
+    initialState: { numberFormatters: string[] };
+    notationOutputs: {
+      notation: string;
+      values: { input: string; output: string }[];
+    }[];
+    saveApplicationSemantics: { inputJson: string };
+  };
+};
+
+type FixedMineObjectUiFixture = {
+  data: {
+    mineObjectCatalog: {
+      base: { id: number }[];
+      special: { id: number }[];
+    };
+    saveApplicationSemantics: { inputJson: string };
+  };
+};
+
 test("Story object previews do not dispatch Mining clicks", async ({
   page,
 }) => {
@@ -234,6 +256,243 @@ test("marks a zero-active-damage Mining canvas unavailable", async ({
   const canvas = page.locator(".mineobject canvas.mine-object");
   await expect(canvas).toHaveAttribute("data-damageable", "false");
   await expect(canvas).toHaveClass(/nodmg/);
+});
+
+test("renders every fixed mine object through the pinned Mining route", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90_000);
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as FixedMineObjectUiFixture;
+  const save = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as {
+    highestMineObjectLevel: number;
+    lastActive: number;
+    mineObjectLevel: number;
+    settings: {
+      numberFormatterIndex: number;
+      showMineObjLevel: boolean;
+      theme: string;
+    };
+  };
+  const objectIds = reference.data.mineObjectCatalog.base.map(({ id }) => id);
+  expect(objectIds).toEqual(
+    Array.from({ length: objectIds.length }, (_, id) => id),
+  );
+  save.highestMineObjectLevel = objectIds.length - 1;
+  save.lastActive = 1_700_000_000_000;
+  save.mineObjectLevel = 0;
+  save.settings.numberFormatterIndex = 0;
+  save.settings.showMineObjLevel = true;
+  save.settings.theme = "light";
+  const encodedSave = encodeRemixLegacySave(save);
+  const sourceContext = await browser.newContext({
+    colorScheme: "light",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+
+  const initializePage = (encoded: string) => {
+    localStorage.clear();
+    localStorage.setItem("IdleMine", encoded);
+    Date.now = () => 1_700_000_000_000;
+  };
+
+  const collectMineObject = async (target: typeof page) =>
+    target.locator("article.main .mineobject").evaluate((mineObject) => {
+      const normalize = (value: string | null | undefined) =>
+        (value ?? "").replace(/\s+/g, " ").trim();
+      return {
+        level: normalize(mineObject.querySelector("h4")?.textContent),
+        name: normalize(mineObject.querySelector("h2")?.textContent),
+        details: Array.from(mineObject.querySelectorAll("p"), (paragraph) =>
+          normalize(paragraph.textContent),
+        ),
+      };
+    });
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all([
+      page.addInitScript(initializePage, encodedSave),
+      sourcePage.addInitScript(initializePage, encodedSave),
+    ]);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean(
+        (window as Window & { game?: unknown }).game &&
+        document.querySelector("#app > footer"),
+      ),
+    );
+    await expect(page.locator("[data-mine-object-level]")).toHaveText("#1");
+
+    for (const [index, id] of objectIds.entries()) {
+      await expect(page.locator("[data-mine-object-level]")).toHaveText(
+        `#${id + 1}`,
+      );
+      await sourcePage.waitForFunction(
+        (level) =>
+          (window as Window & { game?: { mineObjectLevel?: number } }).game
+            ?.mineObjectLevel === level,
+        id,
+      );
+      const [sourceObject, beyondObject] = await Promise.all([
+        collectMineObject(sourcePage),
+        collectMineObject(page),
+      ]);
+      expect(beyondObject, `fixed mine object ID ${id}`).toEqual(sourceObject);
+
+      if (index < objectIds.length - 1) {
+        await Promise.all([
+          sourcePage.locator("article.main .changemineobj").last().click(),
+          page.getByRole("button", { name: "Next mine object" }).click(),
+        ]);
+      }
+    }
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
+test("renders every special mine object through the pinned Mining route", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(180_000);
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as FixedMineObjectUiFixture;
+  const save = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as {
+    highestMineObjectLevel: number;
+    lastActive: number;
+    mineObjectLevel: number;
+    settings: {
+      numberFormatterIndex: number;
+      showMineObjLevel: boolean;
+      theme: string;
+    };
+  };
+  const specialIds = reference.data.mineObjectCatalog.special.map(
+    ({ id }) => id,
+  );
+  expect(specialIds).toHaveLength(78);
+  expect(specialIds).toEqual(
+    [...specialIds].sort((left, right) => left - right),
+  );
+  expect(new Set(specialIds).size).toBe(specialIds.length);
+  const highestMineObjectLevel = specialIds.at(-1);
+  if (highestMineObjectLevel === undefined) {
+    throw new Error("The pinned special mine-object catalog is empty.");
+  }
+  save.highestMineObjectLevel = highestMineObjectLevel;
+  save.lastActive = 1_700_000_000_000;
+  save.mineObjectLevel = 0;
+  save.settings.numberFormatterIndex = 0;
+  save.settings.showMineObjLevel = true;
+  save.settings.theme = "light";
+  const encodedSave = encodeRemixLegacySave(save);
+  const sourceContext = await browser.newContext({
+    colorScheme: "light",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+
+  const initializePage = (encoded: string) => {
+    localStorage.clear();
+    localStorage.setItem("IdleMine", encoded);
+    Date.now = () => 1_700_000_000_000;
+  };
+
+  const collectMineObject = async (target: typeof page) =>
+    target.locator("article.main .mineobject").evaluate((mineObject) => {
+      const normalize = (value: string | null | undefined) =>
+        (value ?? "").replace(/\s+/g, " ").trim();
+      return {
+        level: normalize(mineObject.querySelector("h4")?.textContent),
+        name: normalize(mineObject.querySelector("h2")?.textContent),
+        details: Array.from(mineObject.querySelectorAll("p"), (paragraph) =>
+          normalize(paragraph.textContent),
+        ),
+      };
+    });
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all([
+      page.addInitScript(initializePage, encodedSave),
+      sourcePage.addInitScript(initializePage, encodedSave),
+    ]);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean(
+        (window as Window & { game?: unknown }).game &&
+        document.querySelector("#app > footer"),
+      ),
+    );
+    await expect(page.locator("[data-mine-object-level]")).toHaveText("#1");
+
+    const specialIdSet = new Set(specialIds);
+    for (let id = 0; id <= highestMineObjectLevel; id += 1) {
+      if (specialIdSet.has(id)) {
+        await expect(page.locator("[data-mine-object-level]")).toHaveText(
+          `#${id + 1}`,
+        );
+        await sourcePage.waitForFunction(
+          (level) =>
+            (window as Window & { game?: { mineObjectLevel?: number } }).game
+              ?.mineObjectLevel === level,
+          id,
+        );
+        const [sourceObject, beyondObject] = await Promise.all([
+          collectMineObject(sourcePage),
+          collectMineObject(page),
+        ]);
+        expect(beyondObject, `special mine object ID ${id}`).toEqual(
+          sourceObject,
+        );
+      }
+
+      if (id < highestMineObjectLevel) {
+        await Promise.all([
+          sourcePage.locator("article.main .changemineobj").last().click(),
+          page.getByRole("button", { name: "Next mine object" }).click(),
+        ]);
+      }
+    }
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
 });
 
 test("connects the persistent game session to mining and the Story tab", async ({
@@ -1309,31 +1568,46 @@ test("buys the source-priced Blacksmith with single and modifier controls", asyn
   await expect(blacksmith).not.toHaveClass(/cantafford/);
   await blacksmith.click();
   await expect(blacksmith).toHaveAttribute("data-upgrade-level", "1");
+  const hints = page.locator('[data-upgrade-details="blacksmith"] .multibuy');
+  const shiftHint = hints.nth(0);
+  const controlHint = hints.nth(1);
+  const refreshCard = page
+    .locator(
+      '[data-upgrade-group="money"][data-upgrade-key]:not([data-upgrade-key="blacksmith"])',
+    )
+    .first();
   await page.keyboard.down("Shift");
   expect(modifierLifecycle.key).toBe("Shift");
   expect(modifierLifecycle.target).toBe("focused-text-input");
   expect(modifierLifecycle.output.shiftPressedAfterKeyDown).toBe(true);
-  await expect(
-    page.locator('[data-upgrade-details="blacksmith"] .multibuy.active'),
-  ).toHaveText("Hold SHIFT to buy 10");
+  await expect(shiftHint).not.toHaveClass(/active/);
+  await refreshCard.hover();
+  await blacksmith.hover();
+  await expect(shiftHint).toHaveText("Hold SHIFT to buy 10");
+  await expect(shiftHint).toHaveClass(/active/);
   await page.evaluate(() => window.dispatchEvent(new Event("blur")));
   expect(modifierLifecycle.output.shiftPressedAfterWindowBlur).toBe(true);
-  await expect(
-    page.locator('[data-upgrade-details="blacksmith"] .multibuy.active'),
-  ).toHaveText("Hold SHIFT to buy 10");
+  await expect(shiftHint).toHaveText("Hold SHIFT to buy 10");
   await page.keyboard.up("Shift");
   expect(modifierLifecycle.output.shiftPressedAfterKeyUp).toBe(false);
-  await expect(
-    page.locator('[data-upgrade-details="blacksmith"] .multibuy.active'),
-  ).toHaveCount(0);
+  await expect(shiftHint).toHaveText("Hold SHIFT to buy 10");
+  await expect(shiftHint).toHaveClass(/active/);
+  await refreshCard.hover();
+  await blacksmith.hover();
+  await expect(shiftHint).not.toHaveClass(/active/);
   await page.keyboard.down("Shift");
   await blacksmith.click();
   await expect(blacksmith).toHaveAttribute("data-upgrade-level", "10");
 
   await page.keyboard.down("Control");
-  await expect(
-    page.locator('[data-upgrade-details="blacksmith"] .multibuy.active'),
-  ).toHaveText("Hold CTRL to buy 100");
+  await expect(shiftHint).toHaveText("Hold SHIFT to buy 10");
+  await expect(shiftHint).toHaveClass(/active/);
+  await expect(controlHint).not.toHaveClass(/active/);
+  await refreshCard.hover();
+  await blacksmith.hover();
+  await expect(shiftHint).not.toHaveClass(/active/);
+  await expect(controlHint).toHaveText("Hold CTRL to buy 100");
+  await expect(controlHint).toHaveClass(/active/);
   await blacksmith.click();
   await expect(blacksmith).toHaveAttribute("data-upgrade-level", "100");
   await page.keyboard.up("Control");
@@ -1727,6 +2001,244 @@ test("applies and saves source-backed Settings preferences", async ({
   );
 });
 
+test("renders the selected source-backed notation in the visible currency", async ({
+  page,
+}) => {
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as FormatterUiFixture;
+  const save = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as {
+    highestMoney: string;
+    lastActive: number;
+    money: string;
+    settings: { numberFormatterIndex: number; tab: string };
+  };
+  save.highestMoney = "1e100";
+  save.lastActive = 1_700_000_000_000;
+  save.money = "1e100";
+  save.settings.numberFormatterIndex = 0;
+  save.settings.tab = "main";
+
+  await page.addInitScript((encodedSave) => {
+    localStorage.clear();
+    localStorage.setItem("IdleMine", encodedSave);
+    Date.now = () => 1_700_000_000_000;
+  }, encodeRemixLegacySave(save));
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+
+  const currency = page.locator("header > span").first();
+  const settings = page.locator("article.settings");
+  await page.locator("[data-game-tab='settings']").click();
+  const notationSelect = settings.locator("#numberformatselect");
+  await expect(notationSelect.locator("option")).toHaveText(
+    reference.data.initialState.numberFormatters,
+  );
+
+  for (const [
+    index,
+    name,
+  ] of reference.data.initialState.numberFormatters.entries()) {
+    const source = reference.data.notationOutputs.find(
+      ({ notation }) => notation === name,
+    );
+    const expected = source?.values.find(
+      ({ input }) => input === "1e100",
+    )?.output;
+    expect(expected, `pinned formatter output for ${name}`).toBeDefined();
+
+    await notationSelect.selectOption(String(index));
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-number-formatter",
+      name,
+    );
+    const rendered = await currency.textContent();
+    if (name === "ALL" || name === "Zalgo") {
+      expect(rendered, `${name} updates the visible currency`).toMatch(
+        /\S+ \$$/,
+      );
+      expect(rendered).not.toBe("10.00 DTg $");
+    } else {
+      expect(rendered, `visible ${name} currency`).toBe(`${expected} $`);
+    }
+  }
+});
+
+test("matches Remix UI output and RNG consumption for ALL and Zalgo", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(60_000);
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as FormatterUiFixture;
+  const save = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as {
+    highestMoney: string;
+    lastActive: number;
+    money: string;
+    settings: { numberFormatterIndex: number; tab?: string };
+  };
+  save.highestMoney = "1e100";
+  save.lastActive = 1_700_000_000_000;
+  save.money = "1e100";
+  save.settings.numberFormatterIndex = 0;
+  const encodedSave = encodeRemixLegacySave(save);
+  const sourceContext = await browser.newContext({
+    colorScheme: "light",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+
+  const initializePage = (encoded: string) => {
+    localStorage.clear();
+    localStorage.setItem("IdleMine", encoded);
+    Date.now = () => 1_700_000_000_000;
+    let randomState = 0;
+    let randomCalls = 0;
+    Math.random = () => {
+      randomCalls++;
+      randomState = (Math.imul(randomState, 1_664_525) + 1_013_904_223) >>> 0;
+      return randomState / 0x1_0000_0000;
+    };
+    (
+      window as Window & {
+        __notationRandomControl?: {
+          reset: (seed: number) => void;
+          calls: () => number;
+        };
+      }
+    ).__notationRandomControl = {
+      reset(seed) {
+        randomState = seed >>> 0;
+        randomCalls = 0;
+      },
+      calls: () => randomCalls,
+    };
+  };
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all([
+      page.addInitScript(initializePage, encodedSave),
+      sourcePage.addInitScript(initializePage, encodedSave),
+    ]);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean(
+        (window as Window & { game?: unknown }).game &&
+        document.querySelector("#app > footer"),
+      ),
+    );
+    // Remix schedules the restored select index 50 ms after loading a save.
+    await sourcePage.waitForTimeout(75);
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+
+    const beyondSelect = page.locator("#numberformatselect");
+    const sourceSelect = sourcePage.locator("article.settings select");
+    await expect(beyondSelect.locator("option")).toHaveText(
+      reference.data.initialState.numberFormatters,
+    );
+    await expect(sourceSelect.locator("option")).toHaveText(
+      reference.data.initialState.numberFormatters,
+    );
+
+    for (const notation of ["ALL", "Zalgo"]) {
+      const index =
+        reference.data.initialState.numberFormatters.indexOf(notation);
+      expect(
+        index,
+        `${notation} is registered in the pinned UI`,
+      ).toBeGreaterThanOrEqual(0);
+      await Promise.all([
+        page.evaluate((seed) => {
+          (
+            window as Window & {
+              __notationRandomControl?: { reset: (value: number) => void };
+            }
+          ).__notationRandomControl?.reset(seed);
+        }, 0x1d1e),
+        sourcePage.evaluate((seed) => {
+          (
+            window as Window & {
+              __notationRandomControl?: { reset: (value: number) => void };
+            }
+          ).__notationRandomControl?.reset(seed);
+        }, 0x1d1e),
+      ]);
+      await Promise.all([
+        beyondSelect.selectOption(String(index)),
+        sourceSelect.selectOption({ label: notation }),
+      ]);
+      await expect(page.locator("#app")).toHaveAttribute(
+        "data-number-formatter",
+        notation,
+      );
+      await sourcePage.waitForFunction(
+        (name) =>
+          (
+            window as Window & {
+              game?: { numberFormatter?: { name: string } };
+            }
+          ).game?.numberFormatter?.name === name,
+        notation,
+      );
+
+      const sourceValues = await sourcePage.evaluate(() => ({
+        currency: document.querySelector("header > span")?.textContent,
+        gems: document.querySelectorAll("header > span")[1]?.textContent,
+        randomCalls: (
+          window as Window & {
+            __notationRandomControl?: { calls: () => number };
+          }
+        ).__notationRandomControl?.calls(),
+      }));
+      const beyondValues = await page.evaluate(() => ({
+        currency: document.querySelector("header > span")?.textContent,
+        gems: document.querySelectorAll("header > span")[1]?.textContent,
+        randomCalls: (
+          window as Window & {
+            __notationRandomControl?: { calls: () => number };
+          }
+        ).__notationRandomControl?.calls(),
+      }));
+      expect(beyondValues, `${notation} visible output and RNG`).toEqual(
+        sourceValues,
+      );
+    }
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
 test("exports and imports the pinned legacy save through the Settings text field", async ({
   page,
 }) => {
@@ -1953,6 +2465,13 @@ test("unlocks Powers at the source object and renders prestige and Wisdom upgrad
   await expect(panel.locator("[data-wisdom-balance]")).toContainText("99");
 
   await panel.locator("[data-power-prestige='0']").click();
+  await expect(panel.locator("[data-power-row='0']")).toContainText(
+    "x 1,000,000",
+  );
+  await expect(panel.locator("[data-power-row='1']")).toContainText("x 1.000");
+
+  await page.locator("[data-game-tab='mining']").click();
+  await page.locator("[data-game-tab='powers']").click();
   await expect(panel.locator("[data-power-row='0']")).toContainText("x 1,000");
   await expect(panel.locator("[data-power-row='1']")).toContainText("x 31.62");
 
