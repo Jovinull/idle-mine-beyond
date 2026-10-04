@@ -1,21 +1,228 @@
 # Project status
 
-Last updated: 2026-10-03
+Last updated: 2026-10-04
 
 ## Phase
 
-**Phase 1 - Deterministic core (in progress).** The source-to-test audit maps all 36 parity-matrix areas to pinned Remix functions/branches, fixtures, and assertions. Random distributions and RNG was the first Certified area after confirming every consumer threshold, fixed-seed outcomes, and 90,000 differential state/RNG checkpoints; Big-number math and serialization, Fresh simulation-state initialization, Simulation action composition, Active and idle damage, and Procedural mine objects are also Certified. Fresh-state coverage traces Remix's no-save startup and verifies the complete initial state, live browser startup/interactions, and fresh Mining visuals in both themes. Action-composition coverage compares source frame, click, break, purchase, and craft branches in core, then verifies browser event wiring, save-before-Story ordering, random draws, and persisted state. Active/idle damage has browser assertions for a fresh-Mud click and a pinned full-health idle break; procedural-object coverage loads all three generator regions plus a sparse high ID through the Beyond save and Mining Canvas. Qualified non-exhaustive formula/RNG samples do not block certification; unresolved source boundaries, save/platform domains, and visual/UI evidence still can. The checker flags Certified rows that retain mapped gaps or unqualified sampled domains, and does not infer certification from code presence. parity-v1 remains web-only; native packaging, storage, and running Tauri WebView validation are post-v1.
+**Phase 1 - Deterministic core (in progress).** The source-to-test audit maps all 36 parity-matrix areas to pinned Remix functions/branches, fixtures, and assertions. The Random distributions and RNG row became the first Certified area after its consumer thresholds, seeded outcomes, and 90,000 state/RNG checkpoints passed; ten further rows are Certified: Big-number math and serialization, Fresh simulation-state initialization, Simulation action composition, Active and idle damage, Fixed mine objects, Special mine objects, Procedural mine objects, Mine rendering and compositing, Number formatting and notations, and Progression route and phase replay. Fresh-state coverage traces Remix's no-save startup and verifies the complete initial state, live browser startup/interactions, and fresh Mining visuals in both themes. Action-composition coverage compares source frame, click, break, purchase, and craft branches in core, then verifies browser event wiring, save-before-Story ordering, random draws, and persisted state. Active/idle damage has browser assertions for a fresh-Mud click and a pinned full-health idle break; procedural-object coverage loads all three generator regions plus a sparse high ID through the Beyond save and Mining Canvas. Qualified non-exhaustive formula/RNG samples do not block certification; unresolved source boundaries, save/platform domains, and visual/UI evidence still can. The checker flags Certified rows that retain mapped gaps or unqualified sampled domains, and does not infer certification from code presence. parity-v1 remains web-only; native packaging, storage, and running Tauri WebView validation are post-v1.
+
+**Sampled-domain re-evaluation (2026-10-04):** each `Sampled (qualified)`
+formula/RNG subdomain across the four trace maps has named relevant boundaries,
+a fixed-seed generated sample, and a pinned no-divergence differential. No
+matrix area is In progress solely because its formula/RNG corpus is finite;
+Money/Gem/Planet Coin and aggregate upgrade, Powers/crafting, Story, save/time,
+and visual rows remain open only for separately mapped evidence. The
+[trace-map README](parity-traceability/README.md) records the criterion and
+area-by-area rationale. No larger samples are requested without a missing
+boundary or observed divergence. Validation on 2026-10-04 passed the full parity
+suite (35 files, 152 tests), the full Chromium E2E suite (149/149), the
+traceability map (36 areas), docs (85 files), and formatting checks, alongside
+the pinned reference-corpus verifier (17 live codec boundaries) and focused
+Node/Chromium save-codec tests. A repository-scoped GitHub MCP commit was
+rejected by this session's approval policy (`never`); local `.git` is also
+read-only, so this validated documentation update remains uncommitted.
+
+**Upgrade-shop finite-cap visual differential (2026-10-04):** the pinned-source
+Playwright comparison covers all 15 finite-capped Money, Gem, and Planet Coin
+cards at `cap - 1`, `cap`, and `cap + 1`, in both themes at 1440x900. It checks
+captured level/effect/price text, affordability classes/styles, and exact card
+and tooltip pixels. The focused suite passed 2/2 in Chromium (3.8 minutes).
+Those cap-boundary UI paths are now covered; non-cap levels, other resource
+balances, and modifier/card combinations remain open. The broader upgrade and
+visual matrix rows remain In Progress. This slice remains uncommitted because
+local `.git` writes are denied and GitHub MCP writes require approval, which the
+current session policy does not permit.
+
+**Shop purchase-routing differential (2026-10-04):** the source-paired E2E now
+replays single, Shift, and Control purchases for all 22 Money/Gem/Planet Coin
+cards from identical level-zero saves with sufficient resources. It compares
+the resulting level, card/tooltip presentation, and visible resource headers
+against the pinned Remix runtime across 66 actions. The focused Playwright test
+passed 1/1 in Chromium (2.2 minutes); ESLint and TypeScript/Svelte checks passed.
+This closes the modifier-to-card routing slice for those starts. Other starting
+levels/balances and broader shop visuals remain open; no upgrade matrix row is
+Certified by this test. The slice remains uncommitted under the managed-session
+Git write limitation recorded above.
+
+**Upgrade-tab dark hover parity (2026-10-04):** the live pinned Remix E2E now
+waits for the selected theme stylesheet and compares the computed hover
+background after clicking each Money/Gem/PC tab. Remix's important dark button
+hover rule wins over its later `.upg-tabs button:hover` declaration and yields
+`#636363`; Beyond's local `#777777` override caused a visible mismatch and now
+matches the source. The affordability-boundary E2E passed for both themes
+(2/2). This closes the tab-hover style branch only; shop full-screen states and
+other balances/levels remain open. The full
+`pnpm.cmd exec playwright test tests/e2e/upgrade-affordability-differential.spec.ts --workers=1`
+file passed 5/5 in Chromium (3.7 minutes), including the stabilized full-viewport
+Gem exact-price comparison. No matrix area is Certified by this slice.
+
+The earlier diagnostic's two one-level Gem-border differences at `(697, 152)`
+and `(697, 276)` did not reproduce with the same pinned save, Chromium, theme,
+and 1440x900 viewport. Three paired full-viewport captures per theme all had
+zero differing pixels, and each side's captures were internally pixel-stable.
+`upgrade-affordability-differential.spec.ts` now compares a stabilized complete
+viewport hash for the exact Gem-price state in both themes; that focused E2E
+passed 2/2. This closes only that selected screen state. Other shop balances,
+levels, and full-screen combinations remain open; no pixels were masked.
+
+**Upgrade-group session-state parity (2026-10-04):** source probing found that
+Remix preserves the selected Gem/Planet Coin list when navigating away from
+Mining and back, serializes live `settings.upgradeTab` on export, but does not
+restore that field in a fresh `loadGame()` runtime. Beyond previously kept the
+group only inside `UpgradePanel`, so remounting returned to Money and export
+reported stale settings. The selection now lives in application settings. The
+paired E2E compares both groups across Mining/Story remounts, decoded export
+fields, and the source-compatible fresh-load reset; it passed 1/1 in Chromium.
+Upgrade UI, save, and broader visual matrix rows remain In Progress.
+
+**Shop first non-cap card/detail differential (2026-10-04):** the source-paired
+catalog comparison now checks all 22 Money, Gem, and Planet Coin cards at both
+level 0 and level 1, the first non-cap level for every card. It compares card
+presentation and exact resting-card/hovered-detail pixels in light and dark at
+1440x900. All four Playwright cases passed (4/4, 1.1 minutes). This covers the
+first non-cap UI path across each shop card; other resource-balance combinations
+and broader full-screen shop states remain open, so no upgrade row is
+Certified by this slice.
+
+**Shop full-screen differential (2026-10-04):** the source-paired catalog test
+compares complete 1440x900 viewport screenshots for the Money, Gem, and Planet
+Coin tabs at starting levels 0 and 1 in both themes (12 comparisons). Its
+affordability flow adds 14 source-paired full-screen comparisons across zero-
+resource cases for each group, Money just below price, and exact-price cases for
+each group in both themes. This exposed a dark Money level-1 mismatch on Gem
+Waster's craft-cost increase button: pinned `main.css` sets
+`.craft-pickaxe button.level-change` transparent, and `Themes/dark.css`
+preserves transparency on hover; Beyond's generic dark button background
+overrode the resting state. The scoped Svelte selector now matches the source
+cascade. Both affordability-boundary theme cases passed twice after waiting for
+both pages' upgrade images to decode; the complete focused file passed 7/7 in
+4.3 minutes. The full `pnpm.cmd test:e2e --workers=1` run passed 149/149 in
+13.8 minutes. Other resource balances, modifier hints, and broader application
+states remain open; upgrade and desktop UI rows stay In progress.
+This validated slice remains uncommitted and unpushed because this managed
+workspace exposes `.git` as read-only.
+
+**Malformed-save import message parity (2026-10-04):** the pinned Chromium
+oracle now captures exact Base64/URI decode messages, Settings alert text, and
+the subsequent JSON parse errors for all eleven load-error cases. Beyond's
+Base64 error text now matches the source message. The Node codec test passed
+6/6, the codec E2E passed 1/1, and the Settings import/no-write E2E passed 1/1.
+The save matrix remains In progress for unenumerated malformed inputs and
+historical save formats.
+
+**Gem Blacksmith Skill cap/over-cap visual differential (2026-10-04):** the
+source-paired Playwright test checks saved level 50 at cap and level 51 above
+cap in light and dark at 1440x900. The card crop (1px inset, retaining the
+interior border) and full hovered-detail crop have matching source/Beyond pixel
+hashes; labels, computed affordance, and click/no-op behavior also match. The
+focused test passed 2/2. This covers those two boundaries only; upgrade-shop
+and desktop visual rows remain In progress for other mapped states. The managed
+checkout keeps `.git` read-only, so this validated slice is uncommitted.
+
+**Pre-autosave upgrade persistence differential (2026-10-04):** pinned Remix
+and Beyond start from the same source-shaped save under a fixed clock. Buying
+Blacksmith changes each live level, leaves both persisted slots byte-identical,
+and reloads to the old level in both implementations. The Playwright test passed
+1/1; the persistence trace now maps this `Upgrade.buy` no-save path and the
+strict periodic-save timer. The overall save row remains In progress for
+historical formats and broader save-state combinations. The managed checkout
+keeps `.git` read-only, so this validated slice remains uncommitted.
+
+**Planet Coin shop-gate visual slice (2026-10-03):** the pinned Remix
+`index.html` gates the header balance and shop tab at
+`highestMineObjectLevel >= 90`. Four source captures cover levels 89/90 in both
+themes; Beyond asserts hidden/visible tab state and matches all four full-screen
+screenshots at zero pixels on Windows. This exposed a dark-theme CSS mismatch
+in the zero-damage labels (`#ff6c68` in Remix); Beyond now matches that source
+override. The focused Playwright run passed 4/4, and the focused pinned-source
+capture check passed all four hashes/states. The full `reference:priority-visuals`
+check also passes every pinned screenshot and source-state entry; it starts a
+fresh browser context before gate captures to prevent earlier tab interactions
+from leaking into screenshots and compares metadata in stable ID order. The
+2026-10-03 aggregate reference replay found an intermittent one-pixel source
+paint mismatch at the 90-object light gate. Gate capture now waits two frames
+after state/theme setup, flushes layout, and requires consecutive identical
+PNGs before retaining the strict source hash comparison; it does not alter the
+baseline or permit differing pixels. Four repeated isolated gate checks and
+the full `pnpm test:reference` now pass. The visual corpus has 90 full-screen Windows captures plus one crop (91 Windows
+sidecars) and 79 Linux sidecars. Linux pixel pairs cover the all-unlocked Story,
+the eleven selected Story progression views in both themes, 32 priority
+state/viewport captures, fresh Mining and Settings, and both controlled craft
+panels. The four natural Chapter 3–6 light captures, four post-award drop
+screens, and four Planet Coin gate screens remain Windows-only; Linux keeps
+their route/DOM, drop-RNG, or 89/90 gate assertions without pixel pairs. Other
+shop states remain open, so the Planet Coins and desktop UI rows stay In
+progress.
+
+**Upgrade-shop affordability and modifier slice (2026-10-03):** paired Chromium
+differentials compare the pinned Remix and Beyond at zero resources, Money just
+below its exact price, and exact price for representative Money (`activePower`),
+Gem (`offlineGems`), and Planet Coin (`activePower`) cards. Across light and dark
+themes they compare affordability class, level/details, card and tooltip
+styles/layout, card-interior and exact tooltip PNGs, click/no-op results, and delayed
+Shift/Control hint refresh after keymap changes. A second test visits all 22
+shop cards in a source-shaped level-zero save with `1e100` of each resource, at
+1440x900 in both themes. It compares every card's source order, label, image,
+class/style/geometry, exact resting-card pixels, and hovered detail pixels. The
+focused suite passed 4/4 in Chromium (1.1m). The existing Blacksmith
+single/Shift/Control E2E preserves its purchase-count checks and tests the same
+delayed display transitions. These are selected card and detail states, not
+full-screen certification for every balance, level, cap, or modifier; Money,
+Gem, Planet Coin, and desktop UI parity remain In progress. The trace is in the
+progression/web maps and the keymap quirk in `legacy-quirks.md`. Git metadata is
+read-only in this managed checkout, so this validated slice remains
+uncommitted.
+
+**Shop layout visual correction (2026-10-03):** the all-card differential
+asserted the source and Beyond `article.main` bounds and found that Beyond's
+forced `height: 84vh`/`box-sizing: border-box` differed from Remix's content-
+sized article. Removing those extra declarations restores matching layout; all
+36 selected priority screenshots still compare at zero pixels. The full
+`tests/e2e/priority-visual.spec.ts` run passed 36/36 (1.0m).
 
 **Sampled-domain review (2026-10-03):** when relevant formula/RNG boundaries,
 a recorded fixed-seed sample, and a passing pinned differential are present,
-the finite sample is not a certification blocker; only a missing relevant
-source boundary leaves that sampled domain unqualified. The matrix currently
-has six Certified rows: Big-number math/serialization, Random distributions/RNG,
+the finite sample itself is not a certification blocker. A missing relevant
+source boundary leaves that sampled domain unqualified; a differential
+mismatch is a compatibility failure to fix, not a sample-size concern. At that sampled-domain review, ten matrix rows were Certified: Big-number math/serialization, Random distributions/RNG,
 Fresh simulation-state initialization, Simulation action composition, Active
-and idle damage, and Procedural mine objects. Other qualified subdomains belong to
+and idle damage, Fixed mine objects, Special mine objects, Procedural mine objects, Mine rendering and compositing, and Number
+formatting and notations.
+Other qualified subdomains belong to
 broader rows with separate UI, integration,
 visual, save, platform, or unmapped source-path evidence still open. No further
-sample growth is requested for those qualified formula/RNG domains.
+sample growth is requested for those qualified formula/RNG domains. Progression
+route and phase replay became the eleventh Certified row after its full scoped
+route/phase differential passed on 2026-10-03.
+
+**Legacy save-codec boundary slice (2026-10-03):** the pinned source check
+verified six live full-save cases for the `getSaveString`/`loadGame` UTF-8,
+`escape`, JSON-surrogate/control, and Base64-padding boundaries.
+`tests/parity/save-codec.test.ts` passed 6/6 and
+`tests/e2e/save-codec.spec.ts` passed 1/1 in Chromium. The exact Remix UTF-8
+byte-to-code-unit corruption is retained. This closes the Unicode encoder
+branch evidence; the save-encoding matrix area remains In progress for
+arbitrary malformed external input classes, with historical formats tracked
+separately. Git metadata is read-only in this managed checkout, so the
+validated changes are uncommitted.
+
+**Progression route and phase replay certification (2026-10-03):**
+`pnpm reference:phase-differentials` verified the pinned source for all three
+phase starts, three RNG seeds, and 10,000 actions per trace. The combined
+`pnpm exec vitest run --project parity tests/parity/story-natural-route-replay.test.ts`
+passed 10/10 tests in 657.13 seconds: eight natural segments through Chapter 6
+and nine controlled Chapter 7-9 segments, comparing all 3,923,896 complete
+state/RNG checkpoints. Chapters 7-9 remain controlled-save segments and are not
+represented as natural fresh-game routes. The row certifies simulation replay
+only; Story and desktop UI visual evidence remains separate. Git metadata is
+read-only in this managed checkout, so this validated documentation update is
+uncommitted.
+
+**Mine-object Canvas certification (2026-10-03):** `tests/e2e/mine-object-renderer.spec.ts` directly renders all 920 objects from the pinned source corpus in Remix and Beyond in the same Chromium runtime and compares lossless PNG hashes. The captured records include sparse IDs through `Number.MAX_SAFE_INTEGER`, all 36 observed skins, 92 active skin/layer positions, and 2,511 non-transparent colors. Both renderer tests passed (2/2; 1m 30s). The Mine rendering and compositing row is Certified for this source corpus and browser output; full-screen UI and alternate-view state coverage remain separate. Git metadata is read-only in this managed checkout, so this validated slice remains uncommitted.
+
+**Gem upgrade cap-affordance differential (2026-10-03):** `tests/e2e/upgrade-cap-quirk.spec.ts` loads the same legacy save in pinned Remix and Beyond, with Gems sufficient to afford Gem Blacksmith Skill. At its cap (50), both dim the card and show `Max`; at saved level 51, both render the card bright with `Max`, but a click leaves the level unchanged. The E2E compares level/effect/price text, `cantafford`, opacity, cursor, hover details, and both click outcomes against the live pinned source. It passed 1/1 in Chromium (26.5s); source cases 50/51 were already in the pinned corpus. Other shop card/visual paths remain open. Git metadata is read-only here, so this validated slice is uncommitted.
+
+**Powers prestige table refresh quirk (2026-10-03):** paired Chromium comparisons confirmed that each of Remix's four prestige actions changes `game.powers.data.values` but leaves the mounted Vue 2 table stale because the source assigns array indices directly. An idle hit subsequently calls `Vue.set` for Mining Power and refreshes the mounted table; leaving and re-entering the tab also remounts it from current values. `PowersPanel.svelte` preserves the stale prestige display and refreshes on the observed idle-hit boundary. The source/Beyond E2E covers all four actions, the disabled already-met case, stale rows, a controlled idle-hit refresh, and tab re-entry; including two full-screen theme comparisons it passed 8/8. The full-screen differential compares the initial, stale-after-prestige, and remounted states in both themes at 1440x900. It exposed the pinned Themes/dark.css selector button:not(.chapter-control button), which colors non-chapter controls #636363 even at rest; Beyond now matches it. The existing unlock/purchase/prestige/save/reload Powers E2E also passed (1/1). Later Power balances and other visual states remain open, so Wisdom and Powers stays In progress. Git metadata is read-only in this managed checkout, so these changes are uncommitted.
 
 Fresh-state certification on 2026-10-03: the trace includes Remix `onCreate`
 and the no-stored-save startup path, alongside the full pinned default-state and
@@ -62,6 +269,57 @@ level to render nontransparent pixels. The focused Chromium suite passed 4/4;
 Remix commit. Mine-rendering pixel combinations remain a separate In-progress
 row. Git metadata is read-only in this managed checkout, so this slice is
 uncommitted.
+
+Fixed-object UI certification on 2026-10-03: a controlled source save raises
+the selectable high-water to ID 71, then the Remix oracle and Beyond each
+traverse the 72 fixed entries through their actual next-object controls. The
+E2E compares the displayed level, name, and all stat/drop text at every ID;
+fixed catalog fields and `MineObject.create` remain independently covered by
+the source-corpus unit tests. The source route helper verifies the pinned clean
+checkout and serves source/dependency bytes read-only. The focused browser test
+passed 1/1 in 27.5 seconds. This certifies fixed-content selection and text;
+Canvas pixel/skin combinations remain in Mine rendering. Git metadata is
+read-only in this managed checkout, so this slice is uncommitted.
+
+Special-object UI differential on 2026-10-03: the pinned Remix and Beyond
+traverse the real next-object controls through ID 214 and compare the displayed
+level, name, and every stat/drop line at all 78 special anchors. The source
+save exposes Power of Wisdom 5 at object ID 169; this found that Beyond showed
+the base Wisdom drop (1) while Remix showed `MineObject.getTotalWisdom()` (5).
+A shared core helper now multiplies the base drop by current Wisdom Power for
+both the visible amount and the awarded resource. The pinned-source unit test
+uses ID 169's captured base amount and checks helper results at Power 0 and 5;
+the full anchor differential passed 1/1 in Chromium (1.1 minutes), and focused
+mining transitions, typecheck, and lint passed. All 78 special source records, selection paths, and visible fields are covered, so Special mine objects is Certified; per-anchor Canvas outputs are covered by the certified live 920-record renderer differential. Wisdom drop screens still lack Linux pixel pairs, so Object drops remains In progress. Git metadata is read-only in this managed checkout, so this validated work is uncommitted.
+
+Number-formatting UI certification on 2026-10-03: a Settings E2E selects all 40
+registered notations with a pinned legacy save holding `$1e100`, then compares
+visible currency output with the pinned corpus for the 38 deterministic
+formatters. A second E2E serves the clean pinned Remix source and dependencies
+read-only, loads the same save in Remix and Beyond, resets the same LCG seed
+before selecting ALL and Zalgo, and compares visible currency/Gems text and
+exact random draw counts. Both focused E2Es passed (2/2); formatter source
+boundaries and seeded output tests also pass. This certifies number-formatting
+behavior; overall screenshot/layout parity stays in its independent matrix
+row. The 32-value fixed-seed sample was not expanded. Git metadata is read-only
+in this managed checkout, so this slice is uncommitted.
+
+Object-drop browser integration on 2026-10-03: two real Beyond Mining clicks
+replay the pinned Planet Coin drop at object ID 90 and Wisdom drop at ID 169.
+Each test loads the captured resource/power/pickaxe state and source RNG
+sequence, verifies that captured damage exceeds the object's full regenerated
+HP, then compares the awarded balance, unchanged Gems, selected object/high-water
+behavior, and exact two-draw count. The source fixtures award one Planet Coin
+and three Wisdom. A visual follow-up adds four post-award source screenshots
+(each object in light and dark at 1440x900) and compares them with Beyond at zero
+pixels. The source capture waits one main-loop frame after loading before the
+click so its Story notification state matches the initialized Beyond view. The
+four focused Chromium cases pass; Linux retains semantic transition checks but
+has no pixel baselines for these states. The visual corpus now has 87 Windows
+sidecars (86 screenshots plus one crop) and 77 Linux sidecars. The drop matrix
+row remains In progress for the missing Linux pixel pairs; broader mine
+rendering is tracked separately. Git metadata is read-only in this checkout, so
+the validated changes remain uncommitted.
 
 Offline elapsed-time formula coverage was re-evaluated against the sampled-domain rule. The ten pinned boundary cases already cover the strict threshold, caps, suppression, zero/negative inputs, and ordered effects; the oracle now also captures a reproducible 16-value elapsed-time sample (xorshift32 seed 0x4f46464c) from pinned loadGame(). Beyond compares each complete load result, clock read, message, and save effect. The magnitude domain is qualified; browser suspension/clock discontinuity remains a separate environment gap, so the broader row stays In progress. No further samples were added to already-qualified formula/RNG areas. reference:update offlineProgressionSemantics, oracle verification, the focused offline unit suite (5/5), Chromium E2E (1/1), traceability (36 areas), docs (85 Markdown files), format, TypeScript/Svelte, lint, and git diff --check passed. Git metadata remains read-only in this managed checkout, so this validated slice is uncommitted.
 
@@ -144,7 +402,10 @@ search boundaries, strict maximum/reduction transitions, small-unit rounding,
 almost/short-of cases, and high-unit remainder decomposition including the
 third-unit count cap. Focused tests compare every source method result in Node
 and Chromium; the existing 32-value fixed-seed formatter sample did not change.
-The notation row remains In progress only for formatter UI/visual evidence.
+At this intermediate checkpoint, the notation row remained In progress for
+formatter UI evidence. The later 2026-10-03 source-route differential now
+certifies notation behavior; overall visual appearance stays in its separate
+matrix row.
 Validation for this slice: `reference-probe verify`, 34 formatting unit tests,
 the pinned formatter Chromium E2E, TypeScript/Svelte checks, docs/traceability,
 targeted Prettier, and `git diff --check` pass. Git metadata remains read-only in
@@ -156,7 +417,7 @@ The Decimal source-boundary slice adds a pinned-runtime fixture for add/sub zero
 
 Beyond's seeded core route replay validates eight captured natural Story route segments through Chapter 6 with complete normalized simulation state and RNG-cursor comparisons at 3,833,896 checkpoints. For each of the three controlled Remix phase-start saves for Chapters 7-9, the fixture pairs three fixed game-RNG seeds with three independent action-sequence seeds (three pairs per save, not a Cartesian product); each pair replays 10,000 actions, totaling nine traces and 90,000 complete `RemixSimulationState`/RNG checkpoints after every action. `pnpm reference:phase-differentials` re-executed the pinned Remix runtime and verified all nine trace hashes; the focused Vitest file passed 10/10. On 2026-10-02, `pnpm check` passed with 34 parity test files / 15 unit and 150 parity tests, lint, strict TypeScript/Svelte checks, and web/site builds. `pnpm test:reference` verified the pinned corpus, Story runtime, all nine differential traces, 47 Canvas goldens, and 32 priority visual states. The complete `pnpm test:e2e` passed 108/108, including the preserved Linux Story cases and the shop/Powers/Mining viewport comparisons. `pnpm test:site` passed 14/14. Chapters 7-9 are controlled-save segments, not natural progression claims.
 
-The notation boundary corpus captures 359 direct inputs for the pinned 40-formatter registry, including 32 generated cases from xorshift32 seed `0x494d4231`, positive/negative Decimal.MAX_VALUE cutoffs, shared formatExponent thresholds, Scientific/Engineering mantissa carries, Standard abbreviation groups/replacements, Mixed Logarithm thresholds, Clock base-12 thresholds and loop/clamp paths, Hex signed/finite encoding and terminal tie-rounding paths, Prime factorization/logarithmic boundary paths, Custom Base Binary/Hexadecimal rounding and carry paths, Infinity precision transition, the Brackets base-six loop, Dots rounding/recursion/cutoff, Roman threshold/fraction/cutoff, Haha Funny reciprocal/base-69 loop, Evil threshold/parity paths, Nice log/sentinel paths, Coronavirus replacement branches, and all Greek Letters symbol/base-49 loop paths, all 16 ALL dispatch slots, Zalgo seeded sentinels, and shared Letters/Cancer base-26 carry boundaries. Source tests map every YesNo base-dispatch path and zero/nonzero outcome plus each `ALL` dispatch slot. Four Zalgo sentinel calls account for the recorded 32 Math.random draws; the focused Zalgo source test compares zero, very-small, under-1000/1000, large finite, and signed sentinel outputs and asserts those 32 seeded calls. The pinned capture records two expected `RangeError: Invalid string length` outputs for negative near-MAX values in the two SI formatters. `pnpm reference:update notationSemantics` updated only this field; `pnpm exec node scripts/reference-probe.mjs verify` passed (359 formatter boundary values). The focused formatter unit suite passed (27/27), reference-corpus parity passed (3/3), and Chromium corpus E2E passed (1/1). The full parity suite passed (34 files, 150 tests). `pnpm test:reference` passed the pinned corpus, Story, 90,000 state/RNG checkpoints, 47 Canvas goldens, Mining/crafting captures, and tracked priority visual hashes. `pnpm parity:traceability` verifies all 36 areas. The later 2026-10-03 formatter audit closes those cited source-method gaps; formatter UI and visual evidence remain open in the current trace map.
+The notation boundary corpus captures 359 direct inputs for the pinned 40-formatter registry, including 32 generated cases from xorshift32 seed `0x494d4231`, positive/negative Decimal.MAX_VALUE cutoffs, shared formatExponent thresholds, Scientific/Engineering mantissa carries, Standard abbreviation groups/replacements, Mixed Logarithm thresholds, Clock base-12 thresholds and loop/clamp paths, Hex signed/finite encoding and terminal tie-rounding paths, Prime factorization/logarithmic boundary paths, Custom Base Binary/Hexadecimal rounding and carry paths, Infinity precision transition, the Brackets base-six loop, Dots rounding/recursion/cutoff, Roman threshold/fraction/cutoff, Haha Funny reciprocal/base-69 loop, Evil threshold/parity paths, Nice log/sentinel paths, Coronavirus replacement branches, and all Greek Letters symbol/base-49 loop paths, all 16 ALL dispatch slots, Zalgo seeded sentinels, and shared Letters/Cancer base-26 carry boundaries. Source tests map every YesNo base-dispatch path and zero/nonzero outcome plus each `ALL` dispatch slot. Four Zalgo sentinel calls account for the recorded 32 Math.random draws; the focused Zalgo source test compares zero, very-small, under-1000/1000, large finite, and signed sentinel outputs and asserts those 32 seeded calls. The pinned capture records two expected `RangeError: Invalid string length` outputs for negative near-MAX values in the two SI formatters. `pnpm reference:update notationSemantics` updated only this field; `pnpm exec node scripts/reference-probe.mjs verify` passed (359 formatter boundary values). The focused formatter unit suite passed (27/27), reference-corpus parity passed (3/3), and Chromium corpus E2E passed (1/1). The full parity suite passed (34 files, 150 tests). `pnpm test:reference` passed the pinned corpus, Story, 90,000 state/RNG checkpoints, 47 Canvas goldens, Mining/crafting captures, and tracked priority visual hashes. `pnpm parity:traceability` verifies all 36 areas. The later source-method audit and 2026-10-03 source-route UI differential close the notation behavior gaps; Number formatting and notations is Certified. Overall screen visuals remain in their separate matrix row.
 
 The traceability audit found and corrected a Beyond-only blur behavior that diverged from Remix: Beyond previously cleared held modifiers on window blur, while the pinned runtime keeps them held until keyup. Source fixtures and Chromium E2E verify that lifecycle, global ArrowLeft/ArrowRight selection, bounds, repeats, default prevention, and focused-input behavior. Function/branch-to-test tables cover all 36 areas, including save/load/recovery, offline timing, themes, visual slices, progression, RNG, and simulation/content. The checker requires source/evidence/assertion rows, existing assertion-test links, pinned Remix references, and the exact Planet Coin HTML gate; Certified rows may retain only qualified formula/RNG samples. Live shop tests cover Money/Gem/Planet Coin/Wisdom dispatch and the Planet Coin tab 89/90 gate; browser tests cover Story previews not mining and zero active damage. The pinned RNG inventory includes seeded and direct Math.random call sites, including Blacksmith Expertise. Pickaxe name boundaries are now captured in 119 source crafts; Chromium compares all exact outputs because Node and Chromium Math.log can differ at an exact quality threshold.
 
@@ -304,3 +565,5 @@ Malformed-save compatibility closeout on 2026-10-02: the pinned probe now record
 Trace size, CI time, and Linux closeout on 2026-10-01: the Chapter 6 route trace was made compact and the long source check was moved out of CI. The tracked trace shrank from 43 MB to 1.9 MB: every event stays, 1,660 of 3,751,241 records keep the full state/RNG checkpoint, and each kept record carries a SHA-256 chain over every checkpoint up to it. The Beyond replay in `pnpm check` still compares every step and passed in 189 seconds on Ubuntu WSL (280 seconds with the full trace). The full trace's hash is pinned as `sourceRawSha256`. `extract-story-runtime --check`, `--check-pixel-goldens`, and therefore `pnpm test:reference` no longer recapture the Chapter 6 route, which takes hours; `pnpm reference:story-chapter6:check` does it on request. The 32 priority visual cases gained Linux source screenshots, so Linux CI compares them at zero pixels; the corpus has 81 Windows and 77 Linux sidecars. These changes were committed with the parity-depth follow-up from a separate worktree; each commit passed `pnpm check` in Ubuntu 24.04 WSL, and the final tree passed the Linux CI sequence (docs, Skills, research, `pnpm check`, `pnpm test:reference`, E2E, and site tests) before the push.
 
 Craft-panel Linux and commit closeout on 2026-10-03: both controlled full craft-panel screenshots gained `-linux` source baselines from Ubuntu 24.04 WSL, so Linux E2E now compares them at zero pixels; the corpus has 83 Windows and 79 Linux sidecars, and only the natural Chapter 3-6 captures are Windows-only. The three unseeded phase-differential traces that the multi-seed traces replaced were removed. Each commit of this batch passed `pnpm check` in Ubuntu 24.04 WSL, and the final tree passed the Linux CI sequence before the push.
+
+Drop-screen Linux and commit closeout on 2026-10-04: the four post-award Planet Coin/Wisdom screenshots gained `-linux` source baselines, stable across four repeated Ubuntu 24.04 WSL captures, so Linux E2E compares them at zero pixels; the corpus has 91 Windows and 83 Linux sidecars. The four Planet Coin shop-gate screenshots stay Windows-only because the pinned Remix renders the level-90 light gate on Linux in one of two states that differ by one pixel (at 697,152) across repeated runs. Linux validation also found that the new live differentials made `pnpm test:e2e` take about 22 minutes instead of about 3, with three tests failing on Linux. The two minutes-long tests (every-card purchase routing and finite cap boundaries) are now tagged `@slow` and run only through `pnpm test:e2e:slow`; they timed out on Linux and need a faster formulation. The full-screen Powers prestige comparison is Windows-only because Linux shows a one-pixel antialiasing difference; the Wisdom icon animation that caused most of that mismatch is now frozen on both pages. Each commit of this batch passed `pnpm check` in Ubuntu 24.04 WSL, and the final tree passed the Linux CI sequence before the push.

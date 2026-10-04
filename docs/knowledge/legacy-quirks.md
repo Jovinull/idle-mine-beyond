@@ -21,6 +21,76 @@ These are confirmed in code at the pinned revision. Player-visible effects shoul
 | No formal versioned schema/migration layer is evident in the inspected save path                                                                                                   | Scripts/Define/functions.js                                                                 | Recovery/compatibility concern; full audit remains open                                                               |
 | No automated test setup exists in the pinned Remix repository                                                                                                                      | Repository contents                                                                         | Verification gap                                                                                                      |
 
+## Upgrade group selection is serialized but not restored
+
+**Verified legacy behavior (pinned source and paired Chromium):** upgrade-tab
+buttons write `game.settings.upgradeTab`, and the selected list reads that live
+field. Leaving Mining for Story and returning preserves the selected Gem or
+Planet Coin list. `getSaveString()` serializes the field, but `loadGame()` does
+not assign it; a fresh runtime starts at the `game.js` default, Money, even when
+the exported JSON contains `gems` or `planetcoins`. Beyond stores the live
+selection in application settings, preserves it across panel remounts, includes
+it in legacy export, and keeps the source's fresh-load reset behavior. The paired
+test is `tests/e2e/upgrade-tab-state-differential.spec.ts`.
+
+## Finite upgrade cap styling for saved overshoots
+
+**Verified legacy behavior (pinned source and live browser differential):** the
+generic upgrade component dims a card when `!canAfford()` or when
+`level === maxLevel`; `Upgrade.buy()` separately rejects a purchase unless
+`level < getMaxLevel()`. Gem Blacksmith Skill is capped at 50. With ample Gems,
+level 50 is dimmed and cannot be bought; a loaded level 51 is bright and shows
+`Max` for price, yet its click still cannot change the level. Preserve this
+equality/strict-less-than mismatch for imported saves. Source display cases 50
+and 51 are in `upgradeSemantics`; the live differential is
+`tests/e2e/upgrade-cap-quirk.spec.ts`.
+
+## Powers table refresh depends on how Power values change
+
+**Verified legacy behavior (pinned source and paired Chromium):**
+`Scripts/Components/powers-table.js:prestigePower` writes the current and next
+Power directly to array indices on the same `pow.values` array. Vue 2 does not
+observe those indexed array writes, so the mounted table continues displaying
+its old values, effect text, and disabled state even though
+`game.powers.data.values` has changed. The idle loop and active-click handler
+update Mining Power with `Vue.set`; when an idle hit calls that update, Vue
+refreshes the mounted table from the current values. Leaving the Powers tab
+also destroys the component; entering it again recreates the table from the
+updated values.
+`tests/e2e/powers-prestige-differential.spec.ts` compares all four prestige
+indices and the already-met no-op against the pinned runtime. It checks the
+stale mounted display after prestige, the later update after a controlled idle
+hit, and refresh after tab re-entry. Preserve these update triggers and their
+timing in Beyond; do not force an immediate refresh from the prestige action.
+
+## Dark-theme button selector colors non-chapter controls at rest
+
+**Verified legacy behavior (pinned CSS and paired Chromium screenshots):**
+`Themes/dark.css` declares `button:not(.chapter-control button)` with a
+`#636363` background. The selector also matches when a button is not hovered,
+so non-chapter-control buttons in the Powers screen use the hover gray at rest;
+chapter navigation controls are excluded and retain their separate styling.
+The paired full-screen test exposed Beyond's prior `#4d4d4d` base-color
+mismatch and verifies initial, stale-after-prestige, and remounted Powers
+screens in both themes. Preserve this broad selector behavior during parity.
+
+## Upgrade modifier labels update on reactive renders
+
+**Verified legacy behavior (pinned source and paired Chromium):**
+`Scripts/main.js:onkeydown/onkeyup` mutates the global `keymap`, and
+`Scripts/utils.js:Utils.keyPressed()` reads it directly. The `index.html`
+multibuy labels depend on that function, but keymap changes are not Vue-reactive:
+pressing or releasing Shift/Control alone leaves the rendered label state
+unchanged. A later reactive render, such as moving the highlighted upgrade,
+recomputes the labels from the current keymap. The pinned-source differential
+freezes simulation time and compares immediate keydown, hover refresh, keyup
+before refresh, and the next hover refresh for Shift, Control, and both together.
+Beyond preserves this delayed display update; purchase input still reads the
+currently pressed keys and Control retains precedence. The same differential
+found and corrected a dark-theme CSS specificity mismatch: an active multibuy
+label remains green (`#00bc00`) in Remix, while only inactive labels use the dark
+theme gray. Coverage: `tests/e2e/upgrade-affordability-differential.spec.ts`.
+
 ## Reported player concerns (not specifications)
 
 The bootstrap research records community criticism about long gem grinds, dud frustration, autoclicker advantage, one-hit farming, story pacing, background-tab progress, and save loss. These reports are valuable research leads, not proof of exact mechanics. Preserve them in the post-parity backlog with source links and do not change parity behavior based on them.
@@ -75,6 +145,8 @@ The current object generator consumes four draws per post-Universe object, so th
 
 **Verified source and controlled runtime behavior:** `getSaveString()` encodes `JSON.stringify(game)` with `encodeURIComponent`, then `escape`, then `btoa`. `loadGame()` applies `atob`, `decodeURIComponent`, then `unescape` before `JSON.parse`. Because `unescape` runs after the UTF-8 percent bytes have been decoded into `%HH` escapes, those bytes become individual U+00xx characters. The controlled pickaxe-name round-trip in `saveSemantics` changes `Probe — Å Ω →` into the UTF-8 byte characters instead of preserving the original text; `decodedMatchesJson` is false for the captured starting save as well. Treat this as a legacy defect that remains part of observed compatibility behavior until a documented exception is approved.
 
+**Verified decoder edge behavior (2026-10-04):** controlled single-URI-encoded inputs sent through the real pinned `loadGame()` path show that its native `unescape()` decodes lowercase `%u0041` to `A` and `%AB` to U+00AB, accepts uppercase hex digits, leaves uppercase `%U0041` unchanged, and leaves malformed `%u00G1`, incomplete `%A`/`%u003`, and a lone `%` unchanged. It consumes exactly four hex digits for `%u` and two for `%`, leaves following characters untouched, and preserves the UTF-16 pair in adjacent `%uD83D%uDE00` tokens. These wrappers probe accepted decoder behavior and are not encodings emitted by `getSaveString()`. The exact inputs and imported UTF-16 results are pinned in `saveSemantics.codecBoundaryVectors` and compared by the Node and Chromium save-codec tests.
+
 ## Partial legacy save fields preserve mixed defaults
 
 **Verified source and controlled runtime behavior:** for the deliberately minimal save `{ "story": {} }`, missing resource fields pass through `new Decimal(undefined)` before `loadVal`, so they become zero rather than using the apparent alternate value (including the fresh-game 5-Gem value). Missing Story subfields default to page 0, zero notifications, highest unlocked -1, and scroll 0. Missing Gem and Planet Coin upgrade groups reset their levels; missing settings, Money upgrades, Powers, and pickaxe groups leave the preexisting runtime values untouched. The seeded sentinel results are in `saveSemantics.missingOptionalGroups`. This does not specify all historical saves or malformed-input behavior.
@@ -84,6 +156,8 @@ Present-but-empty groups behave differently from absent groups. Empty `upgrades`
 **Verified source and controlled runtime behavior:** empty Base64 and valid Base64 containing invalid JSON throw `SyntaxError` without an alert. Invalid Base64 and Base64 containing an invalid percent escape trigger an `Error loading Game: ` alert and then still throw `SyntaxError` because `loadGame()` continues to `JSON.parse(undefined)`. A syntactically valid JSON object without `story` throws `TypeError` only after resource and mine-level fields have already been assigned. `saveSemantics.loadErrors` captures these partial effects and ordering; `saveSemantics.base64Variants` confirms that ASCII whitespace and omitted padding are accepted.
 
 The additional `saveSemantics.fieldApplicationErrors` cases exercise a JSON `null` root, null Story/Settings/upgrade/Powers/pickaxe groups, and an unknown upgrade key. Each throws `TypeError`, but the state at failure depends on source assignment order: a null root changes nothing; null Story follows resource/progress assignment; null Settings follows Story assignment; null upgrades follow theme application but precede missing Gem/Planet Coin resets; null Powers values and null pickaxe occur after those resets. These are controlled source failures, not a complete malformed-save catalog. Preserve the observed ordering in evidence and do not silently treat the loader as schema-validated or transactional.
+
+**Verified malformed-save messages (2026-10-04, pinned Chromium):** `loadGame()` alerts with `Error loading Game: ${name}: ${message}` after Base64/URI decode failure, then continues into `JSON.parse(undefined)` and throws its `SyntaxError`; empty input and valid Base64 containing invalid JSON throw without an alert. The pinned Base64 message is `Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded.`, and the URI message is `URI malformed`. `saveSemantics.loadErrors` records these alert and parse messages for eleven cases. The web importer matches them in Chromium; intrinsic error wording may differ in other JavaScript engines.
 
 ## Story notification high-water gaps
 

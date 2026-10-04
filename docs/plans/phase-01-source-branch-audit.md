@@ -1,6 +1,6 @@
 # Phase 1 — Source-to-test branch audit
 
-Status: First-pass function/branch inventory complete across all 36 matrix areas (2026-10-02); Phase 1 remains in progress. Big-number math and serialization, Random distributions and RNG, Fresh simulation-state initialization, Simulation action composition, Active and idle damage, and Procedural mine objects are Certified; formula/RNG samples qualify only after the boundary, fixed-seed, and differential criteria in the trace-map README pass. Other save/state/visual gaps remain open.
+Status: First-pass function/branch inventory complete across all 36 matrix areas (2026-10-02); Phase 1 remains in progress. Eleven matrix rows are Certified: Big-number math and serialization, Random distributions and RNG, Fresh simulation-state initialization, Simulation action composition, Active and idle damage, Fixed mine objects, Special mine objects, Procedural mine objects, Mine rendering and compositing, Number formatting and notations, and Progression route and phase replay. Formula/RNG samples qualify only after the boundary, fixed-seed, and differential criteria in the trace-map README pass. Other save/state/visual gaps remain open.
 
 ## Outcome
 
@@ -81,6 +81,18 @@ fixture hashes and complete per-action state/RNG comparisons.
 - Browser tests exercise live purchase routing for Money, Gems, Planet Coins,
   and Wisdom. The Planet Coin shop is absent at mine high-water 89 and visible
   at 90. Focused unit and Chromium tests pass.
+- The pinned `index.html` Planet Coin header/tab gate now has four additional
+  1440x900 source/Beyond screenshots at high-water 89/90 in light and dark.
+  The priority E2E checks the absent/present tab and exact screenshots. This
+  closes the selected gate-screen visual branch; other shop states remain open.
+- Drop outcomes have live source-seeded Mining clicks for the pinned Planet Coin
+  object (ID 90) and Wisdom object (ID 169), with exact balances, unchanged Gem
+  balance, high-water/selection behavior, and RNG draw counts compared to the
+  source cases. Four full-screen post-award source/Beyond screenshots for those
+  objects in both themes match at zero pixels on Windows. The pinned source
+  capture waits one main-loop frame after loading so Story notification state
+  matches the Beyond visible initialized state. Linux retains semantic coverage
+  but has no pixel pairs for these four screens; the drop row remains In progress.
 - Trace tables now cover all 36 parity-matrix entries. The checker requires an
   inventory and an existing test link per mapped path, recognizes multiple
   headed tables within one area, resolves pinned source files/functions, and
@@ -156,3 +168,15 @@ fixture hashes and complete per-action state/RNG comparisons.
   Chromium web E2E drives the real RAF path, checks the same visible result and
   persisted pre-refresh state, and asserts the seeded draw count. The broader
   focused suites and project checks are recorded in `project-status.md`.
+- Upgrade card/detail visuals compare all 22 Money, Gem, and Planet Coin cards
+  at levels 0 and 1 in both themes at 1440x900. The same source-paired test now
+  compares the complete viewport for each shop group, level, and theme (12
+  states), plus zero-resource, Money below-price, and exact-price boundaries
+  for all three groups in both themes (14 states). This exposed a dark Money
+  level-1 mismatch: Remix leaves the Gem
+  Waster craft-cost button transparent at rest, while Beyond inherited the
+  generic dark button background. The source `main.css` default and dark-theme
+  hover override are now reproduced in the Svelte page. All four focused full-
+  screen scenarios passed after the fix. Other resource balances, modifier
+  hints, and broader application states remain open; finite formula samples do
+  not block their certification.

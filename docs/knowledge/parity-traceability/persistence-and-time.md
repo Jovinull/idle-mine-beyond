@@ -7,21 +7,38 @@
   base64 encodes the result. `functions.loadGame(saveString, decode, nooffline)`
   has null-input, encoded/raw-input, decode-catch, JSON-parse, and application
   branches. Its decode catch alerts and continues into parsing.
-- **Covered:** source codec round trips and malformed base64/URI/JSON cases in
+- **Covered:** source codec round trips and malformed Base64/URI/JSON cases in
   `tests/parity/save-codec.test.ts` and `tests/e2e/save-codec.spec.ts`; complete
   state shape and captured vectors in `tests/parity/legacy-save-export.test.ts`
-  and `tests/fixtures/parity/remix-reference-corpus.json`.
-- **Sampled:** inputs beyond the captured malformed encodings and the exact native
-  browser `escape`/Unicode behavior domain remain open. Do not infer historical
-  schema support from the current serializer.
+  and `tests/fixtures/parity/remix-reference-corpus.json`. The Settings import
+  E2E checks all eleven source-captured malformed/error cases against the exact
+  Chromium alert and parse messages and verifies failed imports do not write.
+- **Boundary evidence (2026-10-04):** six canonical captures call the pinned
+  live `functions.getSaveString()` and then `functions.loadGame()` using the
+  full source-shaped fresh save. They cover the legacy `escape` safe set and
+  encoded punctuation, the UTF-8 two-, three-, and four-byte lower/upper
+  boundaries, JSON-escaped lone surrogates, and JSON control escapes. Eleven
+  additional controlled inputs pass a single-URI-encoded wrapper (not emitted
+  by `getSaveString()`) through the real source `loadGame()` decoder to exercise
+  native `unescape()` branches: `%u0041` becomes `A`, `%U0041` remains literal,
+  uppercase hex is accepted, `%AB` becomes U+00AB, and malformed `%u00G1`
+  remains literal. Incomplete `%`, `%A`, and `%u003` tokens remain literal; `%ABF` decodes only `%AB`, `%u0041B` decodes only `%u0041`, and adjacent `%uD83D%uDE00` tokens produce the corresponding UTF-16 surrogate pair. All seventeen cases pin encoded/decoded hashes and UTF-16 code
+  units; the controlled wrapper is an import-path probe, not a canonical export
+  format. Synthetic codec vectors cover all three Base64 output padding
+  classes. The UTF-8 byte-to-code-unit corruption on canonical import is
+  observed legacy behavior and must be preserved.
+- **Open input domain:** arbitrary malformed external byte strings beyond the
+  named Base64/URI/JSON error classes are not exhaustively enumerated. This is
+  not a formula/RNG sample claim. Do not infer historical save-schema support
+  from the current serializer.
 
 ### Save codec function and branch trace
 
-| Pinned Remix function/path and branch                                                                                                                                           | Source evidence                                                                                                      | Beyond assertion                                                                                                                                                                                 |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Scripts/Define/functions.js:getSaveString`: JSON stringify → URI encode → legacy `escape` → Base64 encode, including Unicode round-trip                                        | `saveSemantics.codecVectors` ASCII and Unicode inputs                                                                | `tests/parity/save-codec.test.ts` compares exact encoded bytes and decoded JSON; `tests/e2e/save-codec.spec.ts` verifies the vectors in Chromium                                                 |
-| `loadGame(saveString, decode, nooffline)`: explicit string versus localStorage default; absent save skips application; `decode` omitted/true decodes and false accepts raw JSON | `saveSemantics.codecVectors`, `saveApplicationSemantics`, and browser storage cases                                  | `tests/parity/save-codec.test.ts` exercises encoding/decoding; `tests/parity/legacy-save-application.test.ts` and `tests/e2e/remix-app.spec.ts` compare direct/imported and stored startup paths |
-| `loadGame` decode catch and subsequent JSON parse: Base64/URI decode error alerts, malformed JSON throws, valid JSON applies                                                    | `saveSemantics.loadErrors` includes empty/invalid Base64, invalid URI, invalid JSON, and partial application failure | `tests/parity/save-codec.test.ts` and `tests/parity/legacy-save-application.test.ts` assert alert/error and partial effects                                                                      |
+| Pinned Remix function/path and branch                                                                                                                                           | Source evidence                                                                                                                                                                                                   | Beyond assertion                                                                                                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Scripts/Define/functions.js:getSaveString`: JSON stringify → URI encode → legacy `escape` → Base64 encode, including Unicode round-trip                                        | `codecVectors` covers all Base64 output padding classes; six canonical `codecBoundaryVectors` call live `getSaveString`/`loadGame`, and eleven controlled vectors exercise native `unescape()` through `loadGame` | `tests/parity/save-codec.test.ts` compares source hashes and UTF-16 boundary results for both wrappers; `tests/e2e/save-codec.spec.ts` compares the same vectors in Chromium                     |
+| `loadGame(saveString, decode, nooffline)`: explicit string versus localStorage default; absent save skips application; `decode` omitted/true decodes and false accepts raw JSON | `saveSemantics.codecVectors`, `saveApplicationSemantics`, and browser storage cases                                                                                                                               | `tests/parity/save-codec.test.ts` exercises encoding/decoding; `tests/parity/legacy-save-application.test.ts` and `tests/e2e/remix-app.spec.ts` compare direct/imported and stored startup paths |
+| `loadGame` decode catch and subsequent JSON parse: Base64/URI decode error alerts, malformed JSON throws, valid JSON applies                                                    | `saveSemantics.loadErrors` records exact Chromium decode-error name/message, alert text, parse-error name/message, and partial application failure                                                                | `tests/parity/save-codec.test.ts`, `tests/e2e/save-codec.spec.ts`, and `tests/e2e/save-import-error.spec.ts` compare decoder messages, Settings alerts, parse errors, and no-write behavior      |
 
 The above are the codec and input-selection branches in the pinned source.
 Other arbitrary byte strings remain an input-domain gap, not an unlisted branch.
@@ -37,8 +54,10 @@ Other arbitrary byte strings remain an input-domain gap, not an unlisted branch.
   `lastActive`. `hardReset` repeats its confirmation up to three times.
 - **Covered:** full current save, absent/empty groups, sixteen source-ordered
   partial-application failures and exact errors in
-  `tests/parity/legacy-save-application.test.ts`; decode failure and
-  `nooffline` behavior in `tests/parity/legacy-save-offline-application.test.ts`;
+  `tests/parity/legacy-save-application.test.ts`; exact source-captured decode,
+  alert, and parse messages plus no-write Settings behavior in
+  `tests/e2e/save-import-error.spec.ts`; decode failure and `nooffline` behavior
+  in `tests/parity/legacy-save-offline-application.test.ts`;
   recovery file/slot branches in
   `tests/parity/remix-beyond-recovery-file.test.ts`, session coverage in
   `tests/parity/remix-web-game-session.test.ts`, and recovery flows in
@@ -67,25 +86,35 @@ all mapped loader and reset control-flow paths have source-backed assertions.
 
 - **Remix source branches:** `getSaveString` and `saveGame` use the source
   encoder and update `lastActive`; craft replacement may save after logging;
-  `loadGame` does not restore transient tab selections or the message log.
+  `loadGame` does not apply the serialized primary tab, upgrade group, or
+  message log. A current runtime keeps its live settings, while a fresh runtime
+  starts from the game defaults.
 - **Covered:** exact encoded strings and all legacy export fields from fresh,
   controlled, and four gameplay-generated Chapter 3–6 saves in
   `tests/parity/legacy-save-export.test.ts` and
   `tests/parity/long-running-save-roundtrip.test.ts`; Beyond v1 reload and
   session selections are asserted there; craft log/save order in
   `tests/parity/pickaxe-crafting.test.ts` and `tests/e2e/remix-app.spec.ts`.
+  `tests/e2e/upgrade-persistence-window.spec.ts` confirms a successful upgrade
+  purchase changes the live state without writing either save slot, and a
+  reload before periodic autosave restores the prior level in pinned Remix and
+  Beyond. `tests/e2e/upgrade-tab-state-differential.spec.ts` confirms that the
+  live group survives leaving and returning to Mining, is included by export,
+  and is not restored into a fresh runtime from the serialized field.
 - **Sampled:** the checked route endpoint set is four saves, not every valid Remix
   runtime state. Cross-browser save-byte behavior outside pinned Chromium is
   unverified.
 
 ### Export/persist function and branch trace
 
-| Pinned Remix function/path and branch                                                                                                  | Source evidence                                                  | Beyond assertion                                                                                                                                               |
-| -------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Scripts/Define/functions.js:saveGame`: set `lastActive` from current clock, write encoded save under `IdleMine`, then append save log | `saveExportSemantics` and captured save application event order  | `tests/parity/legacy-save-export.test.ts` compares exact full save object/bytes; `tests/e2e/remix-app.spec.ts` checks the persisted browser save and UI action |
-| `exportGame`: populate Settings export field without changing the serialized save fields                                               | `saveExportSemantics` fresh/controlled snapshots                 | `tests/parity/legacy-save-export.test.ts` compares exported fields and bytes; `tests/e2e/save-codec.spec.ts` exercises browser export/import controls          |
-| Loading an exported save restores persisted fields but not transient selected tab or message log                                       | source export/load round-trip records and generated route saves  | `tests/parity/legacy-save-export.test.ts` compares round-trip projection and transient-state exclusions                                                        |
-| Craft replacement invokes source save after the success log; dud/insufficient attempts do not persist                                  | `pickaxeCraftingTransactions` event order and per-save snapshots | `tests/parity/pickaxe-crafting.test.ts` compares events and intermediate persisted state; `tests/e2e/remix-app.spec.ts` checks the live craft path             |
+| Pinned Remix function/path and branch                                                                                                                          | Source evidence                                                                                                                     | Beyond assertion                                                                                                                                                 |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Scripts/Define/functions.js:saveGame`: set `lastActive` from current clock, write encoded save under `IdleMine`, then append save log                         | `saveExportSemantics` and captured save application event order                                                                     | `tests/parity/legacy-save-export.test.ts` compares exact full save object/bytes; `tests/e2e/remix-app.spec.ts` checks the persisted browser save and UI action   |
+| `exportGame`: populate Settings export field without changing the serialized save fields                                                                       | `saveExportSemantics` fresh/controlled snapshots                                                                                    | `tests/parity/legacy-save-export.test.ts` compares exported fields and bytes; `tests/e2e/save-codec.spec.ts` exercises browser export/import controls            |
+| `loadGame` leaves live tab/group selection untouched; a fresh runtime uses default `upgradeTab: money` even if an exported save contains `gems`/`planetcoins`  | pinned loader omits `upgradeTab`; `game.js` initializes it to `money`                                                               | `tests/e2e/upgrade-tab-state-differential.spec.ts` checks panel remount, exported group, and fresh-page reset against Remix                                      |
+| Loading an exported save restores persisted fields but not transient selected tab or message log                                                               | source export/load round-trip records and generated route saves                                                                     | `tests/parity/legacy-save-export.test.ts` compares round-trip projection and transient-state exclusions                                                          |
+| Craft replacement invokes source save after the success log; dud/insufficient attempts do not persist                                                          | `pickaxeCraftingTransactions` event order and per-save snapshots                                                                    | `tests/parity/pickaxe-crafting.test.ts` compares events and intermediate persisted state; `tests/e2e/remix-app.spec.ts` checks the live craft path               |
+| `Upgrade.buy` mutates the live balance/level without immediate `saveGame`; a reload before `update` crosses strict `saveTimer > 60` restores the previous save | Pinned `Scripts/upgrade.js:Upgrade.buy` has no save call; `Scripts/main.js:update` saves only when its accumulated timer is over 60 | `tests/e2e/upgrade-persistence-window.spec.ts` compares live purchase, unchanged legacy/Beyond storage, and the reloaded level against the pinned browser oracle |
 
 The source save/export branches above are covered. Arbitrary valid runtime
 states and non-Chromium browser byte behavior remain outside the finite fixture

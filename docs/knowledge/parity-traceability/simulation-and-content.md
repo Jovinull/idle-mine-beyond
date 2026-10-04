@@ -103,15 +103,21 @@ Remix source functions.
   near-volume cutoffs, remainder decomposition, and adjective scaling; plus the
   mapped standard, scientific/engineering, mixed-log, Infinity, Dots, Brackets,
   Hex, Clock, Prime, Roman, Letters, Cancer, and custom-base boundaries.
-- **Evidence gap:** notation class-specific source branches are mapped and
-  source-tested. Formatter UI/visual evidence remains open; it is independent
-  from the qualified formula/output sample and is the remaining notation-row
-  gate.
+- **Web integration evidence:** `tests/e2e/remix-app.spec.ts` loads a pinned
+  legacy-save template with `$1e100`, selects every Settings notation, and
+  checks the visible header currency against the pinned output for the 38
+  deterministic notations. A second E2E opens the clean pinned Remix checkout
+  through a read-only browser route and Beyond from the same legacy save, resets
+  the same LCG seed before selecting `ALL` and `Zalgo`, then compares visible
+  currency/Gems text and exact random draw counts. The renderer integration and
+  stochastic UI paths match. General page visual parity remains tracked in its
+  own matrix area.
 
 ### Formatter function and branch trace
 
 | Pinned Remix function/path and branch                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Source evidence                                                                                                                                                                                                                                                                     | Beyond assertion                                                                                                                                                                                                                                                                                               |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `index.html` Settings notation `<select @input>` assignment and `functions.js:changeTab('settings')`/`refreshNumberSelect` delayed 50 ms selection restoration                                                                                                                                                                                                                                                                                                                                                                                                                                              | Pinned 40-entry `game.numberFormatters`; `numberFormatters[$event.target.selectedIndex]` updates the active formatter and `settings.numberFormatterIndex`; source settings-tab transition schedules the DOM selection restore                                                       | `tests/e2e/remix-app.spec.ts` compares every visible deterministic output to the pinned corpus and compares pinned Remix/Beyond currency/Gems text plus exact LCG draws for `ALL`/`Zalgo`; `tests/e2e/remix-oracle-route.ts` rejects dirty/unpinned references and serves source/dependency bytes read-only    |
 | `Scripts/Define/functions.js:formatNumber` Standard/Scientific/Engineering whitelist, limit comparison, and under-1000 formatting                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | `notationOutputs` plus direct boundary inputs                                                                                                                                                                                                                                       | `packages/formatting/src/index.test.ts` compares pinned outputs and both sides of the limit; `tests/e2e/foundation.spec.ts` checks browser formatting                                                                                                                                                          |
 | `Scripts/adcommunitynotations.js:formatExponent` shared 99,999/100,000/100,001 and 999,999,999/1,000,000,000/1,000,000,001 thresholds; exponent and prefix transitions                                                                                                                                                                                                                                                                                                                                                                                                                                      | `notationSemantics` captured shared thresholds                                                                                                                                                                                                                                      | `packages/formatting/src/index.test.ts` checks each threshold for all registered formatters                                                                                                                                                                                                                    |
 | `Scripts/customnotations.js` Standard abbreviation, SI groups, padding, prefix tables, and suffix fallback                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Corpus boundaries at group changes and terminal suffixes                                                                                                                                                                                                                            | `packages/formatting/src/index.test.ts` checks prefix replacements, padding, and fallback boundaries                                                                                                                                                                                                           |
@@ -139,16 +145,23 @@ Remix source functions.
   multiple color fallback behavior.
 - **Covered:** all fixed definitions in the pinned catalog are compared as
   source records; the bounded corpus is not a claim about procedural IDs.
-- **Scope:** current app rendering and interactions for every fixed object are
-  separate visual/integration evidence.
+- **Covered integration:** `tests/e2e/remix-app.spec.ts` raises a controlled
+  save's high-water to the last fixed ID, traverses all 72 entries with the real
+  next-object buttons in both pinned Remix and Beyond, and compares the level,
+  name, and every visible stat/drop line at each step. It also separately
+  verifies the fresh Mud click. The controlled high-water is a selection
+  harness, not a natural progression claim.
+- **Scope:** this certifies fixed-object selection and visible content. Canvas
+  pixels, skins, and layer combinations remain in the Mine rendering row.
 
 ### Fixed-object function and branch trace
 
-| Pinned Remix function/path and branch                                                                          | Source evidence                                                                              | Beyond assertion                                                                                        |
-| -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `Scripts/Define/game.js` fixed `mineObjects` definitions, including named content and base progression records | `mineObjectCatalog.fixed` source capture                                                     | `tests/parity/reference-corpus.test.ts` compares fixed catalog records against the pinned corpus        |
-| `Scripts/mineobject.js:MineObject.create` reconstruction from saved fields                                     | Captured object snapshots preserve name, HP, defense, value, colors, skin, config, and drops | `tests/parity/mine-object-generation.test.ts` checks reconstructed fixed object outputs                 |
-| `Scripts/mineobject.js:MineObject` empty-color, one-color, and multi-color normalization                       | Source constructors expose each color-count branch                                           | `tests/parity/mine-object-generation.test.ts` compares the normalized colors in source-captured records |
+| Pinned Remix function/path and branch                                                                                                                                               | Source evidence                                                                                      | Beyond assertion                                                                                                                                                                                                                                           |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Scripts/Define/game.js` fixed `mineObjects` definitions, including named content and base progression records                                                                      | `mineObjectCatalog.base` source capture                                                              | `tests/parity/reference-corpus.test.ts` compares fixed catalog records against the pinned corpus                                                                                                                                                           |
+| `Scripts/mineobject.js:MineObject.create` reconstruction from saved fields                                                                                                          | Captured object snapshots preserve name, HP, defense, value, colors, skin, config, and drops         | `tests/parity/mine-object-generation.test.ts` checks reconstructed fixed object outputs                                                                                                                                                                    |
+| `Scripts/mineobject.js:MineObject` empty-color, one-color, and multi-color normalization                                                                                            | Source constructors expose each color-count branch                                                   | `tests/parity/mine-object-generation.test.ts` compares the normalized colors in source-captured records                                                                                                                                                    |
+| `Scripts/Define/functions.js:setMineObjectLevel` high-water guard and `nextMineObjectLevel`; `getMineObject` special-ID miss then `id < game.mineObjects.length` fixed-array branch | `objects` captures all 72 base entries; pinned `index.html` exposes previous/next selection controls | `tests/e2e/remix-app.spec.ts` traverses IDs 0-71 in both runtimes and compares displayed level, name, stats, and drop text; `tests/parity/reference-corpus.test.ts` and `tests/parity/mine-object-generation.test.ts` compare the complete catalog records |
 
 ## Special mine objects
 
@@ -157,16 +170,27 @@ Remix source functions.
   lookup. Special anchors also affect the next procedural object's predecessor.
 - **Covered:** each special record in the pinned catalog is retained and
   compared; exact-ID precedence and adjacent procedural lookups are tested.
-- **Scope:** complete rendered coverage of special skins/states remains in the
-  visual map.
+- **Covered integration:** `tests/e2e/priority-visual.spec.ts` loads special IDs
+  89 and 90 at the Planet Coin shop boundary, asserts their source names and
+  compares the complete screen in both themes at zero pixels on Windows.
+  `tests/e2e/remix-app.spec.ts` also traverses IDs 0-214 through the actual
+  next-object controls in pinned Remix and Beyond, comparing the displayed
+  level, name, and every stat/drop line at all 78 special IDs.
+- **Scope:** special-object selection and visible text are compared for all 78
+  anchors. Full-screen pixel baselines still cover only IDs 89/90; per-anchor
+  Canvas pixel combinations belong to the separate Mine rendering matrix row.
+- **Status:** all 78 source records, exact-ID selection, adjacent-anchor
+  generation, and live visible fields are covered. This special-object content
+  row is Certified; Canvas pixel combinations remain in Mine rendering.
 
 ### Special-object function and branch trace
 
-| Pinned Remix function/path and branch                                                                  | Source evidence                                    | Beyond assertion                                                                                      |
-| ------------------------------------------------------------------------------------------------------ | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `Scripts/Define/game.js` special-object registry and special IDs                                       | `mineObjectCatalog.special` source capture         | `tests/parity/reference-corpus.test.ts` compares registry ordering and exact definitions              |
-| `Scripts/Define/functions.js:getMineObject` exact special-ID match before the fixed/generated fallback | Catalog cases at special IDs and neighboring IDs   | `tests/parity/mine-object-generation.test.ts` asserts exact special selection and neighboring results |
-| `Scripts/Define/functions.js:generateMineObject` most recent special anchor used as predecessor        | Captured objects immediately after special anchors | `tests/parity/mine-object-generation.test.ts` compares generated fields after anchor changes          |
+| Pinned Remix function/path and branch                                                                  | Source evidence                                    | Beyond assertion                                                                                        |
+| ------------------------------------------------------------------------------------------------------ | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `Scripts/Define/game.js` special-object registry and special IDs                                       | `mineObjectCatalog.special` source capture         | `tests/parity/reference-corpus.test.ts` compares registry ordering and exact definitions                |
+| `Scripts/Define/functions.js:getMineObject` exact special-ID match before the fixed/generated fallback | Catalog cases at special IDs and neighboring IDs   | `tests/parity/mine-object-generation.test.ts` asserts exact special selection and neighboring results   |
+| `index.html` next-object control selects each exact special ID through `nextMineObjectLevel`           | All 78 ordered IDs in `mineObjectCatalog.special`  | `tests/e2e/remix-app.spec.ts` traverses both runtimes and compares visible object fields at each anchor |
+| `Scripts/Define/functions.js:generateMineObject` most recent special anchor used as predecessor        | Captured objects immediately after special anchors | `tests/parity/mine-object-generation.test.ts` compares generated fields after anchor changes            |
 
 ## Procedural mine objects
 
@@ -204,23 +228,43 @@ Remix source functions.
 
 - **Remix source branches:** `MineObject.damage` breaks only at HP `<= 0`, pays
   money/high-water, advances the selected object, then rolls gem, Planet Coin,
-  and Wisdom drops in source order using strict `<` comparisons. Last-damageable
-  gem bonus and resource maxima are observable outcomes.
+  and Wisdom drops in source order using strict `<` comparisons. The displayed
+  Wisdom drop calls `MineObject.getTotalWisdom()`: it returns null without a
+  Wisdom drop and otherwise multiplies the base amount by current Power of
+  Wisdom. Last-damageable gem bonus and resource maxima are observable outcomes.
 - **Sampled (qualified):** zero/break boundaries, chance threshold sides,
   drop-presence cases, last-object bonus, and fixed-seed drop outcomes are
   tested. Pinned differential routes compare complete state and RNG after each
   action without divergence.
+- **Covered integration:** `tests/e2e/mine-object-drops.spec.ts` restores the
+  source-shaped object-90 and object-169 saves, then performs real Mining clicks
+  with each captured RNG sequence. The cases compare Planet Coin/Wisdom balance,
+  unchanged Gems, selected object/high-water behavior, and exact RNG draw count.
+  The pinned hit damage is also checked to exceed each object's full source HP,
+  so the oracle break outcomes apply after the Beyond save regenerates full HP.
+  `tests/e2e/remix-app.spec.ts` compares displayed drop text for all 78 special
+  objects at the captured Power state, including Wisdom's Power-scaled amount.
 - **Scope:** arbitrary runtime/host RNG distributions beyond the source-seeded
   contract are not a web parity claim.
 
 ### Drop function and branch trace
 
-| Pinned Remix function/path and branch                                                                     | Source evidence                                                           | Beyond assertion                                                                                                                                              |
-| --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Scripts/mineobject.js:damage` subtract damage and return while HP remains positive; break at HP `<= 0`   | `miningHitSemantics` includes non-breaking and breaking inputs            | `tests/parity/mining-transitions.test.ts` compares full state and verifies no reward before break                                                             |
-| `damage` money reward, highest-money update, high-water advancement, and current-object replacement order | Source-captured mining hit transitions                                    | `tests/parity/mining-transitions.test.ts` and `tests/parity/simulation-action.test.ts` compare each resulting field                                           |
-| `damage` gem roll strict `< chance`, zero/positive chance and last-damageable-object multiplier           | Gem threshold cases and last-object formula scenarios                     | `tests/parity/mining-transitions.test.ts` asserts RNG calls, gem amount, and high-water; `tests/parity/mining-rates.test.ts` checks rates                     |
-| `damage` optional Planet Coin and Wisdom drop presence, strict `< chance`, amount update, and maxima      | Captured objects with absent/present drops and deterministic chance cases | `tests/parity/mining-transitions.test.ts` checks each resource and RNG draw; `tests/parity/endgame-phase-differentials.test.ts` compares state/RNG per action |
+| Pinned Remix function/path and branch                                                                                               | Source evidence                                                           | Beyond assertion                                                                                                                                                                                                                        |
+| ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Scripts/mineobject.js:damage` subtract damage and return while HP remains positive; break at HP `<= 0`                             | `miningHitSemantics` includes non-breaking and breaking inputs            | `tests/parity/mining-transitions.test.ts` compares full state and verifies no reward before break                                                                                                                                       |
+| `damage` money reward, highest-money update, high-water advancement, and current-object replacement order                           | Source-captured mining hit transitions                                    | `tests/parity/mining-transitions.test.ts` and `tests/parity/simulation-action.test.ts` compare each resulting field                                                                                                                     |
+| `damage` gem roll strict `< chance`, zero/positive chance and last-damageable-object multiplier                                     | Gem threshold cases and last-object formula scenarios                     | `tests/parity/mining-transitions.test.ts` asserts RNG calls, gem amount, and high-water; `tests/parity/mining-rates.test.ts` checks rates                                                                                               |
+| `damage` optional Planet Coin and Wisdom drop presence, strict `< chance`, amount update, and maxima                                | Captured objects with absent/present drops and deterministic chance cases | `tests/parity/mining-transitions.test.ts` checks each resource and RNG draw; `tests/parity/endgame-phase-differentials.test.ts` compares state/RNG per action; `tests/e2e/mine-object-drops.spec.ts` checks both awards in the live app |
+| `Scripts/mineobject.js:MineObject.getTotalWisdom`: absent-drop null result; otherwise base Wisdom amount times current Wisdom Power | Special ID 169 definition and controlled loaded Power state               | `tests/parity/wisdom-drop-amount.test.ts` checks zero and Power 5; `tests/e2e/remix-app.spec.ts` compares the source-rendered drop line for all 78 special objects                                                                      |
+
+The browser action/effect integration is covered. Four post-award full-screen
+states (Planet Coins from object 90 and Wisdom from object 169, each in light
+and dark themes at 1440x900) now compare with the pinned source at zero pixels on
+Windows. The source capture waits one main-loop frame after loading before the
+real click, so Story notification state matches a visible initialized session.
+There are no Linux pixel pairs for these four cases; the Linux test retains the
+semantic click/drop assertions. The matrix row remains In progress for that
+cross-platform visual gap; broader Canvas rendering is tracked separately.
 
 ## Mine rendering and compositing
 
@@ -228,19 +272,30 @@ Remix source functions.
   transparent mask, multiply-color layer, destination-in silhouette mask, and
   source-over result. Skin, layer, and color combinations determine source
   assets and crop bounds.
-- **Sampled:** Canvas output is non-exhaustive across all skin/color/asset
-  combinations; fixed visual states and renderer fixtures remain the relevant
-  evidence. Formula/RNG sampling qualification does not certify this domain.
-- **Gap:** selected mine rendering comparisons and the full ID/skin/color visual
-  matrix remain open.
+- **Covered:** `tests/e2e/mine-object-renderer.spec.ts` compares lossless PNG
+  hashes from the pinned Remix canvas with Beyond for every one of the 920
+  source-captured object records, including sparse IDs through
+  `Number.MAX_SAFE_INTEGER`. The corpus exercises all 36 observed skins, all 92
+  non-transparent skin/layer positions, and 2,511 distinct non-transparent
+  colors. The existing 48 Story preview occurrences also retain raw-RGBA
+  baselines.
+- **Sampled (qualified):** arbitrary generator IDs and color values are not
+  exhaustively enumerable. Their relevant skin/layer and generation boundaries
+  are mapped in Procedural mine objects; the fixed-seed source corpus and live
+  per-object pixel differential pass without divergence. This does not claim
+  full-screen parity for every gameplay state or viewport; that evidence stays
+  in Desktop UI and visual parity.
+- **Status:** Mine-object Canvas rendering and compositing is Certified for the
+  pinned browser/output domain. Full-screen state and viewport coverage remains
+  in its separate matrix row.
 
 ### Rendering function and branch trace
 
-| Pinned Remix function/path and branch                                       | Source evidence                                              | Beyond assertion                                                                                                                                              |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Scripts/main.js:drawStone` canvas compositing operations and sprite crop   | Pinned `drawStone` implementation and controlled mine states | `tests/e2e/mine-object-renderer.spec.ts` compares renderer output and compositing behavior                                                                    |
-| `drawStone` multiply fill, destination-in mask, and source-over restoration | Source operations exercised with controlled colors/layers    | `tests/e2e/mine-object-renderer.spec.ts` checks layer and color rendering; `tests/parity/visual-baselines.test.ts` tracks captured visual baselines           |
-| Skin/color/layer combinations outside selected captures                     | Not all catalog combinations have screenshot fixtures        | **Gap:** visual states remain in `tests/e2e/mining-visual.spec.ts` and `tests/parity/visual-baselines.test.ts`; no exhaustive visual certification is claimed |
+| Pinned Remix function/path and branch                                                         | Source evidence                                                                                    | Beyond assertion                                                                                                                                    |
+| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Scripts/main.js:drawStone` canvas compositing operations and sprite crop                     | Pinned `drawStone` implementation and controlled mine states                                       | `tests/e2e/mine-object-renderer.spec.ts` compares renderer output and compositing behavior                                                          |
+| `drawStone` multiply fill, destination-in mask, and source-over restoration                   | Source operations exercised with controlled colors/layers                                          | `tests/e2e/mine-object-renderer.spec.ts` checks layer and color rendering; `tests/parity/visual-baselines.test.ts` tracks captured visual baselines |
+| `mine-object` reverse color-layer loop and transparent skip across every pinned corpus object | All 920 source-captured object records; 36 skins, 92 active skin/layer positions, and 2,511 colors | `tests/e2e/mine-object-renderer.spec.ts` hashes every pinned Remix and Beyond Canvas output in the same Chromium runtime                            |
 
 ## Active and idle damage
 
@@ -285,17 +340,35 @@ Remix source functions.
   softcaps, piecewise formula changes, rounded/exact affordability, and
   cross-upgrade scenarios are covered; fixed-seed phase differentials match
   complete state/RNG.
-- **Gap:** complete in-game shop visual states remain tracked separately; the
-  qualification does not waive those UI requirements.
+- **Visual coverage:** the selected Space Money shop at 1440x900 has pinned
+  Windows/Linux source/Beyond full-screen pairs in both themes in
+  `tests/e2e/priority-visual.spec.ts`. A separate paired Chromium test compares
+  all 8 Money cards and their hovered details at levels zero and one with
+  abundant resources, in both themes at 1440x900; card presentation,
+  resting-card pixels, and detail-panel pixels match the pinned source. The
+  same test compares complete viewport images for the Money tab at levels zero
+  and one in both themes. Level one is the first non-cap state for every Money
+  card. Its source-paired affordability flow also compares the Money zero-
+  resource, immediately-below-price, and exact-price complete views in both
+  themes.
+- **Cap-boundary differential:** `tests/e2e/upgrade-all-caps-differential.spec.ts`
+  compares the four finite-capped Money cards at `cap - 1`, `cap`, and `cap + 1`
+  in both themes at 1440x900. It checks source-captured level/effect/price text,
+  affordability classes and styles, plus exact card and tooltip pixels.
+- **Gap:** other resource-balance combinations, modifier-hint states, and
+  broader application states remain open. The zero/below/exact affordability
+  routes, first non-cap card state, and selected full-screen Money views are
+  covered; formula/RNG qualification does not waive remaining UI evidence.
 
 ### Money function and branch trace
 
-| Pinned Remix function/path and branch                                                                                      | Source evidence                                                                                             | Beyond assertion                                                                                                                          |
-| -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `Scripts/Define/game.js` Money upgrade price/effect/cap definitions and cross-upgrade reads                                | `upgradeSemantics` contains all 29 definitions, 249 captured level samples, caps, and interaction scenarios | `tests/parity/upgrades.test.ts` compares formulas, caps, and cross-upgrade effects                                                        |
-| `Scripts/upgrade.js:Upgrade.buy` Money resource path, affordability, rounded debit, cap, success/failure, and level update | `purchaseSemantics` Money cases                                                                             | `tests/parity/upgrades.test.ts` compares complete purchase results and `tests/parity/simulation-action.test.ts` checks action composition |
-| `Scripts/upgrade.js:Upgrade.getPriceDisplay` and `getEffectDisplay` below-cap versus capped display                        | Source strings at ordinary, cap, and over-cap levels                                                        | `tests/parity/remix-upgrade-display.test.ts` compares exact Money display strings                                                         |
-| `Scripts/Components/upgrade.js:buyUpgrade` single, Shift, and Control operation selection                                  | Captured modifier behavior and live shop actions                                                            | `tests/e2e/remix-app.spec.ts` checks one/ten/one-hundred purchase routing                                                                 |
+| Pinned Remix function/path and branch                                                                                      | Source evidence                                                                                             | Beyond assertion                                                                                                                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Scripts/Define/game.js` Money upgrade price/effect/cap definitions and cross-upgrade reads                                | `upgradeSemantics` contains all 29 definitions, 249 captured level samples, caps, and interaction scenarios | `tests/parity/upgrades.test.ts` compares formulas, caps, and cross-upgrade effects                                                                                                                       |
+| `Scripts/upgrade.js:Upgrade.buy` Money resource path, affordability, rounded debit, cap, success/failure, and level update | `purchaseSemantics` Money cases                                                                             | `tests/parity/upgrades.test.ts` compares complete purchase results and `tests/parity/simulation-action.test.ts` checks action composition                                                                |
+| `Scripts/upgrade.js:Upgrade.getPriceDisplay` and `getEffectDisplay` below-cap versus capped display                        | Source strings at ordinary, cap, and over-cap levels                                                        | `tests/parity/remix-upgrade-display.test.ts` compares exact Money display strings; the all-caps E2E compares source UI at each finite-cap boundary; the affordability E2E compares every card at level 1 |
+| `Scripts/Components/upgrade.js` affordability and exact-cap dimming (`level === maxLevel`)                                 | All four Money finite caps at `cap - 1`, `cap`, and `cap + 1`                                               | `tests/e2e/upgrade-all-caps-differential.spec.ts` compares source/Beyond affordance, tooltip, and card pixels in both themes                                                                             |
+| `Scripts/Components/upgrade.js:buyUpgrade` single, Shift, and Control operation selection                                  | All eight Money cards replayed under each operation from level zero                                         | `tests/e2e/upgrade-affordability-differential.spec.ts` compares all three results against pinned Remix; `tests/e2e/remix-app.spec.ts` retains Blacksmith lifecycle coverage                              |
 
 ## Gems and gem upgrades
 
@@ -305,16 +378,34 @@ Remix source functions.
 - **Sampled (qualified):** zero, source formula transitions/caps, affordability,
   and chance/rate boundaries have source cases; the phase differential matches
   complete state/RNG.
-- **Gap:** selected Gem shop visual states are not a full UI-state certification.
+- **Visual coverage:** the selected Space Gem shop at 1440x900 has pinned
+  Windows/Linux source/Beyond full-screen pairs in both themes in
+  `tests/e2e/priority-visual.spec.ts`; a separate live purchase E2E checks its
+  source-priced card and resource/level update. The paired Chromium catalog
+  test compares all 7 Gem cards and hovered details at levels zero and one with
+  abundant resources, in both themes at 1440x900, including exact resting-card
+  and detail-panel pixels. It also compares complete viewport images for the
+  Gem tab at levels zero and one in both themes. Level one is the first non-cap
+  state for every Gem card. The source-paired affordability flow also compares
+  the Gem zero-resource and exact-price complete views in both themes.
+- **Cap-boundary differential:** the same source-paired test checks all five
+  finite-capped Gem cards at `cap - 1`, `cap`, and `cap + 1` in both themes at
+  1440x900, including the legacy exact-cap dimming and over-cap bright-card
+  behavior.
+- **Gap:** other Gem resource-balance combinations, modifier-hint states, and
+  broader application states remain open. The zero/exact affordability routes,
+  first non-cap card state, and selected full-screen Gem views are covered.
 
 ### Gem function and branch trace
 
-| Pinned Remix function/path and branch                                                                     | Source evidence                                                       | Beyond assertion                                                                                                              |
-| --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `Scripts/Define/game.js` Gem upgrade price/effect/cap definitions and Gem Waster interaction              | `upgradeSemantics` source samples and cross-upgrade cases             | `tests/parity/upgrades.test.ts` asserts all configured Gem formulas and interactions                                          |
-| `Scripts/upgrade.js:Upgrade.buy` Gem resource selection, debit, affordability, cap, and success/failure   | `purchaseSemantics` Gem purchase cases                                | `tests/parity/upgrades.test.ts` compares resource/level snapshots; `tests/e2e/remix-app.spec.ts` exercises the Gem shop route |
-| `Scripts/upgrade.js:GemUpgrade.getPriceDisplay` resource suffix and `getEffectDisplay` cap path           | Captured Gem group price/effect strings at ordinary and capped levels | `tests/parity/remix-upgrade-display.test.ts` compares exact Gem labels                                                        |
-| `Scripts/mineobject.js:damage` gem-chance roll and `Scripts/Define/functions.js:getGPS` drop-rate effects | Drop thresholds and gem-rate scenarios                                | `tests/parity/mining-transitions.test.ts` checks realized drops; `tests/parity/mining-rates.test.ts` checks rates             |
+| Pinned Remix function/path and branch                                                                                                                  | Source evidence                                                                                       | Beyond assertion                                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Scripts/Define/game.js` Gem upgrade price/effect/cap definitions and Gem Waster interaction                                                           | `upgradeSemantics` source samples and cross-upgrade cases                                             | `tests/parity/upgrades.test.ts` asserts all configured Gem formulas and interactions                                                                                                          |
+| `Scripts/Components/upgrade.js` affordability class uses `level === maxLevel`, while `Scripts/upgrade.js:Upgrade.buy` rejects `level >= getMaxLevel()` | Gem Blacksmith Skill at levels 50 and 51; all five finite Gem caps at `cap - 1`, `cap`, and `cap + 1` | `tests/e2e/upgrade-cap-quirk.spec.ts` and `tests/e2e/upgrade-all-caps-differential.spec.ts` compare source/Beyond affordance, labels, and pixels                                              |
+| `Scripts/upgrade.js:Upgrade.buy` Gem resource selection, debit, affordability, cap, and success/failure                                                | `purchaseSemantics` Gem purchase cases                                                                | `tests/parity/upgrades.test.ts` compares resource/level snapshots; browser routes compare Gem shop purchases against Remix                                                                    |
+| `Scripts/Components/upgrade.js:buyUpgrade` single, Shift, and Control routing across Gem cards                                                         | All seven Gem cards replayed under each operation from level zero                                     | `tests/e2e/upgrade-affordability-differential.spec.ts` compares source/Beyond final levels, presentation, and visible balances                                                                |
+| `Scripts/upgrade.js:GemUpgrade.getPriceDisplay` resource suffix and `getEffectDisplay` cap path                                                        | Captured Gem group price/effect strings at ordinary and capped levels                                 | `tests/parity/remix-upgrade-display.test.ts` compares exact Gem labels; the all-caps E2E compares source UI at each finite-cap boundary; the affordability E2E compares every card at level 1 |
+| `Scripts/mineobject.js:damage` gem-chance roll and `Scripts/Define/functions.js:getGPS` drop-rate effects                                              | Drop thresholds and gem-rate scenarios                                                                | `tests/parity/mining-transitions.test.ts` checks realized drops; `tests/parity/mining-rates.test.ts` checks rates                                                                             |
 
 ## Planet Coins and upgrades
 
@@ -325,16 +416,33 @@ Remix source functions.
 - **Sampled (qualified):** zero, formula region/cap and purchase boundaries,
   drop-presence/chance, and fixed-seed phase differential cases pass. More
   random value probes are not required for these sampled domains.
-- **Gap:** shop visibility/render combinations beyond the selected controlled
-  visual states remain open in the web map.
+- **Visual coverage:** the selected Space Planet Coin shop at 1440x900 has
+  pinned Windows/Linux source/Beyond full-screen pairs in both themes. The source `index.html`
+  high-water gate has controlled 89/90 full-screen screenshots in both themes;
+  the Beyond browser asserts the tab is hidden at 89 and visible at 90, and all
+  four Windows pairs match at zero pixels. The paired Chromium catalog test
+  compares all 7 Planet Coin cards and hovered details at levels zero and one
+  with abundant resources, in both themes at 1440x900, including exact
+  resting-card and detail-panel pixels. It also compares complete viewport
+  images for the Planet Coin tab at levels zero and one in both themes. Level
+  one is the first non-cap state for every Planet Coin card. The source-paired
+  affordability flow also compares the Planet Coin zero-resource and exact-
+  price complete views in both themes. Other resource-
+  balance combinations and shop visibility/render combinations remain open in
+  the web map.
+- **Cap-boundary differential:** all six finite-capped Planet Coin cards are
+  compared at `cap - 1`, `cap`, and `cap + 1` in both themes at 1440x900 by
+  `tests/e2e/upgrade-all-caps-differential.spec.ts`.
 
 ### Planet Coin function and branch trace
 
-| Pinned Remix function/path and branch                                                                                                                              | Source evidence                                                    | Beyond assertion                                                                                                                                           |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Scripts/Define/game.js` Planet Coin price/effect/cap definitions and cross-upgrade reads                                                                          | `upgradeSemantics` source samples, caps, and interaction scenarios | `tests/parity/upgrades.test.ts` compares formulas and resource interactions                                                                                |
-| `Scripts/upgrade.js:Upgrade.buy` Planet Coin resource selection, exact/rounded affordability, cap, debit, and result                                               | `purchaseSemantics` Planet Coin cases                              | `tests/parity/upgrades.test.ts` compares state; `tests/e2e/remix-app.spec.ts` checks live shop routing                                                     |
-| `Scripts/upgrade.js:PCUpgrade.getPriceDisplay` and effect/level display overrides                                                                                  | Captured Planet Coin display strings across cap states             | `tests/parity/remix-upgrade-display.test.ts` compares exact labels                                                                                         |
-| `Scripts/Define/functions.js:generateMineObject` Planet Coin inheritance/scaling and late-region drop selection; `Scripts/mineobject.js:damage` optional drop roll | Region and chance-boundary object fixtures                         | `tests/parity/mine-object-generation.test.ts` checks generated drop definitions and `tests/parity/mining-transitions.test.ts` checks realized balances/RNG |
-| `Scripts/Define/functions.js:getPCPS` absent-drop zero path and present-drop rate path                                                                             | Captured rate cases with and without Planet Coin drops             | `tests/parity/mining-rates.test.ts` compares both outputs                                                                                                  |
-| `index.html` Planet Coin tab high-water gate at object level 90                                                                                                    | Source predicate and save states at 89/90                          | `tests/e2e/remix-app.spec.ts` asserts hidden/visible tab boundary                                                                                          |
+| Pinned Remix function/path and branch                                                                                                                              | Source evidence                                                           | Beyond assertion                                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Scripts/Define/game.js` Planet Coin price/effect/cap definitions and cross-upgrade reads                                                                          | `upgradeSemantics` source samples, caps, and interaction scenarios        | `tests/parity/upgrades.test.ts` compares formulas and resource interactions                                                                                                               |
+| `Scripts/upgrade.js:Upgrade.buy` Planet Coin resource selection, exact/rounded affordability, cap, debit, and result                                               | `purchaseSemantics` Planet Coin cases                                     | `tests/parity/upgrades.test.ts` compares state; browser routes compare Planet Coin shop purchases against Remix                                                                           |
+| `Scripts/Components/upgrade.js:buyUpgrade` single, Shift, and Control routing across Planet Coin cards                                                             | All seven Planet Coin cards replayed under each operation from level zero | `tests/e2e/upgrade-affordability-differential.spec.ts` compares source/Beyond final levels, presentation, and visible balances                                                            |
+| `Scripts/upgrade.js:PCUpgrade.getPriceDisplay` and effect/level display overrides                                                                                  | Captured Planet Coin display strings across cap states                    | `tests/parity/remix-upgrade-display.test.ts` compares exact labels; the all-caps E2E compares source UI at each finite-cap boundary; the affordability E2E compares every card at level 1 |
+| `Scripts/Components/upgrade.js` resource-only affordability plus exact-cap dimming (`level === maxLevel`)                                                          | All six finite Planet Coin caps at `cap - 1`, `cap`, and `cap + 1`        | `tests/e2e/upgrade-all-caps-differential.spec.ts` compares source/Beyond classes, tooltip text, and card/detail pixels in both themes                                                     |
+| `Scripts/Define/functions.js:generateMineObject` Planet Coin inheritance/scaling and late-region drop selection; `Scripts/mineobject.js:damage` optional drop roll | Region and chance-boundary object fixtures                                | `tests/parity/mine-object-generation.test.ts` checks generated drop definitions and `tests/parity/mining-transitions.test.ts` checks realized balances/RNG                                |
+| `Scripts/Define/functions.js:getPCPS` absent-drop zero path and present-drop rate path                                                                             | Captured rate cases with and without Planet Coin drops                    | `tests/parity/mining-rates.test.ts` compares both outputs                                                                                                                                 |
+| `index.html` Planet Coin tab high-water gate at object level 90                                                                                                    | Source predicate and four 89/90 light/dark screenshots                    | `tests/e2e/remix-app.spec.ts` asserts hidden/visible tab; `tests/e2e/priority-visual.spec.ts` compares four full-screen source pairs at zero pixels                                       |

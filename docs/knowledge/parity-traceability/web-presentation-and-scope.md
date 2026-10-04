@@ -67,11 +67,12 @@ of those maps.
 
 ### Theme function and branch trace
 
-| Pinned Remix function/path and branch                                                                | Source evidence                                                                    | Beyond assertion                                                                                                                                                           |
-| ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Scripts/Define/functions.js:setTheme`: assign selected theme and replace `css_theme` stylesheet URL | captured light/dark setting states and source stylesheet references                | `tests/e2e/remix-app.spec.ts` loads/switches both theme states and checks persisted theme; `tests/e2e/priority-visual.spec.ts` compares source light/dark screenshot pairs |
-| `loadGame` theme field: absent value defaults to `light`; present `dark` loads dark CSS              | missing-settings default and dark-save cases in `saveSemantics`                    | `tests/parity/legacy-save-application.test.ts` asserts fallback/effect; `tests/e2e/remix-app.spec.ts` asserts the applied theme after load                                 |
-| `Themes/light.css` base palette versus `Themes/dark.css` overrides                                   | source screenshot pairs and computed-style reference metadata for selected screens | `tests/e2e/priority-visual.spec.ts` compares each selected screen/theme at zero allowed pixels; `tests/parity/visual-baselines.test.ts` validates source image hashes      |
+| Pinned Remix function/path and branch                                                                                                                                         | Source evidence                                                                                | Beyond assertion                                                                                                                                                           |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Scripts/Define/functions.js:setTheme`: assign selected theme and replace `css_theme` stylesheet URL                                                                          | captured light/dark setting states and source stylesheet references                            | `tests/e2e/remix-app.spec.ts` loads/switches both theme states and checks persisted theme; `tests/e2e/priority-visual.spec.ts` compares source light/dark screenshot pairs |
+| `loadGame` theme field: absent value defaults to `light`; present `dark` loads dark CSS                                                                                       | missing-settings default and dark-save cases in `saveSemantics`                                | `tests/parity/legacy-save-application.test.ts` asserts fallback/effect; `tests/e2e/remix-app.spec.ts` asserts the applied theme after load                                 |
+| `Themes/light.css` base palette versus `Themes/dark.css` overrides                                                                                                            | source screenshot pairs and computed-style reference metadata for selected screens             | `tests/e2e/priority-visual.spec.ts` compares each selected screen/theme at zero allowed pixels; `tests/parity/visual-baselines.test.ts` validates source image hashes      |
+| `main.css:.craft-pickaxe button.level-change` transparent default versus the generic dark button rule; `Themes/dark.css:button.level-change:hover` transparent hover override | pinned source CSS cascade; full-screen shop state that exposed the dark Money level-1 mismatch | `tests/e2e/upgrade-affordability-differential.spec.ts` compares all three shop tabs at levels 0/1 in both themes, including the craft controls, against the pinned source  |
 
 Every theme selection/load branch is covered. Uncaptured screen/state combinations
 remain visual-state gaps, not unlisted theme-control branches.
@@ -118,17 +119,66 @@ explicit visual gaps above.
   list in `tests/parity/remix-upgrade-display.test.ts`,
   `tests/e2e/foundation.spec.ts`, and `tests/e2e/priority-visual.spec.ts`;
   source/implementation screenshot pairs compare at 1440×900 in both themes.
-- **Sampled:** only the captured Space phase-start shop state has full-screen pairs;
-  not every upgrade card’s interaction/modifier path has a live source-to-Beyond
-  assertion.
+  A separate 1440×900 paired Chromium differential visits all 22 cards at
+  level zero with abundant resources in both themes, comparing source order,
+  labels, image, affordability/style/geometry, exact resting-card pixels, and
+  each hovered detail panel's exact pixels.
+  `tests/e2e/upgrade-affordability-differential.spec.ts` also compares live
+  source/Beyond Money, Gem, and Planet Coin cards at zero and exact-price
+  boundaries, plus Money immediately below price, including card-interior and
+  detail pixels, computed border geometry/style, affordability styling, and
+  click/no-op results in both themes. After selecting each resource tab, it
+  waits for the pinned theme stylesheet and compares the hovered tab's computed
+  background against the live source in both themes. The observed dark source
+  cascade resolves the tab hover to `#636363`; Beyond's local `#777777` override
+  was corrected to match.
+  `tests/e2e/upgrade-tab-state-differential.spec.ts` compares Gem and Planet
+  Coin selection across Story/Mining panel remounts, visible cards, decoded
+  legacy export, and the pinned fresh-load reset.
+- **Covered visual boundary:** the selected Space phase-start shop state has
+  full-screen pairs for all three resource groups. The Planet Coin gate has
+  additional full-screen pairs at high-water 89 (hidden) and 90 (visible), in
+  light and dark themes. Those four source captures use
+  `tests/e2e/priority-visual.spec.ts` and compare at zero pixels on Windows.
+- **Sampled / open visual states:** the all-card comparison is one source-shaped
+  level-zero state with abundant resources; the affordability differential
+  covers representative zero/exact-price resource cases and one below-price
+  Money case. Full-screen comparisons cover each Money/Gem/Planet Coin tab at
+  levels zero and one in both themes (12 paired viewports), plus the zero-
+  resource boundary for each tab, the Money below-price boundary, and the exact-
+  price boundary for all three tabs in both themes (14 paired viewports). Other
+  balances, modifier hints, and broader application-state combinations remain open. The
+  Gem Blacksmith Skill equality-at-cap (50) and saved
+  over-cap (51) states now compare card pixels (1px inset) and full hover-detail
+  pixels against pinned Remix in both themes, in addition to labels, styles,
+  and click/no-op behavior. At exact Gem affordability, three repeated paired
+  full-viewport captures per theme matched at zero pixels; the earlier reported
+  one-level RGB differences did not reproduce. The source-paired E2E now checks
+  the stabilized 1440x900 viewport hash for that state in both themes. This is
+  one selected screen state; the complete shop visual state space remains open.
 
 ### Upgrade-shop visual function and branch trace
 
-| Pinned Remix function/path and branch                                                                                                | Source evidence                                                      | Beyond assertion                                                                                                                                          |
-| ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Scripts/Components/upgrade.js`: render all Money, Gem, and Planet Coin cards in the selected group                                  | pinned group card counts, formula labels, and source screen captures | `tests/e2e/priority-visual.spec.ts` asserts counts and compares source/Beyond 1440×900 screenshots in both themes                                         |
-| Card branches: ordinary/capped label, affordable/unaffordable, enabled/disabled, selected/highlighted                                | `upgradeSemantics` display/purchase cases and source captures        | `tests/parity/remix-upgrade-display.test.ts`, `tests/parity/upgrades.test.ts`, and `tests/e2e/remix-app.spec.ts` assert values and live purchase outcomes |
-| Modifier branch priority: Control buys 100, else Shift buys 10, else single buy; selected Gem craft modifier is covered in craft map | pinned `buyUpgrade` source and browser modifier cases                | `tests/e2e/remix-app.spec.ts` asserts all three purchase modes and control precedence                                                                     |
+| Pinned Remix function/path and branch                                                                                                                  | Source evidence                                                                             | Beyond assertion                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Scripts/Components/upgrade.js`: render all Money, Gem, and Planet Coin cards in the selected group                                                    | pinned group card counts, formula labels, and source screen captures                        | `tests/e2e/priority-visual.spec.ts` asserts counts and compares source/Beyond 1440×900 screenshots in both themes                                                                    |
+| `index.html`: header Planet Coin amount and shop tab appear at `highestMineObjectLevel >= 90`                                                          | Four pinned source screenshots at levels 89/90 in light/dark                                | `tests/e2e/priority-visual.spec.ts` asserts tab hidden/visible and compares all four full-screen source screenshots at zero pixels on Windows                                        |
+| Card branches: ordinary/capped label, affordable/unaffordable, enabled/disabled, selected/highlighted                                                  | `upgradeSemantics` display/purchase cases and source captures                               | `tests/parity/remix-upgrade-display.test.ts`, `tests/parity/upgrades.test.ts`, and `tests/e2e/remix-app.spec.ts` assert values and live purchase outcomes                            |
+| `Components/upgrade.js:canAfford` resource selection and exact/insufficient affordability; card and highlighted-detail appearance                      | Pinned zero-resource, below-exact Money, and exact-price cases for all three shop resources | `tests/e2e/upgrade-affordability-differential.spec.ts` compares source/Beyond state, class/style/layout, click result, and exact card/detail PNG hashes in both themes               |
+| `Themes/dark.css`: generic important button-hover rule versus `.upg-tabs button:hover`; the pinned cascade keeps a hovered resource tab at `#636363`   | Live source computed style after theme CSS load and selecting each group                    | `tests/e2e/upgrade-affordability-differential.spec.ts` compares computed hovered-tab background for Money/Gem/PC in both themes; Beyond now matches `#636363`                        |
+| `Components/upgrade.js` exact `level === maxLevel` dimming versus `Upgrade.buy` strict `level < getMaxLevel()` at Gem cap 50 and saved level 51        | `upgradeSemantics.groups.gems.blacksmithSkill` source displays at 50/51                     | `tests/e2e/upgrade-cap-quirk.spec.ts` compares labels, details, class, opacity, cursor, click no-op, and 1px-inset card/full detail pixel hashes in both themes against pinned Remix |
+| Modifier branch priority: Control buys 100, else Shift buys 10, else single buy; selected Gem craft modifier is covered in craft map                   | pinned `buyUpgrade` source and browser modifier cases                                       | `tests/e2e/remix-app.spec.ts` asserts all three purchase modes and control precedence                                                                                                |
+| `main.js` global keymap and `index.html` multibuy labels: keydown/up does not itself trigger a Vue render; later reactive render recomputes the labels | Pinned source runtime with fixed clock and controlled key events                            | `tests/e2e/upgrade-affordability-differential.spec.ts` compares stale/immediate, hover-refreshed, stale-after-release, and release-refreshed labels and detail pixels in both themes |
+
+### Shop-tab selection state branch trace
+
+- **Remix source behavior:** resource buttons mutate `settings.upgradeTab`; the
+  selected list persists while the main panel is unmounted. The save encoder
+  includes the field, but a fresh `loadGame()` starts from `game.js`'s Money
+  default because the loader does not apply it.
+- **Beyond assertion:**
+  `tests/e2e/upgrade-tab-state-differential.spec.ts` compares Gem and Planet Coin
+  selection, Story/Mining navigation, decoded export, and fresh-page behavior.
 
 ## Visual slice: Powers
 
@@ -137,17 +187,24 @@ explicit visual gaps above.
   and reset behavior.
 - **Covered:** captured unlock-boundary UI and source/implementation light/dark
   screenshot pairs at 1440×900 in `tests/e2e/priority-visual.spec.ts`;
-  formula/prestige state assertions in `tests/parity/remix-powers.test.ts`.
-- **Sampled:** later Power balances, every prestige row, and every selected theme/
-  viewport state have no screenshot pair.
+  formula/prestige state assertions in `tests/parity/remix-powers.test.ts`; and
+  live source comparisons for all four prestige actions, the disabled no-op, and
+  the stale table until tab re-entry in
+  `tests/e2e/powers-prestige-differential.spec.ts`.
+- **Sampled:** representative full-screen comparisons now cover the initial,
+  stale-after-prestige, and remounted table at 1440x900 in both themes. Later
+  Power balances, other prestige inputs, and unselected theme/viewport
+  combinations remain open.
 
 ### Powers visual function and branch trace
 
-| Pinned Remix function/path and branch                                                                                                 | Source evidence                                                     | Beyond assertion                                                                                                                                    |
-| ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `game.powers.unlocked()`: locked below high-water 170; visible at and above 170                                                       | captured 169/170/171 saves and source screenshot state              | `tests/parity/remix-powers.test.ts` asserts the strict gate; `tests/e2e/remix-app.spec.ts` asserts the tab/panel boundary                           |
-| `Scripts/Components/powers-table.js`: row visibility, current/next-Power labels, prestige control enabled/disabled, and reset outcome | all source rows and named prestige states in `powersTableSemantics` | `tests/parity/remix-powers.test.ts` compares row outputs and resulting values; `tests/e2e/remix-app.spec.ts` verifies the rendered table and action |
-| Captured Wisdom/Stars visual state, both themes at 1440×900                                                                           | pinned priority source screenshot pair                              | `tests/e2e/priority-visual.spec.ts` compares the selected screenshot pair; `tests/parity/visual-baselines.test.ts` checks its hashes                |
+| Pinned Remix function/path and branch                                                                                                                                                                                     | Source evidence                                                                                              | Beyond assertion                                                                                                                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `game.powers.unlocked()`: locked below high-water 170; visible at and above 170                                                                                                                                           | captured 169/170/171 saves and source screenshot state                                                       | `tests/parity/remix-powers.test.ts` asserts the strict gate; `tests/e2e/remix-app.spec.ts` asserts the tab/panel boundary                                                                                                       |
+| `Scripts/Components/powers-table.js`: row visibility, current/next-Power labels, prestige control enabled/disabled, indexed-write stale display, observed idle `Vue.set` refresh, tab re-entry refresh, and reset outcome | all source rows and named prestige states in `powersTableSemantics`, plus paired pinned browser observations | `tests/parity/remix-powers.test.ts` compares row outputs and resulting values; `tests/e2e/powers-prestige-differential.spec.ts` compares all four actions, the no-op, stale rows, idle-hit refresh, and tab re-entry with Remix |
+
+The full-screen prestige differential in `tests/e2e/powers-prestige-differential.spec.ts` also compares the initial, stale-after-prestige, and remounted states against pinned Remix at 1440x900 in both themes. The pinned `Themes/dark.css` selector `button:not(.chapter-control button)` gives non-chapter controls the `#636363` background even at rest; this source branch is included in those screenshot assertions.
+| Captured Wisdom/Stars visual state, both themes at 1440×900 | pinned priority source screenshot pair | `tests/e2e/priority-visual.spec.ts` compares the selected screenshot pair; `tests/parity/visual-baselines.test.ts` checks its hashes |
 
 ## Visual slice: Mining
 

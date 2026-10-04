@@ -86,7 +86,9 @@ The initial full-screen comparison exposed the missing `HP:` label and pickaxe i
 
 The default source shop shows Money upgrade cards in `Scripts/Define/game.js` order. Gem cards become visible at `highestMineObjectLevel >= 61`; Planet Coin cards become visible at `>= 90`. The captured presentation fixture records all 29 definitions, their exact labels/descriptions/icons/resource IDs/caps, and source level/effect/price display strings at every formula sample. `UpgradePanel.svelte` renders the 8 Money, 7 Gem, and 7 Planet Coin cards in source order and displays current/next details on pointer hover.
 
-Pinned `main.css` styles `.upgrade` as an inline-block with 3% margins, `0.4em` padding plus `1.05em` bottom padding, a 2px black border, 3px radius, 75% font size, and a 4em icon. The level marker is absolute at the lower-right. The unaffordable or capped class sets 0.3 opacity and an automatic cursor; affordable Money/Gem/Planet Coin cards use the light backgrounds `#fbfdff`, `#9be5f2`, and `#9596f2`. The dark theme changes those card colors to `#4d4d4d`, `#005177`, and `#2733a3`, with the source hover colors retained in `Themes/dark.css`. The hover detail panel aligns its text and modifier instructions across the width.
+Pinned `main.css` styles `.upgrade` as an inline-block with 3% margins, `0.4em` padding plus `1.05em` bottom padding, a 2px black border, 3px radius, 75% font size, and a 4em icon. The level marker is absolute at the lower-right. The unaffordable or capped class sets 0.3 opacity and an automatic cursor; affordable Money/Gem/Planet Coin cards use the light backgrounds `#fbfdff`, `#9be5f2`, and `#9596f2`. The dark theme changes those card colors to `#4d4d4d`, `#005177`, and `#2733a3`, with the source hover colors retained in `Themes/dark.css`. The hover detail panel aligns its text and modifier instructions across the width. A pinned source differential covers zero and exact-price states for one card in each resource family plus Money immediately below price, comparing card/detail styles, card interior and detail pixels, and purchase/no-op outcomes in both themes. It also covers delayed Shift/Control hint refresh after keymap changes.
+
+The all-card differential uses a source-shaped level-zero save with `1e100` of each resource. At 1440x900 in both themes, it visits all 8 Money, 7 Gem, and 7 Planet Coin cards, compares their source order, level text, image, affordability class, computed presentation and geometry, captures exact resting-card PNGs, and compares every hovered detail panel at zero differing pixels. This is a catalog presentation state, not exhaustive affordability coverage: other resource balances, card levels, cap/overshoot states, full-screen card-specific states, and all modifier/card combinations remain separately tracked.
 
 The source `Scripts/Components/upgrade.js` handles a pointer click on its `div`: Control takes precedence and invokes `buy100`; otherwise Shift invokes `buy10`; otherwise it invokes one exact-price `buy`. Hover sets and clears `highlightedUpgrade`, where the detail panel shows the name, description, effect string, current price, and both shortcut instructions. The source card has no keyboard activation; the Beyond component preserves that input boundary during parity. Vitest compares all captured Money/Gem/Planet Coin display strings, and Playwright checks the initial cards/details plus single, Shift, and Ctrl purchase paths. The selected tabs now have full-screen paired comparisons in the visual-baseline set below; other upgrade states remain open.
 
@@ -94,7 +96,7 @@ The source `Scripts/Components/upgrade.js` handles a pointer click on its `div`:
 
 The Powers footer tab appears at `highestMineObjectLevel >= 170`, between Mining and Story. The panel order is the Wisdom balance and introduction, the five-row Power table, then seven Wisdom upgrade cards. Preserve source labels and icon order, including `Craftsmenship` and `Exquisity`. Rows 0–3 can show a `Prestige` action or a `Req. x1,000` label; row 4 has no action cell. The target and disabled state follow `powersTableSemantics` and [the gameplay systems record](game-systems.md).
 
-The standalone Wisdom cards use the pinned source order and level/effect/price labels. Clicking buys one, Shift buys ten, and Control buys one hundred, with Control precedence. Beyond currently renders the table and cards, dispatches prestige and purchase transitions, and places the tab in source order. The focused E2E verifies the unlock boundary, labels, icon, cards, purchase, and prestige. `PowersPanel.svelte` reproduces source-derived layout and dark table-border color; full-screen captures now match in both themes at 1440x900; other Powers states and viewports remain open.
+The standalone Wisdom cards use the pinned source order and level/effect/price labels. Clicking buys one, Shift buys ten, and Control buys one hundred, with Control precedence. Beyond currently renders the table and cards, dispatches prestige and purchase transitions, and places the tab in source order. The focused E2E verifies the unlock boundary, labels, icon, cards, purchase, and prestige. `PowersPanel.svelte` reproduces source-derived layout and dark table-border color. `tests/e2e/powers-prestige-differential.spec.ts` also compares complete 1440x900 source/Beyond screenshots before prestige, with the legacy stale table after prestige, and after table remount in both themes. Later Power balances, other prestige inputs, and unselected viewports remain open.
 
 ## Priority screen visual baselines
 
@@ -143,6 +145,36 @@ The source `.craft-pickaxe` row is a centered flex row with a `1rem` top margin.
 `tests/fixtures/visual/craft-selector-light-1440x900.png` captures the source crop with Money/Gem Gem Waster levels 1/2 and selected level 1. The pinned Chromium 153 comparison found identical Beyond/source geometry and an exact screenshot hash match after moving the pointer away from the controls. `tests/e2e/remix-app.spec.ts` enforces zero-difference Playwright screenshot parity for this crop. By itself, this crop does not certify the surrounding Mining page, other viewports, or full-screen visual parity.
 
 The [full Mining captures](../../tests/fixtures/visual/craft-mining-panel-light-1440x900.png) use the same controlled legacy save that the Beyond route imports: Clay at object level 3, 1,000 Gems, Money and Gem Gem Waster levels 1/2, selected Gem cost 3, and minimum-craft damage hidden. The read-only source capture reloads `saveApplicationSemantics.inputJson`, applies those same overrides, then captures both light and dark themes at 1440x900. The matching Beyond Playwright screenshots are pixel-identical on Windows. The test still exercises selector behavior on Linux but skips full-panel screenshots there because no Linux pixel baselines are recorded. Alternate viewports and other full-panel states remain open.
+
+## Post-award drop screenshots
+
+The pinned source and Beyond now have full-screen 1440x900 screenshots for the
+Planet Coin award from object 90 and the Wisdom award from object 169, in both
+themes. `tests/e2e/mine-object-drops.spec.ts` restores a save derived from the
+same legacy input, uses the captured two-draw RNG sequence, performs a real
+Mining click, and compares the resulting screen at zero differing pixels.
+Before its click, the source capture waits one main-loop frame; Remix refreshes
+Story notifications on every frame, so this matches the initialized state that
+the Beyond route displays before interaction. The four Windows pairs pass. Linux
+continues to assert the live award and RNG results but has no pixel captures for
+these states. This limited result does not certify every drop kind or mine
+rendering combination.
+
+## Planet Coin shop visibility boundary
+
+Pinned `index.html` gates both the Planet Coin header amount and the third
+upgrade tab on `highestMineObjectLevel >= 90`. The controlled states at 89 and
+90 are captured at 1440x900 in light and dark themes. `priority-visual.spec.ts`
+asserts the tab is absent at 89 and present at 90, checks the source object name
+and zero-damage style, then compares the full Beyond screen with the pinned
+capture at zero differing pixels on Windows. Linux keeps the visibility
+assertions without screenshot baselines.
+
+This comparison also caught a source-derived dark-theme color rule: zero-damage
+labels use `#a90500` in the main stylesheet and `#ff6c68` in
+`Themes/dark.css`. Beyond now applies the dark override under
+`body[data-theme="dark"]`; the E2E checks the computed color in both themes.
+The four source pairs are `remix-planetcoin-shop-gate-{89,90}-{light,dark}-1440x900.png`.
 
 ## Viewports and states
 

@@ -1,6 +1,6 @@
 # Phase 10 — Parity certification
 
-Status: Gate defined; first-pass source-to-test inventories cover all 36 matrix areas. Random distributions and RNG is Certified under the qualified-sample rule. The release and all player-facing parity areas remain uncertified.
+Status: Gate defined; first-pass source-to-test inventories cover all 36 matrix areas. Eleven matrix areas are Certified, including RNG under the qualified-sample rule and progression route/phase replay within its documented scope. The release and remaining player-facing parity areas remain uncertified.
 
 ## Outcome
 
