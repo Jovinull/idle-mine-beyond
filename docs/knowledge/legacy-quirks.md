@@ -16,6 +16,7 @@ These are confirmed in code at the pinned revision. Player-visible effects shoul
 | Every random pickaxe craft evaluates the Blacksmith Expertise effect and consumes one random draw even at level zero; a positive level below its 25% chance consumes a second draw | Scripts/Define/game.js, Scripts/pickaxe.js; seeded crafting distribution probe              | Random-stream compatibility quirk; later Power, Quality, streak, and name rolls depend on preserving this order       |
 | Hard reset requires three confirmations, calls localStorage.clear(), reloads the startup snapshot without saving, and preserves loop timers and startup lastActive                 | Scripts/Define/functions.js, Scripts/Define/game.js; `hardResetSemantics` runtime corpus    | Broad storage clearing and stale reset timestamp are verified compatibility behavior                                  |
 | Save loading mutates a shared global game object                                                                                                                                   | Scripts/Define/game.js and Scripts/Define/functions.js                                      | Architecture concern                                                                                                  |
+| An imported `settings.numberFormatterIndex` equal to the formatter count is assigned without a bounds check; subsequent numeric rendering throws `TypeError`                       | `Scripts/Define/functions.js:loadGame` and `formatNumber`; paired browser differential      | Malformed legacy-import behavior; preserve the source render failure during parity                                    |
 | The Gem craft selector is serialized with the game but `loadGame()` does not restore `usedGemsLevel`; a fresh runtime starts it at zero                                            | Scripts/Define/game.js, Scripts/Define/functions.js, index.html                             | Verified session setting reset on load; preserve during parity                                                        |
 | Global `onkeydown` records keys and `onkeyup` is the only source cleanup; Remix has no window-blur handler to clear held modifiers                                                 | Scripts/main.js; `keyboardInputSemantics.modifierLifecycle` source fixture and keyboard E2E | A lost keyup can leave Shift/Control active until another matching keyup; preserve this source behavior during parity |
 | No formal versioned schema/migration layer is evident in the inspected save path                                                                                                   | Scripts/Define/functions.js                                                                 | Recovery/compatibility concern; full audit remains open                                                               |
@@ -146,6 +147,20 @@ The current object generator consumes four draws per post-Universe object, so th
 **Verified source and controlled runtime behavior:** `getSaveString()` encodes `JSON.stringify(game)` with `encodeURIComponent`, then `escape`, then `btoa`. `loadGame()` applies `atob`, `decodeURIComponent`, then `unescape` before `JSON.parse`. Because `unescape` runs after the UTF-8 percent bytes have been decoded into `%HH` escapes, those bytes become individual U+00xx characters. The controlled pickaxe-name round-trip in `saveSemantics` changes `Probe — Å Ω →` into the UTF-8 byte characters instead of preserving the original text; `decodedMatchesJson` is false for the captured starting save as well. Treat this as a legacy defect that remains part of observed compatibility behavior until a documented exception is approved.
 
 **Verified decoder edge behavior (2026-10-04):** controlled single-URI-encoded inputs sent through the real pinned `loadGame()` path show that its native `unescape()` decodes lowercase `%u0041` to `A` and `%AB` to U+00AB, accepts uppercase hex digits, leaves uppercase `%U0041` unchanged, and leaves malformed `%u00G1`, incomplete `%A`/`%u003`, and a lone `%` unchanged. It consumes exactly four hex digits for `%u` and two for `%`, leaves following characters untouched, and preserves the UTF-16 pair in adjacent `%uD83D%uDE00` tokens. These wrappers probe accepted decoder behavior and are not encodings emitted by `getSaveString()`. The exact inputs and imported UTF-16 results are pinned in `saveSemantics.codecBoundaryVectors` and compared by the Node and Chromium save-codec tests.
+
+## Out-of-range formatter index during legacy import
+
+**Verified legacy behavior (pinned source and paired Chromium):**
+`functions.loadGame()` assigns
+`game.numberFormatter = game.numberFormatters[numberFormatterIndex]` without
+validating the index. At the first out-of-range value—the formatter array
+length—the assignment yields `undefined`; the next rendered numeric value
+throws `TypeError: Cannot read properties of undefined (reading 'name')`.
+Beyond previously substituted Standard notation in this state. The source-paired
+test now preserves the same render failure in Beyond:
+`tests/e2e/legacy-save-invalid-formatter.spec.ts`. Beyond's own v1 save schema
+constrains formatter indices to the pinned valid range, while the legacy import
+path retains the observed Remix behavior.
 
 ## Partial legacy save fields preserve mixed defaults
 

@@ -100,7 +100,7 @@
   );
   const selectedNotation = $derived.by<NotationFormatter>(() => {
     const index = appState?.settings.numberFormatterIndex ?? 0;
-    return formatters[index] ?? formatters[0]!;
+    return formatters[index]!;
   });
   const miningRates = $derived.by(() => {
     if (!simulation) return undefined;
