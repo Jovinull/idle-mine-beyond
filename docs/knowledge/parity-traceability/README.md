@@ -59,7 +59,7 @@ before changing status.
   traceability checker rejects unqualified map entries on Certified rows but
   does not decide the human evidence review.
 
-## Sampled-domain re-evaluation (2026-10-04)
+## Sampled-domain re-evaluation (2026-10-05)
 
 A finite sample does not block a formula/RNG domain after its relevant source
 boundaries, recorded fixed-seed sample, and pinned differential pass. This rule
@@ -68,54 +68,123 @@ separate state, platform, integration, UI, or visual evidence remain independent
 gaps. A differential mismatch is a compatibility failure to fix, not a reason to
 increase the sample.
 
-**Reassessment outcome:** every `Sampled (qualified)` formula/RNG entry across
-the four trace maps has named source-boundary evidence, a recorded fixed-seed
-sample, and a passing pinned differential. None of the 36 matrix areas is In
-progress solely because its random sample is finite. For a sampled formula/RNG
-domain, only a missing relevant source boundary is a coverage blocker; a
-differential mismatch is a compatibility failure. Separately mapped source
-branches and required state, save, platform, integration, UI, or visual evidence
-can still keep their matrix area In progress. Finite sample size alone changes
-no status, and does not justify further probes; certification still requires
-the complete row review.
+**Reassessment outcome:** all 14 `Sampled (qualified)` entries in the three
+maps that contain them have named source-boundary evidence, a recorded
+fixed-seed sample, and a passing pinned differential. The fourth map,
+web-presentation-and-scope, uses `Sampled` only for separate UI, input, and
+platform state spaces; those are not formula/RNG samples and remain open where
+the map says so. None of the 36 matrix areas is In progress solely because a
+formula/RNG sample is finite. For each qualified formula/RNG domain, a missing
+applicable source boundary is the only sampling-coverage blocker; a differential
+mismatch is a compatibility failure. Separately mapped source branches and
+required state, save, platform, integration, UI, or visual evidence can still
+keep their matrix area In progress. Finite sample size alone changes no status
+and does not justify further probes; certification still requires the complete
+row review.
 
 This re-evaluation was validated on 2026-10-04 with `pnpm test:parity` (35
-files, 152 tests), `pnpm test:e2e` (149/149), `pnpm parity:traceability` (36
-areas), `pnpm docs:check` (85 Markdown files), and Prettier. No area remains In
-progress solely because its formula/RNG sample is finite; rows stay open only
-for their separately recorded evidence gaps.
+files, 152 tests), `pnpm parity:traceability` (36 areas), `pnpm docs:check` (85
+Markdown files), and Prettier. A subsequent full `pnpm test:e2e --workers=1`
+run passed 149/150: the dark Planet Coin exact-price viewport had one differing
+pixel at `(697, 152)` on the rounded card border, while card geometry and
+computed styles matched the pinned page. A focused follow-up revised the capture
+setup to seed each origin before first navigation and compare Remix/Beyond
+sequentially on the same Page. It passed all six default focused cases,
+including the exact-price viewport; the old one-pixel result did not reproduce.
+The full `pnpm test:e2e --workers=1` suite then passed 150/150, including the
+same screenshot cases. The comparison remains exact and unmasked.
+No area remains In progress solely because its formula/RNG sample is finite;
+other rows stay open for their separately recorded evidence gaps.
 
-| Formula/RNG area reviewed                     | Re-evaluated evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Remaining matrix status reason                                                                                                                                                                                                                         |
-| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Big-number math and serialization             | Source cases cover zero and signed zero; exponent-gap cutoff at 16/17/18; scalar multiplication limits at ±1e307; rounding and string cutoffs; and MAX/MIN sentinels. Sixteen operand pairs from recorded seed `487530534` match the pinned browser Decimal runtime, and JSON round-trip properties pass.                                                                                                                                                                                                                                                 | **Certified.** No remaining component-row gap.                                                                                                                                                                                                         |
-| Random distributions and RNG                  | Every pinned seeded/direct RNG consumer and threshold/draw branch is mapped. Fixed seeds reproduce stream, craft, and drop outcomes; all 90,000 phase-differential checkpoints match full state/RNG.                                                                                                                                                                                                                                                                                                                                                      | **Certified.** No remaining row gap.                                                                                                                                                                                                                   |
-| Upgrade prices/effects, caps, and resources   | Source boundaries cover zero, limits, caps/softcaps, piecewise transitions, purchase branches, and cross-upgrade effects. Fixed-seed differential traces compare complete state/RNG without divergence.                                                                                                                                                                                                                                                                                                                                                   | Formula/RNG samples qualify. Money, Gems, Planet Coins, and aggregate upgrade rows remain In progress for individually mapped interaction and visual evidence, not finite level/value counts.                                                          |
-| Active/idle damage, resource rates, and drops | Source tests cover zero/reward, defense and hit-count limits, scan windows, chance thresholds, caps, and positive/zero outcomes; seeded source differentials match complete state/RNG.                                                                                                                                                                                                                                                                                                                                                                    | Formula/RNG samples qualify. Active/idle damage is Certified with real click and idle-frame E2E; live Planet Coin/Wisdom drop integration now passes. Drop-state pixel baselines and broader mine rendering remain open in their maps.                 |
-| Procedural mine objects                       | Region, anchor, modulo, color/drop, and scaling transitions have source cases. A recorded xorshift64* sample contributes 128 safe-integer IDs; all 920 captured records match the pinned browser oracle.                                                                                                                                                                                                                                                                                                                                                  | **Certified.** Source output covers all mapped branches; the browser loads all three generation regions and the first sparse high-ID probe through a Beyond save. Canvas output parity across all 920 captured records is Certified in Mine rendering. |
-| Powers, pickaxe crafting, and naming          | Source cases cover prestige/visibility limits, draw/stop/replacement/cost paths, all 13 quality transitions and random offsets, name boundaries, and clamps. Seeded examples and fixed-seed differentials match.                                                                                                                                                                                                                                                                                                                                          | Formula/RNG samples qualify. Broader rows remain In progress for separately listed Powers/crafting UI and visual evidence.                                                                                                                             |
-| Story predicates                              | All 61 condition predicates have boundary assertions; objective outputs span captured mine levels and all 40 notations; fixed-seed route/state differentials match progression state/RNG.                                                                                                                                                                                                                                                                                                                                                                 | Predicate samples qualify. The Story row remains In progress for selected route, application-state, and visual evidence.                                                                                                                               |
-| Offline progression formulas                  | Source cases cover the strict 300-second threshold, just-over-threshold reward, default/upgraded caps, overflow, disabled/negative/zero-rate paths, and ordered effects. Sixteen xorshift32-seeded elapsed values (`0x4f46464c`) compare complete load results against pinned Remix with no divergence.                                                                                                                                                                                                                                                   | Elapsed-time formula sampling qualifies; browser suspension/clock discontinuity remains separate environment evidence. Native background behavior is outside web-v1.                                                                                   |
-| Number formatting and notations               | The 359-value corpus retains its recorded fixed-seed sample. Source boundaries cover all 16 ALL dispatch slots, all Shi/Greek/Flags/Elemental tables, Japanese/Omega/Tritetrated/Precise Prime branches, and the full Imperial 17-unit table, 50 unit-search sides, MAX_VOLUME/reduction thresholds, small-unit cutoffs, and near/remainder decomposition. The Settings E2E compares visible `$1e100` output for 38 deterministic notations; a dynamic pinned Remix/Beyond browser differential compares ALL/Zalgo currency and Gems text plus RNG draws. | **Certified.** Source branches, boundary tests, qualified fixed-seed sampling, and visible UI/RNG differentials all pass.                                                                                                                              |
+**Visual revalidation (2026-10-05):** a later repeated run reproduced an
+intermittent one-pixel, one-channel mismatch at the dark Planet Coin exact-price
+rounded card border, despite matching state, geometry, and computed styles. The
+strict screenshot assertion remains open and the desktop UI row is not
+certified. This is independent of the qualified formula/RNG sample review.
+
+**Object drops certification re-evaluation (2026-10-05):** the 10 pinned hit scenarios cover non-breaking and breaking hits, drop absence, strict chance thresholds, the last-object Gem bonus, Planet Coin/Wisdom success and failure, resource maxima, and draw order; four additional frame/timer cases are also mapped. `mining-transitions.test.ts`, the fixed-seed full-state/RNG differential, the four live drop E2Es, and the Windows/Linux post-award screenshots pass. The null fallback in `getTotalWisdom()` is not player-reachable because both source callsites guard Wisdom-drop presence. Finite distribution sample size is qualified evidence under the rule above, not a remaining gap.
+
+| Formula/RNG area reviewed                     | Re-evaluated evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Remaining matrix status reason                                                                                                                                                                                                                                                                                                                                                                                           |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Big-number math and serialization             | Source cases cover zero and signed zero; exponent-gap cutoff at 16/17/18; scalar multiplication limits at ±1e307; rounding and string cutoffs; and MAX/MIN sentinels. Sixteen operand pairs from recorded seed `487530534` match the pinned browser Decimal runtime, and JSON round-trip properties pass.                                                                                                                                                                                                                                                 | **Certified.** No remaining component-row gap.                                                                                                                                                                                                                                                                                                                                                                           |
+| Random distributions and RNG                  | Every pinned seeded/direct RNG consumer and threshold/draw branch is mapped. Fixed seeds reproduce stream, craft, and drop outcomes; all 90,000 phase-differential checkpoints match full state/RNG.                                                                                                                                                                                                                                                                                                                                                      | **Certified.** No remaining row gap.                                                                                                                                                                                                                                                                                                                                                                                     |
+| Upgrade prices/effects, caps, and resources   | Source boundaries cover zero, limits, caps/softcaps, piecewise transitions, purchase branches, and cross-upgrade effects. Fixed-seed differential traces compare complete state/RNG without divergence.                                                                                                                                                                                                                                                                                                                                                   | Formula/RNG samples qualify. Money, Gems, Planet Coins, and aggregate upgrade rows remain In progress for individually mapped interaction and visual evidence, not finite level/value counts.                                                                                                                                                                                                                            |
+| Active/idle damage, resource rates, and drops | Source tests cover zero/reward, defense and hit-count limits, scan windows, chance thresholds, caps, and positive/zero outcomes; seeded source differentials match complete state/RNG.                                                                                                                                                                                                                                                                                                                                                                    | Formula/RNG samples qualify. Active/idle damage is Certified with real click and idle-frame E2E. Object drops and random outcomes is now Certified: source cases cover each reachable damage/drop/RNG branch, the fixed-seed differential reports no divergence, live drop clicks pass, and four Windows/Linux screenshot pairs match at zero pixels. Broader Mining screens and Canvas rendering remain separate areas. |
+| Procedural mine objects                       | Region, anchor, modulo, color/drop, and scaling transitions have source cases. A recorded xorshift64* sample contributes 128 safe-integer IDs; all 920 captured records match the pinned browser oracle.                                                                                                                                                                                                                                                                                                                                                  | **Certified.** Source output covers all mapped branches; the browser loads all three generation regions and the first sparse high-ID probe through a Beyond save. Canvas output parity across all 920 captured records is Certified in Mine rendering.                                                                                                                                                                   |
+| Powers, pickaxe crafting, and naming          | Powers compares all four `getPrestigeEffect` indices at zero and 999/1,000/1,001 around the floor transition, plus source-derived next-Power values below, equal to, and above the effect; the isolated current-Power row boundary at 999/1,000 with next Power fixed at 1, prestige limits, draw/stop/replacement/cost paths, all 13 quality transitions and random offsets, name boundaries, and clamps have source cases. Seeded examples and fixed-seed differentials match.                                                                          | Formula/RNG samples qualify. Wisdom and Powers remains In progress for later balances and visual states; crafting/naming remains In progress for its mapped interaction evidence.                                                                                                                                                                                                                                        |
+| Story predicates                              | All 61 condition predicates have boundary assertions; objective outputs span captured mine levels and all 40 notations; fixed-seed route/state differentials match progression state/RNG.                                                                                                                                                                                                                                                                                                                                                                 | Predicate samples qualify. The Story row remains In progress for selected route, application-state, and visual evidence.                                                                                                                                                                                                                                                                                                 |
+| Offline progression formulas                  | Source cases cover the strict 300-second threshold, just-over-threshold reward, default/upgraded caps, overflow, disabled/negative/zero-rate paths, and ordered effects. Sixteen xorshift32-seeded elapsed values (`0x4f46464c`) compare complete load results against pinned Remix with no divergence.                                                                                                                                                                                                                                                   | Elapsed-time formula sampling qualifies; one controlled Chromium freeze/resume interval is differentially covered. Actual OS background scheduling/throttling remains separate evidence; native background behavior is outside web-v1.                                                                                                                                                                                   |
+| Number formatting and notations               | The 359-value corpus retains its recorded fixed-seed sample. Source boundaries cover all 16 ALL dispatch slots, all Shi/Greek/Flags/Elemental tables, Japanese/Omega/Tritetrated/Precise Prime branches, and the full Imperial 17-unit table, 50 unit-search sides, MAX_VOLUME/reduction thresholds, small-unit cutoffs, and near/remainder decomposition. The Settings E2E compares visible `$1e100` output for 38 deterministic notations; a dynamic pinned Remix/Beyond browser differential compares ALL/Zalgo currency and Gems text plus RNG draws. | **Certified.** Source branches, boundary tests, qualified fixed-seed sampling, and visible UI/RNG differentials all pass.                                                                                                                                                                                                                                                                                                |
+
+**Formula/RNG rule re-review (2026-10-05):** I rechecked each qualified
+formula/RNG sample against its mapped source boundaries, recorded seed, and
+pinned differential. The finite samples qualify; no matrix area is In progress
+only because a sample is finite. Big-number math, number formatting, procedural
+mine objects, object drops, active/idle damage, and random distributions/RNG are
+Certified. Money/Gem/Planet Coin and aggregate upgrade areas, Wisdom/Powers,
+pickaxe crafting/naming, Story, and offline progression remain In progress for
+their separately mapped purchase/action, state, UI/visual, or real OS-background
+evidence—not for finite formula/RNG sample counts. Other sampled
+domains such as arbitrary save inputs, storage/environment failures, and
+unselected UI states remain independent coverage questions and are not waived
+by this rule. No status change or additional random probing is justified by
+sample size alone.
+
+This re-review was validated on 2026-10-05 with `pnpm.cmd test:parity` (35
+files, 154 tests), `pnpm.cmd parity:traceability` (36 matrix areas),
+`pnpm.cmd docs:check` (85 Markdown files and source manifests), and Prettier on
+this README.
 
 The review certifies Active and idle damage after its mapped browser action/timer
 integration tests pass, and Procedural mine objects after its source-derived
 browser integration cases pass across all three generator regions. Planet Coin
 and Wisdom drop awards pass source-seeded real-click browser tests, and their
 four post-award resource screenshots match the pinned source at zero pixels in
-both themes at 1440x900 on Windows. That row remains In progress because these
-new screenshots have no Linux pixel pairs and additional full-screen UI evidence
-is tracked separately. Other aggregate rows remain In progress wherever their
-maps retain a `Gap` or a required evidence layer is open. No additional random
-probes are requested for a qualified formula/RNG domain.
+both themes at 1440x900 on Windows and Linux. Object drops and random outcomes is
+now Certified; its finite RNG sample is qualified and no mapped branch remains
+uncovered. The two new partial-Mud Mining screenshots are Windows-only pending
+external Linux capture; Linux keeps the captured 80 HP assertion. Broader
+full-screen UI evidence is tracked in the Desktop UI area. Other aggregate rows
+remain In progress wherever their maps retain a `Gap` or a required evidence
+layer is open. No additional random probes are requested for a qualified
+formula/RNG domain.
+
+**Focused reassessment (2026-10-05):** 14 entries are marked
+`Sampled (qualified)`: seven in simulation/content, six in progression, and one
+in persistence/time. I checked each against every applicable zero and domain
+limit, strict-threshold below/equal/above case, piecewise or generation-region
+transition, cap/sentinel, and RNG draw-branch boundary, then checked its
+recorded fixed-seed sample and no-divergence pinned differential. All 14 meet
+the criterion. The outcomes by map are:
+
+| Map entries re-evaluated                                                                                                                                         | Result under the sampling rule                                                                                                                    | Matrix disposition after review                                                                                                        |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Procedural mine objects; Object drops and random outcomes; Mine rendering and compositing; Active and idle damage                                                | Applicable generation, damage, drop, rendering-path, threshold, and cap boundaries are covered; fixed-seed source comparisons pass.               | Procedural objects, drops, rendering, and active/idle damage are Certified.                                                            |
+| Money and money upgrades; Gems and gem upgrades; Planet Coins and upgrades                                                                                       | Applicable zero, formula/region, affordability, chance/rate, and cap boundaries are covered; fixed-seed phase differentials match full state/RNG. | In Progress only for separately mapped purchase, interaction, and visual evidence; not for finite formula samples.                     |
+| Wisdom and Powers; Upgrade costs, caps, and effects; Pickaxe crafting RNG; Pickaxe naming and replacement; Random distributions and RNG; Story and notifications | Applicable zero, strict comparison, level/cap, RNG draw, and predicate boundaries are covered; fixed-seed source differentials pass.              | Random distributions/RNG is Certified. The other five remain In Progress for separately mapped interaction, state, or visual evidence. |
+| Offline progression and time                                                                                                                                     | Threshold, zero/negative rate, cap, and ordered-effect boundaries are covered; sixteen fixed-seed elapsed values match full pinned load results.  | In Progress for real browser/OS background scheduling evidence, not elapsed-time sample size.                                          |
+
+The re-evaluation does not claim the non-formula state spaces in the web map
+are qualified by this rule. Story/UI combinations, arbitrary save shapes,
+browser storage failures, keyboard environments, and platform behavior keep
+their own evidence requirements. No formula/RNG area remains open solely
+because its sample is finite, and no sample expansion is warranted.
+
+Validation after this re-evaluation (2026-10-05): `pnpm.cmd test:parity`
+passed 35 files and 158 tests, including the pinned state/RNG differentials;
+`pnpm.cmd parity:traceability` verified 36 matrix areas; `pnpm.cmd docs:check`
+checked 85 Markdown files and source manifests; Prettier and `git diff --check`
+passed.
 
 ### Domains that remain sampled for separate evidence reasons
 
 Raw `Sampled` entries still describe non-formula domains: the complete app-state
 space and action trajectories beyond the captured traces; arbitrary save bytes,
-Unicode and historical save shapes; browser persistence failures and clock
-suspension; physical keyboard/IME variants; and unselected theme/viewport/UI
-states. Their named state, platform, integration, or full-screen visual evidence
-remains open in the corresponding map. The pinned object Canvas corpus is no
+Unicode and historical save shapes; browser persistence failures and OS clock
+suspension beyond the controlled Chromium case; physical keyboard/IME variants;
+and unselected theme/viewport/UI states. Their named state, platform,
+integration, or full-screen visual evidence remains open in the corresponding
+map. The pinned object Canvas corpus is no
 longer a gap: all 920 captured records have live source/Beyond pixel comparisons
 in the Mine rendering row. The formula/RNG rule neither certifies nor waives the
 remaining domains, and random formula probes cannot close them.
