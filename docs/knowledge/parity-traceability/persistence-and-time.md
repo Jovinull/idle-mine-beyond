@@ -125,21 +125,30 @@ domain.
 - **Remix source:** none. This is Beyond-owned serialization and migration code,
   not legacy behavior.
 - **Covered branches:** `parseRemixBeyondSave` validates version, schema, extra
-  fields, Decimal values, and immutable repeated restores; tests are in
+  fields at every object level, every serialized node's required shape, Decimal
+  values, nonnegative safe-integer mine levels with current level not exceeding
+  high-water, number formatter indices in the pinned range `0..39`, and
+  immutable repeated restores. The test also covers absent/present version
+  fields and absent/present `lastActiveMs`, plus encoder rejection of
+  non-finite numeric state and invalid level/formatter values; assertions are in
   `tests/parity/beyond-save.test.ts`.
-- **Sampled:** future schema versions/migrations are not implemented and must not be
-  claimed as covered by current v1 round trips.
+- **Current v1 scope:** older Beyond versions do not exist yet, and no v2
+  migration is claimed. A present unsupported version is rejected explicitly;
+  migration behavior belongs to a future schema-version decision.
 
 ### Beyond schema function and branch trace
 
-| Beyond function/path and branch                                                                                                    | Fixture/evidence                                                   | Assertion                                                                                                      |
-| ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
-| `parseRemixBeyondSave`: valid current schema parses and restores the whole state, including Decimal snapshots                      | complete v1 round-trip state in `tests/parity/beyond-save.test.ts` | `tests/parity/beyond-save.test.ts` compares every serialized/restored field and derived current object         |
-| Parse failure: malformed JSON, unsupported version, unexpected schema fields, and invalid Decimal are rejected with a typed status | invalid-input cases in the same test                               | `tests/parity/beyond-save.test.ts` asserts rejection category and no partial restored state                    |
-| Repeated restore from one parsed save returns independent mutable state                                                            | immutable repeated-restores case                                   | `tests/parity/beyond-save.test.ts` mutates one restore and checks the other and parsed source remain unchanged |
+| Beyond function/path and branch                                                                                                                                           | Fixture/evidence                                                                                                  | Assertion                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `createRemixBeyondSave` and `restoreRemixBeyondSave`: preserve the timestamp when present and omit it when absent                                                         | Complete-state and fresh-state round trips in `tests/parity/beyond-save.test.ts`                                  | `tests/parity/beyond-save.test.ts` compares all fields and verifies the omitted timestamp remains undefined                   |
+| `RemixBeyondSaveV1Schema.simulation`: selected and high-water mine IDs are nonnegative safe integers, and current level cannot exceed high-water                          | Zero/current-safe and `Number.MAX_SAFE_INTEGER` high-water; negative, fractional, unsafe, and inconsistent values | `tests/parity/beyond-save.test.ts` checks valid round trips, typed rejection, exact object restoration, and encoder rejection |
+| `parseRemixBeyondSave`: valid current schema parses and restores every field, Decimal snapshot, and derived current object                                                | Complete v1 round-trip state in `tests/parity/beyond-save.test.ts`                                                | `tests/parity/beyond-save.test.ts` compares every serialized/restored field and derived current object                        |
+| Parse failure: malformed JSON, missing/unsupported version, invalid values at every JSON node, and unknown keys at every strict object level                              | Systematically mutated complete v1 save in the same test                                                          | `tests/parity/beyond-save.test.ts` asserts each typed rejection; no partial state is returned                                 |
+| `RemixBeyondSaveV1Schema.settings.numberFormatterIndex` accepts only integer indices `0..39`, matching the pinned 40-entry formatter list; encoder refuses invalid values | Complete-state round trip at index 39; rejects -1, 39.5, and 40 and a non-finite timer                            | `tests/parity/beyond-save.test.ts` checks the valid upper boundary, decode issue path, and encoder rejection                  |
+| Repeated restore from one parsed save returns independent mutable state                                                                                                   | Immutable repeated-restores case                                                                                  | `tests/parity/beyond-save.test.ts` mutates one restore and checks the other and parsed source remain unchanged                |
 
 Future migration branches do not exist yet and remain outside current v1 schema
-coverage.
+coverage; the current version-rejection branch is covered.
 
 ## Beyond save storage and recovery
 

@@ -21,7 +21,12 @@ const corpus = JSON.parse(
     new URL("../fixtures/parity/remix-reference-corpus.json", import.meta.url),
     "utf8",
   ),
-) as { data: { mineObjectCatalog: RemixMineObjectCatalog } };
+) as {
+  data: {
+    initialState: { numberFormatters: string[] };
+    mineObjectCatalog: RemixMineObjectCatalog;
+  };
+};
 
 function decimalRecord(values: Record<string, DecimalSource>) {
   return Object.fromEntries(
@@ -58,6 +63,93 @@ function summarize(state: RemixLegacySaveApplicationState) {
     settings: state.settings,
     powerValueExtras: state.powerValueExtras.map((value) => value.toString()),
   };
+}
+
+type JsonPathPart = string | number;
+
+function collectJsonPaths(
+  value: unknown,
+  path: JsonPathPart[] = [],
+): JsonPathPart[][] {
+  const paths = [path];
+  if (Array.isArray(value)) {
+    value.forEach((child, index) => {
+      paths.push(...collectJsonPaths(child, [...path, index]));
+    });
+  } else if (typeof value === "object" && value !== null) {
+    for (const [key, child] of Object.entries(value)) {
+      paths.push(...collectJsonPaths(child, [...path, key]));
+    }
+  }
+  return paths;
+}
+
+function setJsonPath(
+  root: unknown,
+  path: JsonPathPart[],
+  replacement: unknown,
+): unknown {
+  if (path.length === 0) return replacement;
+
+  let parent = root;
+  for (const part of path.slice(0, -1)) {
+    if (Array.isArray(parent)) {
+      parent = parent[Number(part)];
+    } else if (typeof parent === "object" && parent !== null) {
+      parent = (parent as Record<string, unknown>)[String(part)];
+    } else {
+      throw new Error(`JSON path does not exist: ${path.join(".")}`);
+    }
+  }
+
+  const key = path.at(-1)!;
+  if (Array.isArray(parent)) {
+    parent[Number(key)] = replacement;
+  } else if (typeof parent === "object" && parent !== null) {
+    (parent as Record<string, unknown>)[String(key)] = replacement;
+  } else {
+    throw new Error(`JSON path parent is not a container: ${path.join(".")}`);
+  }
+  return root;
+}
+
+function collectObjectPaths(
+  value: unknown,
+  path: JsonPathPart[] = [],
+): JsonPathPart[][] {
+  if (Array.isArray(value)) {
+    return value.flatMap((child, index) =>
+      collectObjectPaths(child, [...path, index]),
+    );
+  }
+  if (typeof value !== "object" || value === null) return [];
+
+  return [
+    path,
+    ...Object.entries(value).flatMap(([key, child]) =>
+      collectObjectPaths(child, [...path, key]),
+    ),
+  ];
+}
+
+function objectAtJsonPath(
+  root: unknown,
+  path: JsonPathPart[],
+): Record<string, unknown> {
+  let value = root;
+  for (const part of path) {
+    if (Array.isArray(value)) {
+      value = value[Number(part)];
+    } else if (typeof value === "object" && value !== null) {
+      value = (value as Record<string, unknown>)[String(part)];
+    } else {
+      throw new Error(`JSON path does not exist: ${path.join(".")}`);
+    }
+  }
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    throw new Error(`JSON path is not an object: ${path.join(".")}`);
+  }
+  return value as Record<string, unknown>;
 }
 
 function stateWithEveryPersistedField(catalog: RemixMineObjectCatalog) {
@@ -141,6 +233,60 @@ it("round-trips the complete Beyond v1 state and derives its current object", ()
   expect(restored.simulation.currentObject.id).toBe(210);
 });
 
+it("omits and restores an unset last-active timestamp", () => {
+  const state = createInitialRemixLegacySaveApplicationState(
+    createInitialRemixSimulationState(corpus.data.mineObjectCatalog),
+  );
+  expect(state.simulation.lastActiveMs).toBeUndefined();
+
+  const encoded = encodeRemixBeyondSave(state);
+  const serialized = JSON.parse(encoded) as {
+    state: { simulation: Record<string, unknown> };
+  };
+  expect(Object.hasOwn(serialized.state.simulation, "lastActiveMs")).toBe(
+    false,
+  );
+
+  const decoded = decodeRemixBeyondSave(encoded);
+  expect(decoded.status).toBe("valid");
+  if (decoded.status !== "valid") {
+    throw new Error(`Expected a valid save, received ${decoded.status}.`);
+  }
+  const restored = restoreRemixBeyondSave(
+    decoded.save,
+    corpus.data.mineObjectCatalog,
+  );
+  expect(restored.simulation.lastActiveMs).toBeUndefined();
+  expect(summarize(restored)).toEqual(summarize(state));
+});
+
+it("preserves a safe-integer high-water mark with an earlier object selected", () => {
+  const state = stateWithEveryPersistedField(corpus.data.mineObjectCatalog);
+  const boundaryState = {
+    ...state,
+    simulation: {
+      ...state.simulation,
+      mineObjectLevel: 0,
+      highestMineObjectLevel: Number.MAX_SAFE_INTEGER,
+    },
+  };
+  const decoded = decodeRemixBeyondSave(encodeRemixBeyondSave(boundaryState));
+
+  expect(decoded.status).toBe("valid");
+  if (decoded.status !== "valid") {
+    throw new Error(`Expected a valid save, received ${decoded.status}.`);
+  }
+  const restored = restoreRemixBeyondSave(
+    decoded.save,
+    corpus.data.mineObjectCatalog,
+  );
+  expect(restored.simulation.mineObjectLevel).toBe(0);
+  expect(restored.simulation.highestMineObjectLevel).toBe(
+    Number.MAX_SAFE_INTEGER,
+  );
+  expect(restored.simulation.currentObject.id).toBe(0);
+});
+
 it("rejects malformed JSON, unknown versions, invalid Decimals, and extra fields", () => {
   const state = stateWithEveryPersistedField(corpus.data.mineObjectCatalog);
   const encoded = encodeRemixBeyondSave(state);
@@ -151,6 +297,12 @@ it("rejects malformed JSON, unknown versions, invalid Decimals, and extra fields
     ),
   ).toMatchObject({ status: "unsupportedVersion", version: 2 });
 
+  const missingVersion = JSON.parse(encoded) as Record<string, unknown>;
+  delete missingVersion["version"];
+  expect(decodeRemixBeyondSave(JSON.stringify(missingVersion))).toMatchObject({
+    status: "invalidSchema",
+  });
+
   const invalidDecimal = JSON.parse(encoded) as {
     state: { simulation: { resources: { money: string } } };
   };
@@ -159,11 +311,114 @@ it("rejects malformed JSON, unknown versions, invalid Decimals, and extra fields
     status: "invalidSchema",
   });
 
+  const formatterCount = corpus.data.initialState.numberFormatters.length;
+  expect(formatterCount).toBe(40);
+  for (const numberFormatterIndex of [-1, 39.5, formatterCount]) {
+    const invalidFormatterIndex = JSON.parse(encoded) as {
+      state: { settings: { numberFormatterIndex: number } };
+    };
+    invalidFormatterIndex.state.settings.numberFormatterIndex =
+      numberFormatterIndex;
+    expect(
+      decodeRemixBeyondSave(JSON.stringify(invalidFormatterIndex)),
+      `number formatter index ${numberFormatterIndex}`,
+    ).toMatchObject({
+      status: "invalidSchema",
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          path: "state.settings.numberFormatterIndex",
+        }),
+      ]),
+    });
+  }
+  expect(() =>
+    encodeRemixBeyondSave({
+      ...state,
+      settings: { ...state.settings, numberFormatterIndex: formatterCount },
+    }),
+  ).toThrow();
+  expect(() =>
+    encodeRemixBeyondSave({
+      ...state,
+      simulation: {
+        ...state.simulation,
+        saveTimer: Number.POSITIVE_INFINITY,
+      },
+    }),
+  ).toThrow();
+
+  const invalidCurrentLevel = {
+    ...state,
+    simulation: { ...state.simulation, mineObjectLevel: 210.5 },
+  };
+  expect(() => encodeRemixBeyondSave(invalidCurrentLevel)).toThrow();
+  expect(() =>
+    encodeRemixBeyondSave({
+      ...state,
+      simulation: { ...state.simulation, highestMineObjectLevel: 209 },
+    }),
+  ).toThrow();
+
+  for (const [path, value] of [
+    [["state", "simulation", "mineObjectLevel"], -1],
+    [["state", "simulation", "mineObjectLevel"], 210.5],
+    [["state", "simulation", "mineObjectLevel"], Number.MAX_SAFE_INTEGER + 1],
+    [["state", "simulation", "highestMineObjectLevel"], -1],
+    [["state", "simulation", "highestMineObjectLevel"], 214.5],
+    [
+      ["state", "simulation", "highestMineObjectLevel"],
+      Number.MAX_SAFE_INTEGER + 1,
+    ],
+    [["state", "simulation", "highestMineObjectLevel"], 209],
+  ] as const) {
+    const invalidLevel = setJsonPath(
+      JSON.parse(encoded) as unknown,
+      [...path],
+      value,
+    );
+    expect(
+      decodeRemixBeyondSave(JSON.stringify(invalidLevel)),
+      `${path.join(".")}=${value}`,
+    ).toMatchObject({
+      status: "invalidSchema",
+      issues: expect.arrayContaining([
+        expect.objectContaining({ path: path.join(".") }),
+      ]),
+    });
+  }
+
   const extraField = JSON.parse(encoded) as Record<string, unknown>;
   extraField["unrecognized"] = true;
   expect(decodeRemixBeyondSave(JSON.stringify(extraField))).toMatchObject({
     status: "invalidSchema",
   });
+});
+
+it("validates every v1 JSON node and rejects unknown keys at every object level", () => {
+  const state = stateWithEveryPersistedField(corpus.data.mineObjectCatalog);
+  const encoded = encodeRemixBeyondSave(state);
+  const valid = JSON.parse(encoded) as unknown;
+
+  for (const path of collectJsonPaths(valid)) {
+    const corrupted = setJsonPath(JSON.parse(encoded) as unknown, path, null);
+    const expectedStatus =
+      path.length === 1 && path[0] === "version"
+        ? "unsupportedVersion"
+        : "invalidSchema";
+    expect(
+      decodeRemixBeyondSave(JSON.stringify(corrupted)).status,
+      path.length === 0 ? "root" : path.join("."),
+    ).toBe(expectedStatus);
+  }
+
+  for (const path of collectObjectPaths(valid)) {
+    const corrupted = JSON.parse(encoded) as unknown;
+    objectAtJsonPath(corrupted, path)["unexpectedAtThisLevel"] = true;
+    expect(
+      decodeRemixBeyondSave(JSON.stringify(corrupted)).status,
+      path.length === 0 ? "root strictness" : `${path.join(".")} strictness`,
+    ).toBe("invalidSchema");
+  }
 });
 
 it("does not share mutable state when restoring one parsed save more than once", () => {

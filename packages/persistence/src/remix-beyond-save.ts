@@ -19,6 +19,12 @@ const decimalStringSchema = z
   }, "Expected a valid Decimal string.");
 
 const finiteNumberSchema = z.number().finite();
+const mineObjectLevelSchema = z
+  .number()
+  .int()
+  .min(0)
+  .max(Number.MAX_SAFE_INTEGER);
+const remixNumberFormatterIndexSchema = z.number().int().min(0).max(39);
 
 function upgradeGroupSchema<const Keys extends readonly string[]>(keys: Keys) {
   const shape = Object.fromEntries(
@@ -31,8 +37,8 @@ const remixBeyondSaveStateSchema = z
   .object({
     simulation: z
       .object({
-        mineObjectLevel: finiteNumberSchema,
-        highestMineObjectLevel: finiteNumberSchema,
+        mineObjectLevel: mineObjectLevelSchema,
+        highestMineObjectLevel: mineObjectLevelSchema,
         resources: z
           .object({
             money: decimalStringSchema,
@@ -88,7 +94,7 @@ const remixBeyondSaveStateSchema = z
         tab: z.string(),
         upgradeTab: z.string(),
         exportFieldString: z.string(),
-        numberFormatterIndex: finiteNumberSchema,
+        numberFormatterIndex: remixNumberFormatterIndexSchema,
         theme: z.string(),
         showMineObjLevel: z.boolean(),
         showMinCraftDamage: z.boolean(),
@@ -96,7 +102,16 @@ const remixBeyondSaveStateSchema = z
       .strict(),
     powerValueExtras: z.array(decimalStringSchema),
   })
-  .strict();
+  .strict()
+  .superRefine(({ simulation }, context) => {
+    if (simulation.mineObjectLevel > simulation.highestMineObjectLevel) {
+      context.addIssue({
+        code: "custom",
+        path: ["simulation", "highestMineObjectLevel"],
+        message: "Highest mine object level cannot precede the current level.",
+      });
+    }
+  });
 
 export const REMIX_BEYOND_SAVE_VERSION = 1 as const;
 
