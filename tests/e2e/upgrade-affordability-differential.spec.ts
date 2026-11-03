@@ -330,6 +330,11 @@ async function readCardPresentation(card: Locator) {
   });
 }
 
+async function readShopRasterDiagnostics(page: Page) {
+  const cards = await page.locator(".upgradelist .upgrade").all();
+  return Promise.all(cards.map(readCardPresentation));
+}
+
 type ModifierScreenSequence = {
   immediate: Buffer;
   refreshed: Buffer;
@@ -583,6 +588,7 @@ async function expectSinglePageFullViewportMatch(
         layoutChain,
       };
     });
+    const sourceRasterDiagnostics = await readShopRasterDiagnostics(page);
 
     if (modifier && beyondModifierScreens && sourceModifierScreens) {
       expect(
@@ -613,7 +619,9 @@ async function expectSinglePageFullViewportMatch(
       .digest("hex");
     const stateDetails = JSON.stringify({
       beyond: beyondState,
+      beyondRasterDiagnostics: await readShopRasterDiagnostics(page),
       remix: sourceState,
+      remixRasterDiagnostics: sourceRasterDiagnostics,
     });
     if (beyondHash !== sourceHash) {
       await Promise.all([

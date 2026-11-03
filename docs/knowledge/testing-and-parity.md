@@ -380,3 +380,19 @@ singular/plural and vowel/consonant article choices. The max finite Decimal
 result, including its adjective scaling, is preserved. Vitest and the Chromium
 probe compare every captured method result. The existing fixed-seed formatter
 sample remains unchanged.
+
+## Strict shop visual differential diagnostics (2026-11-03)
+
+When a full-screen upgrade-shop screenshot hash differs, the Playwright failure
+attachment now records each card's classes, bounds, opacity, and
+background/text styles, plus each image's source path, decoded dimensions,
+rendered bounds, and relevant paint styles. This lets a future failure
+distinguish a layout/style difference from an unexplained raster difference
+without weakening the pixel assertion.
+
+Focused dark affordability runs passed once in installed Chrome 156 and once
+in the pinned Playwright Chromium; the light level-zero catalog rerun passed in
+Chrome 156. These do not supersede the earlier complete 8-test run with two
+pixel mismatches. The source and app images remain compared exactly, with no
+mask or tolerance; keep the shop visual row In Progress until the intermittent
+difference is resolved.

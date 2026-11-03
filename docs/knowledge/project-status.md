@@ -42,6 +42,16 @@ the focused browser check compares both the root attribute and computed
 the dark level-one screenshot hash, so the rounded-corner pixel discrepancy
 remains open.
 
+**Shop raster follow-up (2026-11-03):** the strict full-screen comparison now
+attaches per-card identity/classes, bounds, opacity, image source/natural size,
+rendered image bounds, and paint-relevant computed styles when a pixel hash
+differs.
+Focused reruns passed the dark affordability states in installed Chrome 156
+and pinned Playwright Chromium (one run each), and the light level-zero catalog
+in Chrome 156. These passes do not supersede the earlier 6/8 complete-file run
+or identify its intermittent pixel deltas. Exact comparisons remain in place;
+shop and desktop visual parity stay In Progress.
+
 **Legacy save field-error browser coverage (2026-11-03):** the pinned corpus
 contains twenty source-captured `loadGame()` field-application failures.
 `tests/e2e/save-import-error.spec.ts` now submits all twenty through the Settings
