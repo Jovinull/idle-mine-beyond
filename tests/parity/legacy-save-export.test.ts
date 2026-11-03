@@ -230,6 +230,13 @@ it("reconstructs exact fresh and controlled full Remix save objects and bytes", 
 
 it("matches full-save hashes across generated objects and dynamic states", () => {
   const expectedChanges: Record<string, string[]> = {
+    "fixed-planet-coin-drop-90": [
+      "currentMineObject",
+      "mineObjectLevel",
+      "highestMineObjectLevel",
+      "settings",
+    ],
+    "extra-power-values": ["powers", "settings"],
     "generated-wisdom-drop-215": [
       "currentMineObject",
       "mineObjectLevel",
@@ -400,6 +407,10 @@ it("matches full-save hashes across generated objects and dynamic states", () =>
       expect(exportedPowers.data.values).toEqual(
         variant.decimalFields?.powerValues ?? expectedPowers.data.values,
       );
+      if (variant.name === "extra-power-values") {
+        expect(exportedPowers.data.values).toHaveLength(7);
+        expect(exportedPowers.data.values.slice(5)).toEqual(["8", "9"]);
+      }
       if (variant.decimalFields) {
         expect(Object.keys(variant.decimalFields.resources)).toEqual(
           expectedResourceFields,
@@ -445,6 +456,12 @@ it("matches full-save hashes across generated objects and dynamic states", () =>
   const cappedLog = corpus.data.saveExportSemantics.variants.find(
     (variant) => variant.name === "message-log-cap",
   );
+  const fixedDrop = corpus.data.saveExportSemantics.variants.find(
+    (variant) => variant.name === "fixed-planet-coin-drop-90",
+  )?.currentMineObject["cfg"] as
+    { drops?: Record<string, { amount: unknown }> } | undefined;
+  expect(typeof fixedDrop?.drops?.["planetcoin"]?.amount).toBe("number");
+  expect(fixedDrop?.drops?.["planetcoin"]?.amount).toBe(1);
   expect(cappedLog?.messageLog).toHaveLength(6);
   expect(cappedLog?.messageLog[0]?.message).toBe("Export probe 7");
   expect(cappedLog?.messageLog.at(-1)?.message).toBe("Export probe 2");

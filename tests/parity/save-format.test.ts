@@ -63,9 +63,18 @@ const corpus = JSON.parse(
         name: string;
         inputJson: string;
         thrownErrorName: string | null;
+        thrownErrorMessage: string | null;
         stateAfter: {
           money: { decimal: string };
           mineObjectLevel: number;
+          highestMineObjectLevel: number;
+          currentObject: {
+            name: string;
+            hp: { decimal: string };
+            totalHp: { decimal: string };
+            defense: { decimal: string };
+            value: { decimal: string };
+          };
           story: {
             page: number;
             notifications: number;
@@ -295,10 +304,14 @@ it("captures partial Remix field application before malformed saves throw", () =
   const samples = save.fieldApplicationErrors;
   expect(samples.map(({ name }) => name)).toEqual([
     "json-null-root",
+    "missing-story-after-resources",
     "null-story-after-resources",
     "null-settings-after-story",
     "null-upgrades-after-settings",
     "unknown-upgrade-key",
+    "unknown-gem-upgrade-key",
+    "unknown-planet-coin-upgrade-key",
+    "unknown-power-upgrade-key-after-extra-values",
     "null-money-upgrade-entry",
     "null-gem-upgrade-group",
     "null-gem-upgrade-entry",
@@ -312,7 +325,7 @@ it("captures partial Remix field application before malformed saves throw", () =
     "null-pickaxe-after-groups",
   ]);
   expect(samples.map(({ thrownErrorName }) => thrownErrorName)).toEqual(
-    Array.from({ length: 16 }, () => "TypeError"),
+    Array.from({ length: 20 }, () => "TypeError"),
   );
   const byName = Object.fromEntries(
     samples.map((sample) => [sample.name, sample]),
@@ -336,6 +349,20 @@ it("captures partial Remix field application before malformed saves throw", () =
     mineObjectLevel: 4,
     story: { page: 7, notifications: 8 },
   });
+  expect(byName["missing-story-after-resources"]).toMatchObject({
+    thrownErrorMessage: "Cannot read properties of undefined (reading 'page')",
+    stateAfter: {
+      money: { decimal: "123" },
+      mineObjectLevel: 4,
+      highestMineObjectLevel: 9,
+      currentObject: {
+        name: "Rock",
+        hp: { decimal: "2200" },
+        totalHp: { decimal: "2200" },
+      },
+      story: { page: 7, notifications: 8, highestUnlocked: 9, scrollY: 10 },
+    },
+  });
   expect(byName["null-settings-after-story"]?.stateAfter).toMatchObject({
     money: { decimal: "123" },
     story: { page: 2, notifications: 3, highestUnlocked: 5, scrollY: 6 },
@@ -355,6 +382,48 @@ it("captures partial Remix field application before malformed saves throw", () =
       moneyIdleSpeed: 11,
       gemOfflineGems: 12,
       planetOfflinePC: 13,
+    },
+  });
+  expect(byName["unknown-gem-upgrade-key"]).toMatchObject({
+    thrownErrorMessage: "Cannot set properties of undefined (setting 'level')",
+    stateAfter: {
+      upgradeLevels: {
+        moneyIdleSpeed: 6,
+        gemOfflineGems: 12,
+        planetOfflinePC: 13,
+        wisdomPowerPowerActive: 14,
+      },
+    },
+  });
+  expect(byName["unknown-planet-coin-upgrade-key"]).toMatchObject({
+    thrownErrorMessage: "Cannot set properties of undefined (setting 'level')",
+    stateAfter: {
+      upgradeLevels: {
+        moneyIdleSpeed: 11,
+        gemOfflineGems: 4,
+        planetOfflinePC: 13,
+        wisdomPowerPowerActive: 14,
+      },
+    },
+  });
+  expect(byName["unknown-power-upgrade-key-after-extra-values"]).toMatchObject({
+    thrownErrorMessage: "Cannot set properties of undefined (setting 'level')",
+    stateAfter: {
+      upgradeLevels: {
+        moneyIdleSpeed: 11,
+        gemOfflineGems: 4,
+        planetOfflinePC: 5,
+        wisdomPowerPowerActive: 14,
+      },
+      powers: [
+        { decimal: "3" },
+        { decimal: "4" },
+        { decimal: "5" },
+        { decimal: "6" },
+        { decimal: "7" },
+        { decimal: "8" },
+        { decimal: "9" },
+      ],
     },
   });
   expect(byName["null-money-upgrade-entry"]?.stateAfter).toMatchObject({

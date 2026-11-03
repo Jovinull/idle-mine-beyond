@@ -48,7 +48,9 @@ function mimeType(filePath: string): string {
 
 export async function routePinnedRemixOracle(
   routeHost: BrowserContext | Page,
+  options: { readonly passThroughOrigins?: readonly string[] } = {},
 ): Promise<string> {
+  const passThroughOrigins = new Set(options.passThroughOrigins ?? []);
   const [referenceManifest, dependencyManifest] = await Promise.all([
     readFile(
       path.join(projectRoot, "docs/knowledge/sources/reference-manifest.json"),
@@ -166,6 +168,11 @@ export async function routePinnedRemixOracle(
       } else {
         await route.fulfill({ ...response, body: snapshot });
       }
+      return;
+    }
+
+    if (passThroughOrigins.has(requestUrl.origin)) {
+      await route.continue();
       return;
     }
 

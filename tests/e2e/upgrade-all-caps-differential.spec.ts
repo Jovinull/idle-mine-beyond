@@ -3,9 +3,10 @@ import { readFile } from "node:fs/promises";
 import {
   expect,
   test,
-  type Browser,
+  type BrowserContext,
   type Locator,
   type Page,
+  type TestInfo,
 } from "@playwright/test";
 import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
@@ -116,18 +117,25 @@ async function waitForVisualPaint(page: Page): Promise<void> {
   });
 }
 
-async function stableScreenshotHash(
-  page: Page,
+type ScreenshotClip = { x: number; y: number; width: number; height: number };
+
+async function locatorClip(
   locator: Locator,
-  inset = 1,
-): Promise<string> {
+  inset = 0,
+): Promise<ScreenshotClip> {
   const bounds = await locator.boundingBox();
-  if (!bounds) throw new Error("The source-paired upgrade element is hidden.");
+  if (!bounds) throw new Error("The source-paired visual element is hidden.");
   const x = Math.floor(bounds.x) + inset;
   const y = Math.floor(bounds.y) + inset;
   const right = Math.ceil(bounds.x + bounds.width) - inset;
   const bottom = Math.ceil(bounds.y + bounds.height) - inset;
-  const clip = { x, y, width: right - x, height: bottom - y };
+  return { x, y, width: right - x, height: bottom - y };
+}
+
+async function stableClipScreenshotHash(
+  page: Page,
+  clip: ScreenshotClip,
+): Promise<{ hash: string; png: Buffer }> {
   let previous: string | undefined;
   for (let attempt = 0; attempt < 8; attempt += 1) {
     const screenshot = await page.screenshot({
@@ -136,7 +144,7 @@ async function stableScreenshotHash(
       caret: "hide",
     });
     const current = createHash("sha256").update(screenshot).digest("hex");
-    if (current === previous) return current;
+    if (current === previous) return { hash: current, png: screenshot };
     previous = current;
     await waitForVisualPaint(page);
   }
@@ -148,9 +156,9 @@ function normalizeText(value: string): string {
 }
 
 async function compareFiniteCapBoundaries(
-  page: Page,
-  browser: Browser,
+  context: BrowserContext,
   theme: "light" | "dark",
+  testInfo: TestInfo,
 ): Promise<void> {
   const fixture = JSON.parse(
     await readFile(
@@ -171,14 +179,12 @@ async function compareFiniteCapBoundaries(
     level: 0,
     theme,
   });
-  const sourceContext = await browser.newContext({
-    colorScheme: theme,
-    locale: "en-US",
-    timezoneId: "UTC",
-    viewport: { width: 1440, height: 900 },
-  });
-  const sourcePage = await sourceContext.newPage();
-  const sourceUrl = await routePinnedRemixOracle(sourceContext);
+  const [page, sourcePage] = await Promise.all([
+    context.newPage(),
+    context.newPage(),
+  ]);
+  // Route the oracle on its Page only so Beyond's local origin is unaffected.
+  const sourceUrl = await routePinnedRemixOracle(sourcePage);
   const initialize = async (encoded: string) => {
     await Promise.all([
       page.addInitScript(seedPage, { encoded, time: fixedTime }),
@@ -288,24 +294,78 @@ async function compareFiniteCapBoundaries(
           );
 
           const [
-            beyondCardHash,
-            sourceCardHash,
-            beyondDetailsHash,
-            sourceDetailsHash,
+            beyondCardClip,
+            sourceCardClip,
+            beyondDetailsClip,
+            sourceDetailsClip,
           ] = await Promise.all([
-            stableScreenshotHash(page, beyondCard),
-            stableScreenshotHash(sourcePage, sourceCard),
-            stableScreenshotHash(page, beyondDetails, 0),
-            stableScreenshotHash(sourcePage, sourceDetails, 0),
+            locatorClip(beyondCard, 1),
+            locatorClip(sourceCard, 1),
+            locatorClip(beyondDetails),
+            locatorClip(sourceDetails),
           ]);
           expect(
-            beyondCardHash,
-            `${theme} ${group}.${key} level ${level} card pixels`,
-          ).toBe(sourceCardHash);
+            sourceCardClip,
+            `${theme} ${group}.${key} level ${level} card geometry`,
+          ).toEqual(beyondCardClip);
           expect(
-            beyondDetailsHash,
+            sourceDetailsClip,
+            `${theme} ${group}.${key} level ${level} detail geometry`,
+          ).toEqual(beyondDetailsClip);
+          const [
+            beyondCardVisual,
+            sourceCardVisual,
+            beyondDetailsVisual,
+            sourceDetailsVisual,
+          ] = await Promise.all([
+            stableClipScreenshotHash(page, beyondCardClip),
+            stableClipScreenshotHash(sourcePage, sourceCardClip),
+            stableClipScreenshotHash(page, beyondDetailsClip),
+            stableClipScreenshotHash(sourcePage, sourceDetailsClip),
+          ]);
+          if (
+            beyondCardVisual.hash !== sourceCardVisual.hash ||
+            beyondDetailsVisual.hash !== sourceDetailsVisual.hash
+          ) {
+            await Promise.all([
+              testInfo.attach(
+                `${theme}-${group}-${key}-${level}-beyond-card.png`,
+                {
+                  body: beyondCardVisual.png,
+                  contentType: "image/png",
+                },
+              ),
+              testInfo.attach(
+                `${theme}-${group}-${key}-${level}-source-card.png`,
+                {
+                  body: sourceCardVisual.png,
+                  contentType: "image/png",
+                },
+              ),
+              testInfo.attach(
+                `${theme}-${group}-${key}-${level}-beyond-detail.png`,
+                {
+                  body: beyondDetailsVisual.png,
+                  contentType: "image/png",
+                },
+              ),
+              testInfo.attach(
+                `${theme}-${group}-${key}-${level}-source-detail.png`,
+                {
+                  body: sourceDetailsVisual.png,
+                  contentType: "image/png",
+                },
+              ),
+            ]);
+          }
+          expect(
+            beyondCardVisual.hash,
+            `${theme} ${group}.${key} level ${level} card pixels`,
+          ).toBe(sourceCardVisual.hash);
+          expect(
+            beyondDetailsVisual.hash,
             `${theme} ${group}.${key} level ${level} detail pixels`,
-          ).toBe(sourceDetailsHash);
+          ).toBe(sourceDetailsVisual.hash);
 
           const [beyondStyle, sourceStyle] = await Promise.all([
             beyondCard.evaluate((element) => {
@@ -346,7 +406,10 @@ async function compareFiniteCapBoundaries(
       }
     }
   } finally {
-    await sourceContext.close().catch(() => undefined);
+    await Promise.all([
+      page.close().catch(() => undefined),
+      sourcePage.close().catch(() => undefined),
+    ]);
   }
 }
 
@@ -356,8 +419,8 @@ for (const theme of ["light", "dark"] as const) {
     `matches every finite Money, Gem, and Planet Coin shop cap boundary (${theme})`,
     { tag: "@slow" },
     async ({ browser }, testInfo) => {
-      test.setTimeout(240_000);
-      const beyondContext = await browser.newContext({
+      test.setTimeout(600_000);
+      const context = await browser.newContext({
         baseURL: testInfo.project.use.baseURL as string,
         colorScheme: theme,
         locale: "en-US",
@@ -365,11 +428,9 @@ for (const theme of ["light", "dark"] as const) {
         viewport: { width: 1440, height: 900 },
       });
       try {
-        const beyondPage = await beyondContext.newPage();
-        // Keep this context aligned with the configured local web server.
-        await compareFiniteCapBoundaries(beyondPage, browser, theme);
+        await compareFiniteCapBoundaries(context, theme, testInfo);
       } finally {
-        await beyondContext.close();
+        await context.close();
       }
     },
   );

@@ -83,6 +83,12 @@ type SettingsRuntimeFixture = {
     saveExportSemantics: {
       fresh: { object: Record<string, unknown> };
     };
+    hardResetSemantics: {
+      cancelled: {
+        name: string;
+        confirmationPrompts: string[];
+      }[];
+    };
     payUSDebtSemantics: {
       scenarios: {
         name: string;
@@ -2400,6 +2406,29 @@ test("exports and imports the pinned legacy save through the Settings text field
   expect(
     await page.evaluate(() => localStorage.getItem("IdleMineBeyond")),
   ).toBe(beforeMalformedImport);
+
+  await page.locator("[data-game-tab='settings']").click();
+  const missingStory = reference.data.saveSemantics.fieldApplicationErrors.find(
+    ({ name }) => name === "missing-story-after-resources",
+  );
+  if (!missingStory)
+    throw new Error("The absent-Story save fixture is missing.");
+  await saveField.fill(missingStory.encoded);
+  await settings
+    .getByRole("button", { name: "Import (from Text Field)" })
+    .click();
+
+  await expect(page.getByRole("alert")).toHaveText(
+    "Cannot read properties of undefined (reading 'page')",
+  );
+  expect(
+    await page.evaluate(() => localStorage.getItem("IdleMineBeyond")),
+  ).toBe(beforeMalformedImport);
+  await page.locator("[data-game-tab='mining']").click();
+  await expect(page.locator(".mineobject h2")).toHaveText("Rock");
+  expect(
+    await page.evaluate(() => localStorage.getItem("IdleMineBeyond")),
+  ).toBe(beforeMalformedImport);
 });
 
 test("unlocks Powers at the source object and renders prestige and Wisdom upgrades", async ({
@@ -2582,6 +2611,155 @@ test("performs source Hard Reset after three confirmations and clears origin sto
   ).toEqual({ length: 0, keys: [] });
   await page.waitForTimeout(100);
   expect(await page.evaluate(() => localStorage.length)).toBe(0);
+});
+
+test("matches pinned Remix Hard Reset cancellation at each confirmation", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90_000);
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as SettingsRuntimeFixture;
+  const resetCases = reference.data.hardResetSemantics.cancelled;
+  expect(resetCases.map(({ name }) => name)).toEqual([
+    "cancel-first-confirmation",
+    "cancel-second-confirmation",
+    "cancel-third-confirmation",
+  ]);
+  const save = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as {
+    lastActive: number;
+    settings: { theme: string };
+  };
+  save.lastActive = 1_700_000_000_000;
+  save.settings.theme = "dark";
+  const encodedSave = encodeRemixLegacySave(save);
+  const sourceContext = await browser.newContext({
+    colorScheme: "dark",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+  const initializePage = (encoded: string) => {
+    localStorage.clear();
+    localStorage.setItem("IdleMine", encoded);
+    localStorage.setItem("unrelated-origin-data", "existing-data");
+    Date.now = () => 1_700_000_000_000;
+  };
+
+  const captureSettings = (target: typeof page) =>
+    target.evaluate(() => ({
+      field: document.querySelector<HTMLTextAreaElement>(
+        "article.settings textarea",
+      )?.value,
+      settingsVisible: Boolean(document.querySelector("article.settings")),
+      themeColor: getComputedStyle(document.body).backgroundColor,
+      storage: Object.fromEntries(
+        Object.keys(localStorage)
+          .sort()
+          .map((key) => [key, localStorage.getItem(key)]),
+      ),
+    }));
+
+  const cancelAtPrompt = async (
+    target: typeof page,
+    isSource: boolean,
+    promptCount: number,
+  ) => {
+    const prompts: string[] = [];
+    const handleDialog = async (dialog: import("@playwright/test").Dialog) => {
+      prompts.push(dialog.message());
+      if (prompts.length === promptCount) await dialog.dismiss();
+      else await dialog.accept();
+    };
+    target.on("dialog", handleDialog);
+    try {
+      const resetButton = isSource
+        ? target
+            .locator("article.settings button")
+            .filter({ hasText: "Hard Reset" })
+        : target.locator("[data-settings-hard-reset]");
+      await resetButton.click();
+      await expect.poll(() => prompts.length).toBe(promptCount);
+    } finally {
+      target.off("dialog", handleDialog);
+    }
+    return prompts;
+  };
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all([
+      page.addInitScript(initializePage, encodedSave),
+      sourcePage.addInitScript(initializePage, encodedSave),
+    ]);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean(
+        (window as Window & { game?: unknown }).game &&
+        document.querySelector("#app > footer"),
+      ),
+    );
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    const beyondField = page.locator("[data-settings-save-field]");
+    const sourceField = sourcePage.locator("article.settings textarea");
+    await Promise.all([
+      beyondField.fill("old export text"),
+      sourceField.fill("old export text"),
+    ]);
+    const before = await Promise.all([
+      captureSettings(page),
+      captureSettings(sourcePage),
+    ]);
+    expect(before[0]?.field).toBe("old export text");
+    expect(before[1]?.field).toBe("old export text");
+    expect(before[0]?.themeColor).toBe(before[1]?.themeColor);
+
+    for (const scenario of resetCases) {
+      const [beyondPrompts, sourcePrompts] = await Promise.all([
+        cancelAtPrompt(page, false, scenario.confirmationPrompts.length),
+        cancelAtPrompt(sourcePage, true, scenario.confirmationPrompts.length),
+      ]);
+      expect(beyondPrompts, scenario.name).toEqual(
+        scenario.confirmationPrompts,
+      );
+      expect(sourcePrompts, scenario.name).toEqual(
+        scenario.confirmationPrompts,
+      );
+      const after = await Promise.all([
+        captureSettings(page),
+        captureSettings(sourcePage),
+      ]);
+      expect(after[0], `Beyond state after ${scenario.name}`).toEqual(
+        before[0],
+      );
+      expect(after[1], `Remix state after ${scenario.name}`).toEqual(before[1]);
+      expect(after[0]?.field, scenario.name).toBe(after[1]?.field);
+      expect(after[0]?.themeColor, scenario.name).toBe(after[1]?.themeColor);
+    }
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
 });
 
 test("exports damaged save slots before recovering from a supplied Remix save", async ({

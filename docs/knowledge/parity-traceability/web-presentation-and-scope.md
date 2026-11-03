@@ -41,17 +41,20 @@ of those maps.
   modifier E2E compares the source-observed held state across window blur and
   its removal on keyup, as well as Shift/Control purchase precedence.
 - **Sampled:** physical keyboard layout/IME and browser-generated key-event variants
-  are not captured. Manual save/edit/reset combinations remain partial.
+  are not captured. The named save-field, import, and reset interactions cover
+  their mapped source paths; arbitrary text edits and multi-control sequences
+  remain non-exhaustive UI states rather than untested source branches.
 
 ### Settings/input function and branch trace
 
-| Pinned Remix function/path and branch                                                                                                                                                                                                       | Source evidence                                                                                            | Beyond assertion                                                                                           |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `Scripts/main.js:onkeydown`: insert a key only if absent; ArrowRight, ArrowLeft, and an unbound key; prevent default only for either arrow                                                                                                  | `keyboardInputSemantics.scenarios` includes single/repeated arrows, bounds, focused input, and unbound `a` | `tests/e2e/remix-app.spec.ts` replays all scenarios and asserts default prevention and resulting object    |
-| `Scripts/Define/functions.js:setMineObjectLevel`: accept levels from 0 through high-water; ignore levels below 0 or above high-water                                                                                                        | `keyboardInputSemantics.scenarios` includes both bounds                                                    | `tests/e2e/remix-app.spec.ts` compares displayed level and object name after each event                    |
-| `Scripts/main.js:onkeyup`: remove the released key; source has no blur handler to clear it early                                                                                                                                            | `keyboardInputSemantics.modifierLifecycle` records Shift after keydown, blur, and keyup                    | `tests/e2e/remix-app.spec.ts` compares modifier UI before/after blur and after keyup                       |
-| `Scripts/Define/functions.js:changeTab`: save scroll when leaving Story; clear notifications and schedule 30 ms restoration when entering Story; refresh number selection when entering Settings (50 ms)                                    | `storyTabSemantics` captures source tab transitions and timed effects                                      | `tests/parity/story.test.ts` and `tests/e2e/story.spec.ts` assert state/effects and live navigation        |
-| `Scripts/Define/functions.js:exportGame`, `Scripts/Define/functions.js:getSaveString`, and `Scripts/Define/functions.js:saveGame`: serialize the current source game into the Settings field; save path updates time, localStorage, and log | `saveApplicationSemantics` and `saveExportSemantics` pin source output                                     | `tests/e2e/save-codec.spec.ts` and `tests/e2e/remix-app.spec.ts` compare import/export and persisted state |
+| Pinned Remix function/path and branch                                                                                                                                                                                                       | Source evidence                                                                                                 | Beyond assertion                                                                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Scripts/main.js:onkeydown`: insert a key only if absent; ArrowRight, ArrowLeft, and an unbound key; prevent default only for either arrow                                                                                                  | `keyboardInputSemantics.scenarios` includes single/repeated arrows, bounds, focused input, and unbound `a`      | `tests/e2e/remix-app.spec.ts` replays all scenarios and asserts default prevention and resulting object                                                                         |
+| `Scripts/Define/functions.js:setMineObjectLevel`: accept levels from 0 through high-water; ignore levels below 0 or above high-water                                                                                                        | `keyboardInputSemantics.scenarios` includes both bounds                                                         | `tests/e2e/remix-app.spec.ts` compares displayed level and object name after each event                                                                                         |
+| `Scripts/main.js:onkeyup`: remove the released key; source has no blur handler to clear it early                                                                                                                                            | `keyboardInputSemantics.modifierLifecycle` records Shift after keydown, blur, and keyup                         | `tests/e2e/remix-app.spec.ts` compares modifier UI before/after blur and after keyup                                                                                            |
+| `Scripts/Define/functions.js:changeTab`: save scroll when leaving Story; clear notifications and schedule 30 ms restoration when entering Story; refresh number selection when entering Settings (50 ms)                                    | `storyTabSemantics` captures source tab transitions and timed effects                                           | `tests/parity/story.test.ts` and `tests/e2e/story.spec.ts` assert state/effects and live navigation                                                                             |
+| `Scripts/Define/functions.js:exportGame`, `Scripts/Define/functions.js:getSaveString`, and `Scripts/Define/functions.js:saveGame`: serialize the current source game into the Settings field; save path updates time, localStorage, and log | `saveApplicationSemantics` and `saveExportSemantics` pin source output                                          | `tests/e2e/save-codec.spec.ts` and `tests/e2e/remix-app.spec.ts` compare import/export and persisted state                                                                      |
+| `Scripts/Define/functions.js:hardReset`: each confirmation returns early without changing game/storage when dismissed; three accepts clear origin storage and reload defaults                                                               | `hardResetSemantics.cancelled` covers each dismissal index; `hardResetSemantics.confirmed` covers three accepts | `tests/parity/remix-hard-reset.test.ts` checks every source result; `tests/e2e/remix-app.spec.ts` compares each cancellation point with pinned Remix and checks confirmed reset |
 
 ## Light and dark themes
 
@@ -148,7 +151,10 @@ explicit visual gaps above.
   levels zero and one in both themes (12 paired viewports), plus the zero-
   resource boundary for each tab, the Money below-price boundary, and the exact-
   price boundary for all three tabs in both themes (14 paired viewports). Other
-  balances, modifier hints, and broader application-state combinations remain open. The
+  balances and broader application-state combinations remain open. A dedicated
+  full-screen differential covers the immediate stale labels and the refreshed
+  active hints for Shift, Control, and Shift+Control on Money Active Power in
+  both themes; it does not cover all shop states. The
   Gem Blacksmith Skill equality-at-cap (50) and saved
   over-cap (51) states now compare card pixels (1px inset) and full hover-detail
   pixels against pinned Remix in both themes, in addition to labels, styles,
@@ -157,6 +163,40 @@ explicit visual gaps above.
   one-level RGB differences did not reproduce. The source-paired E2E now checks
   the stabilized 1440x900 viewport hash for that state in both themes. This is
   one selected screen state; the complete shop visual state space remains open.
+
+**Dark Planet Coin exact-price repeatability (2026-10-05):** one isolated
+full-screen run failed, its immediate rerun passed, and three consecutive
+repetitions then passed. The failing run's first-card and ancestor paint
+diagnostics matched between Remix and Beyond; the intermittent screenshot
+difference remains unexplained. Keep the exact screenshot comparison and the
+shop visual row In progress.
+
+**Focused boundary rerun (2026-10-05):** the light and dark affordability
+tests each completed successfully (1/1) when the local Vite server was kept in
+a separate managed session. Each test compares nine full 1440x900 source/Beyond
+states across zero, immediately-below-price, and exact-price cases for Money,
+Gems, and Planet Coins. The earlier exact-price rounded-border difference did
+not reproduce. The level-one all-affordable catalog corner mismatch and the
+unexplained intermittent exact-price result remain separate open visual
+evidence; no screenshot tolerance or exception is accepted.
+
+The dark level-one catalog was then rerun as a single source-paired E2E after
+removing Beyond-only `main { min-height: 0; overflow: hidden; }` rules; the
+pinned `main.css` has no `main` override. The full-screen comparison still
+fails at exactly five pixels, each by one channel, on the top-left rounded
+border pixels `(810,152)`, `(923,152)`, `(1036,152)`, `(1149,152)`, and
+`(1262,152)`. The selected cards and their full ancestor chains have matching
+geometry and computed style after the correction, so it did not resolve this
+rendering delta. The 38 priority visual E2Es pass after the CSS change; the
+shop visual row remains In progress.
+
+**Level-one dark Gem catalog rerun (2026-11-03):** the strict 1440x900
+source-paired test reproduced seven one-channel differences at
+`(697,152)`, `(810,152)`, `(923,152)`, `(1036,152)`, `(1149,152)`,
+`(1262,152)`, and `(697,276)`: Beyond RGB 3, Remix RGB 4. Card and ancestor
+geometry, border, radius, and background match; the whole-screen hashes remain
+different. Keep this visual path open with exact comparison; no tolerance or
+mask is permitted.
 
 ### Upgrade-shop visual function and branch trace
 
@@ -170,6 +210,20 @@ explicit visual gaps above.
 | `Components/upgrade.js` exact `level === maxLevel` dimming versus `Upgrade.buy` strict `level < getMaxLevel()` at Gem cap 50 and saved level 51        | `upgradeSemantics.groups.gems.blacksmithSkill` source displays at 50/51                     | `tests/e2e/upgrade-cap-quirk.spec.ts` compares labels, details, class, opacity, cursor, click no-op, and 1px-inset card/full detail pixel hashes in both themes against pinned Remix |
 | Modifier branch priority: Control buys 100, else Shift buys 10, else single buy; selected Gem craft modifier is covered in craft map                   | pinned `buyUpgrade` source and browser modifier cases                                       | `tests/e2e/remix-app.spec.ts` asserts all three purchase modes and control precedence                                                                                                |
 | `main.js` global keymap and `index.html` multibuy labels: keydown/up does not itself trigger a Vue render; later reactive render recomputes the labels | Pinned source runtime with fixed clock and controlled key events                            | `tests/e2e/upgrade-affordability-differential.spec.ts` compares stale/immediate, hover-refreshed, stale-after-release, and release-refreshed labels and detail pixels in both themes |
+
+#### Held modifier full-screen differential
+
+The pinned `Scripts/main.js` global `onkeydown`/`onkeyup` handlers mutate
+`keymap` without a Vue-observed state assignment for Shift or Control.
+`Scripts/Components/upgrade.js` changes `game.highlightedUpgrade` on hover,
+which causes the pinned `index.html` computed purchase labels to render again;
+`main.css` colors `.highlightedupgrade .multibuy.active` green.
+`tests/e2e/upgrade-affordability-differential.spec.ts` starts from a level-zero,
+all-affordable save, then captures the full 1440x900 screen immediately after
+each keydown and after hovering away/back to trigger a Vue render. It asserts
+stale labels `[false,false]`, then Shift `[true,false]`,
+Control `[false,true]`, and Shift+Control `[false,true]`. All 12 source/Beyond
+image pairs (two frames × three modifier cases × two themes) match exactly.
 
 ### Shop-tab selection state branch trace
 
@@ -191,11 +245,18 @@ explicit visual gaps above.
   formula/prestige state assertions in `tests/parity/remix-powers.test.ts`; and
   live source comparisons for all four prestige actions, the disabled no-op, and
   the stale table until tab re-entry in
-  `tests/e2e/powers-prestige-differential.spec.ts`.
-- **Sampled:** representative full-screen comparisons now cover the initial,
-  stale-after-prestige, and remounted table at 1440x900 in both themes. Later
-  Power balances, other prestige inputs, and unselected theme/viewport
-  combinations remain open.
+  `tests/e2e/powers-prestige-differential.spec.ts`. The captured
+  `prestige-effect-above-threshold` input also shows all four prestige rows and
+  compares source-captured button text plus full-screen pixels in both themes.
+- **Covered boundary:** the current-Power row visibility condition is isolated
+  from the next-Power condition: `current=999,next=1` hides the prestige action;
+  `current=1000,next=1` displays the disabled action. The corresponding pinned
+  source outputs drive full-screen comparisons in both themes at 1440x900.
+- **Sampled:** representative full-screen comparisons cover the initial,
+  stale-after-prestige, remounted table, the hidden/visible 999/1,000 boundary,
+  and the all-row state at Power 1,001 at 1440x900 in both themes. Other
+  balances, prestige inputs, and unselected theme/viewport combinations remain
+  open.
 
 ### Powers visual function and branch trace
 
@@ -203,6 +264,7 @@ explicit visual gaps above.
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `game.powers.unlocked()`: locked below high-water 170; visible at and above 170                                                                                                                                           | captured 169/170/171 saves and source screenshot state                                                       | `tests/parity/remix-powers.test.ts` asserts the strict gate; `tests/e2e/remix-app.spec.ts` asserts the tab/panel boundary                                                                                                       |
 | `Scripts/Components/powers-table.js`: row visibility, current/next-Power labels, prestige control enabled/disabled, indexed-write stale display, observed idle `Vue.set` refresh, tab re-entry refresh, and reset outcome | all source rows and named prestige states in `powersTableSemantics`, plus paired pinned browser observations | `tests/parity/remix-powers.test.ts` compares row outputs and resulting values; `tests/e2e/powers-prestige-differential.spec.ts` compares all four actions, the no-op, stale rows, idle-hit refresh, and tab re-entry with Remix |
+| `prestige-effect-above-threshold`: four visible row/button labels at Power 1,001 with mixed enabled/disabled states                                                                                                       | `powersTableSemantics.scenarios` source output and the captured `1001,1001,1001,1001,1` input                | `tests/e2e/powers-prestige-differential.spec.ts` asserts the rendered text against the source fixture and compares full-screen source/Beyond pixels in both themes at 1440x900                                                  |
 
 The full-screen prestige differential in `tests/e2e/powers-prestige-differential.spec.ts` also compares the initial, stale-after-prestige, and remounted states against pinned Remix at 1440x900 in both themes. The pinned `Themes/dark.css` selector `button:not(.chapter-control button)` gives non-chapter controls the `#636363` background even at rest; this source branch is included in those screenshot assertions.
 | Captured Wisdom/Stars visual state, both themes at 1440×900 | pinned priority source screenshot pair | `tests/e2e/priority-visual.spec.ts` compares the selected screenshot pair; `tests/parity/visual-baselines.test.ts` checks its hashes |
@@ -212,8 +274,9 @@ The full-screen prestige differential in `tests/e2e/powers-prestige-differential
 - **Remix source branches:** `index.html` selected object/resources/upgrade
   controls; `Components/mine-object.js` animation; `main.js:update` and
   `drawStone` frame/render paths.
-- **Covered:** fresh Mining plus controlled objects 124, 169, and 198 at
-  1440×900 in both themes; selected primary-screen pairs at
+- **Covered:** fresh Mining, controlled objects 124, 169, and 198, and fresh
+  Mud after one non-lethal click (HP 100 to 80) at 1440×900 in both themes;
+  selected primary-screen pairs at
   1366×768, 1920×1080, and 2560×1440. See
   `tests/e2e/priority-visual.spec.ts` and
   `tests/parity/visual-baselines.test.ts`.
@@ -222,13 +285,14 @@ The full-screen prestige differential in `tests/e2e/powers-prestige-differential
 
 ### Mining visual function and branch trace
 
-| Pinned Remix function/path and branch                                                                                            | Source evidence                                                                                                                 | Beyond assertion                                                                                                                                                   |
-| -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `index.html`: selected mine-object name/level, resource header, and upgrade controls for Mining tab                              | fresh and captured Space/Wisdom/Galaxy phase saves                                                                              | `tests/e2e/priority-visual.spec.ts` asserts object names/controls and compares source/Beyond screenshots at 1440×900 in both themes                                |
-| `Scripts/Components/mine-object.js`: damageable Mining canvas versus non-damageable Story preview; image-loading completion path | `formulaSemantics`, Story `nodamage` template, and Canvas render records                                                        | `tests/e2e/remix-app.spec.ts` asserts active click, zero-damage state, and non-mining preview; `tests/e2e/mine-object-renderer.spec.ts` asserts pixel output       |
-| `Scripts/main.js:update` and `drawStone`: frame-driven mining/render composition and Canvas compositing                          | `simulationFrameSemantics`, source RGBA goldens, and captured mine objects                                                      | `tests/parity/mining-transitions.test.ts`, `tests/parity/story-runtime.test.ts`, and `tests/e2e/mine-object-renderer.spec.ts` compare frame transitions and pixels |
-| Full Mining screen with controlled Clay save and selected Gem craft cost 3 in light and dark at 1440×900                         | both `craft-mining-panel-{light,dark}-1440x900.json` sidecars pin source state, theme, browser, viewport, and screenshot hashes | `tests/e2e/remix-app.spec.ts` compares both full screens at zero pixels on Windows and Linux                                                                       |
-| Selected primary Mining screen at 1366×768, 1920×1080, and 2560×1440                                                             | paired source screenshots for both themes and each viewport                                                                     | `tests/e2e/priority-visual.spec.ts` compares each selected viewport; `tests/parity/visual-baselines.test.ts` validates metadata and hashes                         |
+| Pinned Remix function/path and branch                                                                                                                                                     | Source evidence                                                                                                                 | Beyond assertion                                                                                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `index.html`: selected mine-object name/level, resource header, and upgrade controls for Mining tab                                                                                       | fresh and captured Space/Wisdom/Galaxy phase saves                                                                              | `tests/e2e/priority-visual.spec.ts` asserts object names/controls and compares source/Beyond screenshots at 1440×900 in both themes                                                                      |
+| `Scripts/Components/mine-object.js`: damageable Mining canvas versus non-damageable Story preview; image-loading completion path                                                          | `formulaSemantics`, Story `nodamage` template, and Canvas render records                                                        | `tests/e2e/remix-app.spec.ts` asserts active click, zero-damage state, and non-mining preview; `tests/e2e/mine-object-renderer.spec.ts` asserts pixel output                                             |
+| `Scripts/Define/functions.js#clickMineObject()` and `Scripts/mineobject.js#MineObject.damage(d)`: a non-lethal active hit subtracts HP without breaking the object or consuming break RNG | Pinned fresh Remix after one real Canvas click; Mud changes from 100 to 80 HP                                                   | `tests/e2e/priority-visual.spec.ts` checks source-captured HP and compares both theme screenshots at 1440×900; Linux retains the source-state assertion while its two screenshots await external capture |
+| `Scripts/main.js:update` and `drawStone`: frame-driven mining/render composition and Canvas compositing                                                                                   | `simulationFrameSemantics`, source RGBA goldens, and captured mine objects                                                      | `tests/parity/mining-transitions.test.ts`, `tests/parity/story-runtime.test.ts`, and `tests/e2e/mine-object-renderer.spec.ts` compare frame transitions and pixels                                       |
+| Full Mining screen with controlled Clay save and selected Gem craft cost 3 in light and dark at 1440×900                                                                                  | both `craft-mining-panel-{light,dark}-1440x900.json` sidecars pin source state, theme, browser, viewport, and screenshot hashes | `tests/e2e/remix-app.spec.ts` compares both full screens at zero pixels on Windows and Linux                                                                                                             |
+| Selected primary Mining screen at 1366×768, 1920×1080, and 2560×1440                                                                                                                      | paired source screenshots for both themes and each viewport                                                                     | `tests/e2e/priority-visual.spec.ts` compares each selected viewport; `tests/parity/visual-baselines.test.ts` validates metadata and hashes                                                               |
 
 ## Visual slice: primary screens
 

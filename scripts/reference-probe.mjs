@@ -1978,6 +1978,11 @@ async function capture(reference, dependencies, dependencySnapshots) {
             const context = { pow: { values } };
             return componentMethods.getPrestigeEffect.call(context, index);
           };
+          const exactPrestigeValues = makeValues(["1e6", "1", "1", "1", "1"]);
+          const exactPrestigeEffect = getEffect(
+            exactPrestigeValues,
+            0,
+          ).toString();
           const snapshotRows = (values) =>
             values.map((current, index) => {
               const next = values[index + 1];
@@ -2036,6 +2041,36 @@ async function capture(reference, dependencies, dependencySnapshots) {
               values: ["1", "1", "1", "1e6", "1"],
             },
             {
+              name: "prestige-effect-floor-at-zero",
+              powerResetKeepLevel: 0,
+              values: ["0", "0", "0", "0", "1"],
+            },
+            {
+              name: "prestige-effect-floor-below-threshold",
+              powerResetKeepLevel: 0,
+              values: ["999", "999", "999", "999", "1"],
+            },
+            {
+              name: "power-row-hidden-below-current-threshold",
+              powerResetKeepLevel: 0,
+              values: ["999", "1", "1", "1", "1"],
+            },
+            {
+              name: "power-row-visible-at-current-threshold",
+              powerResetKeepLevel: 0,
+              values: ["1000", "1", "1", "1", "1"],
+            },
+            {
+              name: "prestige-effect-at-threshold",
+              powerResetKeepLevel: 0,
+              values: ["1000", "1000", "1000", "1000", "1"],
+            },
+            {
+              name: "prestige-effect-above-threshold",
+              powerResetKeepLevel: 0,
+              values: ["1001", "1001", "1001", "1001", "1"],
+            },
+            {
               name: "button-shows-from-next-power-above-one",
               powerResetKeepLevel: 0,
               values: ["100", "2", "1", "1", "1"],
@@ -2044,6 +2079,11 @@ async function capture(reference, dependencies, dependencySnapshots) {
               name: "button-is-disabled-when-next-power-meets-effect",
               powerResetKeepLevel: 0,
               values: ["1e6", "40", "1", "1", "1"],
+            },
+            {
+              name: "button-is-disabled-at-exact-prestige-effect",
+              powerResetKeepLevel: 0,
+              values: ["1e6", exactPrestigeEffect, "1", "1", "1"],
             },
           ].map((scenario) => {
             game.powers.upgrades.powerResetKeep.level =
@@ -2089,6 +2129,12 @@ async function capture(reference, dependencies, dependencySnapshots) {
               powerResetKeepLevel: 4,
               values: ["1e6", "40", "1", "1", "1"],
             },
+            {
+              name: "next-power-at-exact-prestige-effect-is-unchanged",
+              index: 0,
+              powerResetKeepLevel: 4,
+              values: ["1e6", exactPrestigeEffect, "1", "1", "1"],
+            },
           ].map((scenario) => {
             game.powers.upgrades.powerResetKeep.level =
               scenario.powerResetKeepLevel;
@@ -2098,6 +2144,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
             context.getPrestigeEffect = (index) =>
               componentMethods.getPrestigeEffect.call(context, index);
             componentMethods.prestigePower.call(context, scenario.index);
+            const after = values.map(normalizedDecimal);
             return {
               name: scenario.name,
               input: {
@@ -2106,7 +2153,10 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 values: scenario.values,
               },
               before,
-              after: values.map(normalizedDecimal),
+              after,
+              changed: after.some(
+                (value, index) => value.decimal !== before[index]?.decimal,
+              ),
             };
           });
 
@@ -3062,6 +3112,8 @@ async function capture(reference, dependencies, dependencySnapshots) {
             "maxWisdom",
           ];
           const powerUpgradeKey = Object.keys(game.powers.upgrades)[0];
+          const initialPowerValueCount = JSON.parse(window.initialGame).powers
+            .data.values.length;
           try {
             functions.loadGame(window.initialGame, false, true);
             game.settings.tab = "settings";
@@ -3190,6 +3242,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
             const controlledFullSaveEncoded = functions.getSaveString();
             const captureExportVariant = (name, configure) => {
               functions.loadGame(window.initialGame, false, true);
+              game.powers.data.values.length = initialPowerValueCount;
               game.timer = { autoPickaxe: 0, save: 0 };
               game.usedGemsLevel = 0;
               game.pickStatus = "";
@@ -3229,6 +3282,14 @@ async function capture(reference, dependencies, dependencySnapshots) {
               });
             };
             const saveExportVariants = [
+              captureExportVariant("fixed-planet-coin-drop-90", () => {
+                game.mineObjectLevel = 90;
+                game.highestMineObjectLevel = 90;
+                game.currentMineObject = functions.getMineObject(90);
+              }),
+              captureLoadedVariant("extra-power-values", (input) => {
+                input.powers.data.values.push("8", "9");
+              }),
               captureExportVariant("generated-wisdom-drop-215", () => {
                 game.mineObjectLevel = 215;
                 game.highestMineObjectLevel = 215;
@@ -4060,6 +4121,14 @@ async function capture(reference, dependencies, dependencySnapshots) {
             const malformedApplicationScenarios = [
               { name: "json-null-root", input: null },
               {
+                name: "missing-story-after-resources",
+                input: (() => {
+                  const input = malformedApplicationBase();
+                  delete input.story;
+                  return input;
+                })(),
+              },
+              {
                 name: "null-story-after-resources",
                 input: { ...malformedApplicationBase(), story: null },
               },
@@ -4085,6 +4154,36 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 input: {
                   ...malformedApplicationBase(),
                   upgrades: { retiredUpgrade: { level: 1 } },
+                },
+              },
+              {
+                name: "unknown-gem-upgrade-key",
+                input: {
+                  ...malformedApplicationBase(),
+                  upgrades: { idleSpeed: { level: 6 } },
+                  gemUpgrades: { retiredGemUpgrade: { level: 1 } },
+                },
+              },
+              {
+                name: "unknown-planet-coin-upgrade-key",
+                input: {
+                  ...malformedApplicationBase(),
+                  gemUpgrades: { offlineGems: { level: 4 } },
+                  planetCoinUpgrades: {
+                    retiredPlanetCoinUpgrade: { level: 1 },
+                  },
+                },
+              },
+              {
+                name: "unknown-power-upgrade-key-after-extra-values",
+                input: {
+                  ...malformedApplicationBase(),
+                  gemUpgrades: { offlineGems: { level: 4 } },
+                  planetCoinUpgrades: { offlinePC: { level: 5 } },
+                  powers: {
+                    data: { values: ["3", "4", "5", "6", "7", "8", "9"] },
+                    upgrades: { retiredPowerUpgrade: { level: 1 } },
+                  },
                 },
               },
               {
@@ -4170,6 +4269,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
               fieldApplicationErrors = malformedApplicationScenarios.map(
                 (scenario) => {
                   functions.loadGame(window.initialGame, false, true);
+                  game.powers.data.values.length = initialPowerValueCount;
                   game.money = new Decimal(77);
                   game.mineObjectLevel = 3;
                   game.highestMineObjectLevel = 3;
@@ -4205,6 +4305,15 @@ async function capture(reference, dependencies, dependencySnapshots) {
                       money: normalizedDecimal(game.money),
                       mineObjectLevel: game.mineObjectLevel,
                       highestMineObjectLevel: game.highestMineObjectLevel,
+                      currentObject: {
+                        name: game.currentMineObject.name,
+                        hp: normalizedDecimal(game.currentMineObject.hp),
+                        totalHp: normalizedDecimal(
+                          game.currentMineObject.totalHp,
+                        ),
+                        defense: normalizedDecimal(game.currentMineObject.def),
+                        value: normalizedDecimal(game.currentMineObject.value),
+                      },
                       story: {
                         page: game.story.page,
                         notifications: game.story.notifications,
@@ -4237,6 +4346,38 @@ async function capture(reference, dependencies, dependencySnapshots) {
             } finally {
               functions.loadGame(window.initialGame, false, true);
             }
+            const powerValueReloadSemantics = (() => {
+              functions.loadGame(window.initialGame, false, true);
+              game.powers.data.values.length = initialPowerValueCount;
+              const extendedInput = {
+                story: {},
+                powers: {
+                  data: { values: ["10", "20", "30", "40", "50", "80", "90"] },
+                },
+              };
+              const shortInput = {
+                story: {},
+                powers: { data: { values: ["1", "2", "3", "4", "5"] } },
+              };
+              functions.loadGame(
+                encodeProbeSave(extendedInput),
+                undefined,
+                true,
+              );
+              const afterExtended = game.powers.data.values.map((value) =>
+                value.toString(),
+              );
+              functions.loadGame(encodeProbeSave(shortInput), undefined, true);
+              const afterShort = game.powers.data.values.map((value) =>
+                value.toString(),
+              );
+              return {
+                extendedInputJson: JSON.stringify(extendedInput),
+                shortInputJson: JSON.stringify(shortInput),
+                afterExtended,
+                afterShort,
+              };
+            })();
 
             const variantJson = JSON.stringify({
               money: "5",
@@ -4386,10 +4527,12 @@ async function capture(reference, dependencies, dependencySnapshots) {
               base64Variants,
               loadErrors,
               fieldApplicationErrors,
+              powerValueReloadSemantics,
               unicodePickaxeRoundTrip,
             };
           } finally {
             functions.loadGame(window.initialGame, false, true);
+            game.powers.data.values.length = initialPowerValueCount;
             game.settings.tab = originalTab;
             game.numberFormatter = originalFormatter;
           }
@@ -7109,6 +7252,10 @@ async function capture(reference, dependencies, dependencySnapshots) {
         })();
         const hardResetSemantics = (() => {
           const previousConfirm = window.confirm;
+          const previousInitialGame = window.initialGame;
+          const resetInitialGame = JSON.parse(window.initialGame);
+          resetInitialGame.lastActive = fixedClock;
+          window.initialGame = JSON.stringify(resetInitialGame);
           const previousStorage = Array.from(
             { length: localStorage.length },
             (_, index) => {
@@ -7254,6 +7401,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
           for (const [key, value] of previousStorage) {
             if (value !== null) localStorage.setItem(key, value);
           }
+          window.initialGame = previousInitialGame;
           return {
             sourcePaths: [
               "index.html",

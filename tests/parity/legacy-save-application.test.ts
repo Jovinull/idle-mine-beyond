@@ -13,6 +13,7 @@ import {
   type RemixLegacySaveApplicationState,
   type RemixLegacySaveData,
 } from "../../packages/persistence/src/index.js";
+import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
 
 const corpus = JSON.parse(
   await readFile(
@@ -26,6 +27,12 @@ const corpus = JSON.parse(
     saveSemantics: {
       missingOptionalGroups: { inputJson: string };
       emptyPresentGroups: { inputJson: string };
+      powerValueReloadSemantics: {
+        extendedInputJson: string;
+        shortInputJson: string;
+        afterExtended: string[];
+        afterShort: string[];
+      };
       fieldApplicationErrors: {
         name: string;
         encoded: string;
@@ -35,6 +42,13 @@ const corpus = JSON.parse(
           money: { decimal: string };
           mineObjectLevel: number;
           highestMineObjectLevel: number;
+          currentObject: {
+            name: string;
+            hp: { decimal: string };
+            totalHp: { decimal: string };
+            defense: { decimal: string };
+            value: { decimal: string };
+          };
           story: {
             page: number;
             notifications: number;
@@ -313,6 +327,51 @@ it("preserves the loader's absent and empty-group behavior", () => {
   expect(seed.simulation.pickaxe.name).toBe("Probe Pickaxe");
 });
 
+it("preserves extra Power values when a later Remix save has fewer values", () => {
+  const semantics = corpus.data.saveSemantics.powerValueReloadSemantics;
+  const namedPowerValues = (state: RemixLegacySaveApplicationState) =>
+    [
+      state.simulation.powers.mining,
+      state.simulation.powers.craftsmanship,
+      state.simulation.powers.expertise,
+      state.simulation.powers.wisdom,
+      state.simulation.powers.exquisity,
+      ...state.powerValueExtras,
+    ].map((value) => value.toString());
+  const load = (state: RemixLegacySaveApplicationState, inputJson: string) => {
+    const result = loadRemixLegacySaveIntoState({
+      state,
+      saveString: encodeRemixLegacySave(
+        JSON.parse(inputJson) as RemixLegacySaveData,
+      ),
+      catalog: corpus.data.mineObjectCatalog,
+      clock: { now: () => 1900000000000 },
+      resolveNumberFormatter: () => () => "",
+      noOffline: true,
+    });
+    expect(result.status).toBe("loaded");
+    if (result.status !== "loaded") {
+      throw new Error("The captured Power reload save did not load.");
+    }
+    return result.state;
+  };
+
+  const extended = load(seedApplicationState(), semantics.extendedInputJson);
+  expect(namedPowerValues(extended)).toEqual(semantics.afterExtended);
+  expect(extended.powerValueExtras.map((value) => value.toString())).toEqual([
+    "80",
+    "90",
+  ]);
+
+  const short = load(extended, semantics.shortInputJson);
+  expect(namedPowerValues(short)).toEqual(semantics.afterShort);
+  expect(short.powerValueExtras.map((value) => value.toString())).toEqual([
+    "80",
+    "90",
+  ]);
+  expect(namedPowerValues(extended)).toEqual(semantics.afterExtended);
+});
+
 it("preserves source partial state and effects for malformed field application", () => {
   const makeMalformedSeed = () => {
     const seed = seedApplicationState();
@@ -370,6 +429,13 @@ it("preserves source partial state and effects for malformed field application",
     money: decimalSnapshot(state.simulation.resources.money),
     mineObjectLevel: state.simulation.mineObjectLevel,
     highestMineObjectLevel: state.simulation.highestMineObjectLevel,
+    currentObject: {
+      name: state.simulation.currentObject.name,
+      hp: decimalSnapshot(state.simulation.currentObject.hp),
+      totalHp: decimalSnapshot(state.simulation.currentObject.totalHp),
+      defense: decimalSnapshot(state.simulation.currentObject.defense),
+      value: decimalSnapshot(state.simulation.currentObject.value),
+    },
     story: {
       page: state.simulation.story.page,
       notifications: state.simulation.story.notifications,
@@ -392,6 +458,7 @@ it("preserves source partial state and effects for malformed field application",
       state.simulation.powers.expertise,
       state.simulation.powers.wisdom,
       state.simulation.powers.exquisity,
+      ...state.powerValueExtras,
     ].map(decimalSnapshot),
     pickaxe: {
       name: state.simulation.pickaxe.name,
@@ -418,6 +485,11 @@ it("preserves source partial state and effects for malformed field application",
     expect(actualSnapshot(loaded.partialState), sample.name).toEqual(
       sample.stateAfter,
     );
+    if (sample.name === "unknown-power-upgrade-key-after-extra-values") {
+      expect(
+        loaded.partialState.powerValueExtras.map((value) => value.toString()),
+      ).toEqual(["8", "9"]);
+    }
     expect(loaded.effects, sample.name).toEqual(
       sample.stateAfter.settings.theme === "light"
         ? [{ type: "setTheme", theme: "light" }]

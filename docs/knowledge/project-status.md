@@ -20,16 +20,16 @@ documented external Linux capture. The headless visibility probe reports
 so it does not stand in for OS background-throttling tests.
 
 The separate strict full-screen shop differential remains In Progress. A
-2026-11-03 rerun reproduced a dark level-one Gem catalog screenshot mismatch;
-the saved source/Beyond pair differs at exactly `(697,152)` and `(697,276)`,
-Beyond RGB 3 versus Remix RGB 4. All seven card rectangles, borders, radii,
-backgrounds, and opacity values matched. A three-run experiment with two
-animation frames and a 100 ms settle still had one mismatch, so that extra wait
-was removed. No pixel tolerance or mask was added. The focused
-visual-baseline test passed 1/1, traceability verified all 36 matrix areas,
-docs checked 85 Markdown/manifests, and Prettier passed. The long parity suite
-passed 35 files and 158 tests. Other parity changes remain in the working tree
-and are not included in those two commits.
+2026-11-03 rerun reproduced the dark level-one Gem catalog screenshot mismatch
+at seven pixels: `(697,152)`, `(810,152)`, `(923,152)`, `(1036,152)`,
+`(1149,152)`, `(1262,152)`, and `(697,276)`. Beyond is RGB 3 and Remix RGB 4
+at each point. Card and ancestor geometry, border, radius, and background match.
+A three-run experiment with two animation frames and a 100 ms settle still had
+one mismatch, so that extra wait was removed. No pixel tolerance or mask was
+added. The focused visual-baseline test passed 1/1, traceability verified all
+36 matrix areas, docs checked 85 Markdown/manifests, and Prettier passed. The
+long parity suite passed 35 files and 158 tests. These checks do not certify the
+full-screen shop differential; its strict comparison remains open.
 
 The source document audit found that pinned Remix has no root `lang` attribute,
 while the SvelteKit shell added `lang="en"`. Beyond now omits that attribute;
@@ -48,6 +48,13 @@ legacy loader parity test already compares partial state and ordered effects
 for all twenty cases. Legacy save import remains In Progress for historical
 formats and other unverified input/recovery domains; this closes its all-cases
 browser error/no-write path only.
+
+**Source-audit validation (2026-11-03):** the pinned corpus verifier passed;
+`pnpm test:parity` passed 35 files and 158 tests. Focused Chromium checks passed
+15 Powers/prestige cases, both light/dark finite-cap cases, and five save/reset
+cases. The strict dark level-one Gem catalog screenshot remains the only
+failure in this follow-up; it differs by seven one-channel rounded-corner
+pixels, so the visual row stays In Progress.
 
 **Sequential legacy Power-value reload (2026-10-05):** the pinned Remix loader
 loads a seven-entry `powers.data.values` array and then a five-entry save into

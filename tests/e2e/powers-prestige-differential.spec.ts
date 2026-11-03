@@ -11,13 +11,26 @@ type PrestigeSample = {
     powerResetKeepLevel: number;
     values: string[];
   };
+  changed: boolean;
   after: { decimal: string }[];
+};
+
+type PowerTableScenario = {
+  name: string;
+  input: { powerResetKeepLevel: number; values: string[] };
+  rows: {
+    index: number;
+    cell: { visible: boolean; disabled: boolean; text: string } | null;
+  }[];
 };
 
 type PowersFixture = {
   data: {
     saveApplicationSemantics: { inputJson: string };
-    powersTableSemantics: { prestiges: PrestigeSample[] };
+    powersTableSemantics: {
+      prestiges: PrestigeSample[];
+      scenarios: PowerTableScenario[];
+    };
   };
 };
 
@@ -44,7 +57,7 @@ const fixture = JSON.parse(
 const prestigeSamples = fixture.data.powersTableSemantics.prestiges;
 
 function createPrestigeSave(
-  sample: PrestigeSample,
+  sample: Pick<PrestigeSample, "input"> | PowerTableScenario,
   theme: "light" | "dark" = "light",
 ): string {
   const save = JSON.parse(
@@ -243,9 +256,7 @@ for (const sample of prestigeSamples) {
       const sourceButton = sourceRows.nth(sample.input.index).locator("button");
       await expect(beyondButton).toBeVisible();
       await expect(sourceButton).toBeVisible();
-      const shouldPrestige =
-        sample.name !== "already-met-next-power-is-unchanged";
-      if (shouldPrestige) {
+      if (sample.changed) {
         await expect(beyondButton).toBeEnabled();
         await expect(sourceButton).toBeEnabled();
         await Promise.all([beyondButton.click(), sourceButton.click()]);
@@ -296,6 +307,88 @@ for (const sample of prestigeSamples) {
       await sourceContext.close().catch(() => undefined);
     }
   });
+}
+
+const powersVisualScenarioNames = new Set([
+  "prestige-effect-above-threshold",
+  "power-row-hidden-below-current-threshold",
+  "power-row-visible-at-current-threshold",
+]);
+const powersVisualScenarios =
+  fixture.data.powersTableSemantics.scenarios.filter(({ name }) =>
+    powersVisualScenarioNames.has(name),
+  );
+
+if (powersVisualScenarios.length !== powersVisualScenarioNames.size) {
+  throw new Error("A pinned Powers visual boundary scenario is missing.");
+}
+
+for (const scenario of powersVisualScenarios) {
+  for (const theme of ["light", "dark"] as const) {
+    test(`matches full-screen Powers ${scenario.name} in ${theme} theme`, async ({
+      page,
+      browser,
+    }) => {
+      test.setTimeout(90_000);
+      const sourceContext = await browser.newContext({
+        colorScheme: theme,
+        locale: "en-US",
+        timezoneId: "UTC",
+        viewport: { width: 1440, height: 900 },
+      });
+      const sourcePage = await sourceContext.newPage();
+      const encoded = createPrestigeSave(scenario, theme);
+
+      try {
+        const sourceUrl = await routePinnedRemixOracle(sourceContext);
+        await Promise.all([
+          page.addInitScript(seedLegacySave, {
+            encoded,
+            sentinel: `powers-${scenario.name}-${theme}`,
+          }),
+          sourcePage.addInitScript(seedLegacySave, {
+            encoded,
+            sentinel: `powers-${scenario.name}-${theme}`,
+          }),
+        ]);
+        await page.emulateMedia({ colorScheme: theme });
+        await page.setViewportSize({ width: 1440, height: 900 });
+        await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+        await expect(page.locator("#app")).toHaveAttribute(
+          "data-app-state",
+          "ready",
+        );
+        await sourcePage.waitForFunction(() =>
+          Boolean(
+            (window as Window & { game?: unknown }).game &&
+            document.querySelector("#app > footer"),
+          ),
+        );
+        await Promise.all([
+          page.locator("[data-game-tab='powers']").click(),
+          sourcePage
+            .locator("footer button")
+            .filter({ hasText: "Powers" })
+            .click(),
+        ]);
+
+        const [beyondRows, sourceRows] = await Promise.all([
+          readRenderedRows(page.locator("article.powers .powers-table tr")),
+          readRenderedRows(
+            sourcePage.locator("article.powers .powers-table tr"),
+          ),
+        ]);
+        expect(beyondRows).toEqual(sourceRows);
+        expect(sourceRows.map(({ cells }) => cells[2])).toEqual(
+          scenario.rows.map(({ cell }) => cell?.text ?? ""),
+        );
+
+        await expectSameScreen(page, sourcePage, `${theme} ${scenario.name}`);
+      } finally {
+        await sourceContext.close().catch(() => undefined);
+      }
+    });
+  }
 }
 
 for (const theme of ["light", "dark"] as const) {

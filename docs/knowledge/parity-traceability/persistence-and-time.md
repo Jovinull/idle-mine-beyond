@@ -52,36 +52,67 @@ Other arbitrary byte strings remain an input-domain gap, not an unlisted branch.
   after earlier assignments. It reconstructs the selected mine object, handles
   offline elapsed time only when `offlineSec > 300 && !nooffline`, and updates
   `lastActive`. `hardReset` repeats its confirmation up to three times.
-- **Covered:** full current save, absent/empty groups, sixteen source-ordered
+- **Covered:** full current save, absent/empty groups, twenty source-ordered
   partial-application failures and exact errors in
   `tests/parity/legacy-save-application.test.ts`; exact source-captured decode,
   alert, and parse messages plus no-write Settings behavior in
-  `tests/e2e/save-import-error.spec.ts`; decode failure and `nooffline` behavior
+  `tests/e2e/save-import-error.spec.ts`; that Chromium suite also submits all
+  twenty captured field-application failures, compares each visible error, and
+  verifies every localStorage slot is unchanged before and after reload;
+  decode failure and `nooffline` behavior
   in `tests/parity/legacy-save-offline-application.test.ts`;
   recovery file/slot branches in
   `tests/parity/remix-beyond-recovery-file.test.ts`, session coverage in
   `tests/parity/remix-web-game-session.test.ts`, and recovery flows in
   `tests/e2e/remix-app.spec.ts`. The separate `hardReset` three-iteration
   confirmation loop has each cancellation index, full confirmation, state and
-  storage outcomes in `tests/parity/remix-hard-reset.test.ts` and a browser
-  assertion in `tests/e2e/remix-app.spec.ts`.
-- **Sampled:** historical-format fixtures and malformed shapes outside the named
-  sixteen cases are not covered.
+  storage outcomes in `tests/parity/remix-hard-reset.test.ts`. The Chromium E2E
+  compares all three cancellation positions with the pinned Remix page and
+  separately checks the fully confirmed reset in `tests/e2e/remix-app.spec.ts`.
+  A valid JSON save with the first index past Remix's formatter list is also
+  source-paired in `tests/e2e/legacy-save-invalid-formatter.spec.ts`.
+- **Sampled:** historical-format saves and malformed inputs outside the named
+  twenty field-application failures and out-of-range formatter-index case have
+  no fixtures yet. These are unverified input/data domains, not uncovered
+  branches in the mapped loader path.
 
 ### Legacy loader function and branch trace
 
-| Pinned Remix function/path and branch                                                                                                                                                    | Source evidence                                                                                         | Beyond assertion                                                                                                                                              |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Scripts/Define/functions.js:loadGame` scalar `loadVal`: absent field falls back to source default; present value is applied; current object is reconstructed from selected object level | complete current save plus `missingOptionalGroups` and `emptyPresentGroups`                             | `tests/parity/legacy-save-application.test.ts` compares full loaded state, fallback values, theme effect, and current object                                  |
-| Loader settings group absent versus present; number formatter, theme, and boolean settings use field-level fallbacks in source order                                                     | missing/present settings and partial-field cases in `saveSemantics`                                     | `tests/parity/legacy-save-application.test.ts` compares settings/effects; `tests/e2e/remix-app.spec.ts` verifies rendered theme and controls                  |
+| Pinned Remix function/path and branch                                                                                                                                                                                                                       | Source evidence                                                                                                                                    | Beyond assertion                                                                                                                                                                                                                      |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Scripts/Define/functions.js:loadGame` scalar `loadVal`: absent field falls back to source default; present value is applied; current object is reconstructed from selected object level                                                                    | complete current save plus `missingOptionalGroups` and `emptyPresentGroups`                                                                        | `tests/parity/legacy-save-application.test.ts` compares full loaded state, fallback values, theme effect, and current object                                                                                                          |
+| `loadGame`: absent `story` container dereferences `story.page` after resources and selected mine object have already been applied; this differs from a present `story: null` container                                                                      | `missing-story-after-resources` records exact TypeError and source partial state                                                                   | `tests/parity/legacy-save-application.test.ts` compares the exact error and partial resources, mine object, Story sentinels, settings, upgrades, Powers, and pickaxe                                                                  |
+| Loader settings group absent versus present; number formatter, theme, and boolean settings use field-level fallbacks in source order                                                                                                                        | missing/present settings and partial-field cases in `saveSemantics`                                                                                | `tests/parity/legacy-save-application.test.ts` compares settings/effects; `tests/e2e/remix-app.spec.ts` verifies rendered theme and controls                                                                                          |
 | `Scripts/Define/functions.js:loadGame` assigns `game.numberFormatters[numberFormatterIndex]` without range validation; the first out-of-range index leaves the formatter undefined and numeric rendering throws `TypeError`                                 | Full save with index equal to the captured formatter count; pinned runtime reports the exact `.name` error                                         | `tests/e2e/legacy-save-invalid-formatter.spec.ts` imports the same save in Remix and Beyond and compares the render failure                                                                                                           |
-| Money upgrade group present entries; Gem/PC/Powers-upgrade absent groups reset their levels; present empty groups preserve levels; Powers values and upgrades are independently optional | `missingOptionalGroups`, `emptyPresentGroups`, complete application, and named field-application errors | `tests/parity/legacy-save-application.test.ts` asserts each group case and all 16 ordered partial-application failure snapshots                               |
-| Pickaxe group absent versus present, with per-field fallback for name, power, and quality                                                                                                | missing/present group records and partial-field save cases                                              | `tests/parity/legacy-save-application.test.ts` compares the resulting full pickaxe for defaults and captured values                                           |
-| `loadGame` selected-object reconstruction, then source-order mutation before later malformed fields throw                                                                                | `fieldApplicationErrors` records each failure point, effects, and partial result                        | `tests/parity/legacy-save-application.test.ts` asserts exact error and the already-applied state/effects for all 16 failure cases                             |
-| `hardReset`: each of three confirmation calls can cancel; only three confirmations clear storage, reload initial game with offline disabled, clear message log, and reset used Gems      | `hardResetSemantics.cancelled` for all three positions and confirmed before/after state                 | `tests/parity/remix-hard-reset.test.ts` compares each cancellation and confirmed result; `tests/e2e/remix-app.spec.ts` verifies the browser confirmation flow |
+| Money upgrade group present entries; Gem/PC/Powers-upgrade absent groups reset their levels; present empty groups preserve levels; Powers values and upgrades are independently optional; values after the five known Power indices extend the source array | `missingOptionalGroups`, `emptyPresentGroups`, complete application, and `unknown-power-upgrade-key-after-extra-values` after seven ordered values | `tests/parity/legacy-save-application.test.ts` asserts each group case, all 20 ordered partial-application snapshots, and both extra Power values                                                                                     |
+| Pickaxe group absent versus present, with per-field fallback for name, power, and quality                                                                                                                                                                   | missing/present group records and partial-field save cases                                                                                         | `tests/parity/legacy-save-application.test.ts` compares the resulting full pickaxe for defaults and captured values                                                                                                                   |
+| `loadGame` selected-object reconstruction, then source-order mutation before later malformed fields throw                                                                                                                                                   | `fieldApplicationErrors` records each failure point, effects, and partial result                                                                   | `tests/parity/legacy-save-application.test.ts` asserts exact error and partial state/effects for all 20 cases; `tests/e2e/save-import-error.spec.ts` asserts all 20 visible error messages and that browser storage remains unchanged |
+| `hardReset`: each of three confirmation calls can cancel; only three confirmations clear storage, reload initial game with offline disabled, clear message log, and reset used Gems                                                                         | `hardResetSemantics.cancelled` for all three positions and confirmed before/after state                                                            | `tests/parity/remix-hard-reset.test.ts` compares each cancellation and confirmed result; `tests/e2e/remix-app.spec.ts` verifies the browser confirmation flow                                                                         |
+
+**Per-loop unknown-key branches:** `loadGame()` assigns each incoming upgrade
+entry through one of four distinct target maps: `game.upgrades[k].level`,
+`game.gemUpgrades[k].level`, `game.planetCoinUpgrades[k].level`, and
+`game.powers.upgrades[k].level`. The corpus cases
+`unknown-upgrade-key`, `unknown-gem-upgrade-key`,
+`unknown-planet-coin-upgrade-key`, and
+`unknown-power-upgrade-key-after-extra-values` capture these separate failure
+points, including the valid earlier group or Power mutations. That Power case
+also captures the source array extending beyond its five named values before
+the unknown-upgrade error. The pinned TypeError and complete partial state,
+including both extra values, are asserted in
+`tests/parity/legacy-save-application.test.ts` and
+`tests/parity/save-format.test.ts`.
+
+The reference probe fixes `initialGame.lastActive` to its injected clock while
+capturing reset semantics so the confirmed reset result is reproducible across
+capture dates.
 
 Historical save shapes beyond captured format cases remain a data-domain gap;
-all mapped loader and reset control-flow paths have source-backed assertions.
+all mapped loader, formatter-index boundary, and reset control-flow paths have
+source-backed assertions. Two community-linked save candidates are listed in
+[`save-time-offline.md`](../save-time-offline.md), but their hosted contents
+could not be retrieved and therefore have no fixture or test. They do not
+qualify as observed behavior or establish historical-schema support.
 
 ## Save export and round-trip
 
@@ -121,6 +152,38 @@ The source save/export branches above are covered. Arbitrary valid runtime
 states and non-Chromium browser byte behavior remain outside the finite fixture
 domain.
 
+### Current-object serialization branch trace
+
+The pinned MineObject constructor assigns cfg as supplied and defaults
+drops to an empty object when no drop configuration exists. getSaveString
+applies JSON.stringify(game): undefined cfg is omitted, object 90 (Tiny
+Asteroid) retains a numeric Planet Coin amount, and generated post-Universe
+drop amounts use the Decimal JSON representation.
+
+| Pinned Remix source path and observable branch                                                                                                                                                                                     | Source fixture                                                                          | Beyond assertion                                                                                                                                                   |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Scripts/mineobject.js:MineObject.constructor` with absent/present `cfg`; `Scripts/Define/game.js` object 90 numeric drop; `Scripts/Define/functions.js:getMineObject` generated Decimal drops; `getSaveString` JSON serialization | `saveExportSemantics.fresh`, `fixed-planet-coin-drop-90`, and generated object variants | `tests/parity/legacy-save-export.test.ts` compares complete current-object fields and full-save hashes; it explicitly asserts object 90 amount remains numeric `1` |
+
+### Extended Power-value round-trip branch
+
+The pinned `loadGame()` iterates through the entire saved
+`powers.data.values` array. Indices beyond the five named Powers extend the
+live source array. A later load with fewer values overwrites only its present
+prefix; the source array keeps its trailing entries. Beyond preserves those
+entries as `powerValueExtras` and appends them after the five named values
+during legacy export. `saveSemantics.powerValueReloadSemantics` records a
+seven-value load followed by a five-value load in the same runtime.
+
+| Pinned Remix source path and branch                                                                                                               | Source fixture                                                                                     | Beyond assertion                                                                                                                                                                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Scripts/Define/functions.js:loadGame` iterates to the input values length and assigns indices 5+; `getSaveString()` preserves the extended array | `saveExportSemantics.extra-power-values` captures seven values, including extra values `8` and `9` | `tests/parity/legacy-save-export.test.ts` imports and re-exports all seven values, checks both extra values and the complete save hash; `tests/parity/legacy-save-application.test.ts` also checks extended values before a later source error |
+
+### Sequential Power-value reload branch
+
+| Pinned Remix source path and branch                                                                                                 | Source fixture                                                                                                                                        | Beyond assertion                                                                                                                                                                                            |
+| ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Scripts/Define/functions.js:loadGame` writes each incoming Power index but does not truncate values left by a previous longer save | `saveSemantics.powerValueReloadSemantics` captures a seven-value save followed by a five-value save in one runtime and records values after each load | `tests/parity/legacy-save-application.test.ts` applies both saves to the same Beyond state, compares the full named-plus-extra Power vector after each step, and confirms the first state remains unchanged |
+
 ## Beyond versioned save schema
 
 - **Remix source:** none. This is Beyond-owned serialization and migration code,
@@ -156,30 +219,46 @@ coverage; the current version-rejection branch is covered.
 - **Remix source:** browser storage is accessed by Remix `saveGame` and load
   paths; Beyond adds a separate adapter/coordinator.
 - **Covered branches:** primary/backup selection, invalid-primary recovery,
-  backup replacement, scoped reset, recovery-file parsing, and acknowledgement
-  before import are mapped to
+  backup replacement, scoped reset, recovery-file parsing, acknowledgement
+  before import, surfaced write failures from both browser save slots, and
+  surfaced primary/backup read failures are mapped to
   `tests/parity/remix-beyond-save-storage.test.ts`,
   `tests/parity/remix-beyond-recovery-file.test.ts`, session tests, and the
-  Settings/recovery E2E cases.
-- **Sampled:** browser-specific quota, tab-race, and process-termination behavior
-  do not have source-backed assertions. Keep those as Beyond adapter risks, not
-  Remix compatibility facts.
+  Settings/recovery E2E cases. The browser write-failure test injects a
+  `QuotaExceededError` through Chromium's `Storage.prototype.setItem` for the
+  primary and backup keys; it verifies error UI, unchanged primary data, no save
+  confirmation, and a successful retry. The read-failure test injects a
+  `SecurityError` through `Storage.prototype.getItem` for each Beyond save key;
+  initialization enters recovery without falling back to the legacy key or
+  writing, and recovery export surfaces its own read error without mutation.
+- **Environment coverage still sampled:** deterministic read/write exception
+  injection tests Beyond's adapter/error pipeline, not browser quota policy.
+  Actual profile quota exhaustion, cross-tab races, and process termination
+  remain adapter-environment risks, not Remix compatibility facts.
 
 ### Beyond web storage/recovery function and branch trace
 
-| Beyond function/path and branch                                                                                                                                              | Fixture/evidence                                                       | Assertion                                                                                                                                                                                                  |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Save coordinator writes previous valid primary to backup before primary; confirms only after the primary succeeds; backup or primary write failure preserves safe prior data | primary/backup snapshots and injected storage failures                 | `tests/parity/remix-beyond-save-storage.test.ts` asserts write order, failure result, retained slots, and absence of confirmation                                                                          |
+| Beyond function/path and branch                                                                                                                                                               | Fixture/evidence                                                          | Assertion                                                                                                                                                                                                  |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Save coordinator writes previous valid primary to backup before primary; confirms only after the primary succeeds; backup or primary write failure preserves safe prior data                  | primary/backup snapshots and injected storage failures                    | `tests/parity/remix-beyond-save-storage.test.ts` asserts write order, failure result, retained slots, and absence of confirmation                                                                          |
 | Browser `Storage.setItem` throws while writing backup or primary; failure is surfaced without a success log, prior primary remains intact, and a later retry writes both slots                | Chromium adapter injection throws `QuotaExceededError` at each save key   | `tests/e2e/browser-storage-failure.spec.ts` checks both failure points, attempted write order, prior-slot preservation, Settings alert, Mining confirmation log, and retry result                          |
 | Browser `Storage.getItem` throws on primary or backup; startup enters recovery, does not fall back to the legacy slot or write, and recovery export reports its read failure without mutation | Chromium adapter injection throws `SecurityError` at each Beyond read key | `tests/e2e/browser-storage-read-failure.spec.ts` checks both startup branches, complete slot preservation, exact read/write traces, recovery UI, and export error                                          |
-| Load chooses valid primary, offers valid backup recovery for damaged primary, distinguishes empty/invalid slots, and protects unsupported future versions                    | primary, backup, empty, invalid, and future-version cases              | `tests/parity/remix-beyond-save-storage.test.ts` asserts selected source and no unintended writes                                                                                                          |
-| Recovery file accepts direct save or bundle primary; uses backup only when primary is invalid; rejects malformed/legacy-only bundles and future primary                      | captured recovery-file cases                                           | `tests/parity/remix-beyond-recovery-file.test.ts` compares each decode/result branch and protected storage                                                                                                 |
-| Import requires acknowledgement, preserves source save on rejection/write failure, and applies legacy offline effects before persistence when applicable                     | legacy-import, rejection, write-failure, and offline recovery fixtures | `tests/parity/remix-beyond-recovery-file.test.ts` and `tests/parity/remix-beyond-save-storage.test.ts` assert state, effects, and storage order; `tests/e2e/remix-app.spec.ts` covers Settings recovery UI |
-| Browser adapter stores Beyond primary/backup in separate keys and exports each slot without mutation                                                                         | key separation and slot export cases                                   | `tests/parity/remix-beyond-save-storage.test.ts` compares exact keys and all returned slots                                                                                                                |
+| Load chooses valid primary, offers valid backup recovery for damaged primary, distinguishes empty/invalid slots, and protects unsupported future versions                                     | primary, backup, empty, invalid, and future-version cases                 | `tests/parity/remix-beyond-save-storage.test.ts` asserts selected source and no unintended writes                                                                                                          |
+| Recovery file accepts direct save or bundle primary; uses backup only when primary is invalid; rejects malformed/legacy-only bundles and future primary                                       | captured recovery-file cases                                              | `tests/parity/remix-beyond-recovery-file.test.ts` compares each decode/result branch and protected storage                                                                                                 |
+| Import requires acknowledgement, preserves source save on rejection/write failure, and applies legacy offline effects before persistence when applicable                                      | legacy-import, rejection, write-failure, and offline recovery fixtures    | `tests/parity/remix-beyond-recovery-file.test.ts` and `tests/parity/remix-beyond-save-storage.test.ts` assert state, effects, and storage order; `tests/e2e/remix-app.spec.ts` covers Settings recovery UI |
+| Browser adapter stores Beyond primary/backup in separate keys and exports each slot without mutation                                                                                          | key separation and slot export cases                                      | `tests/parity/remix-beyond-save-storage.test.ts` compares exact keys and all returned slots                                                                                                                |
 
-Browser quota exhaustion, cross-tab races, and process termination are
+Actual browser quota exhaustion, cross-tab races, and process termination are
 adapter-environment risks without deterministic source branches; they remain
-explicitly open rather than inferred from the unit adapter.
+explicitly open rather than inferred from injected Chromium exceptions.
+
+**Browser E2E validation (2026-10-05):**
+`pnpm.cmd exec playwright test tests/e2e/browser-storage-failure.spec.ts
+tests/e2e/browser-storage-read-failure.spec.ts --project=chromium --workers=1
+--retries=0` passed 4/4. This validates injected backup/primary write failures
+and primary/backup read failures, including unchanged slots, read/write order,
+recovery UI, retry, and export error. It does not close the separate browser
+quota, cross-tab, or abrupt-process environment risks.
 
 ## Native save adapter
 

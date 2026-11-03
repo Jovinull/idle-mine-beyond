@@ -45,7 +45,9 @@ const corpus = JSON.parse(
           powerResetKeepLevel: number;
           values: string[];
         };
+        before: { decimal: string }[];
         after: { decimal: string }[];
+        changed: boolean;
       }[];
     };
   };
@@ -121,9 +123,70 @@ it("matches the source Powers unlock, names, icons, and all captured table rows"
   }
 });
 
+it("covers the strict prestige boundary below, at, and above its effect", () => {
+  const cases = [
+    ["active-power-prestige-effect", "below"],
+    ["button-is-disabled-at-exact-prestige-effect", "equal"],
+    ["button-is-disabled-when-next-power-meets-effect", "above"],
+  ] as const;
+
+  for (const [name, relation] of cases) {
+    const scenario = powers.scenarios.find((entry) => entry.name === name);
+    expect(scenario, `missing pinned source boundary ${name}`).toBeDefined();
+    if (!scenario) throw new Error(`Missing pinned source boundary ${name}.`);
+
+    const state = stateFor(
+      scenario.input.values,
+      scenario.input.powerResetKeepLevel,
+    );
+    const row = getRemixPowerPrestigeRows(state)[0]!;
+    expect(row.nextValue).toBeDefined();
+    expect(row.prestigeEffect).toBeDefined();
+    if (!row.nextValue || !row.prestigeEffect) {
+      throw new Error(`Missing next Power or effect for ${name}.`);
+    }
+
+    const comparisonMatches =
+      relation === "below"
+        ? row.nextValue.lt(row.prestigeEffect)
+        : relation === "equal"
+          ? row.nextValue.eq(row.prestigeEffect)
+          : row.nextValue.gt(row.prestigeEffect);
+    expect(comparisonMatches, `${name} should be ${relation}`).toBe(true);
+    expect(row.buttonDisabled).toBe(relation !== "below");
+  }
+});
+
+it("matches source Prestige effect floor and 1,000 transition boundaries", () => {
+  const boundaries = [
+    ["prestige-effect-floor-at-zero", "0"],
+    ["prestige-effect-floor-below-threshold", "999"],
+    ["prestige-effect-at-threshold", "1000"],
+    ["prestige-effect-above-threshold", "1001"],
+  ] as const;
+
+  for (const [name, value] of boundaries) {
+    const scenario = powers.scenarios.find((entry) => entry.name === name);
+    expect(scenario, `missing pinned source boundary ${name}`).toBeDefined();
+    if (!scenario) {
+      throw new Error(`Missing pinned source boundary ${name}.`);
+    }
+    expect(scenario.input.values.slice(0, 4)).toEqual(Array(4).fill(value));
+
+    const rows = getRemixPowerPrestigeRows(
+      stateFor(scenario.input.values, scenario.input.powerResetKeepLevel),
+    );
+    for (let index = 0; index < 4; index += 1) {
+      expect(rows[index]?.prestigeEffect?.toString()).toBe(
+        scenario.rows[index]?.prestigeEffect?.decimal,
+      );
+    }
+  }
+});
+
 it("matches source prestige targets, retention, and no-op boundaries", () => {
   expect(powers.prestiges.map(({ input }) => input.index)).toEqual([
-    0, 1, 2, 3, 0,
+    0, 1, 2, 3, 0, 0,
   ]);
 
   for (const sample of powers.prestiges) {
@@ -147,6 +210,17 @@ it("matches source prestige targets, retention, and no-op boundaries", () => {
       result.state.powers.exquisity,
     ].map((value) => value.toString());
     expect(actual).toEqual(sample.after.map(({ decimal }) => decimal));
+    expect(sample.changed).toBe(
+      sample.after.some(
+        (value, index) => value.decimal !== sample.before[index]?.decimal,
+      ),
+    );
     expect(result.effects).toEqual([]);
   }
+
+  const equalityCase = powers.prestiges.find(
+    ({ name }) => name === "next-power-at-exact-prestige-effect-is-unchanged",
+  );
+  expect(equalityCase, "missing exact prestige equality action").toBeDefined();
+  expect(equalityCase?.changed).toBe(false);
 });
