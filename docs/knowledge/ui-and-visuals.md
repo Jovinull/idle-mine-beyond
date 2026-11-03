@@ -4,6 +4,13 @@
 
 The desktop Remix UI is the initial visual oracle. Before changing Beyond UI during parity, inspect the pinned index.html, main.css, theme CSS, assets, fonts, and live reference. Use actual screenshots and computed styles where useful. Never infer a redesign from the age of the original.
 
+The pinned `index.html` root has no `lang` attribute. Keep that source metadata
+in `apps/web/src/app.html`; `tests/e2e/remix-app.spec.ts` compares the root
+attribute and computed `-webkit-locale` with the pinned page. Removing
+Beyond's generated `lang="en"` normalizes the computed locale to the source
+value, but did not change the strict dark shop screenshot hashes or explain
+their corner-pixel difference.
+
 ## Source-observed structure
 
 The reference UI includes Money, Gems, conditional Planet Coins, object name and stats, pickaxe name/P/Q/damage, damage-per-click and per-second stats, money/gem/Planet Coin rates, upgrades, crafting, story, and settings. The CSS uses an 8vh / 84vh / 8vh page grid and a 45vw main split. These values are source observations, not a claim that all responsive states have been captured.

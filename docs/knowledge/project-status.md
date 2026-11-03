@@ -30,6 +30,13 @@ docs checked 85 Markdown/manifests, and Prettier passed. The long parity suite
 passed 35 files and 158 tests. Other parity changes remain in the working tree
 and are not included in those two commits.
 
+The source document audit found that pinned Remix has no root `lang` attribute,
+while the SvelteKit shell added `lang="en"`. Beyond now omits that attribute;
+the focused browser check compares both the root attribute and computed
+`-webkit-locale` with Remix and passes. This metadata alignment did not change
+the dark level-one screenshot hash, so the rounded-corner pixel discrepancy
+remains open.
+
 **Legacy save field-error browser coverage (2026-11-03):** the pinned corpus
 contains twenty source-captured `loadGame()` field-application failures.
 `tests/e2e/save-import-error.spec.ts` now submits all twenty through the Settings

@@ -168,6 +168,40 @@ type FixedMineObjectUiFixture = {
   };
 };
 
+test("matches the pinned document language metadata", async ({
+  page,
+  browser,
+}) => {
+  const sourceContext = await browser.newContext({
+    colorScheme: "light",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  try {
+    const sourcePage = await sourceContext.newPage();
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+
+    const readRootLanguage = (target: typeof page) =>
+      target.locator("html").evaluate((element) => ({
+        lang: element.getAttribute("lang"),
+        locale: getComputedStyle(element).getPropertyValue("-webkit-locale"),
+      }));
+    const [beyondLanguage, sourceLanguage] = await Promise.all([
+      readRootLanguage(page),
+      readRootLanguage(sourcePage),
+    ]);
+    expect(beyondLanguage).toEqual(sourceLanguage);
+  } finally {
+    await sourceContext.close();
+  }
+});
+
 test("Story object previews do not dispatch Mining clicks", async ({
   page,
 }) => {
