@@ -164,14 +164,16 @@ non-formula state/platform/integration/visual domain remains.
 
 ## Sampled-domain recheck (2026-11-03)
 
-The 14 `Sampled (qualified)` formula/RNG entries across simulation/content,
-progression, and persistence/time meet the applicable source-boundary, recorded
-fixed-seed, and pinned-differential criteria. No matrix area is In Progress
-solely because a sample is finite. A missing applicable boundary prevents
-qualification; a differential mismatch is a compatibility failure to fix.
-Save-shape, UI, storage, keyboard, and platform samples remain separate open
-evidence and are not qualified by this rule. No further sample expansion is
-warranted for the reviewed formula/RNG domains.
+The 14 `Sampled (qualified)` entries across simulation/content, progression, and
+persistence/time were reviewed. For their formula/RNG domains, applicable
+source boundaries, recorded fixed-seed samples, and pinned differentials pass;
+no matrix area is In Progress solely because those samples are finite. A
+missing applicable boundary prevents qualification; a differential mismatch is
+a compatibility failure to fix. Mine-rendering output remains scoped to its
+pinned corpus and per-object pixel differential. Save-shape, UI, storage,
+keyboard, and platform samples remain separate open evidence and are not
+qualified by this rule. No further sample expansion is warranted for the
+reviewed formula/RNG domains.
 
 Validation on 2026-11-03: `pnpm.cmd test:parity` passed 35 files and 158 tests;
 `pnpm.cmd parity:traceability` verified 36 matrix areas; `pnpm.cmd docs:check`
