@@ -1,7 +1,11 @@
 import { chromium } from "@playwright/test";
 import { getChromiumLaunchOptions } from "./playwright-browser.mjs";
 
-const browser = await chromium.launch(getChromiumLaunchOptions());
+const headed = process.argv.includes("--headed");
+const browser = await chromium.launch({
+  ...getChromiumLaunchOptions(),
+  headless: !headed,
+});
 const context = await browser.newContext();
 
 try {
@@ -32,6 +36,7 @@ try {
     `${JSON.stringify(
       {
         browserVersion: browser.version(),
+        mode: headed ? "headed" : "headless",
         firstInitially,
         firstInBackground,
         secondInForeground,

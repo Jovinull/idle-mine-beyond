@@ -328,15 +328,16 @@ quota, cross-tab, or abrupt-process environment risks.
   remain open; native background/suspend behavior is outside web-v1
   certification.
 
-**Headless browser limitation (2026-10-05):**
-`pnpm.cmd probe:browser-visibility` opens two pages with the configured
-Playwright Chromium and records `document.visibilityState` while switching
-between them. On Chromium 153.0.8010.12, both pages reported `visible` before,
-during, and after `bringToFront()`. This probe cannot exercise a real hidden-tab
-throttle; the existing CDP freeze/resume test covers only `frozen`/`active`
-states ([current protocol](https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-setWebLifecycleState)).
-Repeat the investigation in a headed browser environment that reports a hidden
-page before closing this open web-v1 evidence domain.
+**Playwright visibility limitation (2026-11-03):**
+`pnpm.cmd probe:browser-visibility` runs the probe headless;
+`node scripts/probe-browser-visibility.mjs --headed` runs the same two-page
+probe headed. On this Windows host with Chromium 153.0.8010.12, both modes
+reported `visible` before, during, and after `bringToFront()`. Neither mode
+exposes a hidden page or proves real OS background throttling. The existing CDP
+freeze/resume test covers only `frozen`/`active` states
+([current protocol](https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-setWebLifecycleState)).
+Use a browser session that reports a hidden tab and measure its scheduling
+before closing this open web-v1 evidence domain.
 
 ### Offline/time function and branch trace
 

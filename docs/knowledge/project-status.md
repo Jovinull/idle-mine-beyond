@@ -15,9 +15,10 @@ sample is finite. Priority visual coverage is committed and pushed
 in `88e22ee`: Windows Chromium passed 38/38 selected shop, Powers, Mining, and
 primary-screen comparisons; the two damaged-Mud source captures verified by
 `reference:priority-visuals:mining-damage` remain Windows-only pending the
-documented external Linux capture. The headless visibility probe reports
-`visible` for Chromium pages even when another page is brought to the front,
-so it does not stand in for OS background-throttling tests.
+documented external Linux capture. The Playwright visibility probe reports
+`visible` for both pages in headless and headed Chromium when another page is
+brought to the front, so it does not stand in for OS background-throttling
+tests.
 
 **Complete Windows baseline (2026-11-03):** `pnpm.cmd check` passed end to
 end. Content/assets verification, the 36-area traceability check, Prettier,
@@ -26,6 +27,21 @@ web build, and the 174-page site build all succeeded. The parity suite took
 711.15 seconds on this host. This supersedes the earlier interrupted full-check
 attempt recorded below; it does not include `pnpm test:reference`, browser E2E,
 site E2E, or the external Linux visual run.
+
+**Pinned reference and GitHub CI revalidation (2026-11-03):**
+`pnpm.cmd test:reference` passed on Windows against Remix
+`0e0f4bf5a9c66e5603cda2ce4bd54213023dae21`, including the corpus, Story
+runtime/phase fixtures, 47 raw-RGBA Canvas goldens, fresh Mining, and all
+priority source captures. GitHub Actions run 54 for `1d1d8f7` passed both jobs:
+the Ubuntu reference/check/build/browser/site workflow and Windows native
+storage tests. The separate `@slow` full-screen shop differential is not part
+of CI and retains its documented strict pixel mismatches.
+
+The browser-visibility probe now supports both default headless mode and
+`node scripts/probe-browser-visibility.mjs --headed`. On this host's Chromium
+153.0.8010.12, both modes reported `visible` for both pages before, during,
+and after `bringToFront()`. Neither mode exercises OS-level background
+throttling; offline progression remains In Progress for that evidence.
 
 The strict full-screen shop differential remains In Progress. The latest
 complete seven-test slow run passed 4/7: light affordability, both light
@@ -321,15 +337,20 @@ frame and complete legacy exports. This closes that single browser-lifecycle
 case; actual OS background scheduling/throttling remains untested, so offline
 progression stays In progress.
 
-**Headless visibility probe (2026-10-05):** the new reproducible
-`pnpm.cmd probe:browser-visibility` command switched between two pages on
-Playwright Chromium 153.0.8010.12; both reported `document.visibilityState` as
-`visible` throughout. This environment cannot certify hidden-tab throttling.
-Offline progression remains In progress until that evidence is captured in a
-headed browser environment; Tauri lifecycle remains outside web-v1.
+**Browser visibility probe (2026-11-03):**
+`pnpm.cmd probe:browser-visibility` and
+`node scripts/probe-browser-visibility.mjs --headed` switched between two
+pages on Playwright Chromium 153.0.8010.12. Both modes reported
+`document.visibilityState` as `visible` for both pages before, during, and
+after `bringToFront()`. This setup cannot certify hidden-tab throttling;
+offline progression remains In progress until a browser session exposes a
+hidden page and actual scheduling behavior. Tauri lifecycle remains outside
+web-v1.
 
-This session's `.git` metadata remains read-only, so these changes cannot be
-committed or pushed here.
+At the time of the original 2026-10-05 run, that managed session's `.git`
+metadata was read-only and its changes could not be committed there. This is a
+historical environment note; the current checkout can commit and push to
+`origin`.
 
 **Historical-save lead audit (2026-10-04):** rechecked the full pinned Remix
 Git history (five commits; `loadGame` and game definitions appear only in the
