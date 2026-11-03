@@ -384,15 +384,28 @@ sample remains unchanged.
 ## Strict shop visual differential diagnostics (2026-11-03)
 
 When a full-screen upgrade-shop screenshot hash differs, the Playwright failure
-attachment now records each card's classes, bounds, opacity, and
-background/text styles, plus each image's source path, decoded dimensions,
-rendered bounds, and relevant paint styles. This lets a future failure
-distinguish a layout/style difference from an unexplained raster difference
-without weakening the pixel assertion.
+attachment records each card's classes, bounds, opacity, and background/text
+styles, plus each image's source path, decoded dimensions, rendered bounds,
+and relevant paint styles. It now also records all computed card/image styles,
+pseudo-elements, and the ancestor chain to investigate renderer differences.
+The Beyond style capture runs before the reused page navigates to the Remix
+oracle, so the two diagnostic records describe their respective runtimes.
 
-Focused dark affordability runs passed once in installed Chrome 156 and once
-in the pinned Playwright Chromium; the light level-zero catalog rerun passed in
-Chrome 156. These do not supersede the earlier complete 8-test run with two
-pixel mismatches. The source and app images remain compared exactly, with no
-mask or tolerance; keep the shop visual row In Progress until the intermittent
-difference is resolved.
+The 2026-11-03 complete slow shop run passed 5/7 tests: both affordability
+tests, both light catalogs, and all-card purchase routing. Dark level-zero Gem
+catalog differed at `(697,152)` and `(697,276)`; dark level-one Planet Coin
+catalog differed at `(810,152)`. Each pixel differed by one channel value
+(Remix RGB 4, Beyond RGB 3). The attached card/image geometry and selected
+computed-style fields were equal. Focused isolated reruns passed the dark
+affordability states once in Chrome 156 and once in pinned Playwright Chromium,
+the light level-zero catalog in Chrome 156, and the dark level-zero catalog in
+pinned Chromium. After correcting the capture order, the focused dark level-zero
+catalog reproduced the same two pixels once and passed on its next isolated
+run. This order-dependent evidence does not clear the complete-run failures.
+Keep the exact comparisons and the shop visual row In Progress; do not apply a
+mask or tolerance.
+
+`pnpm check` passed content/assets checks, traceability, formatting, lint,
+strict TypeScript/Svelte checks, and 46 unit tests, but its parity suite
+remained CPU-active without output for more than ten minutes and was stopped;
+the full parity-suite result is therefore unknown for that run.

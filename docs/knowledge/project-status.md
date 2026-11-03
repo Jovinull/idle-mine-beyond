@@ -19,21 +19,14 @@ documented external Linux capture. The headless visibility probe reports
 `visible` for Chromium pages even when another page is brought to the front,
 so it does not stand in for OS background-throttling tests.
 
-The separate strict full-screen shop differential remains In Progress. The
-latest complete run of `tests/e2e/upgrade-affordability-differential.spec.ts`
-passed 6/8 tests. It failed the dark Planet Coin exact-price viewport at one
-pixel, `(697,152)` (Remix RGB 4, Beyond RGB 3), and the light level-zero Gem
-catalog viewport at two pixels, `(697,152)` and `(697,276)` (Remix RGB 19,
-Beyond RGB 17). The other six tests passed, including the level-one catalog
-screens in both themes and both modifier-hint screens. Separate isolated
-level-one light and dark runs failed the Gem and Planet Coin tabs at the same
-two corner pixels, although those cases passed in the complete run. This
-order-dependent result remains unresolved visual evidence. Card and ancestor
-geometry, border, radius, and background match the pinned CSS; Beyond uses the
-plain wrapper `div` found in the pinned template. Keep exact screenshot
-assertions; no pixel tolerance or mask is accepted. The long parity suite
-passed 35 files and 158 tests, and reference, docs, traceability, and formatting
-checks passed; these checks do not certify the full-screen shop differential.
+The strict full-screen shop differential remains In Progress. Its latest
+complete seven-test slow run passed 5/7: both affordability tests, both light
+catalog tests, and the 22-card purchase-routing test. Dark level-zero Gems
+differed at `(697,152)` and `(697,276)`; dark level-one Planet Coins differed
+at `(810,152)`. In each case Remix rendered RGB 4 and Beyond RGB 3. The other
+catalog cards and their details matched. The discrepancy remains confined to
+one-channel rounded-corner pixels under full-screen comparison; no tolerance or
+mask is accepted.
 
 The source document audit found that pinned Remix has no root `lang` attribute,
 while the SvelteKit shell added `lang="en"`. Beyond now omits that attribute;
@@ -42,15 +35,23 @@ the focused browser check compares both the root attribute and computed
 the dark level-one screenshot hash, so the rounded-corner pixel discrepancy
 remains open.
 
-**Shop raster follow-up (2026-11-03):** the strict full-screen comparison now
-attaches per-card identity/classes, bounds, opacity, image source/natural size,
-rendered image bounds, and paint-relevant computed styles when a pixel hash
-differs.
-Focused reruns passed the dark affordability states in installed Chrome 156
-and pinned Playwright Chromium (one run each), and the light level-zero catalog
-in Chrome 156. These passes do not supersede the earlier 6/8 complete-file run
-or identify its intermittent pixel deltas. Exact comparisons remain in place;
-shop and desktop visual parity stay In Progress.
+**Shop raster follow-up (2026-11-03):** the earlier failing run's per-card
+attachments showed identical mapped classes, geometry, opacity, image
+source/dimensions, and selected paint styles for Remix and Beyond. The expanded
+diagnostic captures all computed card/image properties, pseudo-elements, and
+the ancestor style chain while each runtime is still loaded; the Beyond capture
+is taken before the reused page navigates to Remix. A focused dark level-zero
+catalog rerun reproduced the same two corner pixels once and passed on the next
+isolated run. Other focused reruns passed the dark affordability states in
+Chrome 156 and pinned Playwright Chromium and the light level-zero catalog in
+Chrome 156. These intermittent isolated results do not supersede the complete
+5/7 run or explain its order-linked corner differences. Shop and desktop visual
+parity remain In Progress.
+
+`pnpm check` passed content/assets checks, traceability, Prettier, ESLint,
+strict TypeScript/Svelte checks, and 46 unit tests, then was manually stopped
+after its parity suite remained CPU-active without output for over ten minutes.
+The full parity-suite result was not obtained in that run.
 
 **Legacy save field-error browser coverage (2026-11-03):** the pinned corpus
 contains twenty source-captured `loadGame()` field-application failures.

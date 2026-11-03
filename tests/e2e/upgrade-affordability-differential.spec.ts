@@ -331,8 +331,68 @@ async function readCardPresentation(card: Locator) {
 }
 
 async function readShopRasterDiagnostics(page: Page) {
-  const cards = await page.locator(".upgradelist .upgrade").all();
-  return Promise.all(cards.map(readCardPresentation));
+  return page.locator(".upgradelist .upgrade").evaluateAll((cards) => {
+    const styleProperties = (element: Element, pseudo?: string) => {
+      const style = getComputedStyle(element, pseudo);
+      return Array.from({ length: style.length }, (_, index) => {
+        const property = style.item(index);
+        return [property, style.getPropertyValue(property)] as const;
+      });
+    };
+    const box = (element: Element) => {
+      const rect = element.getBoundingClientRect();
+      return {
+        x: rect.x,
+        y: rect.y,
+        width: rect.width,
+        height: rect.height,
+      };
+    };
+    const selector = (element: Element) =>
+      `${element.tagName.toLowerCase()}${element.id ? `#${element.id}` : ""}${element.className ? `.${String(element.className).trim().replace(/\s+/g, ".")}` : ""}`;
+    const ancestors = (() => {
+      const result = [];
+      let element: Element | null = cards[0] ?? null;
+      while (element && result.length < 10) {
+        result.push({
+          selector: selector(element),
+          box: box(element),
+          style: styleProperties(element),
+          before: styleProperties(element, "::before"),
+          after: styleProperties(element, "::after"),
+        });
+        element = element.parentElement;
+      }
+      return result;
+    })();
+    return {
+      userAgent: navigator.userAgent,
+      devicePixelRatio: window.devicePixelRatio,
+      cards: cards.map((card, index) => {
+        const image = card.querySelector<HTMLImageElement>("img");
+        return {
+          index,
+          key: card.getAttribute("data-upgrade-key"),
+          selector: selector(card),
+          outerHTML: card.outerHTML,
+          box: box(card),
+          style: styleProperties(card),
+          before: styleProperties(card, "::before"),
+          after: styleProperties(card, "::after"),
+          image: image
+            ? {
+                src: image.currentSrc,
+                naturalWidth: image.naturalWidth,
+                naturalHeight: image.naturalHeight,
+                box: box(image),
+                style: styleProperties(image),
+              }
+            : null,
+        };
+      }),
+      ancestors,
+    };
+  });
 }
 
 type ModifierScreenSequence = {
@@ -478,6 +538,7 @@ async function expectSinglePageFullViewportMatch(
       layoutChain,
     };
   });
+  const beyondRasterDiagnostics = await readShopRasterDiagnostics(page);
 
   let sourceScreenshot: Buffer;
   let sourceState: unknown;
@@ -619,7 +680,7 @@ async function expectSinglePageFullViewportMatch(
       .digest("hex");
     const stateDetails = JSON.stringify({
       beyond: beyondState,
-      beyondRasterDiagnostics: await readShopRasterDiagnostics(page),
+      beyondRasterDiagnostics,
       remix: sourceState,
       remixRasterDiagnostics: sourceRasterDiagnostics,
     });
