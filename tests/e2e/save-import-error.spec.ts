@@ -8,6 +8,13 @@ type ImportErrorCase = {
   thrownErrorMessage: string | null;
 };
 
+type FieldApplicationFailure = {
+  name: string;
+  encoded: string;
+  thrownErrorName: string;
+  thrownErrorMessage: string;
+};
+
 test("matches Remix malformed-save messages without persisting failed imports", async ({
   page,
 }) => {
@@ -19,7 +26,14 @@ test("matches Remix malformed-save messages without persisting failed imports", 
       ),
       "utf8",
     ),
-  ) as { data: { saveSemantics: { loadErrors: ImportErrorCase[] } } };
+  ) as {
+    data: {
+      saveSemantics: {
+        loadErrors: ImportErrorCase[];
+        fieldApplicationErrors: FieldApplicationFailure[];
+      };
+    };
+  };
 
   await page.addInitScript(() => {
     localStorage.clear();
@@ -61,5 +75,69 @@ test("matches Remix malformed-save messages without persisting failed imports", 
       await page.evaluate(() => localStorage.getItem("IdleMineBeyond")),
       scenario.name,
     ).toBe(before);
+  }
+});
+
+test("shows every pinned field-application failure without writing storage", async ({
+  page,
+}) => {
+  test.setTimeout(180_000);
+  const fixture = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as {
+    data: {
+      saveSemantics: { fieldApplicationErrors: FieldApplicationFailure[] };
+    };
+  };
+
+  await page.addInitScript(() => {
+    localStorage.clear();
+    Date.now = () => 1_700_000_000_000;
+  });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+
+  const storageSnapshot = () =>
+    page.evaluate(() =>
+      Object.fromEntries(
+        Object.keys(localStorage)
+          .sort()
+          .map((key) => [key, localStorage.getItem(key)]),
+      ),
+    );
+  const before = await storageSnapshot();
+
+  for (const scenario of fixture.data.saveSemantics.fieldApplicationErrors) {
+    await test.step(scenario.name, async () => {
+      await page.locator("[data-game-tab='settings']").click();
+      const settings = page.locator("article.settings");
+      await settings
+        .locator("[data-settings-save-field]")
+        .fill(scenario.encoded);
+      await settings
+        .getByRole("button", { name: "Import (from Text Field)" })
+        .click();
+
+      await expect(page.getByRole("alert")).toHaveText(
+        scenario.thrownErrorMessage,
+      );
+      expect(await storageSnapshot(), scenario.name).toEqual(before);
+
+      await page.reload();
+      await expect(page.locator("#app")).toHaveAttribute(
+        "data-app-state",
+        "ready",
+      );
+      expect(await storageSnapshot(), `${scenario.name} after reload`).toEqual(
+        before,
+      );
+    });
   }
 });

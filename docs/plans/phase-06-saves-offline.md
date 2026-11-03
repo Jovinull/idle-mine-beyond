@@ -8,7 +8,7 @@ Import legacy Remix saves into a versioned Beyond format, preserve recovery opti
 
 ## Entry evidence
 
-Legacy fields, encodings, defaults, missing fields, offline caps, and sixteen partial malformed-load states are fixture-backed. Captured legacy import and Beyond v1 reload use the pinned offline outcome/effect-order fixture; schema validation, backup retention, invalid-primary recovery, unknown-version refusal, and the manual-import no-write boundary after field failure are tested.
+Legacy fields, encodings, defaults, missing fields, offline caps, and twenty partial malformed-load states are fixture-backed. Vitest compares all twenty source-ordered partial states and effects; the Settings import E2E checks their exact visible errors and confirms that each failure leaves all localStorage slots unchanged across reload. Captured legacy import and Beyond v1 reload use the pinned offline outcome/effect-order fixture; schema validation, backup retention, invalid-primary recovery, and unknown-version refusal are also tested.
 
 ## Validation
 
