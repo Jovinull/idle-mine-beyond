@@ -19,6 +19,14 @@ documented external Linux capture. The headless visibility probe reports
 `visible` for Chromium pages even when another page is brought to the front,
 so it does not stand in for OS background-throttling tests.
 
+**Complete Windows baseline (2026-11-03):** `pnpm.cmd check` passed end to
+end. Content/assets verification, the 36-area traceability check, Prettier,
+ESLint, strict TypeScript/Svelte checks, 46 unit tests, 158 parity tests, the
+web build, and the 174-page site build all succeeded. The parity suite took
+711.15 seconds on this host. This supersedes the earlier interrupted full-check
+attempt recorded below; it does not include `pnpm test:reference`, browser E2E,
+site E2E, or the external Linux visual run.
+
 The strict full-screen shop differential remains In Progress. The latest
 complete seven-test slow run passed 4/7: light affordability, both light
 catalogs, and the 22-card purchase-routing test. Dark Planet Coin exact-price
