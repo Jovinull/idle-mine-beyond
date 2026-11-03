@@ -190,7 +190,7 @@ geometry and computed style after the correction, so it did not resolve this
 rendering delta. The 38 priority visual E2Es pass after the CSS change; the
 shop visual row remains In progress.
 
-**Strict shop screenshot revalidation (2026-11-03, latest):** the complete
+**Earlier strict shop screenshot revalidation (2026-11-03):** the complete
 seven-test `tests/e2e/upgrade-affordability-differential.spec.ts` rerun passed
 4/7 tests in 12.1 minutes: light affordability, both light catalogs, and the
 22-card purchase-routing test. Dark Planet Coin exact-price affordability
@@ -206,6 +206,27 @@ byte-identical after moving the wrapper's children under `body`; that wrapper
 does not explain the pixel difference for that state. The remaining border
 antialiasing delta is unexplained. Retain exact screenshots and keep the shop
 visual row In Progress; no mask or tolerance is permitted.
+
+**Latest strict shop screenshot revalidation (2026-11-03):**
+`pnpm.cmd test:e2e:slow --workers=1 --retries=0` ran all nine slow tests and
+passed 8/9 in 19.7 minutes. Both affordability themes, both dark catalog levels,
+the level-zero light catalog, all 22 purchase routes, and both finite-cap themes
+passed. The only full-suite failure was the level-one light catalog at the
+Planet Coin tab. A focused rerun of that catalog failed at the Gem tab instead.
+Both failures have the same five top-left corner deltas at `(810,152)`,
+`(923,152)`, `(1036,152)`, `(1149,152)`, and `(1262,152)`, with Beyond RGB 17
+and Remix RGB 19. The isolated failure attachment reports identical box
+geometry and all 477 computed card/image properties for all seven cards; the
+common ancestor boxes, computed properties, and pseudo-elements also match.
+The earlier dark exact-price and level-zero/level-one Gem failures passed in
+the new full run and focused dark reruns.
+
+A fresh-load same-page A/B compared the dark level-zero Gem screen at its flow
+position and at forced integer and fractional positions, with zero changed
+pixels in each capture. It did not repeat the full catalog hover sequence and
+does not locate the intermittent full-screen difference. Keep the strict
+comparison and the desktop/shop rows In Progress; no mask or tolerance is
+permitted.
 
 ### Upgrade-shop visual function and branch trace
 

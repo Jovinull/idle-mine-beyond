@@ -44,19 +44,26 @@ and after `bringToFront()`. Neither mode exercises OS-level background
 throttling; offline progression remains In Progress for that evidence.
 
 The strict full-screen shop differential remains In Progress. The latest
-complete seven-test slow run passed 4/7: light affordability, both light
-catalogs, and the 22-card purchase-routing test. Dark Planet Coin exact-price
-affordability differed at `(697,152)`; dark Gem catalogs at levels zero and one
-differed at `(697,152)` and `(697,276)`. Each changed only one channel
-(Beyond RGB 3, Remix RGB 4). The full computed card/image properties,
-pseudo-elements, and shared app ancestors matched in all three failures; the
-`body` and `html` styles also matched. No tolerance or mask is accepted.
+complete nine-test slow run passed 8/9 in 19.7 minutes. It passed both
+affordability themes, all dark catalogs, the 22-card purchase-routing flow, and
+both finite-cap themes. The only failure was the level-one light full-screen
+catalog: the complete run reported the Planet Coin tab, while an isolated rerun
+reported the Gem tab. Both showed five changed top-left card-corner pixels at
+`(810,152)`, `(923,152)`, `(1036,152)`, `(1149,152)`, and `(1262,152)`; Beyond
+was RGB 17 and Remix RGB 19. The attached state for the isolated rerun showed
+matching geometry, all 477 computed properties for each of seven cards and
+their images, and all common ancestor geometry, computed properties, and
+pseudo-elements. A separate fresh-load A/B produced zero differing pixels in
+flow placement and when fixed at integer and original fractional coordinates;
+it did not replay the catalog test's preceding card-hover sequence and does
+not explain or close the full-screen delta. No tolerance or mask is accepted.
 
 The source document audit found that pinned Remix has no root `lang` attribute,
 while the SvelteKit shell added `lang="en"`. Beyond now omits that attribute;
 the focused browser check compares both the root attribute and computed
 `-webkit-locale` with Remix and passes. This metadata alignment did not change
-the dark level-one screenshot hash, so the rounded-corner pixel discrepancy
+the dark level-one screenshot hash in the earlier revalidation. The latest full
+slow run passed its dark shop cases; the light level-one catalog delta above
 remains open.
 
 **Shop raster follow-up (2026-11-03):** the earlier failing run's per-card
@@ -73,8 +80,21 @@ The only extra DOM node in Beyond's ancestor chain is the SvelteKit
 level-zero Gem state produced a byte-identical Beyond screenshot, so it does
 not explain that state's source/Beyond delta. SvelteKit's pinned runtime warns
 that placing its body placeholder directly in `<body>` can break certain
-browser extensions and recommends this wrapper. The visual mismatch remains
-unexplained; shop and desktop visual parity remain In Progress.
+browser extensions and recommends this wrapper. This was the earlier dark-state
+result; the subsequent full-suite outcome is recorded below.
+
+**Latest shop revalidation (2026-11-03):** the nine-test slow suite passed 8/9
+with strict pixel equality. All dark affordability/catalog cases passed,
+including the three dark states that failed in the earlier run. The sole suite
+failure was the level-one light catalog on the Planet Coin tab. An isolated
+rerun failed the same five pixels on the Gem tab. The pixel coordinates and
+RGB values match across both captures; per-card and shared-ancestor computed
+styles and geometry match in the isolated diagnostic. A separate fresh-load
+A/B at the original flow position, an integer position, and the original
+fractional position returned zero differing pixels; because it did not replay
+the catalog interaction sequence, it is diagnostic only. The light catalog
+delta remains unexplained, with no screenshot mask or tolerance; the shop and
+desktop visual rows remain In Progress.
 
 `pnpm check` passed content/assets checks, traceability, Prettier, ESLint,
 strict TypeScript/Svelte checks, and 46 unit tests, then was manually stopped
