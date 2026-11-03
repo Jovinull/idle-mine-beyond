@@ -190,13 +190,20 @@ geometry and computed style after the correction, so it did not resolve this
 rendering delta. The 38 priority visual E2Es pass after the CSS change; the
 shop visual row remains In progress.
 
-**Level-one dark Gem catalog rerun (2026-11-03):** the strict 1440x900
-source-paired test reproduced seven one-channel differences at
+**Gem catalog level/theme rerun (2026-11-03):** the full affordability file
+passed 4/8 tests. Its four source-paired catalog cases (starting levels 0 and 1
+in both themes) each passed the Money full-screen comparison, then failed the
+Gem full-screen comparison at the same seven points:
 `(697,152)`, `(810,152)`, `(923,152)`, `(1036,152)`, `(1149,152)`,
-`(1262,152)`, and `(697,276)`: Beyond RGB 3, Remix RGB 4. Card and ancestor
-geometry, border, radius, and background match; the whole-screen hashes remain
-different. Keep this visual path open with exact comparison; no tolerance or
-mask is permitted.
+`(1262,152)`, and `(697,276)`. At those points Beyond is RGB 17 and Remix RGB
+19 in light theme; Beyond is RGB 3 and Remix RGB 4 in dark theme. Card and
+ancestor geometry, border, radius, and background match. Beyond's upgrade
+wrapper now uses the plain `div` found in the pinned template; the focused
+rerun retained the same screenshot hashes, so that tag difference was not the
+raster cause. Planet Coin full-screen comparisons in those test iterations are
+not reached after the Gem assertion fails. The two affordability-boundary and
+two modifier-hint tests pass. Keep the Gem path open with exact comparison; no
+tolerance or mask is permitted.
 
 ### Upgrade-shop visual function and branch trace
 

@@ -4,7 +4,7 @@ Last updated: 2026-11-03
 
 ## Phase
 
-**Phase 1 - Deterministic core (in progress).** The source-to-test audit maps all 36 parity-matrix areas to pinned Remix functions/branches, fixtures, and assertions. The Random distributions and RNG row became the first Certified area after its consumer thresholds, seeded outcomes, and 90,000 state/RNG checkpoints passed; twelve further rows are Certified: Big-number math and serialization, Fresh simulation-state initialization, Simulation action composition, Active and idle damage, Object drops and random outcomes, Fixed mine objects, Special mine objects, Procedural mine objects, Mine rendering and compositing, Number formatting and notations, and Progression route and phase replay, plus the bounded Beyond versioned save schema. Fresh-state coverage traces Remix's no-save startup and verifies the complete initial state, live browser startup/interactions, and fresh Mining visuals in both themes. Action-composition coverage compares source frame, click, break, purchase, and craft branches in core, then verifies browser event wiring, save-before-Story ordering, random draws, and persisted state. Active/idle damage has browser assertions for a fresh-Mud click and a pinned full-health idle break; procedural-object coverage loads all three generator regions plus a sparse high ID through the Beyond save and Mining Canvas. Qualified non-exhaustive formula/RNG samples do not block certification; unresolved source boundaries, save/platform domains, and visual/UI evidence still can. The checker flags Certified rows that retain mapped gaps or unqualified sampled domains, and does not infer certification from code presence. parity-v1 remains web-only; native packaging, storage, and running Tauri WebView validation are post-v1.
+**Phase 1 - Deterministic core (in progress).** The source-to-test audit maps all 36 parity-matrix areas to pinned Remix functions/branches, fixtures, and assertions. The Random distributions and RNG row became the first Certified area after its consumer thresholds, seeded outcomes, and 90,000 state/RNG checkpoints passed; twelve further rows are Certified: Big-number math and serialization, Fresh simulation-state initialization, Simulation action composition, Active and idle damage, Object drops and random outcomes, Fixed mine objects, Special mine objects, Procedural mine objects, Mine rendering and compositing, Number formatting and notations, Progression route and phase replay, and the bounded Beyond versioned save schema. Fresh-state coverage traces Remix's no-save startup and verifies the complete initial state, live browser startup/interactions, and fresh Mining visuals in both themes. Action-composition coverage compares source frame, click, break, purchase, and craft branches in core, then verifies browser event wiring, save-before-Story ordering, random draws, and persisted state. Active/idle damage has browser assertions for a fresh-Mud click and a pinned full-health idle break; procedural-object coverage loads all three generator regions plus a sparse high ID through the Beyond save and Mining Canvas. Qualified non-exhaustive formula/RNG samples do not block certification; unresolved source boundaries, save/platform domains, and visual/UI evidence still can. The checker flags Certified rows that retain mapped gaps or unqualified sampled domains, and does not infer certification from code presence. parity-v1 remains web-only; native packaging, storage, and running Tauri WebView validation are post-v1.
 
 **Current closeout (2026-11-03):** the sampled-domain review and rule are
 committed and pushed in `f2f8fd5`; all 14 entries marked `Sampled (qualified)`
@@ -19,17 +19,23 @@ documented external Linux capture. The headless visibility probe reports
 `visible` for Chromium pages even when another page is brought to the front,
 so it does not stand in for OS background-throttling tests.
 
-The separate strict full-screen shop differential remains In Progress. A
-2026-11-03 rerun reproduced the dark level-one Gem catalog screenshot mismatch
-at seven pixels: `(697,152)`, `(810,152)`, `(923,152)`, `(1036,152)`,
-`(1149,152)`, `(1262,152)`, and `(697,276)`. Beyond is RGB 3 and Remix RGB 4
-at each point. Card and ancestor geometry, border, radius, and background match.
-A three-run experiment with two animation frames and a 100 ms settle still had
+The separate strict full-screen shop differential remains In Progress. Its
+2026-11-03 full run passed 4/8 tests: both affordability-boundary tests and both
+modifier-hint tests passed. In the four catalog tests (levels 0/1 in light/dark),
+the Money full-screen comparison passed, then the Gem catalog failed at the
+same seven pixels: `(697,152)`, `(810,152)`, `(923,152)`, `(1036,152)`,
+`(1149,152)`, `(1262,152)`, and `(697,276)`. Beyond is RGB 17 and Remix RGB 19
+in light theme; Beyond is RGB 3 and Remix RGB 4 in dark theme. Planet Coin full-
+screen comparisons are not reached after the Gem failure. Card and ancestor
+geometry, border, radius, and background match. Beyond's upgrade wrapper now
+uses the plain `div` found in the pinned template; a focused rerun retained the
+same screenshot hashes, so that tag difference was not the raster cause. A
+three-run experiment with two animation frames and a 100 ms settle still had
 one mismatch, so that extra wait was removed. No pixel tolerance or mask was
-added. The focused visual-baseline test passed 1/1, traceability verified all
-36 matrix areas, docs checked 85 Markdown/manifests, and Prettier passed. The
-long parity suite passed 35 files and 158 tests. These checks do not certify the
-full-screen shop differential; its strict comparison remains open.
+added. The focused visual-baseline
+test passed 1/1, traceability verified all 36 matrix areas, docs checked 85
+Markdown/manifests, and Prettier passed. The long parity suite passed 35 files
+and 158 tests; these checks do not certify the full-screen shop differential.
 
 The source document audit found that pinned Remix has no root `lang` attribute,
 while the SvelteKit shell added `lang="en"`. Beyond now omits that attribute;
@@ -52,9 +58,9 @@ browser error/no-write path only.
 **Source-audit validation (2026-11-03):** the pinned corpus verifier passed;
 `pnpm test:parity` passed 35 files and 158 tests. Focused Chromium checks passed
 15 Powers/prestige cases, both light/dark finite-cap cases, and five save/reset
-cases. The strict dark level-one Gem catalog screenshot remains the only
-failure in this follow-up; it differs by seven one-channel rounded-corner
-pixels, so the visual row stays In Progress.
+cases. The four full-screen Gem catalog cases remain red on the same seven
+rounded-corner pixels; see the visual trace for exact coordinates and theme
+values. This keeps the shop and desktop visual rows In Progress.
 
 **Sequential legacy Power-value reload (2026-10-05):** the pinned Remix loader
 loads a seven-entry `powers.data.values` array and then a five-entry save into

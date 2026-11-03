@@ -93,7 +93,7 @@
   }
 </script>
 
-<section class="upgrade-panel" aria-label="Upgrades">
+<div class="upgrade-panel">
   {#if simulation.highestMineObjectLevel >= 61}
     <div class="upg-tabs">
       {#each Object.entries(shopGroups) as [group, tab] (group)}
@@ -182,7 +182,7 @@
       </div>
     {/if}
   {/if}
-</section>
+</div>
 
 <style>
   .upg-tabs {
