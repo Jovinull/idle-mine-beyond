@@ -80,6 +80,13 @@ Planet Coin catalog still differs at five one-channel top-left card-border
 pixels in a targeted source-paired run; the CSS correction did not clear the
 known delta, so the shop and full desktop UI remain uncertified.
 
+The 2026-11-03 dark Gem level-one capture has exactly two one-channel
+differences at `(697,152)` and `(697,276)` (Beyond RGB 3, Remix RGB 4). All
+seven card rectangles and border styles match. A three-run settle experiment
+using two animation frames and 100 ms passed twice and failed once, so it did
+not stabilize this comparison; the extra wait was removed. Keep the comparison
+strict and the UI area In Progress.
+
 The finite-cap boundary differential now covers all 15 capped Money, Gem, and
 Planet Coin cards at `cap - 1`, `cap`, and `cap + 1`, in both themes at
 1440x900. It compares source-captured level/effect/price text, affordability

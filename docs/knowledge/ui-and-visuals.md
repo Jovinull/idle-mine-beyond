@@ -102,6 +102,15 @@ RGB 19 at x=810, 923, 1036, 1149, and 1262). The light affordability test and
 dark level-1 catalog passed on this run. Which shop state shows the same
 rounded-corner delta varies across repeated runs; no tolerance or mask is used.
 
+**Capture stability follow-up (2026-11-03):** the saved dark Gem level-one pair
+differs at exactly `(697,152)` and `(697,276)`, with Beyond RGB 3 and Remix RGB
+4 at each pixel. They are rounded-border pixels on the first card in each row;
+all seven card rectangles and their border, radius, background, and opacity
+match. A viewport screenshot path and an added two-animation-frame plus 100 ms
+settle did not remove the discrepancy: three reruns with the settle passed
+twice and failed once. The extra wait was removed; comparisons remain exact and
+the shop remains In Progress.
+
 The web route's `main` container has no source-specific CSS declaration in
 the pinned `main.css`; scrolling is controlled by `body { overflow-y: hidden; }`
 and the source's nested screen scrollers. Beyond previously added

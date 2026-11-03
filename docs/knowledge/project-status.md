@@ -20,12 +20,15 @@ so it does not stand in for OS background-throttling tests.
 
 The separate strict full-screen shop differential remains In Progress. A
 2026-11-03 rerun reproduced a dark level-one Gem catalog screenshot mismatch;
-the seven card rectangles, borders, radii, backgrounds, and opacity values
-matched between Remix and Beyond. No pixel tolerance or mask was added. The
-focused visual-baseline test passed 1/1, traceability verified all 36 matrix
-areas, docs checked 85 Markdown/manifests, and Prettier passed. The long parity
-suite had passed 35 files and 158 tests earlier in this work. Other parity
-changes remain in the working tree and are not included in those two commits.
+the saved source/Beyond pair differs at exactly `(697,152)` and `(697,276)`,
+Beyond RGB 3 versus Remix RGB 4. All seven card rectangles, borders, radii,
+backgrounds, and opacity values matched. A three-run experiment with two
+animation frames and a 100 ms settle still had one mismatch, so that extra wait
+was removed. No pixel tolerance or mask was added. The focused
+visual-baseline test passed 1/1, traceability verified all 36 matrix areas,
+docs checked 85 Markdown/manifests, and Prettier passed. The long parity suite
+passed 35 files and 158 tests. Other parity changes remain in the working tree
+and are not included in those two commits.
 
 **Legacy save field-error browser coverage (2026-11-03):** the pinned corpus
 contains twenty source-captured `loadGame()` field-application failures.
