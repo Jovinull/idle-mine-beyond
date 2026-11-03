@@ -71,6 +71,52 @@
       "screenshotSha256": "312529529be19c33b4aea6ec945615b8509fe0e5a270d12fd3fd10d3782d2928"
     },
     {
+      "id": "mining-mud-damaged-dark-1440x900",
+      "fixture": "tests/fixtures/visual/remix-mining-mud-damaged-dark-1440x900.png",
+      "state": {
+        "tab": "main",
+        "upgradeTab": "money",
+        "theme": "dark",
+        "mineObjectLevel": 0,
+        "highestMineObjectLevel": 0,
+        "currentObjectName": "Mud",
+        "money": "0",
+        "gems": "5",
+        "planetCoins": "0",
+        "wisdom": "0",
+        "currentObjectHp": "80",
+        "story": {
+          "page": 0,
+          "highestUnlocked": 0,
+          "notifications": 1
+        }
+      },
+      "screenshotSha256": "fb29beeba6eb10d34e8d7e6453d85af736ea02058feef434855776465db1533a"
+    },
+    {
+      "id": "mining-mud-damaged-light-1440x900",
+      "fixture": "tests/fixtures/visual/remix-mining-mud-damaged-light-1440x900.png",
+      "state": {
+        "tab": "main",
+        "upgradeTab": "money",
+        "theme": "light",
+        "mineObjectLevel": 0,
+        "highestMineObjectLevel": 0,
+        "currentObjectName": "Mud",
+        "money": "0",
+        "gems": "5",
+        "planetCoins": "0",
+        "wisdom": "0",
+        "currentObjectHp": "80",
+        "story": {
+          "page": 0,
+          "highestUnlocked": 0,
+          "notifications": 1
+        }
+      },
+      "screenshotSha256": "909efddd298abaecf1d9976671aecdc55abe1602e9c468ad6491dcd50e1ab7d1"
+    },
+    {
       "id": "mining-space-dark-1440x900",
       "fixture": "tests/fixtures/visual/remix-mining-space-dark-1440x900.png",
       "state": {

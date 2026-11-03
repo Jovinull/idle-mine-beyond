@@ -14,7 +14,7 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
   const windowsSidecars = sidecars.filter(
     (name) => !name.endsWith("-linux.json"),
   );
-  expect(windowsSidecars).toHaveLength(91);
+  expect(windowsSidecars).toHaveLength(93);
   const linuxSidecars = sidecars.filter((name) => name.endsWith("-linux.json"));
   // Linux still runs state assertions for these selected Windows-only captures.
   const windowsOnlyCaptures = new Set([
@@ -26,6 +26,8 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
     "remix-planetcoin-shop-gate-89-dark-1440x900.json",
     "remix-planetcoin-shop-gate-90-light-1440x900.json",
     "remix-planetcoin-shop-gate-90-dark-1440x900.json",
+    "remix-mining-mud-damaged-light-1440x900.json",
+    "remix-mining-mud-damaged-dark-1440x900.json",
   ]);
   const missingLinuxBaselines = windowsSidecars
     .filter(
@@ -87,4 +89,4 @@ it("pins every tracked screenshot to its source metadata and PNG hash", async ()
       await readState(windowsName),
     );
   }
-});
+}, 30_000);

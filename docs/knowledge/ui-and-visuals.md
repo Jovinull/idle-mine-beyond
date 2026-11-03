@@ -92,17 +92,36 @@ The all-card differential uses a source-shaped level-zero save with `1e100` of e
 
 The source `Scripts/Components/upgrade.js` handles a pointer click on its `div`: Control takes precedence and invokes `buy100`; otherwise Shift invokes `buy10`; otherwise it invokes one exact-price `buy`. Hover sets and clears `highlightedUpgrade`, where the detail panel shows the name, description, effect string, current price, and both shortcut instructions. The source card has no keyboard activation; the Beyond component preserves that input boundary during parity. Vitest compares all captured Money/Gem/Planet Coin display strings, and Playwright checks the initial cards/details plus single, Shift, and Ctrl purchase paths. The selected tabs now have full-screen paired comparisons in the visual-baseline set below; other upgrade states remain open.
 
+`upgrade-affordability-differential.spec.ts` compares zero, one-cent-below, and exact-price balances for each resource group in both themes (18 full-screen pairs), plus all three shop tabs at levels 0 and 1 in both themes (12 pairs). Each full-screen pair reloads the same controlled save on one Page and captures Beyond and Remix sequentially, with exact hashes and no masking. The 2026-10-04 focused file passed 6/6 and its full E2E run passed 150/150. A 2026-10-05 full-file revalidation passed 4/6 tests and 28/30 full-screen pairs. The remaining exact differences are the light Planet Coin exact-price corner pixel (697,152; Beyond RGB 17, Remix RGB 19) and five top-left card corners in the dark all-affordable level-1 catalog (Beyond RGB 3, Remix RGB 4 at y=152). A later targeted dark level-1 rerun reproduced the five pixels on the Gem full-screen pair at x=810, 923, 1036, 1149, and 1262, y=152, so the corner mismatch is not specific to the Planet Coin content. The dark exact-price case has also alternated between exact matches and a one-pixel difference across runs. Source state, card geometry, border, and radius match; all assertions remain strict. The affected shop and desktop UI areas stay In progress; other shop states remain open.
+
+**Complete Chromium rerun (2026-10-05):** the 164-test suite passed 162/164.
+The two failures were the dark Planet Coin exact-price screenshot (one corner
+pixel at `(697,152)`, Beyond RGB 3 and Remix RGB 4) and the light all-affordable
+level-1 Gem catalog (five top-left corners at y=152, Beyond RGB 17 and Remix
+RGB 19 at x=810, 923, 1036, 1149, and 1262). The light affordability test and
+dark level-1 catalog passed on this run. Which shop state shows the same
+rounded-corner delta varies across repeated runs; no tolerance or mask is used.
+
+The web route's `main` container has no source-specific CSS declaration in
+the pinned `main.css`; scrolling is controlled by `body { overflow-y: hidden; }`
+and the source's nested screen scrollers. Beyond previously added
+`min-height: 0` and `overflow: hidden` to `main`. Those extra declarations are
+removed to match the source cascade. The selected Windows priority visual suite
+passed 38/38 after the correction. This did not remove the separate five-pixel
+dark level-1 Planet Coin catalog corner difference, which remains an open
+strict visual comparison in the [trace map](parity-traceability/web-presentation-and-scope.md).
+
 ## Powers and Wisdom upgrades
 
 The Powers footer tab appears at `highestMineObjectLevel >= 170`, between Mining and Story. The panel order is the Wisdom balance and introduction, the five-row Power table, then seven Wisdom upgrade cards. Preserve source labels and icon order, including `Craftsmenship` and `Exquisity`. Rows 0–3 can show a `Prestige` action or a `Req. x1,000` label; row 4 has no action cell. The target and disabled state follow `powersTableSemantics` and [the gameplay systems record](game-systems.md).
 
-The standalone Wisdom cards use the pinned source order and level/effect/price labels. Clicking buys one, Shift buys ten, and Control buys one hundred, with Control precedence. Beyond currently renders the table and cards, dispatches prestige and purchase transitions, and places the tab in source order. The focused E2E verifies the unlock boundary, labels, icon, cards, purchase, and prestige. `PowersPanel.svelte` reproduces source-derived layout and dark table-border color. `tests/e2e/powers-prestige-differential.spec.ts` also compares complete 1440x900 source/Beyond screenshots before prestige, with the legacy stale table after prestige, and after table remount in both themes. Later Power balances, other prestige inputs, and unselected viewports remain open.
+The standalone Wisdom cards use the pinned source order and level/effect/price labels. Clicking buys one, Shift buys ten, and Control buys one hundred, with Control precedence. Beyond currently renders the table and cards, dispatches prestige and purchase transitions, and places the tab in source order. The focused E2E verifies the unlock boundary, labels, icon, cards, purchase, and prestige. `PowersPanel.svelte` reproduces source-derived layout and dark table-border color. `tests/e2e/powers-prestige-differential.spec.ts` compares complete 1440x900 source/Beyond screenshots before prestige, with the legacy stale table after prestige, and after table remount in both themes. Source-captured row states also compare `current=999,next=1` (requirement label), `current=1000,next=1` (disabled prestige action), and the 1,001 all-row state in both themes. Other balances, prestige inputs, and unselected viewports remain open.
 
 ## Priority screen visual baselines
 
 The pinned source and Beyond now have paired full-screen captures for the upgrade shop, Powers, and representative Mining states at 1440x900 in both themes. The upgrade screenshots use the controlled Space phase-start save (object 124) and cover Money, Gem, and Planet Coin tabs. Mining screenshots cover Space/object 124, Wisdom and stars/object 169, and the first galaxy objective/object 198. These are controlled phase-state captures; they do not certify natural progression to those saves.
 
-Powers uses the captured Wisdom/stars phase save with the current object left at 169 and `highestMineObjectLevel` set to 170 so the source tab unlocks. The source refreshes Story at that boundary before the save is recorded. This explicitly controlled UI fixture is not a natural route or a claim that the save is a historical player save.
+Powers uses the captured Wisdom/stars phase save with the current object left at 169 and `highestMineObjectLevel` set to 170 so the source tab unlocks. The source refreshes Story at that boundary before the save is recorded. The source/Beyond prestige differential also replays the corpus scenarios `power-row-hidden-below-current-threshold` (`999,1,1,1,1`), `power-row-visible-at-current-threshold` (`1000,1,1,1,1`), and `prestige-effect-above-threshold` (`1001,1001,1001,1001,1`) as separate full-table visual states. These explicitly controlled UI fixtures are not natural routes or claims that the saves are historical player saves.
 
 The pinned Remix's global `img.inline` rule applies to icons inside Vue child components. The first Beyond comparisons exposed that Svelte component styles scoped those icons out, making upgrade-tab icons and Wisdom icons render at intrinsic image size. The same comparison found that dark-theme standalone Wisdom buttons need the Remix `#636363` background and `#c1c1c1` text. The Beyond global selectors now reproduce those source rules; all six upgrade-tab and all six Mining state/theme pairs, plus both Powers pairs, are covered by zero-pixel screenshot assertions.
 

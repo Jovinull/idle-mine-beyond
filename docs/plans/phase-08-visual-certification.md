@@ -14,17 +14,25 @@ Provide reviewable visual parity evidence for fixed viewport, theme, and state f
 
 At 1440x900, tracked Windows source/implementation pairs match the pinned Remix in both themes for fresh Game Start Story, selected natural Story milestones through Chapter 6, all nine controlled all-unlocked Story pages, fresh Mining, fresh Settings, the controlled full craft panel in both themes at 1440x900, all three upgrade tabs, the Planet Coin gate at high-water 89/90, three phase-start Mining states, the controlled Powers boundary, and post-award Planet Coin/Wisdom balances. Four gate screenshots compare the hidden 89 and visible 90 states in both themes at zero pixels; their browser test also checks the tab boundary and dark-theme zero-damage label color. The four post-award screenshots replay source-shaped saves through a main-loop frame and real click, then match at zero pixels in both themes. Fifteen selected progression views reach first eligibility through Chapter 6; the Chapter 3-6 screens match at zero pixels in light theme on Windows. The Story suite has all 61 condition expressions with 177 boundary samples, notification/high-water transition cases, sampled objective outputs across mine levels and all notations, and all rendered chapter/template blocks. It compares selected screens and all 48 mine-object preview occurrences by RGBA hash. We will not capture every remaining milestone: these views share `StoryPanel` and the pinned template, and the source-backed state tests already cover their conditions, notification transitions, and objective text. Add another Story screenshot only for a distinct rendering branch or an identified integration gap. The natural source route and full checkpoint replay through Chapter 6 are complete, including its light 1440x900 screenshot. For Chapters 7 to 9, the three controlled phase-start saves at objects 124, 169, and 198 each have three paired fixed `(game-RNG seed, action-sequence seed)` runs (not a Cartesian product), with 10,000 randomized actions per pair and full simulation-state/RNG comparison after every action (nine traces, 90,000 checkpoints). These are controlled source saves, not natural paths. The visual corpus has 90 full-screen Windows captures plus one crop; 32 priority captures, each with a Linux pair, cover upgrade tabs, Powers, phase Mining states, and primary screens at the other viewports. This is selected state coverage, not whole-game certification.
 
+Mining now also has source-paired full-screen captures after one non-lethal click
+on fresh Mud (100 to 80 HP), in both themes at 1440x900. This covers the
+intermediate damage presentation without breaking the object or consuming
+break RNG. These two Windows captures have Linux DOM/state assertions; Linux
+pixel captures are deferred to the external WSL workflow.
+
 The aggregate `reference:priority-visuals` source replay was rerun after the
 Planet Coin gate addition and verifies every capture/state entry. It opens a
 fresh browser context for the 89/90 captures so prior source-tab interactions
 cannot affect their screenshots; manifest entries use a deterministic order.
 
-The controlled Powers boundary has its tracked 1440x900 light/dark screenshot
-pairs. Separately, `tests/e2e/powers-prestige-differential.spec.ts` captures the
-complete initial, stale-after-prestige, and remounted screens from pinned Remix
-and Beyond in both themes and compares the PNGs directly. This verifies the
-legacy table refresh presentation for one controlled prestige input; later
-Power balances and other prestige inputs remain open.
+The controlled Powers unlock boundary has its tracked 1440x900 light/dark
+screenshot pairs. Separately, `tests/e2e/powers-prestige-differential.spec.ts`
+captures the complete initial, stale-after-prestige, and remounted screens from
+pinned Remix and Beyond in both themes and compares the PNGs directly. It also
+compares the source-captured row boundary at `current=999,next=1` versus
+`current=1000,next=1`, plus the all-row `prestige-effect-above-threshold`
+scenario at Power 1,001, in both themes with zero pixel differences. Other
+Power balances and prestige inputs remain open.
 
 The shop catalog differential now visits all 22 Money, Gem, and Planet Coin
 cards at level zero with abundant resources, compares their card presentation
@@ -32,15 +40,45 @@ and resting pixels plus every hovered detail panel at zero differing pixels,
 and passes in both themes at 1440x900. Representative affordability states
 remain separate, and this catalog state does not certify every balance, level,
 cap, modifier/card combination, or full-screen state. The four affordability
-and catalog E2Es pass together (4/4). Removing Beyond's forced `84vh` article
-height restores the pinned source layout; the priority visual suite passes
-36/36 afterward.
+and catalog E2Es passed together (4/4) in the earlier focused run; the
+2026-10-05 revalidation reopens one dark Planet Coin full-screen state below.
+Removing Beyond's forced `84vh` article
+height restores the pinned source layout; the priority visual suite passed
+36/36 after that correction. The current Windows Chromium run on 2026-10-05
+passed all 38 cases, covering upgrade tabs, the Planet Coin gate, Powers,
+Space/Wisdom/galaxy and damaged-Mud Mining, and the selected primary screens at
+the three alternate viewports. This revalidates only those paired states and
+does not expand the full-screen parity claim to unselected states.
 
 The Gem exact-price affordability state now also compares stabilized full
 1440x900 viewport screenshots against the pinned source in light and dark. The
 earlier two-pixel diagnostic did not reproduce in three paired captures per
 theme; the source-paired E2E asserts the complete viewport hash and passed 2/2.
 Other resource balances and shop screen states remain open.
+
+The dark Planet Coin exact-price full-screen state remains open. Repeated
+Windows Chromium comparisons alternated between exact matches and a one-pixel,
+one-channel difference at the rounded upgrade-card border (pixel 697,152),
+despite matching resource state, theme, device-pixel ratio, card bounds, and
+computed border/radius. The state-seeding change stages the save before the
+next document initializes so the previous run's autosave cannot replace it.
+Card/tooltip assertions and the selected shop visual suite pass, but this
+full-screen state is not certified. Keep the zero-pixel assertion and do not
+record a behavioral or visual exception.
+
+The focused light and dark affordability tests were rerun on 2026-10-05 with a
+separately managed local Vite server; both completed 1/1, each comparing nine
+source-paired full-screen states. The intermittent exact-price pixel did not
+reproduce. The level-one all-affordable catalog corner mismatch remains, and
+the prior exact-price discrepancy is unexplained, so this shop slice remains
+open under exact pixel comparison.
+
+The Beyond-only `main { min-height: 0; overflow: hidden; }` rules have since
+been removed because the pinned source has no corresponding `main` override.
+All 38 priority visual cases passed after this change. The dark level-one
+Planet Coin catalog still differs at five one-channel top-left card-border
+pixels in a targeted source-paired run; the CSS correction did not clear the
+known delta, so the shop and full desktop UI remain uncertified.
 
 The finite-cap boundary differential now covers all 15 capped Money, Gem, and
 Planet Coin cards at `cap - 1`, `cap`, and `cap + 1`, in both themes at
@@ -67,7 +105,7 @@ states.
 
 Beyond's core replays eight captured natural route segments from equivalent Remix route-start saves with the shared seed 7454 and recorded RNG offsets. It matches complete normalized state and RNG cursor at all 3,833,896 source checkpoints: 82,655 through first Chapter 5 eligibility, then 3,751,241 from the Chapter 5 endpoint through first Chapter 6 eligibility. These are route-segment comparisons, not fresh-game-to-chapter replays. Chapters 7-9 have three controlled phase-start saves captured through Remix; each save has three independent 10,000-action traces under fixed RNG/action-sequence seeds. Beyond compares all 90,000 checkpoints. These controlled starts do not claim natural progression to their save states.
 
-The visual corpus has 91 Windows sidecars (90 full-screen captures plus one crop) and 83 Linux sidecars. The 22 Linux screenshots for the eleven selected Story views (light and dark) were captured in an external Ubuntu WSL session on 2026-10-01, and Linux E2E compares them at zero pixels. The 32 priority viewport/state captures gained Linux pairs on 2026-10-01. The controlled full craft-panel screenshots gained Linux pairs on 2026-10-03. The four post-award Planet Coin/Wisdom screenshots gained Linux pairs on 2026-10-04. The selected natural Chapter 3-6 light screenshots and four Planet Coin shop-gate screenshots are Windows-only (on Linux the pinned level-90 light gate renders in one of two one-pixel variants); Linux E2E keeps route state/DOM assertions, craft selector interaction checks, source-seeded drop checks, and the 89/90 gate assertions without those screenshots.
+The visual corpus has 93 Windows sidecars (92 full-screen captures plus one crop) and 83 Linux sidecars. The 22 Linux screenshots for the eleven selected Story views (light and dark) were captured in an external Ubuntu WSL session on 2026-10-01, and Linux E2E compares them at zero pixels. The 32 priority viewport/state captures gained Linux pairs on 2026-10-01. The two partial-Mud screenshots remain Windows-only until the external WSL workflow captures their Linux source renders; Linux E2E asserts the same source-captured 80 HP state. The controlled full craft-panel screenshots gained Linux pairs on 2026-10-03. The four post-award Planet Coin/Wisdom screenshots gained Linux pairs on 2026-10-04. The selected natural Chapter 3-6 light screenshots and four Planet Coin shop-gate screenshots are Windows-only (on Linux the pinned level-90 light gate renders in one of two one-pixel variants); Linux E2E keeps route state/DOM assertions, craft selector interaction checks, source-seeded drop checks, and the 89/90 gate assertions without those screenshots.
 
 ## Next work
 

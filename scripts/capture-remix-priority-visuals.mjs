@@ -38,6 +38,7 @@ const defaultViewport = { width: 1440, height: 900 };
 const mode = process.argv[2] ?? "--check";
 const dropOnly = mode.endsWith("-drop-only");
 const shopGateOnly = mode.endsWith("-shop-gate-only");
+const miningDamageOnly = mode.endsWith("-mining-damage-only");
 const writeMode = mode.startsWith("--write");
 
 if (
@@ -48,10 +49,12 @@ if (
     "--write-drop-only",
     "--check-shop-gate-only",
     "--write-shop-gate-only",
+    "--check-mining-damage-only",
+    "--write-mining-damage-only",
   ].includes(mode)
 ) {
   throw new Error(
-    "Usage: node scripts/capture-remix-priority-visuals.mjs [--check|--write|--check-drop-only|--write-drop-only|--check-shop-gate-only|--write-shop-gate-only]",
+    "Usage: node scripts/capture-remix-priority-visuals.mjs [--check|--write|--check-drop-only|--write-drop-only|--check-shop-gate-only|--write-shop-gate-only|--check-mining-damage-only|--write-mining-damage-only]",
   );
 }
 
@@ -230,6 +233,16 @@ function makeCaptureCases() {
         phaseId,
       });
     }
+  }
+  for (const theme of ["light", "dark"]) {
+    cases.push({
+      id: `mining-mud-damaged-${theme}-1440x900`,
+      family: "mining",
+      viewport: defaultViewport,
+      theme,
+      gameTab: "main",
+      damageHits: 1,
+    });
   }
   for (const [dropCaseName, dropId, afterDropTab] of [
     ["planet-coin-drop-roll-follows-gem-roll", "planet-coins", undefined],
@@ -489,6 +502,7 @@ async function main() {
     // the level-90 gate in one of two states that differ by one pixel.
     const captureCases = makeCaptureCases().filter((capture) => {
       if (dropOnly) return capture.family === "drops";
+      if (miningDamageOnly) return capture.damageHits !== undefined;
       if (shopGateOnly) {
         return capture.family === "shop-gate" && process.platform === "win32";
       }
@@ -644,6 +658,18 @@ async function main() {
               game.settings.tab = captureCase.afterDropTab;
             }
           }
+          if (captureCase.damageHits) {
+            const mineCanvas = document.querySelector(
+              ".main .mineobject canvas",
+            );
+            if (!(mineCanvas instanceof HTMLCanvasElement)) {
+              throw new Error("Pinned Remix Mining Canvas is missing.");
+            }
+            for (let hit = 0; hit < captureCase.damageHits; hit += 1) {
+              mineCanvas.click();
+              await window.app.$nextTick();
+            }
+          }
           if (captureCase.upgradeTab) {
             const upgradeIndex = {
               money: 0,
@@ -670,6 +696,9 @@ async function main() {
             gems: game.gems.toString(),
             planetCoins: game.planetCoins.toString(),
             wisdom: game.wisdom.toString(),
+            ...(captureCase.damageHits
+              ? { currentObjectHp: object.hp.toString() }
+              : {}),
             story: {
               page: game.story.page,
               highestUnlocked: game.story.highestUnlocked,
@@ -781,9 +810,19 @@ async function main() {
                 "Scripts/Components/mine-object.js",
                 "Scripts/Components/powers-table.js",
               ]
-            : capture.family === "shop-gate"
-              ? ["index.html", "main.css"]
-              : ["index.html", "main.css", "Scripts/Define/game.js"],
+            : capture.damageHits
+              ? [
+                  "index.html",
+                  "main.css",
+                  `Themes/${capture.theme}.css`,
+                  "Scripts/main.js",
+                  "Scripts/Define/functions.js",
+                  "Scripts/mineobject.js",
+                  "Scripts/Components/mine-object.js",
+                ]
+              : capture.family === "shop-gate"
+                ? ["index.html", "main.css"]
+                : ["index.html", "main.css", "Scripts/Define/game.js"],
         browserName: "Chromium",
         browserVersion: browser.version(),
         viewport: capture.viewport,
@@ -798,6 +837,11 @@ async function main() {
           capture.controlledPowersBoundary ??
           capture.controlledBoundary ??
           false,
+        ...(capture.damageHits
+          ? {
+              controlledInteraction: `${capture.damageHits} active mining click(s)`,
+            }
+          : {}),
         ...(capture.family === "shop-gate"
           ? { mineLevelBoundary: capture.mineObjectLevel }
           : {}),
@@ -810,17 +854,19 @@ async function main() {
       const outputImagePath = path.join(outputDirectory, `${capture.id}.png`);
       await writeFile(outputImagePath, screenshot);
       if (writeMode) {
-        await writeFile(imagePath, screenshot);
-        await writeFile(
-          metadataPath,
-          await formatJson({
-            ...metadata,
-            capturedOn: new Date().toISOString().slice(0, 10),
-            screenshotPath: relativeToRoot(imagePath),
-          }),
-          "utf8",
-        );
-      } else {
+        if (!(platformSuffix && capture.damageHits)) {
+          await writeFile(imagePath, screenshot);
+          await writeFile(
+            metadataPath,
+            await formatJson({
+              ...metadata,
+              capturedOn: new Date().toISOString().slice(0, 10),
+              screenshotPath: relativeToRoot(imagePath),
+            }),
+            "utf8",
+          );
+        }
+      } else if (!(platformSuffix && capture.damageHits)) {
         const [expectedImage, expectedMetadataText] = await Promise.all([
           readFile(imagePath),
           readFile(metadataPath, "utf8"),
@@ -890,6 +936,34 @@ async function main() {
           platformSuffix ? platformNeutralStates(actual) : actual,
           platformSuffix ? platformNeutralStates(expected) : expected,
           "Planet Coin shop gate source states",
+        );
+      }
+    } else if (miningDamageOnly) {
+      const stored = await readFile(stateFixturePath, "utf8").then(JSON.parse);
+      const captureIds = new Set(generatedMetadata.map(({ id }) => id));
+      if (writeMode && !platformSuffix) {
+        const mergedCaptures = stored.captures.filter(
+          ({ id }) => !captureIds.has(id),
+        );
+        mergedCaptures.push(...generatedMetadata);
+        await writeFile(
+          stateFixturePath,
+          await formatJson({
+            ...stored,
+            captures: mergedCaptures.sort(compareCaptureIds),
+          }),
+        );
+      } else if (!writeMode) {
+        const actual = {
+          captures: [...generatedMetadata].sort(compareCaptureIds),
+        };
+        const expected = {
+          captures: stored.captures.filter(({ id }) => captureIds.has(id)),
+        };
+        difference(
+          platformSuffix ? platformNeutralStates(actual) : actual,
+          platformSuffix ? platformNeutralStates(expected) : expected,
+          "Mining damage source states",
         );
       }
     } else if (!dropOnly && writeMode && !platformSuffix) {

@@ -1,0 +1,49 @@
+{
+  "repository": "https://github.com/veprogames/idle-mine-remix",
+  "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+  "sourcePaths": [
+    "index.html",
+    "main.css",
+    "Themes/light.css",
+    "Scripts/main.js",
+    "Scripts/Define/functions.js",
+    "Scripts/mineobject.js",
+    "Scripts/Components/mine-object.js"
+  ],
+  "browserName": "Chromium",
+  "browserVersion": "153.0.8010.12",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "browserColorScheme": "light",
+  "gameTheme": "light",
+  "locale": "en-US",
+  "timezoneId": "UTC",
+  "clockMs": 1704067200000,
+  "phaseSaveId": null,
+  "controlledBoundary": false,
+  "controlledInteraction": "1 active mining click(s)",
+  "state": {
+    "tab": "main",
+    "upgradeTab": "money",
+    "theme": "light",
+    "mineObjectLevel": 0,
+    "highestMineObjectLevel": 0,
+    "currentObjectName": "Mud",
+    "money": "0",
+    "gems": "5",
+    "planetCoins": "0",
+    "wisdom": "0",
+    "currentObjectHp": "80",
+    "story": {
+      "page": 0,
+      "highestUnlocked": 0,
+      "notifications": 1
+    }
+  },
+  "screenshotSha256": "909efddd298abaecf1d9976671aecdc55abe1602e9c468ad6491dcd50e1ab7d1",
+  "capturedOn": "2026-10-05",
+  "screenshotPath": "tests/fixtures/visual/remix-mining-mud-damaged-light-1440x900.png"
+}

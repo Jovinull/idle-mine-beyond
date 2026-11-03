@@ -33,6 +33,7 @@ type PriorityVisualStates = {
     id: string;
     state: {
       currentObjectName: string;
+      currentObjectHp?: string;
       planetCoinTabVisible?: boolean;
     };
   }>;
@@ -52,6 +53,7 @@ type VisualCase = {
   readonly upgradeTab?: "money" | "gems" | "planetcoins";
   readonly mineObjectLevel?: number;
   readonly highestMineObjectLevel?: number;
+  readonly damageHits?: number;
 };
 
 function getVisualCases(): VisualCase[] {
@@ -103,6 +105,16 @@ function getVisualCases(): VisualCase[] {
         phaseId,
       });
     }
+  }
+  for (const theme of ["light", "dark"] as const) {
+    cases.push({
+      id: `mining-mud-damaged-${theme}-1440x900`,
+      family: "mining",
+      viewport: { width: 1440, height: 900 },
+      theme,
+      gameTab: "main",
+      damageHits: 1,
+    });
   }
   for (const viewport of [
     { width: 1366, height: 768 },
@@ -221,6 +233,22 @@ async function prepareBeyondScreen(
       "data-rendered",
       "true",
     );
+    if (capture.damageHits) {
+      const sourceState = saves.visualStates.captures.find(
+        ({ id }) => id === capture.id,
+      );
+      const expectedHp = sourceState?.state.currentObjectHp;
+      if (!expectedHp) {
+        throw new Error(`Missing source HP state for ${capture.id}.`);
+      }
+      const canvas = page.locator("canvas.mine-object[data-damageable='true']");
+      for (let hit = 0; hit < capture.damageHits; hit += 1) {
+        await canvas.click();
+      }
+      await expect(page.locator("[data-mine-object-hp]")).toHaveText(
+        `HP: ${expectedHp}`,
+      );
+    }
   }
   if (capture.family === "shop-gate") {
     const sourceState = saves.visualStates.captures.find(
@@ -279,9 +307,21 @@ for (const capture of getVisualCases()) {
       );
     } else if (capture.family === "mining") {
       const phase = saves.phases.get(capture.phaseId ?? "");
-      if (!phase) throw new Error(`Missing phase ${capture.phaseId}.`);
-      const sourceObject = phase.start.state.currentObject.name;
+      const sourceState = capture.damageHits
+        ? saves.visualStates.captures.find(({ id }) => id === capture.id)
+        : undefined;
+      const sourceObject = capture.damageHits
+        ? sourceState?.state.currentObjectName
+        : phase?.start.state.currentObject.name;
+      if (!sourceObject) {
+        throw new Error(`Missing source object for visual case ${capture.id}.`);
+      }
       await expect(page.locator(".mineobject h2")).toHaveText(sourceObject);
+      if (capture.damageHits) {
+        await expect(page.locator("[data-mine-object-hp]")).toHaveText(
+          `HP: ${sourceState?.state.currentObjectHp}`,
+        );
+      }
     } else if (capture.family === "shop-gate") {
       const sourceState = saves.visualStates.captures.find(
         ({ id }) => id === capture.id,
@@ -306,7 +346,10 @@ for (const capture of getVisualCases()) {
     // Shop-gate screenshots are Windows-only (see capture-remix-priority-visuals.mjs).
     const hasPixelBaseline =
       pixelComparison &&
-      !(process.platform === "linux" && capture.family === "shop-gate");
+      !(
+        process.platform === "linux" &&
+        (capture.family === "shop-gate" || capture.damageHits !== undefined)
+      );
     if (hasPixelBaseline) {
       await expect(page).toHaveScreenshot(`remix-${capture.id}.png`, {
         maxDiffPixels: 0,

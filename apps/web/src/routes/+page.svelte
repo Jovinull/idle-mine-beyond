@@ -1190,11 +1190,6 @@
     font-family: Montserrat, sans-serif;
   }
 
-  main {
-    min-height: 0;
-    overflow: hidden;
-  }
-
   article {
     padding: 0.5rem;
   }
