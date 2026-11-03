@@ -391,19 +391,23 @@ pseudo-elements, and the ancestor chain to investigate renderer differences.
 The Beyond style capture runs before the reused page navigates to the Remix
 oracle, so the two diagnostic records describe their respective runtimes.
 
-The 2026-11-03 complete slow shop run passed 5/7 tests: both affordability
-tests, both light catalogs, and all-card purchase routing. Dark level-zero Gem
-catalog differed at `(697,152)` and `(697,276)`; dark level-one Planet Coin
-catalog differed at `(810,152)`. Each pixel differed by one channel value
-(Remix RGB 4, Beyond RGB 3). The attached card/image geometry and selected
-computed-style fields were equal. Focused isolated reruns passed the dark
-affordability states once in Chrome 156 and once in pinned Playwright Chromium,
-the light level-zero catalog in Chrome 156, and the dark level-zero catalog in
-pinned Chromium. After correcting the capture order, the focused dark level-zero
-catalog reproduced the same two pixels once and passed on its next isolated
-run. This order-dependent evidence does not clear the complete-run failures.
-Keep the exact comparisons and the shop visual row In Progress; do not apply a
-mask or tolerance.
+The latest complete seven-test slow shop rerun passed 4/7 tests: light
+affordability, both light catalogs, and all-card purchase routing. It failed
+dark Planet Coin exact-price affordability at `(697,152)` and dark Gem
+catalogs at levels zero and one at `(697,152)` and `(697,276)`. Each pixel
+differed by one channel value (Remix RGB 4, Beyond RGB 3). Full computed styles
+for every visible card and image, their pseudo-elements, common app ancestors,
+`body`, and `html` matched in all three failures.
+
+The source has `#app` as a direct child of `body`; the Beyond shell has one
+extra `<div style="display: contents">` before `#app`. The pinned SvelteKit
+runtime warns that placing `%sveltekit.body%` directly inside `<body>` can
+break certain browser extensions and recommends the wrapper. In a same-page
+A/B check on the dark level-zero Gem state, moving the wrapper's children
+directly under `body` produced a byte-identical Beyond screenshot. The wrapper
+is not the cause of that observed source/Beyond pixel delta. The remaining
+one-channel border-raster difference is unexplained. Keep exact comparisons
+and the shop visual row In Progress; do not apply a mask or tolerance.
 
 `pnpm check` passed content/assets checks, traceability, formatting, lint,
 strict TypeScript/Svelte checks, and 46 unit tests, but its parity suite

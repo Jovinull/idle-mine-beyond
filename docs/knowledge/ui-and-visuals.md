@@ -11,6 +11,15 @@ Beyond's generated `lang="en"` normalizes the computed locale to the source
 value, but did not change the strict dark shop screenshot hashes or explain
 their corner-pixel difference.
 
+The pinned `index.html` places `#app` directly under `body`. The Beyond
+`app.html` keeps SvelteKit's recommended `<div style="display: contents">`
+around `%sveltekit.body%`; the installed SvelteKit runtime warns that mounting
+directly on `body` can break some browser extensions. The wrapper has no
+rendered box. A same-page A/B capture of the dark level-zero Gem catalog was
+byte-identical before and after moving its children directly under `body`, so
+the wrapper is not the cause of the currently observed card-border pixel
+difference. Do not remove it as a visual workaround.
+
 ## Source-observed structure
 
 The reference UI includes Money, Gems, conditional Planet Coins, object name and stats, pickaxe name/P/Q/damage, damage-per-click and per-second stats, money/gem/Planet Coin rates, upgrades, crafting, story, and settings. The CSS uses an 8vh / 84vh / 8vh page grid and a 45vw main split. These values are source observations, not a claim that all responsive states have been captured.

@@ -190,21 +190,22 @@ geometry and computed style after the correction, so it did not resolve this
 rendering delta. The 38 priority visual E2Es pass after the CSS change; the
 shop visual row remains In progress.
 
-**Strict shop screenshot revalidation (2026-11-03):** the complete
-`tests/e2e/upgrade-affordability-differential.spec.ts` run passed 6/8 tests.
-Two full-screen comparisons failed: the dark Planet Coin exact-price state at
-`(697,152)` (Remix RGB 4; Beyond RGB 3), and the light level-zero Gem catalog
-state at `(697,152)` and `(697,276)` (Remix RGB 19; Beyond RGB 17). The other
-six tests passed, including level-one catalog screens in both themes and both
-modifier-hint screens. Isolated level-one light and dark reruns also failed the
-Gem and Planet Coin tabs at those same two pixels, although both level-one
-catalog tests passed in the complete run. This test-order-sensitive result
-remains unresolved; it is not evidence to accept a tolerance. The source and
-Beyond card/ancestor geometry, border, radius, and background match, and the
-CSS values correspond to pinned `main.css` (`border: 2px solid black`,
-`border-radius: 3px`). Beyond's wrapper uses the source's plain `div`. Retain
-the exact pixel assertion and keep the shop visual row In Progress; no mask or
-tolerance is permitted.
+**Strict shop screenshot revalidation (2026-11-03, latest):** the complete
+seven-test `tests/e2e/upgrade-affordability-differential.spec.ts` rerun passed
+4/7 tests in 12.1 minutes: light affordability, both light catalogs, and the
+22-card purchase-routing test. Dark Planet Coin exact-price affordability
+failed at `(697,152)`; dark Gem catalogs at levels zero and one each failed at
+`(697,152)` and `(697,276)`. All differences were one channel (Beyond RGB 3,
+Remix RGB 4). The failure attachments compared all computed card/image styles,
+pseudo-elements, and the common app ancestor styles; the card presentation,
+`body`, and `html` match between runtimes. Beyond has one extra
+`display: contents` shell wrapper around `#app`, recommended by the pinned
+SvelteKit runtime because direct body mounting can break some browser
+extensions. A same-page A/B screenshot of the dark level-zero Gem state was
+byte-identical after moving the wrapper's children under `body`; that wrapper
+does not explain the pixel difference for that state. The remaining border
+antialiasing delta is unexplained. Retain exact screenshots and keep the shop
+visual row In Progress; no mask or tolerance is permitted.
 
 ### Upgrade-shop visual function and branch trace
 

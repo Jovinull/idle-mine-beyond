@@ -19,14 +19,14 @@ documented external Linux capture. The headless visibility probe reports
 `visible` for Chromium pages even when another page is brought to the front,
 so it does not stand in for OS background-throttling tests.
 
-The strict full-screen shop differential remains In Progress. Its latest
-complete seven-test slow run passed 5/7: both affordability tests, both light
-catalog tests, and the 22-card purchase-routing test. Dark level-zero Gems
-differed at `(697,152)` and `(697,276)`; dark level-one Planet Coins differed
-at `(810,152)`. In each case Remix rendered RGB 4 and Beyond RGB 3. The other
-catalog cards and their details matched. The discrepancy remains confined to
-one-channel rounded-corner pixels under full-screen comparison; no tolerance or
-mask is accepted.
+The strict full-screen shop differential remains In Progress. The latest
+complete seven-test slow run passed 4/7: light affordability, both light
+catalogs, and the 22-card purchase-routing test. Dark Planet Coin exact-price
+affordability differed at `(697,152)`; dark Gem catalogs at levels zero and one
+differed at `(697,152)` and `(697,276)`. Each changed only one channel
+(Beyond RGB 3, Remix RGB 4). The full computed card/image properties,
+pseudo-elements, and shared app ancestors matched in all three failures; the
+`body` and `html` styles also matched. No tolerance or mask is accepted.
 
 The source document audit found that pinned Remix has no root `lang` attribute,
 while the SvelteKit shell added `lang="en"`. Beyond now omits that attribute;
@@ -40,13 +40,17 @@ attachments showed identical mapped classes, geometry, opacity, image
 source/dimensions, and selected paint styles for Remix and Beyond. The expanded
 diagnostic captures all computed card/image properties, pseudo-elements, and
 the ancestor style chain while each runtime is still loaded; the Beyond capture
-is taken before the reused page navigates to Remix. A focused dark level-zero
-catalog rerun reproduced the same two corner pixels once and passed on the next
-isolated run. Other focused reruns passed the dark affordability states in
-Chrome 156 and pinned Playwright Chromium and the light level-zero catalog in
-Chrome 156. These intermittent isolated results do not supersede the complete
-5/7 run or explain its order-linked corner differences. Shop and desktop visual
-parity remain In Progress.
+is taken before the reused page navigates to Remix. The latest full slow rerun
+reproduced three dark-state differences: one Planet Coin exact-price pixel and
+the same two Gem catalog pixels at levels zero and one. All card, image,
+pseudo-element, shared app-ancestor, `body`, and `html` computed styles match.
+The only extra DOM node in Beyond's ancestor chain is the SvelteKit
+`display: contents` shell wrapper. Removing that wrapper at runtime in the dark
+level-zero Gem state produced a byte-identical Beyond screenshot, so it does
+not explain that state's source/Beyond delta. SvelteKit's pinned runtime warns
+that placing its body placeholder directly in `<body>` can break certain
+browser extensions and recommends this wrapper. The visual mismatch remains
+unexplained; shop and desktop visual parity remain In Progress.
 
 `pnpm check` passed content/assets checks, traceability, Prettier, ESLint,
 strict TypeScript/Svelte checks, and 46 unit tests, then was manually stopped

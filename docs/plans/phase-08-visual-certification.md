@@ -87,6 +87,19 @@ using two animation frames and 100 ms passed twice and failed once, so it did
 not stabilize this comparison; the extra wait was removed. Keep the comparison
 strict and the UI area In Progress.
 
+**Full shop diagnostic rerun (2026-11-03):** the complete seven-test slow suite
+passed 4/7 in 12.1 minutes. Dark Planet Coin exact-price affordability failed
+at `(697,152)`; dark Gem catalogs at levels zero and one each failed at
+`(697,152)` and `(697,276)`. Every failure was one channel (Beyond RGB 3,
+Remix RGB 4). Full computed styles for the visible cards, images,
+pseudo-elements, shared app ancestors, `body`, and `html` matched. Beyond's
+extra SvelteKit `display: contents` wrapper around the app root was tested by
+removing it during the same dark level-zero Gem state; the Beyond screenshot
+hash remained byte-identical. The wrapper remains because the pinned SvelteKit
+runtime warns that direct body mounting can break browser extensions. The
+cross-runtime border-raster delta is still unexplained; keep exact assertions,
+use no tolerance or mask, and do not mark the shop visual slice Certified.
+
 The finite-cap boundary differential now covers all 15 capped Money, Gem, and
 Planet Coin cards at `cap - 1`, `cap`, and `cap + 1`, in both themes at
 1440x900. It compares source-captured level/effect/price text, affordability
