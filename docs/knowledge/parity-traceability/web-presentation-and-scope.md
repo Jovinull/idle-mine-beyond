@@ -190,20 +190,21 @@ geometry and computed style after the correction, so it did not resolve this
 rendering delta. The 38 priority visual E2Es pass after the CSS change; the
 shop visual row remains In progress.
 
-**Gem catalog level/theme rerun (2026-11-03):** the full affordability file
-passed 4/8 tests. Its four source-paired catalog cases (starting levels 0 and 1
-in both themes) each passed the Money full-screen comparison, then failed the
-Gem full-screen comparison at the same seven points:
-`(697,152)`, `(810,152)`, `(923,152)`, `(1036,152)`, `(1149,152)`,
-`(1262,152)`, and `(697,276)`. At those points Beyond is RGB 17 and Remix RGB
-19 in light theme; Beyond is RGB 3 and Remix RGB 4 in dark theme. Card and
-ancestor geometry, border, radius, and background match. Beyond's upgrade
-wrapper now uses the plain `div` found in the pinned template; the focused
-rerun retained the same screenshot hashes, so that tag difference was not the
-raster cause. Planet Coin full-screen comparisons in those test iterations are
-not reached after the Gem assertion fails. The two affordability-boundary and
-two modifier-hint tests pass. Keep the Gem path open with exact comparison; no
-tolerance or mask is permitted.
+**Strict shop screenshot revalidation (2026-11-03):** the complete
+`tests/e2e/upgrade-affordability-differential.spec.ts` run passed 6/8 tests.
+Two full-screen comparisons failed: the dark Planet Coin exact-price state at
+`(697,152)` (Remix RGB 4; Beyond RGB 3), and the light level-zero Gem catalog
+state at `(697,152)` and `(697,276)` (Remix RGB 19; Beyond RGB 17). The other
+six tests passed, including level-one catalog screens in both themes and both
+modifier-hint screens. Isolated level-one light and dark reruns also failed the
+Gem and Planet Coin tabs at those same two pixels, although both level-one
+catalog tests passed in the complete run. This test-order-sensitive result
+remains unresolved; it is not evidence to accept a tolerance. The source and
+Beyond card/ancestor geometry, border, radius, and background match, and the
+CSS values correspond to pinned `main.css` (`border: 2px solid black`,
+`border-radius: 3px`). Beyond's wrapper uses the source's plain `div`. Retain
+the exact pixel assertion and keep the shop visual row In Progress; no mask or
+tolerance is permitted.
 
 ### Upgrade-shop visual function and branch trace
 

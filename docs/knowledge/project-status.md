@@ -19,23 +19,21 @@ documented external Linux capture. The headless visibility probe reports
 `visible` for Chromium pages even when another page is brought to the front,
 so it does not stand in for OS background-throttling tests.
 
-The separate strict full-screen shop differential remains In Progress. Its
-2026-11-03 full run passed 4/8 tests: both affordability-boundary tests and both
-modifier-hint tests passed. In the four catalog tests (levels 0/1 in light/dark),
-the Money full-screen comparison passed, then the Gem catalog failed at the
-same seven pixels: `(697,152)`, `(810,152)`, `(923,152)`, `(1036,152)`,
-`(1149,152)`, `(1262,152)`, and `(697,276)`. Beyond is RGB 17 and Remix RGB 19
-in light theme; Beyond is RGB 3 and Remix RGB 4 in dark theme. Planet Coin full-
-screen comparisons are not reached after the Gem failure. Card and ancestor
-geometry, border, radius, and background match. Beyond's upgrade wrapper now
-uses the plain `div` found in the pinned template; a focused rerun retained the
-same screenshot hashes, so that tag difference was not the raster cause. A
-three-run experiment with two animation frames and a 100 ms settle still had
-one mismatch, so that extra wait was removed. No pixel tolerance or mask was
-added. The focused visual-baseline
-test passed 1/1, traceability verified all 36 matrix areas, docs checked 85
-Markdown/manifests, and Prettier passed. The long parity suite passed 35 files
-and 158 tests; these checks do not certify the full-screen shop differential.
+The separate strict full-screen shop differential remains In Progress. The
+latest complete run of `tests/e2e/upgrade-affordability-differential.spec.ts`
+passed 6/8 tests. It failed the dark Planet Coin exact-price viewport at one
+pixel, `(697,152)` (Remix RGB 4, Beyond RGB 3), and the light level-zero Gem
+catalog viewport at two pixels, `(697,152)` and `(697,276)` (Remix RGB 19,
+Beyond RGB 17). The other six tests passed, including the level-one catalog
+screens in both themes and both modifier-hint screens. Separate isolated
+level-one light and dark runs failed the Gem and Planet Coin tabs at the same
+two corner pixels, although those cases passed in the complete run. This
+order-dependent result remains unresolved visual evidence. Card and ancestor
+geometry, border, radius, and background match the pinned CSS; Beyond uses the
+plain wrapper `div` found in the pinned template. Keep exact screenshot
+assertions; no pixel tolerance or mask is accepted. The long parity suite
+passed 35 files and 158 tests, and reference, docs, traceability, and formatting
+checks passed; these checks do not certify the full-screen shop differential.
 
 The source document audit found that pinned Remix has no root `lang` attribute,
 while the SvelteKit shell added `lang="en"`. Beyond now omits that attribute;
@@ -58,9 +56,10 @@ browser error/no-write path only.
 **Source-audit validation (2026-11-03):** the pinned corpus verifier passed;
 `pnpm test:parity` passed 35 files and 158 tests. Focused Chromium checks passed
 15 Powers/prestige cases, both light/dark finite-cap cases, and five save/reset
-cases. The four full-screen Gem catalog cases remain red on the same seven
-rounded-corner pixels; see the visual trace for exact coordinates and theme
-values. This keeps the shop and desktop visual rows In Progress.
+cases. The initial full-screen Gem run at this checkpoint reported four red
+catalog cases; the later strict shop revalidation below supersedes those
+counts. Order-dependent full-screen mismatches remain open, so the shop and
+desktop visual rows stay In Progress.
 
 **Sequential legacy Power-value reload (2026-10-05):** the pinned Remix loader
 loads a seven-entry `powers.data.values` array and then a five-entry save into
