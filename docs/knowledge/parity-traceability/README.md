@@ -22,19 +22,25 @@ before changing status.
   that branch. Running code or reaching a screenshot is not sufficient by itself.
 - A **gap** is a relevant source path without a source-based assertion. The gap
   stays open until a focused fixture/test exercises it.
+- Reserve `Gap` for an uncovered source path. If source branches are asserted
+  but selected visual/state combinations remain unverified, label that as open
+  evidence and keep the matrix row In progress; do not present an unbounded
+  combination count as a missing code branch.
 - **`Sampled` does not by itself block certification.** A non-exhaustive formula
-  or RNG input domain is **qualified** when tests cover every relevant source
-  boundary (as applicable: zero, lower/upper limits, both sides of strict
-  thresholds, piecewise or generation-region transitions, caps/sentinels, and
-  RNG draw/branch thresholds), an additional generated sample has a recorded
-  fixed seed, and the pinned differential shows no divergence. Compare the full
-  relevant output and RNG effects for pure functions/content generation, or the
-  complete simulation state and RNG after every action for action differentials.
-  Record the boundary assertions, seed/sample, and differential. Once those
-  conditions pass, a finite sample is not a certification blocker: **only a
-  missing relevant source boundary blocks coverage of that sampled domain**.
-  A differential mismatch is a compatibility failure to fix, not a sample-size
-  problem; do not expand an already adequate sample just because it is finite.
+  or RNG domain is **qualified** when source-backed tests cover its applicable
+  boundaries: zero; supported domain limits; each piecewise-formula or
+  generation-region transition; cap/sentinel values; and, for strict
+  thresholds, the value below, at, and above the threshold. RNG branches also
+  need tests on the relevant draw thresholds and outcomes. Qualification then
+  requires a generated sample reproducible from a recorded fixed seed and a
+  pinned differential with no divergence. Compare the full relevant output and
+  RNG effects for pure functions/content generation, or the complete simulation
+  state and RNG after every action for action differentials. Record the boundary
+  assertions, seed, sample, and differential. Once these conditions pass, finite
+  sample size is not a certification blocker and does not justify more probes:
+  **for that sampled formula/RNG domain, a missing applicable boundary is the
+  only coverage blocker**. A differential mismatch is a compatibility failure
+  to fix, not a sample-size problem.
 - Random testing cannot replace a missing source boundary. Screenshot/state
   combinations, save shapes, browser-storage failure modes, and platform
   behavior do not qualify under the formula/RNG rule; document those separately
