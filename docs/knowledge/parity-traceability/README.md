@@ -161,3 +161,19 @@ When the map changes, update the matching matrix row and project status. Do not
 change `In progress` to `Certified` while any linked item says Gap, a relevant
 formula/RNG boundary is missing, a differential fails, or an unresolved
 non-formula state/platform/integration/visual domain remains.
+
+## Sampled-domain recheck (2026-11-03)
+
+The 14 `Sampled (qualified)` formula/RNG entries across simulation/content,
+progression, and persistence/time meet the applicable source-boundary, recorded
+fixed-seed, and pinned-differential criteria. No matrix area is In Progress
+solely because a sample is finite. A missing applicable boundary prevents
+qualification; a differential mismatch is a compatibility failure to fix.
+Save-shape, UI, storage, keyboard, and platform samples remain separate open
+evidence and are not qualified by this rule. No further sample expansion is
+warranted for the reviewed formula/RNG domains.
+
+Validation on 2026-11-03: `pnpm.cmd test:parity` passed 35 files and 158 tests;
+`pnpm.cmd parity:traceability` verified 36 matrix areas; `pnpm.cmd docs:check`
+checked 85 Markdown files and source manifests; Prettier passed for the trace
+maps and parity matrix.
