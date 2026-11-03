@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
-import type { BrowserContext } from "@playwright/test";
+import type { BrowserContext, Page } from "@playwright/test";
 
 const execFileAsync = promisify(execFile);
 const projectRoot = path.resolve(
@@ -47,7 +47,7 @@ function mimeType(filePath: string): string {
 }
 
 export async function routePinnedRemixOracle(
-  context: BrowserContext,
+  routeHost: BrowserContext | Page,
 ): Promise<string> {
   const [referenceManifest, dependencyManifest] = await Promise.all([
     readFile(
@@ -106,7 +106,7 @@ export async function routePinnedRemixOracle(
     dependencySnapshots.set(dependency.originalRequestUrl, contents);
   }
 
-  await context.route("**/*", async (route) => {
+  await routeHost.route("**/*", async (route) => {
     const request = route.request();
     const requestUrl = new URL(request.url());
     if (request.method() !== "GET" && request.method() !== "HEAD") {

@@ -49,7 +49,32 @@ The hard-reset implementation calls localStorage.clear(), which clears all origi
 
 Ten named boundary cases plus sixteen elapsed-time samples generated with xorshift32 seed `0x4f46464c` live in `offlineProgressionSemantics`. Together they cover missing timestamps, the exact and just-over 300-second boundary, exact/over default cap, an upgraded cap, the explicit `nooffline` flag, negative elapsed time, zero rates, clock movement between reward calculation and save, and a non-exhaustive fixed-seed magnitude sample. Every generated input and complete source result is captured; `tests/parity/offline-progression.test.ts` compares resources, maxima, messages, clock reads, timestamps, and writes. The probe stubs MPS/GPS/PCPS to isolate the offline-load branch; it does not validate every live state that generates those rates. Manual import in `index.html` calls `loadGame(saveString)` without a `nooffline` argument, so it follows the same offline check; hard reset explicitly passes `true`.
 
-`packages/core/src/remix-offline-progression.ts` reproduces the pure resource/timer transition with an injected clock, offline rates, upgrade effects, and number formatter. Its rate source can be resolved lazily after the threshold check, preserving the legacy ordering. `performRemixSimulationAction()` supplies a lazy rate resolver that uses the loaded state and catalog, shares the mining action's factor/highest-damageable calculation, and then calls the same source-backed MPS/GPS/PCPS formulas. Nine captured formula states are exercised through this full action, including low-damage boundaries, a last-damageable-object Gem bonus, an extreme object ID, and zero-damage cases. Four additional browser captures call real `loadGame()` with controlled saves and real rate functions; Vitest compares rates, rewards, saved resources, clock reads, log text, and stored snapshots. The source emits `Game Saved!` after a successful storage write. The web persistence service emits this confirmation after its versioned primary write, and the legacy-import coordinator preserves theme → offline message → write → confirmation order. `createRemixWebGameSession()` also routes ordered save effects from regular core actions through the browser adapter; session and route tests cover those writes and failure ordering. This is selected application coverage, not exhaustive save integration. Ten isolated offline branch fixtures continue to cover timing, caps, multipliers, and save order with controlled rates. Remaining offline gaps include broader live-rate state coverage, alternate notation output, and the visual return message.
+`packages/core/src/remix-offline-progression.ts` reproduces the pure resource/timer transition with an injected clock, offline rates, upgrade effects, and number formatter. Its rate source can be resolved lazily after the threshold check, preserving the legacy ordering. `performRemixSimulationAction()` supplies a lazy rate resolver that uses the loaded state and catalog, shares the mining action's factor/highest-damageable calculation, and then calls the same source-backed MPS/GPS/PCPS formulas. Nine captured formula states are exercised through this full action, including low-damage boundaries, a last-damageable-object Gem bonus, an extreme object ID, and zero-damage cases. Four additional browser captures call real `loadGame()` with controlled saves and real rate functions; Vitest compares rates, rewards, saved resources, clock reads, log text, and stored snapshots. The source emits `Game Saved!` after a successful storage write. The web persistence service emits this confirmation after its versioned primary write, and the legacy-import coordinator preserves theme → offline message → write → confirmation order. `createRemixWebGameSession()` also routes ordered save effects from regular core actions through the browser adapter; session and route tests cover those writes and failure ordering. This is selected application coverage, not exhaustive save integration. Ten isolated offline branch fixtures continue to cover timing, caps, multipliers, and save order with controlled rates. Remaining offline gaps include broader live-rate state coverage and actual OS/browser background scheduling. The cold-start differential uses the non-default Letters formatter at index 3; other formatter/state combinations are not exhaustively enumerated. The return-message crop is covered in the pinned browser differential below.
+
+**Pinned browser cold-start differential (2026-10-04):**
+`tests/e2e/offline-progression.spec.ts` opens the pinned Remix and Beyond apps
+in Chromium from the same source-encoded legacy saves. Frozen-clock cases cover
+an upgraded seven-hour capped restore and a timestamp 60 seconds in the future;
+both produce matching visible message text/computed color and complete legacy
+save exports. The positive capped state also has an exact `.messagelog` pixel
+match at 1440x900 in light and dark themes. A third case advances the controlled
+clock between the source and Beyond startup/load reads at corresponding event
+positions, checks each clock-read prefix and full message/export equality, then
+holds later runtime reads at the final timestamp. This isolates the load path
+from the main loop. The focused Playwright file now passes 4/4. Three cases
+cover cold-start restores and the advancing startup clock; a separate
+controlled Chromium freeze/resume differential is described below. The cold-
+start tests do not simulate the actual OS background scheduler; native WebView
+behavior remains outside web-v1.
+
+**Controlled Chromium lifecycle freeze/resume differential (2026-10-04):**
+`tests/e2e/offline-progression.spec.ts` freezes the pinned Remix and Beyond
+pages with CDP `Page.setWebLifecycleState`, advances each injected wall clock
+by exactly two seconds, and resumes both pages. It compares the resumed frame's
+mine object/HP, idle timers, visible mine panel, and complete exported legacy
+saves; the focused Playwright case passes 1/1. This covers one controlled
+Chromium lifecycle transition. Actual OS background scheduling and throttling
+remain open, and native WebView lifecycle is outside web-v1.
 
 ## Main simulation time and autosave timer
 

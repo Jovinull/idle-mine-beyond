@@ -219,6 +219,23 @@ explicitly open rather than inferred from the unit adapter.
   threshold, just-over-threshold reward, default/upgraded caps and cap overflow,
   disabled and negative elapsed time, zero-rate rewards, and source clock/effect
   ordering.
+- **Pinned browser evidence (2026-10-04):**
+  `tests/e2e/offline-progression.spec.ts` cold-starts the pinned Remix and Beyond
+  apps in Chromium from the same encoded legacy saves. Frozen-clock cases compare
+  visible return-message text/color and complete legacy exports for a restore
+  beyond the upgraded seven-hour cap and a 60-second backward wall-clock jump.
+  The source save selects formatter index 3 (`Letters` in the pinned formatter
+  registry), and the differential compares its formatted message and full save.
+  The cap-state `.messagelog` crop matches exactly at 1440×900 in both themes.
+  A separate startup case advances the controlled wall clock between the
+  source-observed fallback, elapsed-time, `lastActive`, and save reads (301,
+  302, and 303 seconds after the saved timestamp). It checks the mapped read
+  prefixes, clamps later framework reads, and compares message order and full
+  legacy exports. All three cold-start E2E cases match the pinned source. A
+  fourth E2E freezes both pinned Remix and Beyond with Chromium's
+  `Page.setWebLifecycleState`, advances the injected wall clock by two seconds,
+  resumes both pages, and compares the resumed frame, visible mine state, and
+  complete legacy exports; it passes 1/1.
 - **Sampled (qualified):** sixteen elapsed values generated with xorshift32 seed
   `0x4f46464c` cover the open interval from the reward threshold through values
   above the seven-hour upgraded cap. The pinned `loadGame()` fixture records
@@ -226,21 +243,34 @@ explicitly open rather than inferred from the unit adapter.
   resources, maxima, timestamp, clock reads, messages, and writes with no
   divergence. The elapsed-time magnitude domain is non-exhaustive but is not a
   certification blocker under the [trace-map rule](README.md).
-- **Sampled:** browser suspension patterns and clock discontinuities are not
-  exhaustively exercised. Native background/suspend behavior is outside
-  web-v1 certification.
+- **Open environment domain:** the controlled Chromium freeze/resume case
+  covers one two-second interval and its next main-loop frame. Actual OS
+  background scheduling/throttling and lifecycle behavior across environments
+  remain open; native background/suspend behavior is outside web-v1
+  certification.
+
+**Headless browser limitation (2026-10-05):**
+`pnpm.cmd probe:browser-visibility` opens two pages with the configured
+Playwright Chromium and records `document.visibilityState` while switching
+between them. On Chromium 153.0.8010.12, both pages reported `visible` before,
+during, and after `bringToFront()`. This probe cannot exercise a real hidden-tab
+throttle; the existing CDP freeze/resume test covers only `frozen`/`active`
+states ([current protocol](https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-setWebLifecycleState)).
+Repeat the investigation in a headed browser environment that reports a hidden
+page before closing this open web-v1 evidence domain.
 
 ### Offline/time function and branch trace
 
-| Pinned Remix function/path and branch                                                                                                                                                           | Source evidence                                                                           | Beyond assertion                                                                                                                                                             |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Scripts/Define/functions.js:loadGame`: `offlineSec <= 300` or `nooffline` skips reward/rate computation; `offlineSec > 300` enters the offline path                                            | exact threshold, disabled flag, and clock-read cases in offline/save application fixtures | `tests/parity/offline-progression.test.ts` and `tests/parity/legacy-save-offline-application.test.ts` assert strict boundary, no-rate-resolution branch, and disabled branch |
-| Offline duration cap uses default six hours or `offlineTime` upgrade; Money is half-rate while Gems/PC use their respective upgraded rates and floor                                            | cap, upgrade, and source live-state cases in `offlineProgressionSemantics`                | `tests/parity/offline-progression.test.ts` compares each resource reward and `tests/e2e/offline-progression.spec.ts` checks reload behavior in Chromium                      |
-| Positive Gem/PC rewards conditionally extend the welcome-back message; rewards update balances/high-water, log, timestamp, and save in source order                                             | zero/positive reward combinations and captured load event/clock sequence                  | `tests/parity/offline-progression.test.ts` and `tests/parity/legacy-save-offline-application.test.ts` compare messages, full effects, time reads, and persistence            |
-| `Scripts/main.js:update`: idle timer equal/under threshold does not hit; over threshold performs one hit then zeroes timer; save timer is strict `> 60`, one save per frame, then Story refresh | named `simulationFrameSemantics` threshold, long-delta, and event-order cases             | `tests/parity/mining-transitions.test.ts` and `tests/parity/simulation-action.test.ts` compare timer state, hit count, save count, and effect order                          |
-| Offline load updates `lastActive` only in applied-reward branch; absent `lastActive` uses source clock default; error/nooffline paths preserve source clock-read order                          | `dateNowReads`, fallback, and decode-error records                                        | `tests/parity/legacy-save-offline-application.test.ts` and `tests/parity/remix-web-game-session.test.ts` assert exact clock reads and persisted timestamp                    |
+| Pinned Remix function/path and branch                                                                                                                                                           | Source evidence                                                                           | Beyond assertion                                                                                                                                                                                                       |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Scripts/Define/functions.js:loadGame`: `offlineSec <= 300` or `nooffline` skips reward/rate computation; `offlineSec > 300` enters the offline path                                            | exact threshold, disabled flag, and clock-read cases in offline/save application fixtures | `tests/parity/offline-progression.test.ts` and `tests/parity/legacy-save-offline-application.test.ts` assert strict boundary, no-rate-resolution branch, and disabled branch                                           |
+| Offline duration cap uses default six hours or `offlineTime` upgrade; Money is half-rate while Gems/PC use their respective upgraded rates and floor                                            | cap, upgrade, and source live-state cases in `offlineProgressionSemantics`                | `tests/parity/offline-progression.test.ts` compares each resource reward; `tests/e2e/offline-progression.spec.ts` source-pairs cold-start restore above the upgraded cap                                               |
+| Positive Gem/PC rewards conditionally extend the welcome-back message; rewards update balances/high-water, log, timestamp, and save in source order                                             | zero/positive reward combinations and captured load event/clock sequence                  | `tests/parity/offline-progression.test.ts`, `tests/parity/legacy-save-offline-application.test.ts`, and the live Chromium app differential compares message text/style, exact pixels in both themes, and the full save |
+| `Scripts/main.js:update`: idle timer equal/under threshold does not hit; over threshold performs one hit then zeroes timer; save timer is strict `> 60`, one save per frame, then Story refresh | named `simulationFrameSemantics` threshold, long-delta, and event-order cases             | `tests/parity/mining-transitions.test.ts` and `tests/parity/simulation-action.test.ts` compare timer state, hit count, save count, and effect order                                                                    |
+| Offline load updates `lastActive` only in applied-reward branch; absent `lastActive` uses source clock default; error/nooffline paths preserve source clock-read order                          | `dateNowReads`, fallback, and decode-error records                                        | `tests/parity/legacy-save-offline-application.test.ts` and `tests/parity/remix-web-game-session.test.ts` assert exact clock reads and persisted timestamp                                                              |
 
 Elapsed magnitudes outside the sampled values remain non-exhaustive, qualified
-formula coverage. Real browser suspension or clock discontinuities remain
-time-domain/environment gaps. Native background lifecycle is out of web-v1
-scope.
+formula coverage. The browser differentials cover capped positive elapsed time,
+a negative elapsed boundary, and an advancing inter-read startup clock.
+Actual OS/browser background lifecycle remains a separate environment gap;
+native background lifecycle is out of web-v1 scope.
