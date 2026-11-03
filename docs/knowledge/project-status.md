@@ -7,10 +7,11 @@ Last updated: 2026-11-03
 **Phase 1 - Deterministic core (in progress).** The source-to-test audit maps all 36 parity-matrix areas to pinned Remix functions/branches, fixtures, and assertions. The Random distributions and RNG row became the first Certified area after its consumer thresholds, seeded outcomes, and 90,000 state/RNG checkpoints passed; twelve further rows are Certified: Big-number math and serialization, Fresh simulation-state initialization, Simulation action composition, Active and idle damage, Object drops and random outcomes, Fixed mine objects, Special mine objects, Procedural mine objects, Mine rendering and compositing, Number formatting and notations, and Progression route and phase replay, plus the bounded Beyond versioned save schema. Fresh-state coverage traces Remix's no-save startup and verifies the complete initial state, live browser startup/interactions, and fresh Mining visuals in both themes. Action-composition coverage compares source frame, click, break, purchase, and craft branches in core, then verifies browser event wiring, save-before-Story ordering, random draws, and persisted state. Active/idle damage has browser assertions for a fresh-Mud click and a pinned full-health idle break; procedural-object coverage loads all three generator regions plus a sparse high ID through the Beyond save and Mining Canvas. Qualified non-exhaustive formula/RNG samples do not block certification; unresolved source boundaries, save/platform domains, and visual/UI evidence still can. The checker flags Certified rows that retain mapped gaps or unqualified sampled domains, and does not infer certification from code presence. parity-v1 remains web-only; native packaging, storage, and running Tauri WebView validation are post-v1.
 
 **Current closeout (2026-11-03):** the sampled-domain review and rule are
-committed and pushed in `f2f8fd5`; all 14 formula/RNG entries marked
-`Sampled (qualified)` have named relevant boundaries, fixed-seed samples, and
-passing pinned differentials. No matrix area is In Progress solely because a
-formula/RNG sample is finite. Priority visual coverage is committed and pushed
+committed and pushed in `f2f8fd5`; all 14 entries marked `Sampled (qualified)`
+have mapped boundary, sample, and differential evidence. They comprise twelve
+formula/RNG domains, Story predicates, and the separately corpus-backed mine-
+rendering domain. No matrix area is In Progress solely because a formula/RNG
+sample is finite. Priority visual coverage is committed and pushed
 in `88e22ee`: Windows Chromium passed 38/38 selected shop, Powers, Mining, and
 primary-screen comparisons; the two damaged-Mud source captures verified by
 `reference:priority-visuals:mining-damage` remain Windows-only pending the

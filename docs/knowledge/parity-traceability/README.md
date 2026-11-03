@@ -233,18 +233,37 @@ non-formula state/platform/integration/visual domain remains.
 
 ## Sampled-domain recheck (2026-11-03)
 
-The 14 `Sampled (qualified)` entries across simulation/content, progression, and
-persistence/time were reviewed. For their formula/RNG domains, applicable
-source boundaries, recorded fixed-seed samples, and pinned differentials pass;
-no matrix area is In Progress solely because those samples are finite. A
-missing applicable boundary prevents qualification; a differential mismatch is
-a compatibility failure to fix. Mine-rendering output remains scoped to its
-pinned corpus and per-object pixel differential. Save-shape, UI, storage,
-keyboard, and platform samples remain separate open evidence and are not
-qualified by this rule. No further sample expansion is warranted for the
-reviewed formula/RNG domains.
+Reaffirmed the qualification rule while reviewing all 14 `Sampled (qualified)`
+entries across the three trace maps that contain them. For a formula or random
+draw, finite sample size does not block certification once source-backed tests
+cover zero, supported limits, every piecewise or generation-region transition,
+caps/sentinels, and both sides plus equality for strict thresholds; RNG tests
+also cover the relevant draw thresholds and outcomes. The domain must then have
+a reproducible fixed-seed sample and a passing pinned differential. For that
+sampled subdomain, a missing applicable boundary is the only coverage blocker;
+a differential mismatch is a compatibility defect to fix. Do not expand a
+passing sample merely to increase its size.
 
-Validation on 2026-11-03: `pnpm.cmd test:parity` passed 35 files and 158 tests;
-`pnpm.cmd parity:traceability` verified 36 matrix areas; `pnpm.cmd docs:check`
-checked 85 Markdown files and source manifests; Prettier passed for the trace
-maps and parity matrix.
+The review found twelve qualified formula/RNG domains (procedural generation,
+drops, damage, resource and upgrade formulas, Powers, crafting, naming,
+distributions, and offline elapsed time), plus the qualified Story-predicate
+domain. Their mapped boundaries, fixed-seed fixtures, and pinned differentials
+pass. Mine rendering is the fourteenth qualified sample, tracked separately:
+its evidence is the 920-record per-object pixel differential and the 48 Story
+preview baselines, not a claim that rendering is a formula/RNG domain. No
+matrix area is In Progress solely because one of these samples is finite.
+
+The matrix statuses therefore remain unchanged in this review. Money/Gem/Planet
+Coin and aggregate upgrade areas remain open for their separately mapped
+purchase, interaction, and visual evidence; Wisdom/Powers, crafting/naming, and
+Story remain open for their other state, interaction, and visual evidence;
+offline progression remains open for real browser/OS background scheduling.
+Save-shape, storage, keyboard, unselected UI, and platform samples are separate
+evidence domains and are not qualified by this formula/RNG rule. No additional
+random probes are warranted for the reviewed domains.
+
+Validation on 2026-11-03: `pnpm test:parity` passed 35 files and 158 tests;
+`pnpm test:reference` passed pinned corpus, Story, phase-differential, Canvas,
+Mining, and priority-visual checks; `pnpm parity:traceability` verified 36
+matrix areas; `pnpm docs:check` checked 85 Markdown files and source manifests;
+Prettier and `git diff --check` passed.
