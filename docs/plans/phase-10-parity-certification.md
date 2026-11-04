@@ -1,6 +1,6 @@
 # Phase 10 — Parity certification
 
-Status: Gate defined; first-pass source-to-test inventories cover all 36 matrix areas. Thirteen matrix areas are Certified, including RNG under the qualified-sample rule, progression route/phase replay within its documented scope, and the bounded Beyond v1 save schema. The release and remaining player-facing parity areas remain uncertified.
+Status: Gate defined; first-pass source-to-test inventories cover all 36 matrix areas. Fourteen matrix areas are Certified: Random distributions and RNG; Big-number math and serialization; Fresh simulation-state initialization; Simulation action composition; Active and idle damage; Object drops and random outcomes; Fixed mine objects; Special mine objects; Procedural mine objects; Mine rendering and compositing; Number formatting and notations; Progression route and phase replay; Beyond versioned save schema; and Story and notifications. Story is Certified at the approved chapter-level web visual scope; per-milestone screenshots are not required because source-backed condition, objective, route, and integration assertions cover those behaviors. The release and remaining player-facing parity areas remain uncertified.
 
 ## Outcome
 
