@@ -225,6 +225,31 @@ async function captureWithBodyChildrenHidden(page: Page) {
   }
 }
 
+async function captureWithElementHidden(page: Page, selector: string) {
+  const element = page.locator(selector);
+  const original = await element.evaluate((node) => {
+    const style = (node as HTMLElement).style;
+    return {
+      value: style.getPropertyValue("display"),
+      priority: style.getPropertyPriority("display"),
+    };
+  });
+  try {
+    await element.evaluate((node) => {
+      (node as HTMLElement).style.setProperty("display", "none", "important");
+    });
+    return await waitForStableMiningScreenshot(page, false);
+  } finally {
+    await element.evaluate((node, style) => {
+      const inlineStyle = (node as HTMLElement).style;
+      inlineStyle.removeProperty("display");
+      if (style.value) {
+        inlineStyle.setProperty("display", style.value, style.priority);
+      }
+    }, original);
+  }
+}
+
 async function captureWithRootBackground(page: Page) {
   const original = await page.evaluate(() =>
     [document.documentElement, document.body].map((element) => ({
@@ -449,6 +474,17 @@ for (const theme of ["light", "dark"] as const) {
             const remixRootHash = createHash("sha256")
               .update(remixRootPng)
               .digest("hex");
+            const [beyondArticleHiddenPng, remixArticleHiddenPng] =
+              await Promise.all([
+                captureWithElementHidden(page, "article.main"),
+                captureWithElementHidden(sourcePage, "article.main"),
+              ]);
+            const beyondArticleHiddenHash = createHash("sha256")
+              .update(beyondArticleHiddenPng)
+              .digest("hex");
+            const remixArticleHiddenHash = createHash("sha256")
+              .update(remixArticleHiddenPng)
+              .digest("hex");
             for (const [name, png] of [
               [
                 "mining-dark-level-background-only-beyond.png",
@@ -460,6 +496,14 @@ for (const theme of ["light", "dark"] as const) {
               ],
               ["mining-dark-level-root-background-beyond.png", beyondRootPng],
               ["mining-dark-level-root-background-remix.png", remixRootPng],
+              [
+                "mining-dark-level-article-hidden-beyond.png",
+                beyondArticleHiddenPng,
+              ],
+              [
+                "mining-dark-level-article-hidden-remix.png",
+                remixArticleHiddenPng,
+              ],
             ] as const) {
               await test.info().attach(name, {
                 body: png,
@@ -508,6 +552,12 @@ for (const theme of ["light", "dark"] as const) {
                     beyondHash: beyondRootHash,
                     remixHash: remixRootHash,
                     matchesRemix: beyondRootHash === remixRootHash,
+                  },
+                  articleHidden: {
+                    beyondHash: beyondArticleHiddenHash,
+                    remixHash: remixArticleHiddenHash,
+                    matchesRemix:
+                      beyondArticleHiddenHash === remixArticleHiddenHash,
                   },
                   wrapper,
                   afterWrapperRemoval: {

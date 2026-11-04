@@ -144,6 +144,15 @@ rendered. The next probe records every DOM element whose bounds cover the pixel,
 including `pointer-events: none` elements, and all four border sides. Keep the
 strict visual gap open.
 
+**Linux Mining paint-candidate probe (CI run 84, 2026-11-04):** the full
+Beyond/Remix screenshots still differ at exactly one pixel `(7,209)`:
+`(54,54,54)` versus `(54,54,58)`. The bounds covering that point are the same
+five ancestors on both pages (`html`, `body`, `#app`, `main`, and
+`article.main`); no extra overlay or `pointer-events:none` element covers it,
+and recorded paint styles and geometry match. The next capture hides only
+`article.main` on each page to test whether this rendered subtree participates
+in the one-pixel difference.
+
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
 all 61 condition boundaries, dynamic objective outputs across 152 mine-level

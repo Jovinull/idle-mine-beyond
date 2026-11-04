@@ -92,6 +92,14 @@ sample point, including elements omitted from `elementsFromPoint()` by
 `pointer-events: none`, plus all border sides and additional paint properties.
 No source or app presentation styles were changed and no tolerance was added.
 
+CI run 84 confirmed the full-screen comparison still has one differing pixel:
+`(7,209)`, Beyond `(54,54,54)`, Remix `(54,54,58)`. The only element bounds
+covering the sample are the same ancestor chain (`html`, `body`, `#app`,
+`main`, and `article.main`) in each page. No separate overlay, including one
+with `pointer-events:none`, covers the point, and captured border/background
+styles and geometry match. The next probe hides only `article.main` in both
+pages to test whether that subtree participates in the pixel difference.
+
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 
 The pinned `initialState` capture records the fresh Remix values and the constructor test compares the core simulation subset against it: starting object/progress, all resources and upgrade levels, pickaxe, Powers, timers, and Story page/notification progress. It also checks that two new states do not share mutable objects. This does not compare settings, notation instances, message history, or the complete Remix runtime object.
