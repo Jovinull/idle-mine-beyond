@@ -47,6 +47,14 @@ states against pinned Remix using exact hashes. These passing reruns do not
 explain earlier intermittent one-pixel failures or cover the remaining shop
 state space; shop and desktop UI remain In Progress.
 
+**Shop corner-delta follow-up (2026-11-04):** the focused light level-one
+catalog rerun reproduced five one-channel Gem-card corner pixels after the
+full 22-card/detail interaction sequence. Removing Beyond's `display: contents`
+shell before a second capture produced the same Beyond hash, ruling that shell
+out for this state. The source/Beyond screenshot delta remains unresolved;
+comparisons stay exact with no tolerance, and shop/desktop visual parity remain
+In Progress.
+
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
 all 61 condition boundaries, dynamic objective outputs across 152 mine-level

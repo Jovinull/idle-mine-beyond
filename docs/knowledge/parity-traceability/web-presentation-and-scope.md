@@ -231,6 +231,20 @@ does not locate the intermittent full-screen difference. Keep the strict
 comparison and the desktop/shop rows In Progress; no mask or tolerance is
 permitted.
 
+**Focused catalog follow-up (2026-11-04):**
+`pnpm.cmd exec playwright test -c playwright.slow.config.ts
+tests/e2e/upgrade-affordability-differential.spec.ts --project=chromium
+--workers=1 --retries=0 --grep "matches shop cards, details, and full screens
+against Remix at level 1 in light theme"` replayed the level-one light catalog
+with the full card/detail hover sequence. Its Gem full-screen comparison again
+differed at exactly `(810,152)`, `(923,152)`, `(1036,152)`, `(1149,152)`,
+and `(1262,152)` (Beyond RGB 17, Remix RGB 19). The failure attachment confirms
+matching card boxes and computed styles. Removing the Beyond SvelteKit
+`display: contents` shell immediately before a second Beyond capture produced
+the same screenshot hash as the original Beyond capture, so the wrapper does
+not explain this state either. The visual difference remains unresolved and
+the strict assertion remains unchanged.
+
 ### Upgrade-shop visual function and branch trace
 
 | Pinned Remix function/path and branch                                                                                                                  | Source evidence                                                                             | Beyond assertion                                                                                                                                                                     |
