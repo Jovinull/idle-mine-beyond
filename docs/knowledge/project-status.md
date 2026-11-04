@@ -123,6 +123,16 @@ one-pixel mismatch. The wrapper is not the cause. The next probe compares a
 background-only capture and a matched root-background variant to determine
 whether the pixel comes from page-background painting or descendant content.
 
+**Linux Mining diagnostic fix (CI run 82, 2026-11-04):** checks/build,
+reference corpus, and native storage passed; 174 browser tests passed. The
+remaining test timed out inside the new diagnostic: after hiding every direct
+`body` child to capture only the page background, it reused a screenshot helper
+that waits for the now-hidden mine Canvas. This run provides no new evidence
+about the pixel source. The diagnostic now skips that visibility precondition
+for intentional background-only captures and restores inline display styles
+in `finally`. The exact screenshot assertion is unchanged; the visual gap is
+still open pending a successful Linux capture.
+
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
 all 61 condition boundaries, dynamic objective outputs across 152 mine-level

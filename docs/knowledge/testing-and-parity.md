@@ -69,6 +69,17 @@ diagnostic compares background-only captures and a matched root-background
 variant to distinguish background painting from descendant content. The app
 template and strict screenshot assertion remain unchanged.
 
+CI run 82 passed checks/build, reference-corpus verification, and native
+storage; 174 browser tests passed. Its remaining E2E failure was in the
+diagnostic itself: the background-only probe hid all direct `body` children,
+then called the ordinary screenshot helper, which waits for the hidden mine
+Canvas to become visible. It timed out before either background comparison, so
+the run says nothing new about the one-pixel paint source. The helper now
+allows captures without a visible Canvas and restores the original inline
+display values in `finally`. The production page and strict PNG equality check
+are unchanged; the Linux dark level-label case remains open until the probe
+completes and exact parity passes.
+
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 
 The pinned `initialState` capture records the fresh Remix values and the constructor test compares the core simulation subset against it: starting object/progress, all resources and upgrade levels, pickaxe, Powers, timers, and Story page/notification progress. It also checks that two new states do not share mutable objects. This does not compare settings, notation instances, message history, or the complete Remix runtime object.

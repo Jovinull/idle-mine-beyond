@@ -46,8 +46,13 @@ function seedLegacySave({
   Object.defineProperty(Date, "now", { configurable: true, value: () => now });
 }
 
-async function waitForStableMiningScreenshot(page: Page): Promise<Buffer> {
-  await page.locator("canvas.mine-object").waitFor({ state: "visible" });
+async function waitForStableMiningScreenshot(
+  page: Page,
+  requireVisibleCanvas = true,
+): Promise<Buffer> {
+  if (requireVisibleCanvas) {
+    await page.locator("canvas.mine-object").waitFor({ state: "visible" });
+  }
   await page.evaluate(() => document.fonts.ready);
   await page.mouse.move(1439, 899);
   await page.evaluate(
@@ -165,30 +170,32 @@ async function captureWithBodyChildrenHidden(page: Page) {
       };
     }),
   );
-  await page.evaluate(() => {
-    for (const element of document.body.children) {
-      (element as HTMLElement).style.setProperty(
-        "display",
-        "none",
-        "important",
-      );
-    }
-  });
-  const screenshot = await waitForStableMiningScreenshot(page);
-  await page.evaluate((styles) => {
-    Array.from(document.body.children).forEach((element, index) => {
-      const style = (element as HTMLElement).style;
-      style.removeProperty("display");
-      if (styles[index]?.value) {
-        style.setProperty(
+  try {
+    await page.evaluate(() => {
+      for (const element of document.body.children) {
+        (element as HTMLElement).style.setProperty(
           "display",
-          styles[index].value,
-          styles[index].priority,
+          "none",
+          "important",
         );
       }
     });
-  }, original);
-  return screenshot;
+    return await waitForStableMiningScreenshot(page, false);
+  } finally {
+    await page.evaluate((styles) => {
+      Array.from(document.body.children).forEach((element, index) => {
+        const style = (element as HTMLElement).style;
+        style.removeProperty("display");
+        if (styles[index]?.value) {
+          style.setProperty(
+            "display",
+            styles[index].value,
+            styles[index].priority,
+          );
+        }
+      });
+    }, original);
+  }
 }
 
 async function captureWithRootBackground(page: Page) {
