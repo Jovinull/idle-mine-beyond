@@ -80,6 +80,18 @@ display values in `finally`. The production page and strict PNG equality check
 are unchanged; the Linux dark level-label case remains open until the probe
 completes and exact parity passes.
 
+CI run 83 verified that diagnostic fix. On both retries, the background-only
+capture matched exactly between Beyond and Remix. Their full screenshots also
+matched after applying the same root-background/transparent-body variant, while
+the untouched full-screen screenshots still differed at the original pixel.
+Removing the Beyond `display: contents` wrapper still does not change its
+hash. These comparisons narrow the issue to the normal background setup with
+the app tree rendered, but do not yet identify a responsible painter. The
+failure probe now records all DOM elements whose bounding boxes include the
+sample point, including elements omitted from `elementsFromPoint()` by
+`pointer-events: none`, plus all border sides and additional paint properties.
+No source or app presentation styles were changed and no tolerance was added.
+
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 
 The pinned `initialState` capture records the fresh Remix values and the constructor test compares the core simulation subset against it: starting object/progress, all resources and upgrade levels, pickaxe, Powers, timers, and Story page/notification progress. It also checks that two new states do not share mutable objects. This does not compare settings, notation instances, message history, or the complete Remix runtime object.

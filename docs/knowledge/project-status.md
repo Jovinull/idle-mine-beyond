@@ -133,6 +133,17 @@ for intentional background-only captures and restores inline display styles
 in `finally`. The exact screenshot assertion is unchanged; the visual gap is
 still open pending a successful Linux capture.
 
+**Linux Mining background comparison (CI run 83, 2026-11-04):** the corrected
+diagnostic completed on both attempts. The body-children-hidden screenshots
+match exactly, and the full screenshots also match when both pages use a
+matching `html` background with transparent `body`. The unmodified full-screen
+comparison still differs at the same pixel; removing the Beyond wrapper still
+does not resolve it. These controls do not identify the painting source, but
+show the mismatch depends on the normal background setup with the app tree
+rendered. The next probe records every DOM element whose bounds cover the pixel,
+including `pointer-events: none` elements, and all four border sides. Keep the
+strict visual gap open.
+
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
 all 61 condition boundaries, dynamic objective outputs across 152 mine-level

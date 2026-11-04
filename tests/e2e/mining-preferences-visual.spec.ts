@@ -88,6 +88,15 @@ async function readMiningPixelStack(page: Page) {
       "borderTopColor",
       "borderTopStyle",
       "borderTopWidth",
+      "borderRightColor",
+      "borderRightStyle",
+      "borderRightWidth",
+      "borderBottomColor",
+      "borderBottomStyle",
+      "borderBottomWidth",
+      "borderLeftColor",
+      "borderLeftStyle",
+      "borderLeftWidth",
       "boxShadow",
       "clipPath",
       "color",
@@ -96,6 +105,9 @@ async function readMiningPixelStack(page: Page) {
       "filter",
       "isolation",
       "mixBlendMode",
+      "backdropFilter",
+      "mask",
+      "maskImage",
       "opacity",
       "outlineColor",
       "outlineStyle",
@@ -139,6 +151,20 @@ async function readMiningPixelStack(page: Page) {
       };
     };
     const stack = document.elementsFromPoint(point.x, point.y);
+    const coveringElements = Array.from(document.querySelectorAll("*"))
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        if (
+          point.x < rect.left ||
+          point.x >= rect.right ||
+          point.y < rect.top ||
+          point.y >= rect.bottom
+        ) {
+          return null;
+        }
+        return describe(element);
+      })
+      .filter((element) => element !== null);
     const ancestry: Element[] = [];
     for (let element = document.elementFromPoint(point.x, point.y); element;) {
       ancestry.push(element);
@@ -155,6 +181,7 @@ async function readMiningPixelStack(page: Page) {
       root: describe(document.documentElement),
       body: describe(document.body),
       stack: stack.map(describe),
+      coveringElements,
       ancestry: ancestry.map(describe),
     };
   });
