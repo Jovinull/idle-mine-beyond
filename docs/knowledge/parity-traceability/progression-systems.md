@@ -167,6 +167,13 @@ Remix/Beyond views at 1440x900 in both themes.
 | `craftPick`: candidate damage strictly greater replaces and saves; equal/lower damage is a dud and does not save                                                                                           | `better-craft-replaces-and-saves`, `equal-damage-is-a-dud`                                                                                                       | `tests/parity/pickaxe-crafting.test.ts` compares equipped pickaxe, feedback, and save count                                                                          |
 | `craftPick`: bulk loop continues after success and dud, stops at `times`, and saves each successful replacement using that intermediate pickaxe                                                            | `bulk-success-dud-then-insufficient`, `bulk-replacements-save-each-intermediate-state`                                                                           | `tests/parity/pickaxe-crafting.test.ts` compares ordered events, every saved snapshot, final state, and RNG consumption                                              |
 
+**Visual integration evidence (2026-11-04):**
+`tests/e2e/pickaxe-crafting-visual.spec.ts` replays the pinned
+`better-craft-replaces-and-saves` and `equal-damage-is-a-dud` sequences in both
+themes. It checks the displayed pickaxe name, consumes the source-recorded RNG
+draw count in each runtime, and compares the full 1440x900 Mining screen at
+zero differing pixels. This closes those two visible result branches only.
+
 - **Sampled (qualified):** source-forced cases cover the strict Expertise,
   quality-streak, name-type, cap, affordability, replacement, and bulk-stop
   boundaries. The two-state, three-seed corpus adds 512 crafts per seed, and the

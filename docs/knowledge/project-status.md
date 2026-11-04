@@ -70,6 +70,13 @@ Focused Settings visual tests passed 3/3; preference/save and import/export
 E2Es passed 2/2. Settings and desktop UI remain In Progress for their other
 states.
 
+**Pickaxe result visual differential (2026-11-04):** the pinned replacement
+and equal-damage dud craft sequences now compare full Mining screens against
+Remix at 1440x900 in both themes. The E2E verifies the visible pickaxe name
+and consumes the same captured RNG draws in both runtimes; all four exact
+screen comparisons passed. Crafting and naming remain In Progress for their
+other mapped states and viewports.
+
 **Complete Windows baseline (2026-11-03):** `pnpm.cmd check` passed end to
 end. Content/assets verification, the 36-area traceability check, Prettier,
 ESLint, strict TypeScript/Svelte checks, 46 unit tests, 158 parity tests, the
