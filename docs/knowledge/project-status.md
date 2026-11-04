@@ -80,7 +80,13 @@ only the browser job failed on the one-pixel screenshot delta. CI run 76 for
 `310cfa9` passed both jobs, including the pinned oracle, browser smoke, site
 browser tests, and native storage tests. On Linux, the affected branch passed
 its source/Beyond label, background, and geometry assertions; its full-screen
-pixel comparison remains explicitly open.
+pixel comparison remains explicitly open. The screenshot helper now advances
+two animation frames after pausing animations at time zero, and the Linux
+anomaly branch captures both images for failure evidence without asserting
+cross-page equality. The focused Windows test passed 2/2 after this change;
+Linux validation is pending. The browser CI now uploads Playwright diagnostic
+attachments after successful non-cancelled runs as well, so this known open
+comparison can preserve the exact PNG pair for review.
 
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover

@@ -21,10 +21,11 @@ The pinned Remix installs `keydown`/`keyup` handlers on `window`, so ArrowLeft a
 - **Visual regression:** screenshot comparisons at fixed viewports, themes, and state fixtures.
 - **Native checks:** Tauri shell/config and platform builds when the required SDK/toolchain is available.
 
-The GitHub Actions browser job uploads `test-results/` only after a failed
-step, retaining screenshots and traces for seven days so visual differences can
-be diagnosed from the actual pixels. Successful runs do not publish these test
-artifacts. This uses GitHub's official
+The GitHub Actions browser job uploads `test-results/` after each non-cancelled
+E2E run, retaining failure traces and explicitly attached diagnostic screenshots
+for seven days. Successful runs normally produce no files; the open Linux
+Mining pixel case attaches its exact source and Beyond captures while its pixel
+comparison remains open. This uses GitHub's official
 [upload-artifact action](https://github.com/actions/upload-artifact).
 
 The source-paired Mining preference capture compares complete PNG hashes with
@@ -36,9 +37,11 @@ resolve to the same transparent Mining article and computed body background
 did not change the screenshot hashes, so the capture normalization was
 reverted. Windows continues exact full-screen comparison for every preference
 branch; Linux keeps exact comparisons for the other five branches and asserts
-matching body background and article geometry for this one case. Its Linux
-full-screen pixel evidence remains open rather than being masked or declared
-equal.
+matching body background and article geometry for this one case. The capture
+helper pauses animations at time zero and waits two more animation frames
+before capturing; this branch now captures both images and attaches them when
+their hashes differ. Its Linux full-screen pixel evidence remains open rather
+than being masked or declared equal.
 
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 

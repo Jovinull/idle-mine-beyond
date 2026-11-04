@@ -62,6 +62,12 @@ async function waitForStableMiningScreenshot(page: Page): Promise<Buffer> {
       animation.currentTime = 0;
     }
   });
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
   return page.screenshot({ animations: "disabled" });
 }
 
@@ -207,6 +213,7 @@ for (const theme of ["light", "dark"] as const) {
         const linuxDarkLevelLabelRasterAnomaly =
           process.platform === "linux" && theme === "dark" && mineObjectLevel;
         if (linuxDarkLevelLabelRasterAnomaly) {
+          // Preserve exact screenshot evidence while this pixel delta stays open.
           const readSurface = (target: Page) =>
             target.evaluate(() => {
               const article = document.querySelector("article.main");
@@ -229,6 +236,26 @@ for (const theme of ["light", "dark"] as const) {
           ]);
           expect(beyondSurface).toEqual(remixSurface);
           expect(beyondSurface.bodyBackground).toBe("rgb(54, 54, 54)");
+          const [beyondPng, remixPng] = await Promise.all([
+            waitForStableMiningScreenshot(page),
+            waitForStableMiningScreenshot(sourcePage),
+          ]);
+          const beyondHash = createHash("sha256")
+            .update(beyondPng)
+            .digest("hex");
+          const remixHash = createHash("sha256").update(remixPng).digest("hex");
+          if (beyondHash !== remixHash) {
+            await Promise.all([
+              test.info().attach("linux-dark-level-beyond.png", {
+                body: beyondPng,
+                contentType: "image/png",
+              }),
+              test.info().attach("linux-dark-level-remix.png", {
+                body: remixPng,
+                contentType: "image/png",
+              }),
+            ]);
+          }
         } else {
           const [beyondPng, remixPng] = await Promise.all([
             waitForStableMiningScreenshot(page),
