@@ -12,6 +12,16 @@ Provide reviewable visual parity evidence for fixed viewport, theme, and state f
 
 ## Current evidence
 
+**Story scope certified (2026-11-03):** the approved chapter-level visual scope
+is complete. All nine all-unlocked chapter pages match the pinned source at
+zero pixels in light and dark at 1440x900; selected natural progression states
+are captured separately. All 61 Story conditions, dynamic objective outputs,
+route/phase state-RNG checkpoints, template blocks, and 48 Canvas previews
+have direct source-backed coverage. A screenshot for each remaining milestone
+is not required: those states share the captured renderer, and condition,
+objective, route, and selected app-integration behavior is asserted directly.
+Other game screens and viewport combinations remain part of this phase.
+
 At 1440x900, tracked Windows source/implementation pairs match the pinned Remix in both themes for fresh Game Start Story, selected natural Story milestones through Chapter 6, all nine controlled all-unlocked Story pages, fresh Mining, fresh Settings, the controlled full craft panel in both themes at 1440x900, all three upgrade tabs, the Planet Coin gate at high-water 89/90, three phase-start Mining states, the controlled Powers boundary, and post-award Planet Coin/Wisdom balances. Four gate screenshots compare the hidden 89 and visible 90 states in both themes at zero pixels; their browser test also checks the tab boundary and dark-theme zero-damage label color. The four post-award screenshots replay source-shaped saves through a main-loop frame and real click, then match at zero pixels in both themes. Fifteen selected progression views reach first eligibility through Chapter 6; the Chapter 3-6 screens match at zero pixels in light theme on Windows. The Story suite has all 61 condition expressions with 177 boundary samples, notification/high-water transition cases, sampled objective outputs across mine levels and all notations, and all rendered chapter/template blocks. It compares selected screens and all 48 mine-object preview occurrences by RGBA hash. We will not capture every remaining milestone: these views share `StoryPanel` and the pinned template, and the source-backed state tests already cover their conditions, notification transitions, and objective text. Add another Story screenshot only for a distinct rendering branch or an identified integration gap. The natural source route and full checkpoint replay through Chapter 6 are complete, including its light 1440x900 screenshot. For Chapters 7 to 9, the three controlled phase-start saves at objects 124, 169, and 198 each have three paired fixed `(game-RNG seed, action-sequence seed)` runs (not a Cartesian product), with 10,000 randomized actions per pair and full simulation-state/RNG comparison after every action (nine traces, 90,000 checkpoints). These are controlled source saves, not natural paths. The visual corpus has 90 full-screen Windows captures plus one crop; 32 priority captures, each with a Linux pair, cover upgrade tabs, Powers, phase Mining states, and primary screens at the other viewports. This is selected state coverage, not whole-game certification.
 
 Mining now also has source-paired full-screen captures after one non-lethal click
