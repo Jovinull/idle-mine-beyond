@@ -39,6 +39,14 @@ reported dark corner pixels were not reproduced. Keep the shop and desktop UI
 In Progress: the light Planet Coin exact-price screenshot has an intermittent
 one-pixel result, and other visual states remain open.
 
+**Shop affordability boundary rerun (2026-11-03):** the existing slow
+`upgrade-affordability-differential.spec.ts` passed 1/1 in each theme (light
+1.7 minutes, dark 1.7 minutes). Each run compares full 1440x900 screens for
+zero, immediately-below-price, and exact-price Money, Gem, and Planet Coin
+states against pinned Remix using exact hashes. These passing reruns do not
+explain earlier intermittent one-pixel failures or cover the remaining shop
+state space; shop and desktop UI remain In Progress.
+
 **Complete Windows baseline (2026-11-03):** `pnpm.cmd check` passed end to
 end. Content/assets verification, the 36-area traceability check, Prettier,
 ESLint, strict TypeScript/Svelte checks, 46 unit tests, 158 parity tests, the

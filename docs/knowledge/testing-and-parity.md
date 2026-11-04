@@ -229,6 +229,13 @@ The older dark rounded-corner deltas were not reproduced; the shop remains
 In Progress because other states and the intermittent exact-price result remain
 open.
 
+The same existing slow suite's affordability-boundary tests passed 1/1 for
+light and dark on 2026-11-03 (1.7 minutes each). Each compares zero,
+immediately-below-price, and exact-price states for Money, Gems, and Planet
+Coins as full-screen 1440x900 images with exact hashes. Earlier intermittent
+exact-price pixel failures remain unexplained, so this passing rerun does not
+close the shop visual gap or justify a tolerance.
+
 **Background-visibility probe (2026-11-03):** run `pnpm.cmd
 probe:browser-visibility` for headless mode or `node
 scripts/probe-browser-visibility.mjs --headed` for headed mode. Both report

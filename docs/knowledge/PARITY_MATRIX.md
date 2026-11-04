@@ -161,4 +161,11 @@ deltas were not reproduced. This does not resolve the intermittent exact-price
 result or close the remaining visual-state scope, so the shop and desktop UI
 rows remain In progress.
 
+The existing slow affordability-boundary E2E also passed 1/1 in light and dark
+on 2026-11-03. It compares full 1440x900 screenshots for zero,
+immediately-below-price, and exact-price Money, Gems, and Planet Coins against
+pinned Remix. Since earlier runs recorded intermittent exact-price pixel
+mismatches and these tests do not cover every shop state, this rerun does not
+close the visual gap; shop and desktop UI remain In progress.
+
 `pnpm reference:priority-visuals` reproduces the pinned Remix captures for the current platform and verifies screenshot/state metadata. Linux compares these 32 cases at zero pixels against their `-linux` baselines. Tauri WebView save/reload remains deferred until native packaging.

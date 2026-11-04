@@ -118,6 +118,13 @@ corner differences were not reproduced. This does not resolve the intermittent
 exact-price result or make the shop state-space exhaustive; the shop and desktop
 UI rows remain In Progress.
 
+**Affordability boundary rerun (2026-11-03):** the existing slow E2E passed
+1/1 in each theme (1.7 minutes each). It compares the zero,
+immediately-below-price, and exact-price states for Money, Gems, and Planet
+Coins as full-screen 1440x900 images against pinned Remix with exact hashes.
+The prior intermittent exact-price mismatch remains unexplained; keep shop and
+desktop UI In Progress.
+
 **Complete Chromium rerun (2026-10-05):** the 164-test suite passed 162/164.
 The two failures were the dark Planet Coin exact-price screenshot (one corner
 pixel at `(697,152)`, Beyond RGB 3 and Remix RGB 4) and the light all-affordable
