@@ -113,9 +113,15 @@ screenshot still differs at the same one pixel. The probe reports identical
 viewport, element hit-test stack, element rectangles, and selected background,
 compositing, and paint-related computed styles. The only ancestry difference
 is the Beyond app template's `display: contents` body wrapper, which has a
-0×0 rectangle at the sample point. A diagnostic follow-up removes that wrapper
-from the Beyond DOM only, captures again, and records whether the hash changes;
-the app template itself is not changed by this experiment.
+0×0 rectangle at the sample point. A diagnostic follow-up removed that wrapper
+from the Beyond DOM only and captured again; the app template itself was not
+changed.
+
+**Linux Mining wrapper experiment (CI run 81, 2026-11-04):** removing the
+`display: contents` wrapper left Beyond's hash unchanged and did not close the
+one-pixel mismatch. The wrapper is not the cause. The next probe compares a
+background-only capture and a matched root-background variant to determine
+whether the pixel comes from page-background painting or descendant content.
 
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover

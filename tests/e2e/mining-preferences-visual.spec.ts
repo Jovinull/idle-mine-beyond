@@ -155,6 +155,78 @@ async function readMiningPixelStack(page: Page) {
   });
 }
 
+async function captureWithBodyChildrenHidden(page: Page) {
+  const original = await page.evaluate(() =>
+    Array.from(document.body.children).map((element) => {
+      const style = (element as HTMLElement).style;
+      return {
+        value: style.getPropertyValue("display"),
+        priority: style.getPropertyPriority("display"),
+      };
+    }),
+  );
+  await page.evaluate(() => {
+    for (const element of document.body.children) {
+      (element as HTMLElement).style.setProperty(
+        "display",
+        "none",
+        "important",
+      );
+    }
+  });
+  const screenshot = await waitForStableMiningScreenshot(page);
+  await page.evaluate((styles) => {
+    Array.from(document.body.children).forEach((element, index) => {
+      const style = (element as HTMLElement).style;
+      style.removeProperty("display");
+      if (styles[index]?.value) {
+        style.setProperty(
+          "display",
+          styles[index].value,
+          styles[index].priority,
+        );
+      }
+    });
+  }, original);
+  return screenshot;
+}
+
+async function captureWithRootBackground(page: Page) {
+  const original = await page.evaluate(() =>
+    [document.documentElement, document.body].map((element) => ({
+      value: element.style.getPropertyValue("background-color"),
+      priority: element.style.getPropertyPriority("background-color"),
+    })),
+  );
+  await page.evaluate(() => {
+    document.documentElement.style.setProperty(
+      "background-color",
+      "rgb(54, 54, 54)",
+      "important",
+    );
+    document.body.style.setProperty(
+      "background-color",
+      "transparent",
+      "important",
+    );
+  });
+  const screenshot = await waitForStableMiningScreenshot(page);
+  await page.evaluate((styles) => {
+    [document.documentElement, document.body].forEach((element, index) => {
+      const style = element.style;
+      style.removeProperty("background-color");
+      if (styles[index]?.value) {
+        style.setProperty(
+          "background-color",
+          styles[index].value,
+          styles[index].priority,
+        );
+      }
+    });
+  }, original);
+  return screenshot;
+}
+
 for (const theme of ["light", "dark"] as const) {
   test(`matches Remix Mining preference branches in ${theme} theme`, async ({
     browser,
@@ -321,6 +393,45 @@ for (const theme of ["light", "dark"] as const) {
               readMiningPixelStack(page),
               readMiningPixelStack(sourcePage),
             ]);
+            const [beyondBackgroundPng, remixBackgroundPng] = await Promise.all(
+              [
+                captureWithBodyChildrenHidden(page),
+                captureWithBodyChildrenHidden(sourcePage),
+              ],
+            );
+            const beyondBackgroundHash = createHash("sha256")
+              .update(beyondBackgroundPng)
+              .digest("hex");
+            const remixBackgroundHash = createHash("sha256")
+              .update(remixBackgroundPng)
+              .digest("hex");
+            const [beyondRootPng, remixRootPng] = await Promise.all([
+              captureWithRootBackground(page),
+              captureWithRootBackground(sourcePage),
+            ]);
+            const beyondRootHash = createHash("sha256")
+              .update(beyondRootPng)
+              .digest("hex");
+            const remixRootHash = createHash("sha256")
+              .update(remixRootPng)
+              .digest("hex");
+            for (const [name, png] of [
+              [
+                "mining-dark-level-background-only-beyond.png",
+                beyondBackgroundPng,
+              ],
+              [
+                "mining-dark-level-background-only-remix.png",
+                remixBackgroundPng,
+              ],
+              ["mining-dark-level-root-background-beyond.png", beyondRootPng],
+              ["mining-dark-level-root-background-remix.png", remixRootPng],
+            ] as const) {
+              await test.info().attach(name, {
+                body: png,
+                contentType: "image/png",
+              });
+            }
             const wrapper = await page.evaluate(() => {
               const app = document.getElementById("app");
               const element = app?.parentElement;
@@ -353,6 +464,16 @@ for (const theme of ["light", "dark"] as const) {
                   beforeWrapperRemoval: {
                     beyond: beyondPaint,
                     remix: remixPaint,
+                  },
+                  backgroundOnly: {
+                    beyondHash: beyondBackgroundHash,
+                    remixHash: remixBackgroundHash,
+                    matchesRemix: beyondBackgroundHash === remixBackgroundHash,
+                  },
+                  rootBackground: {
+                    beyondHash: beyondRootHash,
+                    remixHash: remixRootHash,
+                    matchesRemix: beyondRootHash === remixRootHash,
                   },
                   wrapper,
                   afterWrapperRemoval: {

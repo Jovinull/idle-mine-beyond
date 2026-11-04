@@ -62,10 +62,12 @@ CI run 80 (`cc5dda9`) repeated the same one-pixel result. Its DOM probe found
 identical viewport, hit-test stack, rectangles, and selected background and
 compositing styles at the sample point. Beyond's ancestry includes the
 `display: contents` wrapper from `apps/web/src/app.html`, with a zero-sized
-box there; pinned Remix has no corresponding wrapper. The next diagnostic
-captures the Beyond page after removing only that wrapper and records whether
-the exact full-screen hash becomes equal. This experiment does not change the
-app template or the strict assertion.
+box there; pinned Remix has no corresponding wrapper. CI run 81 removed only
+that wrapper from the Beyond DOM and captured again. Its original and unwrapped
+hashes were identical, so the wrapper does not explain the mismatch. The next
+diagnostic compares background-only captures and a matched root-background
+variant to distinguish background painting from descendant content. The app
+template and strict screenshot assertion remain unchanged.
 
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 
