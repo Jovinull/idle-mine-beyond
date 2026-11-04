@@ -360,6 +360,13 @@ only `frozen`/`active` states
 Use a browser session that reports `document.visibilityState === "hidden"` and
 measure its scheduling before closing this open web-v1 evidence domain.
 
+**Headless target follow-up (2026-11-04):** Chromium 153.0.8010.12 was tested
+with a same-context `window.open()` popup and a CDP `Target.createTarget`
+created with `background: true`. Both produced separate CDP window IDs; the
+pages remained `visible` and focused. This confirms that the current headless
+launch path still cannot exercise a hidden tab; it does not add lifecycle
+parity evidence.
+
 ### Offline/time function and branch trace
 
 | Pinned Remix function/path and branch                                                                                                                                                           | Source evidence                                                                           | Beyond assertion                                                                                                                                                                                                       |

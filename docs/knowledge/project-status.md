@@ -76,7 +76,11 @@ background and Mining article geometry; full-screen hashes remain exact on
 Windows for every branch and Linux for the other five branches. The Linux
 visual evidence for this specific case remains open, so Settings and Desktop UI
 remain In Progress. Run 75 passed checks/build/reference and native storage;
-only the browser job failed on the one-pixel screenshot delta.
+only the browser job failed on the one-pixel screenshot delta. CI run 76 for
+`310cfa9` passed both jobs, including the pinned oracle, browser smoke, site
+browser tests, and native storage tests. On Linux, the affected branch passed
+its source/Beyond label, background, and geometry assertions; its full-screen
+pixel comparison remains explicitly open.
 
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
