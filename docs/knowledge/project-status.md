@@ -153,6 +153,13 @@ and recorded paint styles and geometry match. The next capture hides only
 `article.main` on each page to test whether this rendered subtree participates
 in the one-pixel difference.
 
+**Linux Mining article isolation (CI run 85, 2026-11-04):** hiding only
+`article.main` makes the Beyond and Remix full-page screenshots byte-for-byte
+equal. This isolates the mismatch to rendering with that article subtree
+present; it does not identify which child or style causes the pixel change.
+The next probe hides only `.mineobject` while leaving the article and its other
+children rendered.
+
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
 all 61 condition boundaries, dynamic objective outputs across 152 mine-level

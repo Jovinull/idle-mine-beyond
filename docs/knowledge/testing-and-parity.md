@@ -100,6 +100,13 @@ with `pointer-events:none`, covers the point, and captured border/background
 styles and geometry match. The next probe hides only `article.main` in both
 pages to test whether that subtree participates in the pixel difference.
 
+CI run 85 passed the corrected diagnostic and confirmed that hiding only
+`article.main` makes the two full-page screenshots match exactly. The
+one-pixel delta is therefore associated with rendering while this article
+subtree is present. This does not distinguish the mine-object block, upgrades,
+statistics, activity log, or the article's own paint behavior. The next probe
+hides only `.mineobject` while leaving the rest of the article rendered.
+
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 
 The pinned `initialState` capture records the fresh Remix values and the constructor test compares the core simulation subset against it: starting object/progress, all resources and upgrade levels, pickaxe, Powers, timers, and Story page/notification progress. It also checks that two new states do not share mutable objects. This does not compare settings, notation instances, message history, or the complete Remix runtime object.

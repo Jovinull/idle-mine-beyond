@@ -485,6 +485,17 @@ for (const theme of ["light", "dark"] as const) {
             const remixArticleHiddenHash = createHash("sha256")
               .update(remixArticleHiddenPng)
               .digest("hex");
+            const [beyondMineObjectHiddenPng, remixMineObjectHiddenPng] =
+              await Promise.all([
+                captureWithElementHidden(page, ".mineobject"),
+                captureWithElementHidden(sourcePage, ".mineobject"),
+              ]);
+            const beyondMineObjectHiddenHash = createHash("sha256")
+              .update(beyondMineObjectHiddenPng)
+              .digest("hex");
+            const remixMineObjectHiddenHash = createHash("sha256")
+              .update(remixMineObjectHiddenPng)
+              .digest("hex");
             for (const [name, png] of [
               [
                 "mining-dark-level-background-only-beyond.png",
@@ -503,6 +514,14 @@ for (const theme of ["light", "dark"] as const) {
               [
                 "mining-dark-level-article-hidden-remix.png",
                 remixArticleHiddenPng,
+              ],
+              [
+                "mining-dark-level-mineobject-hidden-beyond.png",
+                beyondMineObjectHiddenPng,
+              ],
+              [
+                "mining-dark-level-mineobject-hidden-remix.png",
+                remixMineObjectHiddenPng,
               ],
             ] as const) {
               await test.info().attach(name, {
@@ -558,6 +577,12 @@ for (const theme of ["light", "dark"] as const) {
                     remixHash: remixArticleHiddenHash,
                     matchesRemix:
                       beyondArticleHiddenHash === remixArticleHiddenHash,
+                  },
+                  mineObjectHidden: {
+                    beyondHash: beyondMineObjectHiddenHash,
+                    remixHash: remixMineObjectHiddenHash,
+                    matchesRemix:
+                      beyondMineObjectHiddenHash === remixMineObjectHiddenHash,
                   },
                   wrapper,
                   afterWrapperRemoval: {
