@@ -58,6 +58,15 @@ do not add a mask or tolerance. The Linux dark-label screenshot remains an
 open visual gap until the paint difference is explained and exact equality
 passes.
 
+CI run 80 (`cc5dda9`) repeated the same one-pixel result. Its DOM probe found
+identical viewport, hit-test stack, rectangles, and selected background and
+compositing styles at the sample point. Beyond's ancestry includes the
+`display: contents` wrapper from `apps/web/src/app.html`, with a zero-sized
+box there; pinned Remix has no corresponding wrapper. The next diagnostic
+captures the Beyond page after removing only that wrapper and records whether
+the exact full-screen hash becomes equal. This experiment does not change the
+app template or the strict assertion.
+
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 
 The pinned `initialState` capture records the fresh Remix values and the constructor test compares the core simulation subset against it: starting object/progress, all resources and upgrade levels, pickaxe, Powers, timers, and Story page/notification progress. It also checks that two new states do not share mutable objects. This does not compare settings, notation instances, message history, or the complete Remix runtime object.

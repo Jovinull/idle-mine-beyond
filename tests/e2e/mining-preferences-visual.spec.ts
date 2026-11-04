@@ -76,13 +76,17 @@ async function readMiningPixelStack(page: Page) {
     const point = { x: 7.5, y: 209.5 };
     const styleProperties = [
       "backgroundColor",
+      "backgroundAttachment",
+      "backgroundClip",
       "backgroundImage",
+      "backgroundOrigin",
       "borderTopColor",
       "borderTopStyle",
       "borderTopWidth",
       "boxShadow",
       "clipPath",
       "color",
+      "display",
       "contain",
       "filter",
       "isolation",
@@ -92,8 +96,12 @@ async function readMiningPixelStack(page: Page) {
       "outlineStyle",
       "outlineWidth",
       "overflow",
+      "pointerEvents",
       "position",
+      "scrollbarColor",
+      "scrollbarWidth",
       "transform",
+      "visibility",
       "willChange",
       "zIndex",
     ] as const;
@@ -313,10 +321,46 @@ for (const theme of ["light", "dark"] as const) {
               readMiningPixelStack(page),
               readMiningPixelStack(sourcePage),
             ]);
+            const wrapper = await page.evaluate(() => {
+              const app = document.getElementById("app");
+              const element = app?.parentElement;
+              if (
+                !app ||
+                !element ||
+                element === document.body ||
+                element.parentElement !== document.body
+              ) {
+                return null;
+              }
+              const outerHTML = element.outerHTML;
+              element.replaceWith(...Array.from(element.childNodes));
+              return outerHTML;
+            });
+            const unwrappedPng = await waitForStableMiningScreenshot(page);
+            const unwrappedHash = createHash("sha256")
+              .update(unwrappedPng)
+              .digest("hex");
+            await test
+              .info()
+              .attach("mining-dark-level-beyond-without-body-wrapper.png", {
+                body: unwrappedPng,
+                contentType: "image/png",
+              });
             await writeFile(
               test.info().outputPath("linux-dark-level-pixel-stack.json"),
               JSON.stringify(
-                { beyond: beyondPaint, remix: remixPaint },
+                {
+                  beforeWrapperRemoval: {
+                    beyond: beyondPaint,
+                    remix: remixPaint,
+                  },
+                  wrapper,
+                  afterWrapperRemoval: {
+                    hash: unwrappedHash,
+                    matchesRemix: unwrappedHash === remixHash,
+                    paint: await readMiningPixelStack(page),
+                  },
+                },
                 null,
                 2,
               ),

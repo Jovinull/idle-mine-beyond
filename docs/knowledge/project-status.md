@@ -108,6 +108,15 @@ the DOM paint stack, ancestor geometry, and computed paint-related styles for
 the next CI artifact. This visual slice and the desktop UI row remain In
 Progress.
 
+**Linux Mining paint-stack probe (CI run 80, 2026-11-04):** the strict
+screenshot still differs at the same one pixel. The probe reports identical
+viewport, element hit-test stack, element rectangles, and selected background,
+compositing, and paint-related computed styles. The only ancestry difference
+is the Beyond app template's `display: contents` body wrapper, which has a
+0×0 rectangle at the sample point. A diagnostic follow-up removes that wrapper
+from the Beyond DOM only, captures again, and records whether the hash changes;
+the app template itself is not changed by this experiment.
+
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
 all 61 condition boundaries, dynamic objective outputs across 152 mine-level
