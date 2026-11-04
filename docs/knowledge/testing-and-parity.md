@@ -113,6 +113,13 @@ the object block or a rendering effect it induces. The next probe hides only
 `canvas.mine-object` to separate Canvas compositing from its surrounding text
 and controls.
 
+CI run 87 confirms that hiding only `canvas.mine-object` removes the mismatch,
+even with the object label, buttons, and text still visible. The sampled point
+is outside the Canvas bounds, so this establishes Canvas presence as a
+necessary condition, not a direct pixel overlap. The next probe uses
+`visibility:hidden` to preserve the Canvas layout box, and records its computed
+paint styles, bounds, attributes, and rendered bitmap hash on each page.
+
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 
 The pinned `initialState` capture records the fresh Remix values and the constructor test compares the core simulation subset against it: starting object/progress, all resources and upgrade levels, pickaxe, Powers, timers, and Story page/notification progress. It also checks that two new states do not share mutable objects. This does not compare settings, notation instances, message history, or the complete Remix runtime object.

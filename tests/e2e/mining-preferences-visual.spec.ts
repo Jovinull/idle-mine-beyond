@@ -85,6 +85,10 @@ async function readMiningPixelStack(page: Page) {
       "backgroundClip",
       "backgroundImage",
       "backgroundOrigin",
+      "backgroundPosition",
+      "backgroundRepeat",
+      "backgroundSize",
+      "backgroundBlendMode",
       "borderTopColor",
       "borderTopStyle",
       "borderTopWidth",
@@ -115,6 +119,11 @@ async function readMiningPixelStack(page: Page) {
       "overflow",
       "pointerEvents",
       "position",
+      "imageRendering",
+      "backfaceVisibility",
+      "objectFit",
+      "objectPosition",
+      "transformOrigin",
       "scrollbarColor",
       "scrollbarWidth",
       "transform",
@@ -180,6 +189,31 @@ async function readMiningPixelStack(page: Page) {
       },
       root: describe(document.documentElement),
       body: describe(document.body),
+      mineCanvas: (() => {
+        const canvas =
+          document.querySelector<HTMLCanvasElement>("canvas.mine-object");
+        const context = canvas?.getContext("2d");
+        const pixels =
+          canvas && context
+            ? context.getImageData(0, 0, canvas.width, canvas.height).data
+            : undefined;
+        let pixelHash = 2166136261;
+        if (pixels) {
+          for (const value of pixels) {
+            pixelHash = Math.imul(pixelHash ^ value, 16777619);
+          }
+        }
+        return canvas
+          ? {
+              bitmap: { width: canvas.width, height: canvas.height },
+              attributes: Array.from(canvas.attributes).map(
+                ({ name, value }) => [name, value],
+              ),
+              pixelHash: pixels ? (pixelHash >>> 0).toString(16) : null,
+              paint: describe(canvas),
+            }
+          : null;
+      })(),
       stack: stack.map(describe),
       coveringElements,
       ancestry: ancestry.map(describe),
@@ -245,6 +279,38 @@ async function captureWithElementHidden(page: Page, selector: string) {
       inlineStyle.removeProperty("display");
       if (style.value) {
         inlineStyle.setProperty("display", style.value, style.priority);
+      }
+    }, original);
+  }
+}
+
+async function captureWithElementVisibilityHidden(
+  page: Page,
+  selector: string,
+) {
+  const element = page.locator(selector);
+  const original = await element.evaluate((node) => {
+    const style = (node as HTMLElement).style;
+    return {
+      value: style.getPropertyValue("visibility"),
+      priority: style.getPropertyPriority("visibility"),
+    };
+  });
+  try {
+    await element.evaluate((node) => {
+      (node as HTMLElement).style.setProperty(
+        "visibility",
+        "hidden",
+        "important",
+      );
+    });
+    return await waitForStableMiningScreenshot(page, false);
+  } finally {
+    await element.evaluate((node, style) => {
+      const inlineStyle = (node as HTMLElement).style;
+      inlineStyle.removeProperty("visibility");
+      if (style.value) {
+        inlineStyle.setProperty("visibility", style.value, style.priority);
       }
     }, original);
   }
@@ -507,6 +573,20 @@ for (const theme of ["light", "dark"] as const) {
             const remixCanvasHiddenHash = createHash("sha256")
               .update(remixCanvasHiddenPng)
               .digest("hex");
+            const [beyondCanvasInvisiblePng, remixCanvasInvisiblePng] =
+              await Promise.all([
+                captureWithElementVisibilityHidden(page, "canvas.mine-object"),
+                captureWithElementVisibilityHidden(
+                  sourcePage,
+                  "canvas.mine-object",
+                ),
+              ]);
+            const beyondCanvasInvisibleHash = createHash("sha256")
+              .update(beyondCanvasInvisiblePng)
+              .digest("hex");
+            const remixCanvasInvisibleHash = createHash("sha256")
+              .update(remixCanvasInvisiblePng)
+              .digest("hex");
             for (const [name, png] of [
               [
                 "mining-dark-level-background-only-beyond.png",
@@ -541,6 +621,14 @@ for (const theme of ["light", "dark"] as const) {
               [
                 "mining-dark-level-canvas-hidden-remix.png",
                 remixCanvasHiddenPng,
+              ],
+              [
+                "mining-dark-level-canvas-invisible-beyond.png",
+                beyondCanvasInvisiblePng,
+              ],
+              [
+                "mining-dark-level-canvas-invisible-remix.png",
+                remixCanvasInvisiblePng,
               ],
             ] as const) {
               await test.info().attach(name, {
@@ -608,6 +696,12 @@ for (const theme of ["light", "dark"] as const) {
                     remixHash: remixCanvasHiddenHash,
                     matchesRemix:
                       beyondCanvasHiddenHash === remixCanvasHiddenHash,
+                  },
+                  canvasVisibilityHidden: {
+                    beyondHash: beyondCanvasInvisibleHash,
+                    remixHash: remixCanvasInvisibleHash,
+                    matchesRemix:
+                      beyondCanvasInvisibleHash === remixCanvasInvisibleHash,
                   },
                   wrapper,
                   afterWrapperRemoval: {

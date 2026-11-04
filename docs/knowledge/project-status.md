@@ -166,6 +166,13 @@ children rendered.
 by this mining block. The next probe hides only `canvas.mine-object`, keeping
 its surrounding label, controls, and text visible.
 
+**Linux Mining Canvas isolation (CI run 87, 2026-11-04):** hiding only
+`canvas.mine-object` also makes the full Beyond and Remix screenshots identical.
+The canvas is required for the one-pixel difference even though the sampled
+point lies outside its bounds. The next probe sets only its visibility to
+hidden while preserving its layout box and records each canvas's dimensions,
+attributes, computed paint styles, and bitmap-pixel hash.
+
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
 all 61 condition boundaries, dynamic objective outputs across 152 mine-level
