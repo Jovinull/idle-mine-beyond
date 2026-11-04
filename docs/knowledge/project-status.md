@@ -60,6 +60,16 @@ milestone; no mapped branch or distinct renderer path remains open. GitHub
 Actions run 58 passed the full check, pinned oracle, browser, site, and native
 storage jobs for the code baseline.
 
+**Settings visual differential (2026-11-03):** a source-paired 1440x900
+comparison found that Beyond's dark Settings buttons, selector, and textarea
+used `#4d4d4d` while Remix's pinned cascade renders them `#636363`. The Svelte
+theme rule now matches the source. Full-screen comparisons pass for fresh light
+and dark Settings plus changed notation, both enabled preferences, dark theme,
+manual save, and export. The exported field matches the pinned source text.
+Focused Settings visual tests passed 3/3; preference/save and import/export
+E2Es passed 2/2. Settings and desktop UI remain In Progress for their other
+states.
+
 **Complete Windows baseline (2026-11-03):** `pnpm.cmd check` passed end to
 end. Content/assets verification, the 36-area traceability check, Prettier,
 ESLint, strict TypeScript/Svelte checks, 46 unit tests, 158 parity tests, the

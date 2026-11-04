@@ -31,6 +31,10 @@ packages.
   differential has intermittent pixel mismatches and remains open. Other
   application states and combinations of resource balance, progression,
   viewport, and theme are not exhaustively certified.
+- Settings now has a source-paired full-screen test for changed notation,
+  checked preferences, dark theme, manual save, and exported text at 1440x900.
+  The dark Settings controls match Remix `#636363`; other Settings and recovery
+  states remain open.
 
 ## Validation
 

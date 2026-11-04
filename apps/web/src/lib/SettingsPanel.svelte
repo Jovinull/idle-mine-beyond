@@ -194,7 +194,7 @@
   :global(body[data-theme="dark"]) article.settings button,
   :global(body[data-theme="dark"]) article.settings select,
   :global(body[data-theme="dark"]) article.settings textarea {
-    background-color: #4d4d4d;
+    background-color: #636363;
     color: #c1c1c1;
   }
 
