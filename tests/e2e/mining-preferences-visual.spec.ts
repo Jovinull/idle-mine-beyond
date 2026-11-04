@@ -496,6 +496,17 @@ for (const theme of ["light", "dark"] as const) {
             const remixMineObjectHiddenHash = createHash("sha256")
               .update(remixMineObjectHiddenPng)
               .digest("hex");
+            const [beyondCanvasHiddenPng, remixCanvasHiddenPng] =
+              await Promise.all([
+                captureWithElementHidden(page, "canvas.mine-object"),
+                captureWithElementHidden(sourcePage, "canvas.mine-object"),
+              ]);
+            const beyondCanvasHiddenHash = createHash("sha256")
+              .update(beyondCanvasHiddenPng)
+              .digest("hex");
+            const remixCanvasHiddenHash = createHash("sha256")
+              .update(remixCanvasHiddenPng)
+              .digest("hex");
             for (const [name, png] of [
               [
                 "mining-dark-level-background-only-beyond.png",
@@ -522,6 +533,14 @@ for (const theme of ["light", "dark"] as const) {
               [
                 "mining-dark-level-mineobject-hidden-remix.png",
                 remixMineObjectHiddenPng,
+              ],
+              [
+                "mining-dark-level-canvas-hidden-beyond.png",
+                beyondCanvasHiddenPng,
+              ],
+              [
+                "mining-dark-level-canvas-hidden-remix.png",
+                remixCanvasHiddenPng,
               ],
             ] as const) {
               await test.info().attach(name, {
@@ -583,6 +602,12 @@ for (const theme of ["light", "dark"] as const) {
                     remixHash: remixMineObjectHiddenHash,
                     matchesRemix:
                       beyondMineObjectHiddenHash === remixMineObjectHiddenHash,
+                  },
+                  canvasHidden: {
+                    beyondHash: beyondCanvasHiddenHash,
+                    remixHash: remixCanvasHiddenHash,
+                    matchesRemix:
+                      beyondCanvasHiddenHash === remixCanvasHiddenHash,
                   },
                   wrapper,
                   afterWrapperRemoval: {

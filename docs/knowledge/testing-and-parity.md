@@ -107,6 +107,12 @@ subtree is present. This does not distinguish the mine-object block, upgrades,
 statistics, activity log, or the article's own paint behavior. The next probe
 hides only `.mineobject` while leaving the rest of the article rendered.
 
+CI run 86 confirms that hiding `.mineobject` also removes the mismatch while
+the remaining Mining article content stays visible. This narrows the source to
+the object block or a rendering effect it induces. The next probe hides only
+`canvas.mine-object` to separate Canvas compositing from its surrounding text
+and controls.
+
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 
 The pinned `initialState` capture records the fresh Remix values and the constructor test compares the core simulation subset against it: starting object/progress, all resources and upgrade levels, pickaxe, Powers, timers, and Story page/notification progress. It also checks that two new states do not share mutable objects. This does not compare settings, notation instances, message history, or the complete Remix runtime object.

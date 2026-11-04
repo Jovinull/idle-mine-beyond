@@ -160,6 +160,12 @@ present; it does not identify which child or style causes the pixel change.
 The next probe hides only `.mineobject` while leaving the article and its other
 children rendered.
 
+**Linux Mining object-block isolation (CI run 86, 2026-11-04):** hiding only
+`.mineobject` also makes the full screenshots match exactly, while the rest of
+`article.main` remains rendered. The source of the pixel is within or induced
+by this mining block. The next probe hides only `canvas.mine-object`, keeping
+its surrounding label, controls, and text visible.
+
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
 all 61 condition boundaries, dynamic objective outputs across 152 mine-level
