@@ -55,6 +55,14 @@ out for this state. The source/Beyond screenshot delta remains unresolved;
 comparisons stay exact with no tolerance, and shop/desktop visual parity remain
 In Progress.
 
+**Gem shop unlock boundary (2026-11-04):** added a pinned-source differential
+for the `gemUpgradesUnlocked` high-water gate. At 60, the Money/Gem tab group is
+hidden; at 61, Money and Gem tabs render while the separate Planet Coin tab
+remains hidden. Beyond matches the pinned full Mining screen at zero pixels for
+both boundaries in light and dark 1440×900 captures (4/4). This closes the
+mapped tab-visibility branch only; the shop and desktop visual rows remain In
+Progress because their broader screen states are still open.
+
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
 all 61 condition boundaries, dynamic objective outputs across 152 mine-level
