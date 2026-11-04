@@ -27,6 +27,16 @@ be diagnosed from the actual pixels. Successful runs do not publish these test
 artifacts. This uses GitHub's official
 [upload-artifact action](https://github.com/actions/upload-artifact).
 
+The source-paired Mining preference capture sets `document.documentElement`'s
+background to the current computed `body` background in both pages before the
+screenshot. This keeps the viewport canvas opaque without changing the app's
+body color. Run 74 on Linux showed a one-pixel delta at `(7,209)` in the empty
+dark background even though both bodies computed to `rgb(54,54,54)` and the
+topmost element at that point was the same transparent article. The helper
+continues to compare complete PNG hashes exactly; it does not crop, mask, or
+tolerate pixels. Local Windows runs pass; the next Linux CI run must establish
+whether root-background normalization removes the raster discrepancy.
+
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 
 The pinned `initialState` capture records the fresh Remix values and the constructor test compares the core simulation subset against it: starting object/progress, all resources and upgrade levels, pickaxe, Powers, timers, and Story page/notification progress. It also checks that two new states do not share mutable objects. This does not compare settings, notation instances, message history, or the complete Remix runtime object.

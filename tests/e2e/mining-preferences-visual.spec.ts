@@ -50,6 +50,14 @@ async function waitForStableMiningScreenshot(page: Page): Promise<Buffer> {
   await page.locator("canvas.mine-object").waitFor({ state: "visible" });
   await page.evaluate(() => document.fonts.ready);
   await page.mouse.move(1439, 899);
+  await page.evaluate(() => {
+    // Paint the viewport canvas with the existing body color on both apps.
+    // This preserves their computed appearance while avoiding a transparent
+    // root background in full-page captures.
+    document.documentElement.style.backgroundColor = getComputedStyle(
+      document.body,
+    ).backgroundColor;
+  });
   await page.evaluate(
     () =>
       new Promise<void>((resolve) =>
