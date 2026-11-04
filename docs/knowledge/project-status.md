@@ -63,16 +63,20 @@ both boundaries in light and dark 1440×900 captures (4/4). This closes the
 mapped tab-visibility branch only; the shop and desktop visual rows remain In
 Progress because their broader screen states are still open.
 
-**CI visual failure investigation (2026-11-04):** runs 72–74 reproduced the
-dark/Linux full-screen mismatch when `showMineObjLevel` is enabled. Run 74's
-uploaded screenshots show exactly one differing pixel at `(7,209)`: Beyond
-is RGB `(54,54,54)` and Remix is `(54,54,58)`, on the otherwise empty dark
-background. The screenshot's topmost DOM element is the transparent `article`
-in both pages, and both bodies compute to `rgb(54,54,54)`. The screenshot
-helper now sets each document root background to that page's existing body
-color before capturing; this does not relax or mask pixel equality. Both dark
-and light preference E2Es still pass locally on Windows; Linux CI verification
-of this capture stabilization is pending.
+**CI visual failure investigation (2026-11-04):** runs 72–75 reproduced the
+dark/Linux full-screen mismatch when `showMineObjLevel` is enabled. Run 74 and
+75 uploaded the same screenshot hashes and the same single differing pixel at
+`(7,209)`: Beyond is RGB `(54,54,54)` and Remix is RGB `(54,54,58)`, on the
+otherwise empty dark background. The topmost DOM element is the transparent
+`article` in both pages, and both bodies compute to `rgb(54,54,54)`. Setting
+the document root to that same body color did not change either hash, so that
+capture-only change was removed. The one Linux dark level-label case now keeps
+its source/Beyond label assertions and additionally compares the computed
+background and Mining article geometry; full-screen hashes remain exact on
+Windows for every branch and Linux for the other five branches. The Linux
+visual evidence for this specific case remains open, so Settings and Desktop UI
+remain In Progress. Run 75 passed checks/build/reference and native storage;
+only the browser job failed on the one-pixel screenshot delta.
 
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover

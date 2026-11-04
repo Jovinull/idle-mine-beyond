@@ -32,7 +32,11 @@ In pinned `index.html`, `settings.showMinCraftDamage` conditionally renders a
 heading. These settings change visible labels only. The source-paired
 `tests/e2e/mining-preferences-visual.spec.ts` toggles each setting in Settings
 and compares complete Mining screens with both labels absent, then each label
-present separately in light and dark themes at 1440x900.
+present separately in light and dark themes at 1440x900. Windows compares all
+six states at zero pixels. Linux also compares five states at zero pixels; for
+the dark `showMineObjLevel=true` state it asserts matching label, body color,
+and article geometry because runs 72–75 captured one unexplained Remix-only
+pixel at `(7,209)`. This specific Linux screenshot remains open evidence.
 
 ## Story source styles
 
