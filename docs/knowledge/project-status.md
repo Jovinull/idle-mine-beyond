@@ -88,6 +88,16 @@ Linux validation is pending. The browser CI now uploads Playwright diagnostic
 attachments after successful non-cancelled runs as well, so this known open
 comparison can preserve the exact PNG pair for review.
 
+**Linux Mining pixel recheck (2026-11-04):** CI run 78 for `ba26519` passed
+175/175 E2E tests, including the dark `showMineObjLevel` state. That diagnostic
+branch computed both full-screen PNG hashes and would attach source/Beyond
+images when they differed. However, Playwright attachments supplied as `body`
+are retained in reporter data and do not necessarily create files in
+`test-results/`; the empty artifact therefore does not establish equality. Run
+78 is diagnostic only. The Linux-only semantic/geometry exception has now been
+removed and exact hash equality is required in every branch; the next CI run
+will validate that assertion.
+
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
 all 61 condition boundaries, dynamic objective outputs across 152 mine-level

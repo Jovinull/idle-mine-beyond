@@ -23,25 +23,29 @@ The pinned Remix installs `keydown`/`keyup` handlers on `window`, so ArrowLeft a
 
 The GitHub Actions browser job uploads `test-results/` after each non-cancelled
 E2E run, retaining failure traces and explicitly attached diagnostic screenshots
-for seven days. Successful runs normally produce no files; the open Linux
-Mining pixel case attaches its exact source and Beyond captures while its pixel
-comparison remains open. This uses GitHub's official
+for seven days. Successful runs normally produce no files. Source-paired Mining
+captures attach the exact source and Beyond PNGs when their hashes differ. This
+uses GitHub's official
 [upload-artifact action](https://github.com/actions/upload-artifact).
 
 The source-paired Mining preference capture compares complete PNG hashes with
-no crops, masks, or pixel tolerance. Runs 72–75 on Linux reproduce one
-dark-theme mismatch when `showMineObjLevel` is enabled: pixel `(7,209)` is
+no crops, masks, or pixel tolerance. Runs 72–75 on Linux reproduced one
+dark-theme mismatch when `showMineObjLevel` was enabled: pixel `(7,209)` was
 Beyond RGB `(54,54,54)` and Remix RGB `(54,54,58)`. At that point, both pages
-resolve to the same transparent Mining article and computed body background
+resolved to the same transparent Mining article and computed body background
 `rgb(54,54,54)`. Setting the document root background to that same body color
 did not change the screenshot hashes, so the capture normalization was
-reverted. Windows continues exact full-screen comparison for every preference
-branch; Linux keeps exact comparisons for the other five branches and asserts
-matching body background and article geometry for this one case. The capture
-helper pauses animations at time zero and waits two more animation frames
-before capturing; this branch now captures both images and attaches them when
-their hashes differ. Its Linux full-screen pixel evidence remains open rather
-than being masked or declared equal.
+reverted. CI run 78 for `ba26519` passed all 175 E2E tests after the capture
+helper paused animations at time zero and waited two more animation frames.
+The Linux branch computed complete source/Beyond hashes and would attach both
+PNGs on a mismatch; the successful upload step reported that `test-results/`
+contained no files. This is inconclusive because Playwright retains
+`test.info().attach({ body })` in reporter data without necessarily creating a
+file under `test-results/`. The prior run therefore does not establish whether
+the hashes matched. The test now asserts exact hash equality on Linux for every
+branch, with no tolerance or mask; the commit carrying that restored assertion
+must pass CI before this state is considered closed in the maintained browser
+gate.
 
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 

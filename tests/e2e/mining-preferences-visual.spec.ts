@@ -210,81 +210,29 @@ for (const theme of ["light", "dark"] as const) {
           ]);
         }
 
-        const linuxDarkLevelLabelRasterAnomaly =
-          process.platform === "linux" && theme === "dark" && mineObjectLevel;
-        if (linuxDarkLevelLabelRasterAnomaly) {
-          // Preserve exact screenshot evidence while this pixel delta stays open.
-          const readSurface = (target: Page) =>
-            target.evaluate(() => {
-              const article = document.querySelector("article.main");
-              if (!article) throw new Error("Mining article is missing.");
-              const rect = article.getBoundingClientRect();
-              return {
-                bodyBackground: getComputedStyle(document.body).backgroundColor,
-                articleBackground: getComputedStyle(article).backgroundColor,
-                articleRect: {
-                  x: rect.x,
-                  y: rect.y,
-                  width: rect.width,
-                  height: rect.height,
-                },
-              };
-            });
-          const [beyondSurface, remixSurface] = await Promise.all([
-            readSurface(page),
-            readSurface(sourcePage),
+        const [beyondPng, remixPng] = await Promise.all([
+          waitForStableMiningScreenshot(page),
+          waitForStableMiningScreenshot(sourcePage),
+        ]);
+        const beyondHash = createHash("sha256").update(beyondPng).digest("hex");
+        const remixHash = createHash("sha256").update(remixPng).digest("hex");
+        if (beyondHash !== remixHash) {
+          const state = `craft-${minimumCraftDamage}-level-${mineObjectLevel}`;
+          await Promise.all([
+            test.info().attach(`mining-${theme}-${state}-beyond.png`, {
+              body: beyondPng,
+              contentType: "image/png",
+            }),
+            test.info().attach(`mining-${theme}-${state}-remix.png`, {
+              body: remixPng,
+              contentType: "image/png",
+            }),
           ]);
-          expect(beyondSurface).toEqual(remixSurface);
-          expect(beyondSurface.bodyBackground).toBe("rgb(54, 54, 54)");
-          const [beyondPng, remixPng] = await Promise.all([
-            waitForStableMiningScreenshot(page),
-            waitForStableMiningScreenshot(sourcePage),
-          ]);
-          const beyondHash = createHash("sha256")
-            .update(beyondPng)
-            .digest("hex");
-          const remixHash = createHash("sha256").update(remixPng).digest("hex");
-          if (beyondHash !== remixHash) {
-            await Promise.all([
-              test.info().attach("linux-dark-level-beyond.png", {
-                body: beyondPng,
-                contentType: "image/png",
-              }),
-              test.info().attach("linux-dark-level-remix.png", {
-                body: remixPng,
-                contentType: "image/png",
-              }),
-            ]);
-          }
-        } else {
-          const [beyondPng, remixPng] = await Promise.all([
-            waitForStableMiningScreenshot(page),
-            waitForStableMiningScreenshot(sourcePage),
-          ]);
-          const beyondHash = createHash("sha256")
-            .update(beyondPng)
-            .digest("hex");
-          const remixHash = createHash("sha256").update(remixPng).digest("hex");
-          if (beyondHash !== remixHash) {
-            const state = `craft-${minimumCraftDamage}-level-${mineObjectLevel}`;
-            await Promise.all([
-              test
-                .info()
-                .attach(`minimum-damage-${theme}-${state}-beyond.png`, {
-                  body: beyondPng,
-                  contentType: "image/png",
-                }),
-              test.info().attach(`minimum-damage-${theme}-${state}-remix.png`, {
-                body: remixPng,
-                contentType: "image/png",
-              }),
-            ]);
-          }
-          expect(
-            beyondHash,
-            `full Mining screen, minimum damage ${minimumCraftDamage}, mineral level ${mineObjectLevel}, ${theme}`,
-          ).toBe(remixHash);
         }
+        expect(
+          beyondHash,
+          `full Mining screen, minimum damage ${minimumCraftDamage}, mineral level ${mineObjectLevel}, ${theme}`,
+        ).toBe(remixHash);
 
         await Promise.all([
           page.locator("[data-game-tab='settings']").click(),
