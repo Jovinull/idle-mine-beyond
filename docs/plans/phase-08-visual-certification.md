@@ -30,10 +30,11 @@ field text is asserted equal to Remix and its rendered Settings screen matches
 at zero pixels. This closes the dark control-background mismatch for that
 state; other Settings/recovery states remain open.
 
-Mining now also compares the source-captured successful pickaxe replacement
-and equal-damage dud result screens at 1440x900 in light and dark. The paired
-test checks the displayed name, RNG draw count, and exact full-screen pixels;
-other craft panel states and alternate resolutions remain open.
+Mining now also compares the source-captured successful pickaxe replacement,
+equal-damage dud, and insufficient-Gem result screens at 1440x900 in light and
+dark. The paired test checks the displayed result, RNG draw count, and exact
+full-screen pixels; other craft panel states and alternate resolutions remain
+open.
 
 Mining now also has source-paired full-screen captures after one non-lethal click
 on fresh Mud (100 to 80 HP), in both themes at 1440x900. This covers the

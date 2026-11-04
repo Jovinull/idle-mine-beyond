@@ -309,7 +309,8 @@ The full-screen prestige differential in `tests/e2e/powers-prestige-differential
   `drawStone` frame/render paths.
 - **Covered:** fresh Mining, controlled objects 124, 169, and 198, and fresh
   Mud after one non-lethal click (HP 100 to 80) at 1440×900 in both themes;
-  seeded craft replacement and equal-damage dud outcomes also match the pinned
+  seeded craft replacement, equal-damage dud, and insufficient-Gem outcomes
+  also match the pinned
   source screen in both themes. Selected primary-screen pairs cover
   1366×768, 1920×1080, and 2560×1440. See
   `tests/e2e/priority-visual.spec.ts`,

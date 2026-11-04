@@ -52,6 +52,7 @@ const fixedClock = 1_700_000_000_000;
 const cases = [
   "better-craft-replaces-and-saves",
   "equal-damage-is-a-dud",
+  "insufficient-gems-consumes-no-rng",
 ] as const;
 
 function seedLegacySave({ encoded, now }: { encoded: string; now: number }) {
@@ -140,6 +141,11 @@ for (const theme of ["light", "dark"] as const) {
         viewport: { width: 1440, height: 900 },
       });
       const sourcePage = await sourceContext.newPage();
+      const beyondPageErrors: string[] = [];
+      page.on("pageerror", (error) => beyondPageErrors.push(error.message));
+      page.on("console", (message) => {
+        if (message.type() === "error") beyondPageErrors.push(message.text());
+      });
 
       try {
         const sourceUrl = await routePinnedRemixOracle(sourceContext);
@@ -153,10 +159,10 @@ for (const theme of ["light", "dark"] as const) {
         ]);
         await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
         await Promise.all([
-          expect(page.locator("#app")).toHaveAttribute(
-            "data-app-state",
-            "ready",
-          ),
+          expect(
+            page.locator("#app"),
+            `Beyond page errors: ${JSON.stringify(beyondPageErrors)}`,
+          ).toHaveAttribute("data-app-state", "ready", { timeout: 30_000 }),
           sourcePage.waitForFunction(() =>
             Boolean(
               (window as Window & { game?: unknown }).game &&

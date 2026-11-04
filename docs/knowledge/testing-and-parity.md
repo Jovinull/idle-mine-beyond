@@ -150,9 +150,9 @@ Run `pnpm reference:priority-visuals` to replay the read-only pinned source capt
 The captured Windows images have matching Beyond screenshots at zero pixels for all 32 priority cases and the four Planet Coin gate states. The first pass found an Svelte CSS scoping mismatch for source-global inline icons, missing dark styling on Wisdom upgrade buttons, and the dark-theme zero-damage label color. These were corrected from the pinned `main.css` and `Themes/dark.css` rules before the focused E2E reruns. The 32 priority cases have Linux pairs captured in Ubuntu 24.04 WSL on 2026-10-01 with `node scripts/capture-remix-priority-visuals.mjs --write`; on Linux that command writes only the `-linux` PNGs and sidecars and checks that the source states match `remix-priority-visual-states.json` apart from the screenshot fields.
 
 `tests/e2e/pickaxe-crafting-visual.spec.ts` compares the pinned stochastic
-replacement and equal-damage dud screens against Beyond in both themes at
-1440x900. It asserts the visible result and exact RNG draw count before
-comparing full-screen PNG hashes. Run it with
+replacement, equal-damage dud, and insufficient-Gem screens against Beyond in
+both themes at 1440x900. It asserts the visible result and exact RNG draw count
+before comparing full-screen PNG hashes. Run it with
 `pnpm exec playwright test tests/e2e/pickaxe-crafting-visual.spec.ts
 --project=chromium --workers=1 --retries=0`.
 
