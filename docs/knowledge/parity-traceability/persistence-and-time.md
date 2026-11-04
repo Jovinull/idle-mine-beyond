@@ -329,15 +329,21 @@ quota, cross-tab, or abrupt-process environment risks.
   certification.
 
 **Playwright visibility limitation (2026-11-03):**
-`pnpm.cmd probe:browser-visibility` runs the probe headless;
-`node scripts/probe-browser-visibility.mjs --headed` runs the same two-page
-probe headed. On this Windows host with Chromium 153.0.8010.12, both modes
-reported `visible` before, during, and after `bringToFront()`. Neither mode
-exposes a hidden page or proves real OS background throttling. The existing CDP
-freeze/resume test covers only `frozen`/`active` states
+`pnpm.cmd probe:browser-visibility` runs headless; the two pages have different
+CDP window IDs. `node scripts/probe-browser-visibility.mjs --headed` puts both
+pages in one window, but `bringToFront()` still leaves both `visible` and
+focused on this Windows host with Chromium 153.0.8010.12. The additional
+`node scripts/probe-browser-visibility.mjs --headed --minimize-window` mode
+confirmed CDP's window state was `minimized` for 12 seconds, while the page
+remained `visible` and focused, emitted no visibility-change event, and kept
+running its 100 ms interval and animation frame callback. One run recorded 103
+interval samples and 563 animation frames during minimization; callback gaps
+reached 888.5 ms and 853 ms, respectively. This does not establish hidden-tab
+behavior or production OS throttling. The existing CDP freeze/resume test covers
+only `frozen`/`active` states
 ([current protocol](https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-setWebLifecycleState)).
-Use a browser session that reports a hidden tab and measure its scheduling
-before closing this open web-v1 evidence domain.
+Use a browser session that reports `document.visibilityState === "hidden"` and
+measure its scheduling before closing this open web-v1 evidence domain.
 
 ### Offline/time function and branch trace
 

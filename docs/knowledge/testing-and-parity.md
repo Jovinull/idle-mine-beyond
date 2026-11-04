@@ -219,12 +219,23 @@ The offline-load corpus contains ten controlled boundary calls plus sixteen elap
 
 **Background-visibility probe (2026-11-03):** run `pnpm.cmd
 probe:browser-visibility` for headless mode or `node
-scripts/probe-browser-visibility.mjs --headed` for headed mode. Both commands
-record the browser version and each page's visibility while switching between
-pages; neither claims to reproduce OS background throttling. In Playwright
-Chromium 153.0.8010.12 on this Windows host, both modes kept both pages
-`visible`. The offline map's actual hidden-tab scheduling evidence remains
-open. The controlled CDP `frozen`/`active` comparison is separate evidence.
+scripts/probe-browser-visibility.mjs --headed` for headed mode. Both report
+window IDs, `document.visibilityState`, and `document.hasFocus()` while
+switching between pages. On this Windows host with Chromium 153.0.8010.12,
+headless pages used separate browser windows (IDs 1 and 2); headed pages shared
+one window, but neither mode changed either page from `visible`/focused during
+`bringToFront()`. These commands do not simulate a hidden tab.
+
+Run `node scripts/probe-browser-visibility.mjs --headed --minimize-window` to
+minimize the headed browser through CDP, sample a 100 ms interval and a
+continuous animation frame, then restore the original window bounds. One
+12-second run confirmed CDP `windowState: minimized`, but the page remained
+`visible` and focused, emitted no `visibilitychange`, and continued both
+callbacks (103 interval samples and 563 animation frames during the minimized
+period; maximum observed gaps were 888.5 ms and 853 ms). This is a host/browser
+observation, not hidden-tab or OS-background evidence. The offline map's actual
+hidden-tab scheduling evidence remains open. The controlled CDP
+`frozen`/`active` comparison is separate evidence.
 
 `saveSemantics` in the oracle corpus records the pinned current save's top-level/nested keys, Decimal JSON values, omitted upgrade functions, storage key, encode/decode order, absent and empty optional groups, the sequential seven-then-five Power reload, five malformed/partial-load outcomes, Base64 whitespace/padding variants, and controlled ASCII/Unicode codec vectors. `saveExportSemantics` stores full serialized objects for fresh and controlled loaded states, plus hashes and changing fields for fixed object 90 and five procedural IDs covering all three generation branches, a seven-value Power array, a capped message log, and a state varying all upgrade groups, resources, Story, Power values, and Settings. `saveApplicationSemantics` captures a distinct current save applied through the pinned browser loader; `saveOfflineApplicationSemantics` captures that boundary followed by real live-rate offline rewards, the exact four clock reads, event order, and stored snapshot. `@idle-mine-beyond/persistence` decodes the wrapper, applies captured fields, and composes the offline transition in `loadRemixLegacySaveIntoState()`; Beyond v1 loading repeats the offline transition through `loadRemixBeyondSaveIntoState()`. Vitest compares both paths, the sequential extended-then-short Power reload, all seventeen full-save source captures (two complete objects and fifteen variants), and the full source codec snapshots; Chromium compares codec vectors and exercises Settings import/export with the captured current save. The Beyond recovery route exports all three raw slots without mutation and gates both legacy-save and Beyond-file recovery on copy acknowledgement. Direct v1 files and recovery bundles use strict validation, primary-first/valid-backup selection, future-version refusal, and never treat the bundled legacy key as a Beyond save; unit, session, and Playwright tests cover these boundaries. `tests/parity/beyond-save.test.ts` round-trips both present and absent `lastActiveMs`, rejects null at every serialized node, injects an unknown key at every strict-object level, checks missing/unsupported versions, formatter boundaries, nonnegative safe-integer mine IDs and current/high-water ordering, and verifies that invalid/non-finite encoder state is refused. It also preserves a max-safe high-water mark while an earlier object is selected. Historical save variants, uncovered legacy-loader malformed shapes and exhaustive error ordering, exhaustive state-to-object export parity, and native WebView runtime remain open; Beyond v1 schema validation, backup recovery, browser/native adapters, and both recovery-import workflows are implemented.
 

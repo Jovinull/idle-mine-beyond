@@ -360,12 +360,16 @@ progression stays In progress.
 **Browser visibility probe (2026-11-03):**
 `pnpm.cmd probe:browser-visibility` and
 `node scripts/probe-browser-visibility.mjs --headed` switched between two
-pages on Playwright Chromium 153.0.8010.12. Both modes reported
-`document.visibilityState` as `visible` for both pages before, during, and
-after `bringToFront()`. This setup cannot certify hidden-tab throttling;
-offline progression remains In progress until a browser session exposes a
-hidden page and actual scheduling behavior. Tauri lifecycle remains outside
-web-v1.
+pages on Playwright Chromium 153.0.8010.12. Headless pages used separate CDP
+windows; headed pages shared one browser window.
+`document.visibilityState` stayed `visible` across `bringToFront()`; headed
+pages also stayed focused. This setup cannot certify hidden-tab throttling;
+`node scripts/probe-browser-visibility.mjs --headed --minimize-window`
+confirmed a 12-second CDP-minimized window while the page stayed visible and
+focused, produced no `visibilitychange`, and continued interval/animation-frame
+callbacks. This host probe does not cover hidden-tab or actual OS background
+scheduling. Offline progression remains In Progress pending that evidence;
+Tauri lifecycle remains outside web-v1.
 
 At the time of the original 2026-10-05 run, that managed session's `.git`
 metadata was read-only and its changes could not be committed there. This is a
