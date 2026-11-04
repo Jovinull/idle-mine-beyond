@@ -26,6 +26,13 @@ The reference UI includes Money, Gems, conditional Planet Coins, object name and
 
 The default appearance is a light, sparse browser game. The source includes Work Sans and Montserrat font files and a separate dark theme. Preserve original spacing, color groupings, hierarchy, and native-feeling controls as they are verified.
 
+In pinned `index.html`, `settings.showMinCraftDamage` conditionally renders a
+60%-size `Minimum Base Damage` span inside the Mining craft button. The setting
+changes the visible label only. The source-paired
+`tests/e2e/minimum-craft-damage-visual.spec.ts` toggles it in Settings and
+compares complete Mining screens with the label both present and absent in
+light and dark themes at 1440x900.
+
 ## Story source styles
 
 At the pinned Remix source revision, `main.css` gives `article.story` `1rem` padding and `z-index: -1`. Its `.story-milestones` scroller uses vertical scrolling, `overscroll-behavior: contain`, and `height: 62vh`. The objective has a top border of `1px solid rgba(0, 0, 0, 0.4)`, zero margin, and `0.5rem` top padding. Each direct milestone child has `1rem 0` padding and the same bottom border, except the last child. Images inside the article are `6em` high.

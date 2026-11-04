@@ -85,6 +85,13 @@ pickaxe name and consumes the same captured RNG draws (zero for insufficient
 Gems) in both runtimes; all six exact screen comparisons passed. Crafting and
 naming remain In Progress for their other mapped states and viewports.
 
+**Minimum craft damage preference visual branch (2026-11-04):** a new paired
+browser test toggles `showMinCraftDamage` from Settings in pinned Remix and
+Beyond, then compares the complete Mining screen with the conditional label
+present and absent. Both states match at zero differing pixels in light and
+dark at 1440x900 (four full-screen comparisons). The Settings and Desktop UI
+areas remain In Progress for their other mapped interaction and visual states.
+
 **Complete Windows baseline (2026-11-03):** `pnpm.cmd check` passed end to
 end. Content/assets verification, the 36-area traceability check, Prettier,
 ESLint, strict TypeScript/Svelte checks, 46 unit tests, 158 parity tests, the
