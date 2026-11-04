@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { expect, test, type Page } from "@playwright/test";
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
@@ -69,6 +69,82 @@ async function waitForStableMiningScreenshot(page: Page): Promise<Buffer> {
       ),
   );
   return page.screenshot({ animations: "disabled" });
+}
+
+async function readMiningPixelStack(page: Page) {
+  return page.evaluate(() => {
+    const point = { x: 7.5, y: 209.5 };
+    const styleProperties = [
+      "backgroundColor",
+      "backgroundImage",
+      "borderTopColor",
+      "borderTopStyle",
+      "borderTopWidth",
+      "boxShadow",
+      "clipPath",
+      "color",
+      "contain",
+      "filter",
+      "isolation",
+      "mixBlendMode",
+      "opacity",
+      "outlineColor",
+      "outlineStyle",
+      "outlineWidth",
+      "overflow",
+      "position",
+      "transform",
+      "willChange",
+      "zIndex",
+    ] as const;
+    const readStyle = (style: CSSStyleDeclaration) =>
+      Object.fromEntries(
+        styleProperties.map((property) => [property, style[property]]),
+      );
+    const describe = (element: Element) => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return {
+        tagName: element.tagName,
+        id: element.id,
+        className: String(element.className),
+        rect: {
+          x: rect.x,
+          y: rect.y,
+          width: rect.width,
+          height: rect.height,
+        },
+        style: readStyle(style),
+        before: {
+          content: getComputedStyle(element, "::before").content,
+          ...readStyle(getComputedStyle(element, "::before")),
+        },
+        after: {
+          content: getComputedStyle(element, "::after").content,
+          ...readStyle(getComputedStyle(element, "::after")),
+        },
+      };
+    };
+    const stack = document.elementsFromPoint(point.x, point.y);
+    const ancestry: Element[] = [];
+    for (let element = document.elementFromPoint(point.x, point.y); element;) {
+      ancestry.push(element);
+      element = element.parentElement;
+    }
+    return {
+      point,
+      viewport: {
+        width: innerWidth,
+        height: innerHeight,
+        devicePixelRatio,
+        visualScale: visualViewport?.scale ?? null,
+      },
+      root: describe(document.documentElement),
+      body: describe(document.body),
+      stack: stack.map(describe),
+      ancestry: ancestry.map(describe),
+    };
+  });
 }
 
 for (const theme of ["light", "dark"] as const) {
@@ -228,6 +304,25 @@ for (const theme of ["light", "dark"] as const) {
               contentType: "image/png",
             }),
           ]);
+          if (
+            process.platform === "linux" &&
+            theme === "dark" &&
+            mineObjectLevel
+          ) {
+            const [beyondPaint, remixPaint] = await Promise.all([
+              readMiningPixelStack(page),
+              readMiningPixelStack(sourcePage),
+            ]);
+            await writeFile(
+              test.info().outputPath("linux-dark-level-pixel-stack.json"),
+              JSON.stringify(
+                { beyond: beyondPaint, remix: remixPaint },
+                null,
+                2,
+              ),
+              "utf8",
+            );
+          }
         }
         expect(
           beyondHash,

@@ -43,9 +43,20 @@ contained no files. This is inconclusive because Playwright retains
 `test.info().attach({ body })` in reporter data without necessarily creating a
 file under `test-results/`. The prior run therefore does not establish whether
 the hashes matched. The test now asserts exact hash equality on Linux for every
-branch, with no tolerance or mask; the commit carrying that restored assertion
-must pass CI before this state is considered closed in the maintained browser
-gate.
+branch, with no tolerance or mask.
+
+CI run 79 (`b3b4097`) exercised the strict assertion on Ubuntu: the other five
+Mining preference/theme screenshots passed, while dark `showMineObjLevel=true`
+failed in both attempts at exactly pixel `(7,209)`. Beyond was
+`rgb(54,54,54)` and pinned Remix was `rgb(54,54,58)`. The downloaded PNGs
+confirm the same one-pixel delta in both attempts; this is not a hash-only or
+flaky retry result. The run passed checks/build, the pinned oracle, and native
+storage; 174 browser tests passed and this was the only E2E failure. The next
+diagnostic records elements under that pixel, ancestor geometry, and computed
+paint-related styles for both live pages. Keep the strict equality assertion;
+do not add a mask or tolerance. The Linux dark-label screenshot remains an
+open visual gap until the paint difference is explained and exact equality
+passes.
 
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 

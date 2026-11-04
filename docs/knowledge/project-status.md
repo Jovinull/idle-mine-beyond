@@ -94,9 +94,19 @@ branch computed both full-screen PNG hashes and would attach source/Beyond
 images when they differed. However, Playwright attachments supplied as `body`
 are retained in reporter data and do not necessarily create files in
 `test-results/`; the empty artifact therefore does not establish equality. Run
-78 is diagnostic only. The Linux-only semantic/geometry exception has now been
-removed and exact hash equality is required in every branch; the next CI run
-will validate that assertion.
+78 is diagnostic only. The Linux-only semantic/geometry exception was removed,
+and exact hash equality is required in every branch.
+
+**Linux Mining exact-pixel result (2026-11-04):** CI run 79 for `b3b4097`
+passed the full check/build, pinned oracle, and native-storage job. Its browser
+job passed 174 E2E tests and reproduced the dark `showMineObjLevel` mismatch
+in both attempts: exactly pixel `(7,209)`, Beyond RGB `(54,54,54)` versus Remix
+RGB `(54,54,58)`. The other five Mining preference/theme screenshots passed
+exact equality. The difference is deterministic but its paint source is still
+unknown. Exact comparison remains enabled; the failing Linux case now records
+the DOM paint stack, ancestor geometry, and computed paint-related styles for
+the next CI artifact. This visual slice and the desktop UI row remain In
+Progress.
 
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
