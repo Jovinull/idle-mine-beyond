@@ -9,6 +9,7 @@ type LegacySave = {
   settings: {
     tab: string;
     theme: string;
+    showMineObjLevel: boolean;
     showMinCraftDamage: boolean;
   };
 };
@@ -65,7 +66,7 @@ async function waitForStableMiningScreenshot(page: Page): Promise<Buffer> {
 }
 
 for (const theme of ["light", "dark"] as const) {
-  test(`matches Remix minimum craft damage Mining branch in ${theme} theme`, async ({
+  test(`matches Remix Mining preference branches in ${theme} theme`, async ({
     browser,
     page,
   }) => {
@@ -84,6 +85,7 @@ for (const theme of ["light", "dark"] as const) {
     save.lastActive = fixedClock;
     save.settings.tab = "settings";
     save.settings.theme = theme;
+    save.settings.showMineObjLevel = false;
     save.settings.showMinCraftDamage = false;
     const encoded = encodeRemixLegacySave(save);
     const sourceContext = await browser.newContext({
@@ -140,12 +142,22 @@ for (const theme of ["light", "dark"] as const) {
       const remixPreference = sourcePage.getByLabel(
         "Show minimum Base Damage for crafted Pickaxes",
       );
+      const beyondLevelPreference = page.getByLabel("Show Mineral Level");
+      const remixLevelPreference = sourcePage.getByLabel("Show Mineral Level");
       await Promise.all([
         expect(beyondPreference).not.toBeChecked(),
         expect(remixPreference).not.toBeChecked(),
+        expect(beyondLevelPreference).not.toBeChecked(),
+        expect(remixLevelPreference).not.toBeChecked(),
       ]);
 
-      const compareMining = async (enabled: boolean) => {
+      const compareMining = async ({
+        minimumCraftDamage,
+        mineObjectLevel,
+      }: {
+        minimumCraftDamage: boolean;
+        mineObjectLevel: boolean;
+      }) => {
         await Promise.all([
           page.locator("[data-game-tab='mining']").click(),
           sourcePage
@@ -155,10 +167,12 @@ for (const theme of ["light", "dark"] as const) {
         ]);
 
         const beyondMinimumDamage = page.locator("[data-minimum-craft-damage]");
+        const beyondMineObjectLevel = page.locator("[data-mine-object-level]");
         const remixCraftButton = sourcePage.locator(
           ".craft-pickaxe button:not(.level-change)",
         );
-        if (enabled) {
+        const remixMineObjectLevel = sourcePage.locator("article.main h4");
+        if (minimumCraftDamage) {
           await Promise.all([
             expect(beyondMinimumDamage).toBeVisible(),
             expect(remixCraftButton).toContainText("Minimum Base Damage:"),
@@ -178,6 +192,17 @@ for (const theme of ["light", "dark"] as const) {
             expect(remixCraftButton).not.toContainText("Minimum Base Damage:"),
           ]);
         }
+        if (mineObjectLevel) {
+          await Promise.all([
+            expect(beyondMineObjectLevel).toHaveText("#1"),
+            expect(remixMineObjectLevel).toHaveText("#1"),
+          ]);
+        } else {
+          await Promise.all([
+            expect(beyondMineObjectLevel).toHaveCount(0),
+            expect(remixMineObjectLevel).toHaveCount(0),
+          ]);
+        }
 
         const [beyondPng, remixPng] = await Promise.all([
           waitForStableMiningScreenshot(page),
@@ -186,7 +211,7 @@ for (const theme of ["light", "dark"] as const) {
         const beyondHash = createHash("sha256").update(beyondPng).digest("hex");
         const remixHash = createHash("sha256").update(remixPng).digest("hex");
         if (beyondHash !== remixHash) {
-          const state = enabled ? "enabled" : "disabled";
+          const state = `craft-${minimumCraftDamage}-level-${mineObjectLevel}`;
           await Promise.all([
             test.info().attach(`minimum-damage-${theme}-${state}-beyond.png`, {
               body: beyondPng,
@@ -200,7 +225,7 @@ for (const theme of ["light", "dark"] as const) {
         }
         expect(
           beyondHash,
-          `full Mining screen, preference ${enabled ? "enabled" : "disabled"}, ${theme}`,
+          `full Mining screen, minimum damage ${minimumCraftDamage}, mineral level ${mineObjectLevel}, ${theme}`,
         ).toBe(remixHash);
 
         await Promise.all([
@@ -212,22 +237,34 @@ for (const theme of ["light", "dark"] as const) {
         ]);
       };
 
+      await compareMining({
+        minimumCraftDamage: false,
+        mineObjectLevel: false,
+      });
       await Promise.all([beyondPreference.check(), remixPreference.check()]);
       await Promise.all([
         expect(beyondPreference).toBeChecked(),
         expect(remixPreference).toBeChecked(),
       ]);
-      await compareMining(true);
+      await compareMining({ minimumCraftDamage: true, mineObjectLevel: false });
 
       await Promise.all([
-        beyondPreference.uncheck(),
-        remixPreference.uncheck(),
+        (async () => {
+          await beyondPreference.uncheck();
+          await beyondLevelPreference.check();
+        })(),
+        (async () => {
+          await remixPreference.uncheck();
+          await remixLevelPreference.check();
+        })(),
       ]);
       await Promise.all([
         expect(beyondPreference).not.toBeChecked(),
         expect(remixPreference).not.toBeChecked(),
+        expect(beyondLevelPreference).toBeChecked(),
+        expect(remixLevelPreference).toBeChecked(),
       ]);
-      await compareMining(false);
+      await compareMining({ minimumCraftDamage: false, mineObjectLevel: true });
     } finally {
       await sourceContext.close().catch(() => undefined);
     }

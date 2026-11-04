@@ -27,11 +27,12 @@ The reference UI includes Money, Gems, conditional Planet Coins, object name and
 The default appearance is a light, sparse browser game. The source includes Work Sans and Montserrat font files and a separate dark theme. Preserve original spacing, color groupings, hierarchy, and native-feeling controls as they are verified.
 
 In pinned `index.html`, `settings.showMinCraftDamage` conditionally renders a
-60%-size `Minimum Base Damage` span inside the Mining craft button. The setting
-changes the visible label only. The source-paired
-`tests/e2e/minimum-craft-damage-visual.spec.ts` toggles it in Settings and
-compares complete Mining screens with the label both present and absent in
-light and dark themes at 1440x900.
+60%-size `Minimum Base Damage` span inside the Mining craft button, while
+`settings.showMineObjLevel` conditionally renders the selected mineral-level
+heading. These settings change visible labels only. The source-paired
+`tests/e2e/mining-preferences-visual.spec.ts` toggles each setting in Settings
+and compares complete Mining screens with both labels absent, then each label
+present separately in light and dark themes at 1440x900.
 
 ## Story source styles
 
