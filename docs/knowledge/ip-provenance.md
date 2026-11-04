@@ -24,6 +24,14 @@ The parity corpus contains normalized runtime outputs for mine objects and formu
 
 The runtime CDN JavaScript response snapshots live only in ignored `.research/`; the tracked manifest records their versions, hashes, and npm license metadata. The snapshots themselves are not bundled assets. `@antimatter-dimensions/notations@1.6.0` is now an explicit product dependency; its upstream MIT license is included in the installed package, and no upstream source or assets were copied into product directories. The short display wrappers were independently implemented from Remix's `Scripts/Define/functions.js` and are golden-tested against the extracted outputs.
 
+`tests/fixtures/parity/remix-historical-save-shape.json` is a fixed-value
+synthetic fixture derived from the field shape of a public community export
+linked in the [Remix launch discussion](https://www.reddit.com/r/incremental_games/comments/g48nt2/kongregate_idle_mine_remix/).
+Its provenance records the artifact URL, retrieval date, and original SHA-256.
+The 49,460-byte player export itself remains only in ignored `.research/`; the
+fixture does not preserve its resource values, pickaxe, or progression. This
+is a test input for the pinned loader and is not copied into product output.
+
 ## Provenance ledger for future derived work
 
 | Field               | Required information                                                |

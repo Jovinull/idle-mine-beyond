@@ -1,0 +1,65 @@
+{
+  "provenance": {
+    "classification": "Synthetic minimized fixture derived from the field shape of a public community save specimen. The player save itself is not included.",
+    "threadUrl": "https://www.reddit.com/r/incremental_games/comments/g48nt2/kongregate_idle_mine_remix/",
+    "artifactUrl": "https://drive.google.com/file/d/1e4ZgKJKxXj4maW-4sGJRJ_pEuQXgxmvJ/view?usp=sharing",
+    "retrievedOn": "2026-11-03",
+    "originalEncodedBytes": 49460,
+    "originalSha256": "c20f939b47d63bd60cfd9f9aba17444c5bf1a2c4f50b977a6a452f99a4c2131e",
+    "originalTopLevelFieldCount": 20,
+    "originalNumberFormatterCount": 26,
+    "originalMineObjectCount": 72,
+    "note": "The original specimen loaded without errors in pinned Remix and the Beyond importer produced an identical complete source-shaped export in a one-off local differential. The checked-in input replaces its player values with fixed synthetic values and keeps only fields read by the final loader."
+  },
+  "reference": {
+    "sourceCommit": "0e0f4bf5a9c66e5603cda2ce4bd54213023dae21",
+    "browserVersion": "153.0.8010.12",
+    "loadCall": "functions.loadGame(saveString, undefined, true)",
+    "nowMs": 1704067200000,
+    "inputEncodedBytes": 2188,
+    "inputEncodedSha256": "cc643a1997961dd288f8694d1b58d1c20aaaeb3dd8c4d7f9b9643d8549f55599",
+    "loadedGameJsonSha256": "e50022f4a502cdb3aec2c008a4a87c94be56aa0065876921c190121b7da185f9",
+    "reexportEncodedSha256": "6561db4a655298e486e89494368ef2c60933c8a9f1c5b61861da2a6e44b2b206"
+  },
+  "input": {
+    "money": "100",
+    "highestMoney": "200",
+    "gems": "10",
+    "mineObjectLevel": 6,
+    "highestMineObjectLevel": 7,
+    "lastActive": 1704067140000,
+    "story": {
+      "page": 0,
+      "notifications": 0,
+      "highestUnlocked": 0,
+      "scrollY": 0
+    },
+    "settings": {
+      "numberFormatterIndex": 2
+    },
+    "upgrades": {
+      "blacksmith": { "level": 0 },
+      "blacksmithSkill": { "level": 0 },
+      "blacksmithBonus": { "level": 0 },
+      "gemChance": { "level": 0 },
+      "activePower": { "level": 0 },
+      "idlePower": { "level": 0 },
+      "idleSpeed": { "level": 0 },
+      "gemWaster": { "level": 0 }
+    },
+    "gemUpgrades": {
+      "blacksmith": { "level": 0 },
+      "blacksmithSkill": { "level": 0 },
+      "idlePower": { "level": 0 },
+      "gemWaster": { "level": 0 },
+      "gemChance": { "level": 0 },
+      "gemMultiply": { "level": 0 },
+      "offlineGems": { "level": 0 }
+    },
+    "pickaxe": {
+      "name": "Legacy compatibility probe",
+      "pow": "20",
+      "quality": "1"
+    }
+  }
+}

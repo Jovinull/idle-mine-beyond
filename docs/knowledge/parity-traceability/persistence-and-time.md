@@ -54,7 +54,9 @@ Other arbitrary byte strings remain an input-domain gap, not an unlisted branch.
   `lastActive`. `hardReset` repeats its confirmation up to three times.
 - **Covered:** full current save, absent/empty groups, twenty source-ordered
   partial-application failures and exact errors in
-  `tests/parity/legacy-save-application.test.ts`; exact source-captured decode,
+  `tests/parity/legacy-save-application.test.ts`; the fixed-value derivative of
+  one public community save shape compares full source export/re-export hashes
+  in `tests/parity/legacy-save-historical-shape.test.ts`; exact source-captured decode,
   alert, and parse messages plus no-write Settings behavior in
   `tests/e2e/save-import-error.spec.ts`; that Chromium suite also submits all
   twenty captured field-application failures, compares each visible error, and
@@ -71,10 +73,13 @@ Other arbitrary byte strings remain an input-domain gap, not an unlisted branch.
   separately checks the fully confirmed reset in `tests/e2e/remix-app.spec.ts`.
   A valid JSON save with the first index past Remix's formatter list is also
   source-paired in `tests/e2e/legacy-save-invalid-formatter.spec.ts`.
-- **Sampled:** historical-format saves and malformed inputs outside the named
-  twenty field-application failures and out-of-range formatter-index case have
-  no fixtures yet. These are unverified input/data domains, not uncovered
-  branches in the mapped loader path.
+- **Sampled:** one community-shared export with an older-looking field shape
+  now loads through the pinned final Remix loader and has a matching Beyond
+  source-shaped export differential. The durable test uses a fixed-value,
+  minimized derivative rather than retaining the player's save. Other
+  historical formats and malformed inputs outside the named twenty
+  field-application failures and out-of-range formatter-index case remain
+  unverified data domains, not uncovered branches in the mapped loader path.
 
 ### Legacy loader function and branch trace
 
@@ -107,12 +112,16 @@ The reference probe fixes `initialGame.lastActive` to its injected clock while
 capturing reset semantics so the confirmed reset result is reproducible across
 capture dates.
 
-Historical save shapes beyond captured format cases remain a data-domain gap;
-all mapped loader, formatter-index boundary, and reset control-flow paths have
-source-backed assertions. Two community-linked save candidates are listed in
-[`save-time-offline.md`](../save-time-offline.md), but their hosted contents
-could not be retrieved and therefore have no fixture or test. They do not
-qualify as observed behavior or establish historical-schema support.
+The Google Drive community candidate listed in
+[`save-time-offline.md`](../save-time-offline.md) was retrieved and loaded by
+the pinned final Remix implementation. Its source-read fields produced an
+exact Beyond export match in a one-off local differential; the checked-in
+synthetic derivative hash-checks that minimized field shape against the pinned
+output. This does not establish which deployed version produced the save or
+general historical-schema support. The Pastebin candidate remains unavailable.
+Other historical shapes and arbitrary malformed input remain separate data
+domains; all mapped loader, formatter-index boundary, and reset control-flow
+paths have source-backed assertions.
 
 ## Save export and round-trip
 

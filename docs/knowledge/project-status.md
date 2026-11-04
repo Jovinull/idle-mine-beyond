@@ -16,9 +16,21 @@ in `88e22ee`: Windows Chromium passed 38/38 selected shop, Powers, Mining, and
 primary-screen comparisons; the two damaged-Mud source captures verified by
 `reference:priority-visuals:mining-damage` remain Windows-only pending the
 documented external Linux capture. The Playwright visibility probe reports
-`visible` for both pages in headless and headed Chromium when another page is
-brought to the front, so it does not stand in for OS background-throttling
-tests.
+`visible` in headless and headed Chromium when another page is brought to the
+front, and after CDP minimizes a headed window for 12 seconds. The minimized
+page stays focused, emits no visibility-change event, and continues timer and
+animation-frame callbacks; this does not stand in for a hidden tab or OS
+background-throttling test. The probe implementation is in `4960610`; this
+entry records the additional minimized-window result.
+
+**Historical save specimen check (2026-11-03):** retrieved the public Drive
+export linked from a community import report; the separate Pastebin lead still
+returns 404. Pinned Remix loaded the 49,460-byte artifact without error, and a
+disposable Beyond differential matched the complete source-shaped export. The
+raw save remains ignored; a fixed-value minimized fixture now tests its
+source-read field shape against full pinned-output hashes. This verifies one
+specimen, not general historical-save support; that evidence remains In
+Progress. Details and provenance are in [save/time research](save-time-offline.md).
 
 **Complete Windows baseline (2026-11-03):** `pnpm.cmd check` passed end to
 end. Content/assets verification, the 36-area traceability check, Prettier,
@@ -382,9 +394,18 @@ initial source commit) and searched the linked public community discussion.
 Two user-shared save candidates are now recorded in [save/time research](save-time-offline.md),
 but the research browser could not retrieve either hosted artifact. No save
 bytes or historical load behavior were verified, so the candidates are not
-fixtures and do not support migration claims. Legacy import remains In progress;
-the next research step is obtaining an attributable artifact and replaying it
-through the pinned final loader.
+fixtures and do not support migration claims. Legacy import remained In
+Progress at that review. A later 2026-11-03 recheck retrieved one community
+artifact and replayed it through the pinned final loader; the single specimen
+does not establish broad historical-format support (see the follow-up below).
+
+**Historical-save specimen follow-up (2026-11-03):** the linked Drive export
+was retrieved and loaded by pinned Remix with offline processing disabled. A
+one-off Beyond differential matched its complete source-shaped export. The
+49,460-byte raw save and its values remain in ignored research storage; a
+fixed-value minimized fixture now checks the relevant older field shape against
+the full pinned source-output hashes. This verifies one specimen only; broader
+historical formats remain open.
 
 **Upgrade-shop modifier-hint rendering (2026-10-04):** the pinned detail panel
 activates the Shift hint only without Control and activates the Control hint
