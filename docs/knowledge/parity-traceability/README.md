@@ -157,12 +157,12 @@ transition, cap/sentinel, and RNG draw-branch boundary, then checked its
 recorded fixed-seed sample and no-divergence pinned differential. All 14 meet
 the criterion. The outcomes by map are:
 
-| Map entries re-evaluated                                                                                                                                         | Result under the sampling rule                                                                                                                    | Matrix disposition after review                                                                                                        |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Procedural mine objects; Object drops and random outcomes; Mine rendering and compositing; Active and idle damage                                                | Applicable generation, damage, drop, rendering-path, threshold, and cap boundaries are covered; fixed-seed source comparisons pass.               | Procedural objects, drops, rendering, and active/idle damage are Certified.                                                            |
-| Money and money upgrades; Gems and gem upgrades; Planet Coins and upgrades                                                                                       | Applicable zero, formula/region, affordability, chance/rate, and cap boundaries are covered; fixed-seed phase differentials match full state/RNG. | In Progress only for separately mapped purchase, interaction, and visual evidence; not for finite formula samples.                     |
-| Wisdom and Powers; Upgrade costs, caps, and effects; Pickaxe crafting RNG; Pickaxe naming and replacement; Random distributions and RNG; Story and notifications | Applicable zero, strict comparison, level/cap, RNG draw, and predicate boundaries are covered; fixed-seed source differentials pass.              | Random distributions/RNG is Certified. The other five remain In Progress for separately mapped interaction, state, or visual evidence. |
-| Offline progression and time                                                                                                                                     | Threshold, zero/negative rate, cap, and ordered-effect boundaries are covered; sixteen fixed-seed elapsed values match full pinned load results.  | In Progress for real browser/OS background scheduling evidence, not elapsed-time sample size.                                          |
+| Map entries re-evaluated                                                                                                                                         | Result under the sampling rule                                                                                                                    | Matrix disposition after review                                                                                                                                     |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Procedural mine objects; Object drops and random outcomes; Mine rendering and compositing; Active and idle damage                                                | Applicable generation, damage, drop, rendering-path, threshold, and cap boundaries are covered; fixed-seed source comparisons pass.               | Procedural objects, drops, rendering, and active/idle damage are Certified.                                                                                         |
+| Money and money upgrades; Gems and gem upgrades; Planet Coins and upgrades                                                                                       | Applicable zero, formula/region, affordability, chance/rate, and cap boundaries are covered; fixed-seed phase differentials match full state/RNG. | In Progress only for separately mapped purchase, interaction, and visual evidence; not for finite formula samples.                                                  |
+| Wisdom and Powers; Upgrade costs, caps, and effects; Pickaxe crafting RNG; Pickaxe naming and replacement; Random distributions and RNG; Story and notifications | Applicable zero, strict comparison, level/cap, RNG draw, and predicate boundaries are covered; fixed-seed source differentials pass.              | Random distributions/RNG and Story and notifications are Certified. The other four remain In Progress for separately mapped interaction, state, or visual evidence. |
+| Offline progression and time                                                                                                                                     | Threshold, zero/negative rate, cap, and ordered-effect boundaries are covered; sixteen fixed-seed elapsed values match full pinned load results.  | In Progress for real browser/OS background scheduling evidence, not elapsed-time sample size.                                                                       |
 
 The re-evaluation does not claim the non-formula state spaces in the web map
 are qualified by this rule. Story/UI combinations, arbitrary save shapes,
@@ -253,14 +253,20 @@ its evidence is the 920-record per-object pixel differential and the 48 Story
 preview baselines, not a claim that rendering is a formula/RNG domain. No
 matrix area is In Progress solely because one of these samples is finite.
 
-The matrix statuses therefore remain unchanged in this review. Money/Gem/Planet
-Coin and aggregate upgrade areas remain open for their separately mapped
-purchase, interaction, and visual evidence; Wisdom/Powers, crafting/naming, and
-Story remain open for their other state, interaction, and visual evidence;
-offline progression remains open for real browser/OS background scheduling.
-Save-shape, storage, keyboard, unselected UI, and platform samples are separate
-evidence domains and are not qualified by this formula/RNG rule. No additional
-random probes are warranted for the reviewed domains.
+The formula/RNG re-evaluation did not change status solely because of finite
+sample size. A separate same-day Story scope review moved Story and
+notifications to Certified: every condition and objective path has direct
+assertions, route/phase state and RNG comparisons pass, all nine chapter pages
+have exact both-theme captures at 1440x900, and selected app integrations pass.
+That status follows the approved chapter-level screenshot strategy; it does not
+claim a separate screenshot for every milestone. Money/Gem/Planet Coin and
+aggregate upgrades remain open for their mapped purchase, interaction, and
+visual evidence; Wisdom/Powers and crafting/naming remain open for their other
+state, interaction, or visual evidence. Offline progression remains open for
+real browser/OS background scheduling. Save-shape, storage, keyboard,
+unselected UI, and platform samples are separate evidence domains and are not
+qualified by this formula/RNG rule. No additional random probes are warranted
+for the reviewed domains.
 
 Validation on 2026-11-03: `pnpm test:parity` passed 35 files and 158 tests;
 `pnpm test:reference` passed pinned corpus, Story, phase-differential, Canvas,

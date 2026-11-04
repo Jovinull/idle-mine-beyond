@@ -271,8 +271,18 @@ Remix/Beyond views at 1440x900 in both themes.
   but all 61 source conditions have boundary assertions, dynamic objective
   outputs are compared across captured mine levels and all 40 notations, and the
   fixed-seed route/differential tests preserve progression state with no
-  divergence. Screenshot coverage remains a separate web visual gap; this
-  qualification does not claim pixel parity for every reachable Story state.
+  divergence. This qualifies the condition/objective domain under the
+  boundary-and-differential rule; it does not claim pixel parity for every
+  reachable milestone state.
+- **Certified visual scope (project decision, 2026-11-03):** all nine fully
+  unlocked Story pages have exact full-screen captures in light and dark at
+  1440x900; selected natural progression screens and app interactions are
+  covered separately, and all 48 Story Canvas previews match pinned hashes.
+  Source template/runtime assertions cover every rendered block and dynamic
+  objective. A screenshot for each individual milestone is not required because
+  those milestones share the captured template and their condition/text/order
+  behavior has direct assertions. Add one only if source review finds a distinct
+  rendering branch or evidence identifies an uncovered visual integration risk.
 
 ### Story function and branch trace
 

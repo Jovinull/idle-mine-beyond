@@ -4,7 +4,7 @@ Last updated: 2026-11-03
 
 ## Phase
 
-**Phase 1 - Deterministic core (in progress).** The source-to-test audit maps all 36 parity-matrix areas to pinned Remix functions/branches, fixtures, and assertions. The Random distributions and RNG row became the first Certified area after its consumer thresholds, seeded outcomes, and 90,000 state/RNG checkpoints passed; twelve further rows are Certified: Big-number math and serialization, Fresh simulation-state initialization, Simulation action composition, Active and idle damage, Object drops and random outcomes, Fixed mine objects, Special mine objects, Procedural mine objects, Mine rendering and compositing, Number formatting and notations, Progression route and phase replay, and the bounded Beyond versioned save schema. Fresh-state coverage traces Remix's no-save startup and verifies the complete initial state, live browser startup/interactions, and fresh Mining visuals in both themes. Action-composition coverage compares source frame, click, break, purchase, and craft branches in core, then verifies browser event wiring, save-before-Story ordering, random draws, and persisted state. Active/idle damage has browser assertions for a fresh-Mud click and a pinned full-health idle break; procedural-object coverage loads all three generator regions plus a sparse high ID through the Beyond save and Mining Canvas. Qualified non-exhaustive formula/RNG samples do not block certification; unresolved source boundaries, save/platform domains, and visual/UI evidence still can. The checker flags Certified rows that retain mapped gaps or unqualified sampled domains, and does not infer certification from code presence. parity-v1 remains web-only; native packaging, storage, and running Tauri WebView validation are post-v1.
+**Phase 1 - Deterministic core (in progress).** The source-to-test audit maps all 36 parity-matrix areas to pinned Remix functions/branches, fixtures, and assertions. Fourteen rows are Certified: Random distributions and RNG; Big-number math and serialization; Fresh simulation-state initialization; Simulation action composition; Active and idle damage; Object drops and random outcomes; Fixed mine objects; Special mine objects; Procedural mine objects; Mine rendering and compositing; Number formatting and notations; Progression route and phase replay; Beyond versioned save schema; and Story and notifications. The Story row was certified on 2026-11-03 at the approved chapter-level visual scope after its 61 condition boundaries, route/phase differentials, app interactions, all nine chapter screens in both themes, and all 48 preview hashes were reviewed. Fresh-state coverage traces Remix's no-save startup and verifies the complete initial state, live browser startup/interactions, and fresh Mining visuals in both themes. Action-composition coverage compares source frame, click, break, purchase, and craft branches in core, then verifies browser event wiring, save-before-Story ordering, random draws, and persisted state. Active/idle damage has browser assertions for a fresh-Mud click and a pinned full-health idle break; procedural-object coverage loads all three generator regions plus a sparse high ID through the Beyond save and Mining Canvas. Qualified non-exhaustive formula/RNG samples do not block certification; unresolved source boundaries, save/platform domains, and visual/UI evidence still can. The checker flags Certified rows that retain mapped gaps or unqualified sampled domains, and does not infer certification from code presence. parity-v1 remains web-only; native packaging, storage, and running Tauri WebView validation are post-v1.
 
 **Current closeout (2026-11-03):** the sampled-domain review and rule are
 committed and pushed in `f2f8fd5`; all 14 entries marked `Sampled (qualified)`
@@ -46,6 +46,19 @@ zero, immediately-below-price, and exact-price Money, Gem, and Planet Coin
 states against pinned Remix using exact hashes. These passing reruns do not
 explain earlier intermittent one-pixel failures or cover the remaining shop
 state space; shop and desktop UI remain In Progress.
+
+**Story and notifications certification (2026-11-03):** the row moved to
+Certified within its approved chapter-level web visual scope. Pinned tests cover
+all 61 condition boundaries, dynamic objective outputs across 152 mine-level
+and 80 notation cases, notification/high-water and tab effects, exact template
+order, and the full route/phase state-RNG differentials. All nine fully unlocked
+chapter screens match at zero pixels in both themes at 1440x900; all 48 Story
+Canvas previews match their source hashes. Natural route checkpoints cover
+Chapter 6, and controlled Chapter 7-9 phase saves cover 90,000 action
+checkpoints. The agreed strategy does not require a screenshot for every
+milestone; no mapped branch or distinct renderer path remains open. GitHub
+Actions run 58 passed the full check, pinned oracle, browser, site, and native
+storage jobs for the code baseline.
 
 **Complete Windows baseline (2026-11-03):** `pnpm.cmd check` passed end to
 end. Content/assets verification, the 36-area traceability check, Prettier,
