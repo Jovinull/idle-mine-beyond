@@ -32,6 +32,13 @@ source-read field shape against full pinned-output hashes. This verifies one
 specimen, not general historical-save support; that evidence remains In
 Progress. Details and provenance are in [save/time research](save-time-offline.md).
 
+**Shop visual rerun (2026-11-03):** the existing 1440x900 dark, all-affordable
+level-one catalog E2E passed 1/1 in 29.3 seconds across Money, Gems, and Planet
+Coins, including all 22 cards/details and full-screen exact hashes. Previously
+reported dark corner pixels were not reproduced. Keep the shop and desktop UI
+In Progress: the light Planet Coin exact-price screenshot has an intermittent
+one-pixel result, and other visual states remain open.
+
 **Complete Windows baseline (2026-11-03):** `pnpm.cmd check` passed end to
 end. Content/assets verification, the 36-area traceability check, Prettier,
 ESLint, strict TypeScript/Svelte checks, 46 unit tests, 158 parity tests, the

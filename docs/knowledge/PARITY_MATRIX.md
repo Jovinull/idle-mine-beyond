@@ -154,4 +154,11 @@ selected comparisons pass exact hashes with no tolerance or masking. These views
 do not certify remaining shop states, balances, modifier hints, or
 application-state combinations; the related matrix rows remain In progress.
 
+**Shop rerun (2026-11-03):** the existing dark, all-affordable level-one
+catalog comparison passed 1/1. All three resource tabs, 22 cards/details, and
+full 1440x900 screenshots matched pinned Remix exactly; prior dark corner
+deltas were not reproduced. This does not resolve the intermittent exact-price
+result or close the remaining visual-state scope, so the shop and desktop UI
+rows remain In progress.
+
 `pnpm reference:priority-visuals` reproduces the pinned Remix captures for the current platform and verifies screenshot/state metadata. Linux compares these 32 cases at zero pixels against their `-linux` baselines. Tauri WebView save/reload remains deferred until native packaging.

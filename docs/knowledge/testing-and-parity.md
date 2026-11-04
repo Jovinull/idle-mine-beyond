@@ -219,6 +219,16 @@ The offline-load corpus contains ten controlled boundary calls plus sixteen elap
 
 `tests/parity/legacy-save-historical-shape.test.ts` imports a minimized, fixed-value fixture derived from one public community export whose original encoded SHA-256 is recorded in the fixture provenance. The raw player save is not checked in. The fixture omits later resource fields, Planet Coin upgrades, and Powers; the test compares the Beyond re-export's full JSON hash and encoded hash with the pinned Remix load/re-export capture. The source probe and one disposable Beyond differential also loaded the original artifact without divergence. This is evidence for that specimen and its minimized field shape, not a claim of general historical-save support.
 
+**Shop visual rerun (2026-11-03):** the existing dark, level-one, all-affordable
+catalog test passed 1/1 in 29.3 seconds using
+`pnpm.cmd exec playwright test -c playwright.slow.config.ts
+upgrade-affordability-differential.spec.ts --project=chromium --workers=1
+--retries=0 --grep "level 1 in dark theme"`. Money, Gems, and Planet Coins
+matched pinned Remix at 1440x900 for full screens, all 22 cards, and details.
+The older dark rounded-corner deltas were not reproduced; the shop remains
+In Progress because other states and the intermittent exact-price result remain
+open.
+
 **Background-visibility probe (2026-11-03):** run `pnpm.cmd
 probe:browser-visibility` for headless mode or `node
 scripts/probe-browser-visibility.mjs --headed` for headed mode. Both report
