@@ -63,6 +63,14 @@ both boundaries in light and dark 1440×900 captures (4/4). This closes the
 mapped tab-visibility branch only; the shop and desktop visual rows remain In
 Progress because their broader screen states are still open.
 
+**CI visual failure investigation (2026-11-04):** run 72 passed checks, build,
+reference verification, native storage, and 170 browser tests, but failed one
+dark/Linux full-screen pair when `showMineObjLevel` was enabled. The rerun used
+the same hashes. Its job did not publish Playwright attachments, so the exact
+pixel delta is unknown. CI now uploads browser failure evidence for seven days;
+run 73 is validating the Gem-gate commit and does not yet include that artifact
+step.
+
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
 all 61 condition boundaries, dynamic objective outputs across 152 mine-level

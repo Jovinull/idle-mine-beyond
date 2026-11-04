@@ -21,6 +21,12 @@ The pinned Remix installs `keydown`/`keyup` handlers on `window`, so ArrowLeft a
 - **Visual regression:** screenshot comparisons at fixed viewports, themes, and state fixtures.
 - **Native checks:** Tauri shell/config and platform builds when the required SDK/toolchain is available.
 
+The GitHub Actions browser job uploads `test-results/` only after a failed
+step, retaining screenshots and traces for seven days so visual differences can
+be diagnosed from the actual pixels. Successful runs do not publish these test
+artifacts. This uses GitHub's official
+[upload-artifact action](https://github.com/actions/upload-artifact).
+
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 
 The pinned `initialState` capture records the fresh Remix values and the constructor test compares the core simulation subset against it: starting object/progress, all resources and upgrade levels, pickaxe, Powers, timers, and Story page/notification progress. It also checks that two new states do not share mutable objects. This does not compare settings, notation instances, message history, or the complete Remix runtime object.
