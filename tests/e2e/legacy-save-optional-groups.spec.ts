@@ -30,6 +30,9 @@ type OptionalGroupFixture = {
       missingOptionalGroups: { inputJson: string };
       emptyPresentGroups: { inputJson: string };
     };
+    saveExportSemantics: {
+      variants: { name: string; inputJson?: string }[];
+    };
   };
 };
 
@@ -156,7 +159,7 @@ async function decodeExport(
   }, encoded);
 }
 
-test("matches Remix imports with absent versus present empty save groups", async ({
+test("matches Remix imports with optional groups and varied all-upgrade state", async ({
   page,
   browser,
 }) => {
@@ -200,6 +203,10 @@ test("matches Remix imports with absent versus present empty save groups", async
         name: "absent optional groups",
         inputJson: fixture.data.saveSemantics.missingOptionalGroups.inputJson,
         expected: {
+          money: "0",
+          gems: "0",
+          planetCoins: "0",
+          wisdom: "0",
           moneyUpgrade: 4,
           gemUpgrade: 0,
           planetCoinUpgrade: 0,
@@ -214,12 +221,40 @@ test("matches Remix imports with absent versus present empty save groups", async
         name: "present empty optional groups",
         inputJson: fixture.data.saveSemantics.emptyPresentGroups.inputJson,
         expected: {
+          money: "0",
+          gems: "0",
+          planetCoins: "0",
+          wisdom: "0",
           moneyUpgrade: 4,
           gemUpgrade: 5,
           planetCoinUpgrade: 6,
           wisdomUpgrade: 0,
           power: "2",
           pickaxe: { name: "Toy Pickaxe", pow: "0", quality: "0" },
+          theme: "dark",
+          settingsTab: "settings",
+        },
+      },
+      {
+        name: "varied resources, settings, and all upgrade groups",
+        inputJson: fixture.data.saveExportSemantics.variants.find(
+          (variant) => variant.name === "varied-settings-and-all-upgrades",
+        )!.inputJson!,
+        expected: {
+          money: "314159.265",
+          gems: "12345",
+          planetCoins: "6789",
+          wisdom: "9876",
+          moneyUpgrade: 8,
+          gemUpgrade: 9,
+          planetCoinUpgrade: 8,
+          wisdomUpgrade: 5,
+          power: "11",
+          pickaxe: {
+            name: "Deep export probe",
+            pow: "456",
+            quality: "7.5",
+          },
           theme: "dark",
           settingsTab: "settings",
         },
@@ -242,10 +277,10 @@ test("matches Remix imports with absent versus present empty save groups", async
         expect(result, `${scenario.name} complete source export`).toEqual(
           sourceResult,
         );
-        expect(result.money).toBe("0");
-        expect(result.gems).toBe("0");
-        expect(result.planetCoins).toBe("0");
-        expect(result.wisdom).toBe("0");
+        expect(result.money).toBe(scenario.expected.money ?? "0");
+        expect(result.gems).toBe(scenario.expected.gems ?? "0");
+        expect(result.planetCoins).toBe(scenario.expected.planetCoins ?? "0");
+        expect(result.wisdom).toBe(scenario.expected.wisdom ?? "0");
         expect(result.upgrades["idleSpeed"]!.level).toBe(
           scenario.expected.moneyUpgrade,
         );
@@ -264,6 +299,13 @@ test("matches Remix imports with absent versus present empty save groups", async
           tab: scenario.expected.settingsTab,
           theme: scenario.expected.theme,
         });
+        if (
+          scenario.name === "varied resources, settings, and all upgrade groups"
+        ) {
+          expect(beyondExport, `${scenario.name} encoded save`).toBe(
+            sourceExport,
+          );
+        }
       });
     }
   } finally {
