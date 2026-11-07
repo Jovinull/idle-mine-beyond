@@ -47,6 +47,12 @@ passed and dark failed only the Planet Coin exact-price full-screen hash at
 computed styles match. The shop row remains In Progress for this exact visual
 difference and its remaining state coverage.
 
+The repeated dark affordability run immediately after the failure passed. The
+E2E now saves the exact compared Remix/Beyond screenshot buffers as attachments
+when their hashes differ; Playwright's default post-failure screenshots had
+captured the cleaned-up page and were byte-identical. This improves failure
+evidence but does not close the pixel mismatch or change the strict assertion.
+
 Browser persistence failure evidence (2026-10-05): the Chromium write/read failure tests passed 4/4, covering injected backup/primary `QuotaExceededError`, primary/backup `SecurityError`, retained save slots, recovery UI, retry, and export failure. Real quota policy, cross-tab races, and process termination remain separate open environment evidence; Beyond save storage and recovery stays In progress.
 
 Offline-message formatter differential (2026-10-05): `tests/e2e/offline-progression.spec.ts` asserts the source save selects formatter index 3 (`Letters`) and compares cold-start return messages and complete legacy exports between pinned Remix and Beyond. The message-log crop also matches at zero pixels in light and dark. The focused file passed 4/4; this closes the alternate-notation message-composition path only. Offline progression remains In Progress for broader live-rate states and actual OS/browser background scheduling.

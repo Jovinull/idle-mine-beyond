@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { Decimal } from "../../packages/core/src/decimal.js";
 import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
@@ -685,13 +685,19 @@ async function expectSinglePageFullViewportMatch(
       remixRasterDiagnostics: sourceRasterDiagnostics,
     });
     if (beyondHash !== sourceHash) {
+      const beyondPath = test.info().outputPath(`${description}-beyond.png`);
+      const sourcePath = test.info().outputPath(`${description}-remix.png`);
+      await Promise.all([
+        writeFile(beyondPath, beyondScreenshot),
+        writeFile(sourcePath, sourceScreenshot),
+      ]);
       await Promise.all([
         test.info().attach(`${description}-beyond.png`, {
-          body: beyondScreenshot,
+          path: beyondPath,
           contentType: "image/png",
         }),
         test.info().attach(`${description}-remix.png`, {
-          body: sourceScreenshot,
+          path: sourcePath,
           contentType: "image/png",
         }),
         test.info().attach(`${description}-state.json`, {

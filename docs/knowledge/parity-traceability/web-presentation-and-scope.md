@@ -274,6 +274,15 @@ and full screens against Remix at level 1 in <light|dark> theme" --workers=1
 shop affordability boundaries in" --workers=1 --retries=0` for both affordability
 themes.
 
+**Affordability mismatch attachment follow-up (2026-11-07):** a fresh dark
+affordability run reproduced the Planet Coin exact-price mismatch, then an
+immediate rerun passed. The default Playwright failure screenshots were taken
+after the helper had navigated back to Beyond, so the two files were identical
+and did not preserve the compared pair. The differential now writes and
+attaches the actual source and Beyond screenshot buffers when their strict
+hashes differ. No rendering change or pixel tolerance was made; the visual
+mismatch remains open.
+
 ### Upgrade-shop visual function and branch trace
 
 | Pinned Remix function/path and branch                                                                                                                  | Source evidence                                                                             | Beyond assertion                                                                                                                                                                     |

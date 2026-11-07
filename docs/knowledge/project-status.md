@@ -15,6 +15,13 @@ computed styles. A temporary source-only paint refresh did not remove the
 difference and was discarded. Shop and Desktop UI remain In Progress; strict
 pixel comparison remains unchanged.
 
+**Shop mismatch capture follow-up (2026-11-07):** the dark affordability E2E
+reproduced the Planet Coin exact-price one-pixel mismatch, and an immediate
+rerun passed. Playwright's default failure screenshots were captured after the
+test cleanup and were byte-identical; the differential now saves the exact
+compared source/Beyond buffers as attachments on mismatch. No render change or
+tolerance was introduced, so the Shop and Desktop UI rows remain In Progress.
+
 **Selected-tab lifecycle probe (2026-11-07):** a project Chrome DevTools MCP
 session kept an instrumented page `visible` and focused while a second target
 was selected; reading the first target by page ID recorded no visibility event
