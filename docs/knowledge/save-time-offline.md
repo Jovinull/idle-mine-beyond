@@ -24,13 +24,13 @@ The probe confirms the source's exact encode/decode order and a Unicode corrupti
 entire current `game` value and writes it directly to `localStorage` key
 `IdleMine`; the pinned scripts do not install a `storage` event listener or
 merge another tab's save. In the source-paired
-`tests/e2e/save-cross-tab-overwrite.spec.ts`, both tabs load the same state,
-one buys Blacksmith and saves, then the still-stale second tab saves. Remix's
-final save returns to the second tab's older Blacksmith level and balance.
-Beyond matches that state using its versioned `IdleMineBeyond` primary save and
-leaves the imported `IdleMine` legacy key untouched. This verifies that exact
-last-writer scenario; it does not cover other cross-tab orderings, profile
-quota behavior, or process termination.
+`tests/e2e/save-cross-tab-overwrite.spec.ts`, both tabs load the same state.
+The updated tab buys Blacksmith and saves, the still-stale second tab overwrites
+it, then the updated tab saves again. Remix and Beyond match the level-one,
+level-zero, and level-one snapshots in order; Beyond uses its versioned
+`IdleMineBeyond` primary save and leaves the imported `IdleMine` legacy key
+untouched. Other action/write interleavings, profile quota behavior, and process
+termination remain open.
 
 ### Historical save evidence
 

@@ -232,6 +232,33 @@ test("a stale second tab overwrites the newer save like pinned Remix", async ({
     expect(beyondStaleState.upgrades.money["blacksmith"]).toBe(0);
     expect(beyondStaleState.resources.money).toBe(remixStaleState.money);
     expect(remixStaleState.money).toBe("1000");
+
+    // The newer snapshot can become the final writer again without merging.
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      page.getByRole("button", { name: "Save" }).click(),
+      sourcePage.getByRole("button", { name: "Save" }).click(),
+    ]);
+
+    const [beyondFinalState, remixFinalSave] = await Promise.all([
+      readBeyondState(page),
+      readLegacySlot(sourcePage),
+    ]);
+    const remixFinalState = readSaveState(remixFinalSave);
+    expect(beyondFinalState.upgrades.money["blacksmith"]).toBe(
+      remixFinalState.upgrades["blacksmith"]?.level,
+    );
+    expect(beyondFinalState.upgrades.money["blacksmith"]).toBe(1);
+    expect(beyondFinalState.resources.money).toBe(remixFinalState.money);
+    expect(await page.evaluate(() => localStorage.getItem("IdleMine"))).toBe(
+      encodedInitialSave,
+    );
   } finally {
     await sourceContext.close().catch(() => undefined);
   }
