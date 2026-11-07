@@ -1,10 +1,12 @@
-import { expect, test } from "@playwright/test";
+import { createHash } from "node:crypto";
+import { expect, test, type Browser, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
 import {
   createBeyondVisualSaveFromRemixSave,
   createFreshBeyondVisualSave,
 } from "./visual-state.js";
+import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
 const fixedClock = 1_704_067_200_000;
 // Windows and Linux each have pinned source screenshots (`-linux` on Linux).
@@ -213,7 +215,14 @@ async function prepareBeyondScreen(
     { now: fixedClock, save: serialized },
   );
   await page.goto("/");
-  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+  const appRoot = page.locator("#app");
+  if (capture.damageHits !== undefined) {
+    await expect(appRoot).toHaveAttribute("data-app-state", "ready", {
+      timeout: 30_000,
+    });
+  } else {
+    await expect(appRoot).toHaveAttribute("data-app-state", "ready");
+  }
   if (capture.family === "upgrades" && capture.upgradeTab !== "money") {
     const beyondGroup =
       capture.upgradeTab === "planetcoins" ? "planetCoins" : capture.upgradeTab;
@@ -286,8 +295,112 @@ async function prepareBeyondScreen(
   });
 }
 
+async function compareDamagedMudWithRemix({
+  browser,
+  page,
+  capture,
+}: {
+  readonly browser: Browser;
+  readonly page: Page;
+  readonly capture: VisualCase;
+}): Promise<void> {
+  const sourceContext = await browser.newContext({
+    colorScheme: capture.theme,
+    deviceScaleFactor: 1,
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: capture.viewport,
+  });
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    const sourcePage = await sourceContext.newPage();
+    await sourcePage.addInitScript((now) => {
+      localStorage.clear();
+      Date.now = () => now;
+    }, fixedClock);
+    await sourcePage.goto(sourceUrl);
+    await sourcePage.waitForFunction(() =>
+      Boolean(
+        (window as Window & { game?: unknown }).game &&
+        document.querySelector("#app > footer"),
+      ),
+    );
+    if (capture.theme === "dark") {
+      await sourcePage.evaluate(() => {
+        const sourceWindow = window as Window & {
+          game?: { settings?: { theme?: string } };
+          functions?: { setTheme?: (theme: string) => void };
+        };
+        if (!sourceWindow.game?.settings || !sourceWindow.functions?.setTheme) {
+          throw new Error("Pinned Remix theme controls are unavailable.");
+        }
+        sourceWindow.game.settings.theme = "dark";
+        sourceWindow.functions.setTheme("dark");
+      });
+    }
+    await sourcePage.waitForFunction(
+      (selectedTheme) =>
+        document.querySelector<HTMLLinkElement>("#css_theme")?.sheet !== null &&
+        document
+          .querySelector<HTMLLinkElement>("#css_theme")
+          ?.getAttribute("href") === `Themes/${selectedTheme}.css`,
+      capture.theme,
+    );
+    await expect(sourcePage.locator(".mineobject h2")).toHaveText("Mud");
+    await sourcePage.locator(".mineobject canvas").click();
+    await expect(sourcePage.locator(".mineobject p").first()).toHaveText(
+      "HP: 80",
+    );
+
+    const stabilizeAndCapture = async (target: Page) => {
+      await target.evaluate(() => document.fonts.ready);
+      await target.mouse.move(
+        capture.viewport.width - 1,
+        capture.viewport.height - 1,
+      );
+      await target.evaluate(
+        () =>
+          new Promise<void>((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+          ),
+      );
+      await target.evaluate(() => {
+        for (const animation of document.getAnimations()) {
+          animation.pause();
+          animation.currentTime = 0;
+        }
+      });
+      return target.screenshot({ animations: "disabled" });
+    };
+    const [remixPng, beyondPng] = await Promise.all([
+      stabilizeAndCapture(sourcePage),
+      stabilizeAndCapture(page),
+    ]);
+    const remixHash = createHash("sha256").update(remixPng).digest("hex");
+    const beyondHash = createHash("sha256").update(beyondPng).digest("hex");
+    if (remixHash !== beyondHash) {
+      await Promise.all([
+        test.info().attach(`mud-damaged-${capture.theme}-remix.png`, {
+          body: remixPng,
+          contentType: "image/png",
+        }),
+        test.info().attach(`mud-damaged-${capture.theme}-beyond.png`, {
+          body: beyondPng,
+          contentType: "image/png",
+        }),
+      ]);
+    }
+    expect(
+      beyondHash,
+      `live pinned Remix damaged-Mud screen in ${capture.theme}`,
+    ).toBe(remixHash);
+  } finally {
+    await sourceContext.close();
+  }
+}
+
 for (const capture of getVisualCases()) {
-  test(`compares pinned Remix ${capture.id}`, async ({ page }) => {
+  test(`compares pinned Remix ${capture.id}`, async ({ page, browser }) => {
     const saves = await readSaveInputs();
     await prepareBeyondScreen(page, capture, saves);
 
@@ -341,6 +454,10 @@ for (const capture of getVisualCases()) {
       ).toBeVisible();
     } else {
       await expect(page.locator(".mineobject h2")).toHaveText("Mud");
+    }
+
+    if (capture.damageHits !== undefined) {
+      await compareDamagedMudWithRemix({ browser, page, capture });
     }
 
     // Shop-gate screenshots are Windows-only (see capture-remix-priority-visuals.mjs).

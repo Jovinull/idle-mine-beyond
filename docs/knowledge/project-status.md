@@ -1534,3 +1534,9 @@ intervening keyup while the Settings save field is focused. Both runtimes
 report trusted `repeat=false` and `repeat=true` events, prevent caret movement,
 and select the same prior mine object; the resulting level and event details
 match (1/1). Keyboard layouts and IME behavior remain open.
+
+**Live partial-Mud visual comparison (2026-11-07):** extended the priority
+visual E2E to replay one active, non-lethal Mud click in pinned Remix and
+Beyond, then compare complete source/runtime screenshots at zero pixels in
+light and dark. Windows passed both comparisons (2/2); Linux runs the same live
+comparison in CI, replacing the earlier state-only check for this slice.
