@@ -1562,3 +1562,9 @@ source-paired full Mining screen comparison for selector cost 35 and the
 disabled increase control to 1366x768. Together with the existing 1440x900
 case, exact hashes now match in both themes at both viewports (4/4 focused
 Playwright cases). Other crafting panel states and viewports remain open.
+
+**Gem Waster interior selector state (2026-11-07):** added the cost-10
+interior state, with its increase control enabled and arrow image visible, to
+the source-paired full Mining comparison. Cost 10 and maximum cost 35 now match
+in both themes at 1440x900 and 1366x768 (eight focused Playwright cases passed).
+Other selector states and resolutions remain open.

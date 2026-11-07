@@ -27,11 +27,12 @@ comparisons at 1366x768 in light and dark, alongside the existing 1440x900
 comparisons. These selected viewport cases do not cover all Mining panel states
 or resolutions.
 
-The Gem Waster maximum-cost selector state (cost 35, increase control disabled
-with no arrow image) now also matches the full source screen at 1366x768 in both
-themes, in addition to 1440x900. The focused Playwright comparison passed all
-four viewport/theme cases; other selector states, craft outcomes, and
-resolutions remain open.
+The Gem Waster selector at its interior cost 10 and maximum cost 35 now
+matches the full source screen in both themes at 1440x900 and 1366x768. The
+focused Playwright comparison passed all eight state/theme/viewport cases,
+including the enabled increase control and arrow image at cost 10, and the
+disabled control with no image at cost 35. Other selector states, craft
+outcomes, and resolutions remain open.
 
 ## Craft flow
 
