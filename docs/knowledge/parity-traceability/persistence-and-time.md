@@ -257,13 +257,17 @@ coverage; the current version-rejection branch is covered.
   `SecurityError` through `Storage.prototype.getItem` for each Beyond save key;
   initialization enters recovery without falling back to the legacy key or
   writing, and recovery export surfaces its own read error without mutation.
-- **Environment coverage still sampled:** deterministic read/write exception
-  injection tests Beyond's adapter/error pipeline, not browser quota policy.
+- A separate Chromium E2E fills origin storage until the browser itself throws
+  `QuotaExceededError`, then exercises manual Save and asserts the actual
+  exception reaches the UI with no confirmation or newly created save slots.
+- **Environment coverage still sampled:** the real quota E2E establishes one
+  Chromium profile's localStorage exhaustion path; it does not establish quota
+  policy across browsers or profiles.
   The source-paired stale-tab test below compares a fresh write, stale overwrite,
   fresh write again, then a final stale-tab action/write. Other cross-tab
-  action/write interleavings, actual
-  profile quota exhaustion, and process termination remain adapter-environment
-  risks, not fully covered Remix compatibility facts.
+  action/write interleavings, quota policies beyond that Chromium profile, and
+  process termination remain adapter-environment risks, not fully covered
+  Remix compatibility facts.
 
 ### Beyond web storage/recovery function and branch trace
 
@@ -271,6 +275,7 @@ coverage; the current version-rejection branch is covered.
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Save coordinator writes previous valid primary to backup before primary; confirms only after the primary succeeds; backup or primary write failure preserves safe prior data                  | primary/backup snapshots and injected storage failures                                                                                                                                                                        | `tests/parity/remix-beyond-save-storage.test.ts` asserts write order, failure result, retained slots, and absence of confirmation                                                                                                                           |
 | Browser `Storage.setItem` throws while writing backup or primary; failure is surfaced without a success log, prior primary remains intact, and a later retry writes both slots                | Chromium adapter injection throws `QuotaExceededError` at each save key                                                                                                                                                       | `tests/e2e/browser-storage-failure.spec.ts` checks both failure points, attempted write order, prior-slot preservation, Settings alert, Mining confirmation log, and retry result                                                                           |
+| Chromium origin reaches its actual localStorage quota during manual save; native `QuotaExceededError` is surfaced without success confirmation or a new save slot                             | Test fills origin keys to the browser's native quota before invoking Save                                                                                                                                                     | `tests/e2e/browser-storage-real-quota.spec.ts` asserts the native quota error, primary write attempt, unchanged key count, absent primary/backup, and no `Game Saved!` log                                                                                  |
 | Browser `Storage.getItem` throws on primary or backup; startup enters recovery, does not fall back to the legacy slot or write, and recovery export reports its read failure without mutation | Chromium adapter injection throws `SecurityError` at each Beyond read key                                                                                                                                                     | `tests/e2e/browser-storage-read-failure.spec.ts` checks both startup branches, complete slot preservation, exact read/write traces, recovery UI, and export error                                                                                           |
 | Load chooses valid primary, offers valid backup recovery for damaged primary, distinguishes empty/invalid slots, and protects unsupported future versions                                     | primary, backup, empty, invalid, and future-version cases                                                                                                                                                                     | `tests/parity/remix-beyond-save-storage.test.ts` asserts selected source and no unintended writes                                                                                                                                                           |
 | Recovery file accepts direct save or bundle primary; uses backup only when primary is invalid; rejects malformed/legacy-only bundles and future primary                                       | captured recovery-file cases                                                                                                                                                                                                  | `tests/parity/remix-beyond-recovery-file.test.ts` compares each decode/result branch and protected storage                                                                                                                                                  |
@@ -278,9 +283,9 @@ coverage; the current version-rejection branch is covered.
 | Browser adapter stores Beyond primary/backup in separate keys and exports each slot without mutation                                                                                          | key separation and slot export cases                                                                                                                                                                                          | `tests/parity/remix-beyond-save-storage.test.ts` compares exact keys and all returned slots                                                                                                                                                                 |
 | Same-origin tabs explicitly save snapshots in different orders; each write replaces the shared value without merging or reconciling the other tab                                             | Four pinned/implementation tabs load one controlled seed; the updated tab saves Blacksmith 1, the stale peer saves level 0, the updated tab saves 1 again, then the stale peer buys Active Power and saves its local snapshot | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares Remix legacy output with Beyond v1 state after all four writes: Blacksmith 1, 0, 1, then 0; the final stale snapshot also has Active Power 1 and Money 0; the updated tab still displays Blacksmith 1 |
 
-Other cross-tab action/write interleavings, actual browser quota exhaustion,
-and process termination remain open environment domains; they are not inferred
-from injected Chromium exceptions or from this explicit-save ordering.
+Other cross-tab action/write interleavings, quota policies across browsers and
+profiles, and process termination remain open environment domains; they are
+not inferred from this single Chromium quota run or the explicit-save ordering.
 
 **Cross-tab E2E validation (2026-11-07):**
 `pnpm.cmd exec playwright test tests/e2e/save-cross-tab-overwrite.spec.ts
@@ -300,6 +305,14 @@ tests/e2e/browser-storage-read-failure.spec.ts --project=chromium --workers=1
 and primary/backup read failures, including unchanged slots, read/write order,
 recovery UI, retry, and export error. It does not close the separate browser
 quota, cross-tab, or abrupt-process environment risks.
+
+**Actual Chromium quota E2E (2026-11-07):**
+`tests/e2e/browser-storage-real-quota.spec.ts` fills the origin's localStorage
+until the browser throws its native `QuotaExceededError`, then invokes manual
+Save. The focused Chromium test passed 1/1 and verified the real exception,
+visible failure result, unchanged key count, absent primary/backup slots, and
+no `Game Saved!` log. This covers one Chromium profile's quota path; policies
+across browsers and profiles remain open.
 
 ## Native save adapter
 

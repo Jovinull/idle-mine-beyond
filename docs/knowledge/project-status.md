@@ -1469,6 +1469,15 @@ still reports its documented intermittent 1440x900 card-corner deltas; those
 screens remain strict and are independent of the new viewport evidence. Linux
 alternate-viewport captures and broader shop states remain open.
 
+**Actual Chromium localStorage quota failure (2026-11-07):**
+`tests/e2e/browser-storage-real-quota.spec.ts` fills the browser origin until
+the native `Storage.setItem` throws `QuotaExceededError`, then triggers manual
+Save. The focused Chromium E2E passed 1/1: Beyond surfaces the
+`Save failed: storageFailed` alert, creates neither primary nor backup, leaves
+the key count unchanged, and emits no `Game Saved!` confirmation. This closes
+the real-quota path for the tested Chromium profile; browser/profile quota
+policies, other cross-tab interleavings, and process termination remain open.
+
 **Mining craft-panel alternate viewport (2026-11-07):** extended the paired
 Remix/Beyond craft visual test to capture the full pre-craft Mining panel at
 1366x768 with Gem cost set to 3. The fixed replacement input matches at zero
