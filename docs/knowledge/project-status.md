@@ -72,6 +72,12 @@ comparison failed once on Planet Coins at `(810,152)` by one RGB channel
 session. No CSS, tolerance, or mask changed; the strict shop visual gap remains
 open.
 
+**Powers alternate viewport differential (2026-11-07):** added the captured
+exact-effect disabled Prestige state at 1366x768 in light and dark, preserving
+the 1440x900 cases. The pinned Remix rows and disabled control match in both
+themes; Windows full-screen screenshots also match exactly. Linux retains those
+state assertions because of the known Wisdom-description antialiasing delta.
+
 **Powers visual differential (2026-11-07):**
 `pnpm.cmd exec playwright test tests/e2e/powers-prestige-differential.spec.ts --workers=1 --retries=0`
 passed 15/15. It covers source-paired prestige actions/no-op and stale-table

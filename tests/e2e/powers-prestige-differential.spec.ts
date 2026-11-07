@@ -171,9 +171,25 @@ async function expectSameScreen(
   // the start of the Wisdom description's second line (25,196), so this
   // full-screen comparison is Windows-only, like other selected captures.
   if (process.platform === "linux") return;
+  const beyondViewport = beyond.viewportSize();
+  const sourceViewport = source.viewportSize();
+  if (
+    !beyondViewport ||
+    !sourceViewport ||
+    beyondViewport.width !== sourceViewport.width ||
+    beyondViewport.height !== sourceViewport.height
+  ) {
+    throw new Error("Powers source and Beyond viewports must match.");
+  }
   await Promise.all([
-    beyond.mouse.move(1438, 800),
-    source.mouse.move(1438, 800),
+    beyond.mouse.move(
+      beyondViewport.width - 2,
+      Math.min(800, beyondViewport.height - 100),
+    ),
+    source.mouse.move(
+      sourceViewport.width - 2,
+      Math.min(800, sourceViewport.height - 100),
+    ),
   ]);
   // The Wisdom icon spins forever; freeze it on both pages like the source
   // captures do, or the two screenshots catch it at different angles.
@@ -394,6 +410,90 @@ for (const scenario of powersVisualScenarios) {
       }
     });
   }
+}
+
+const exactEffectScenario = fixture.data.powersTableSemantics.scenarios.find(
+  ({ name }) => name === "button-is-disabled-at-exact-prestige-effect",
+);
+
+if (!exactEffectScenario) {
+  throw new Error("The pinned exact-effect Powers scenario is missing.");
+}
+
+for (const theme of ["light", "dark"] as const) {
+  test(`matches full-screen Powers exact-effect state at 1366x768 in ${theme} theme`, async ({
+    page,
+    browser,
+  }) => {
+    test.setTimeout(90_000);
+    const viewport = { width: 1366, height: 768 };
+    const sourceContext = await browser.newContext({
+      colorScheme: theme,
+      locale: "en-US",
+      timezoneId: "UTC",
+      viewport,
+    });
+    const sourcePage = await sourceContext.newPage();
+    const encoded = createPrestigeSave(exactEffectScenario, theme);
+
+    try {
+      const sourceUrl = await routePinnedRemixOracle(sourceContext);
+      await Promise.all([
+        page.addInitScript(seedLegacySave, {
+          encoded,
+          sentinel: `powers-exact-effect-1366-${theme}`,
+        }),
+        sourcePage.addInitScript(seedLegacySave, {
+          encoded,
+          sentinel: `powers-exact-effect-1366-${theme}`,
+        }),
+      ]);
+      await page.emulateMedia({ colorScheme: theme });
+      await page.setViewportSize(viewport);
+      await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+      await expect(page.locator("#app")).toHaveAttribute(
+        "data-app-state",
+        "ready",
+        { timeout: 20_000 },
+      );
+      await sourcePage.waitForFunction(() =>
+        Boolean(
+          (window as Window & { game?: unknown }).game &&
+          document.querySelector("#app > footer"),
+        ),
+      );
+      await Promise.all([
+        page.locator("[data-game-tab='powers']").click(),
+        sourcePage
+          .locator("footer button")
+          .filter({ hasText: "Powers" })
+          .click(),
+      ]);
+
+      const [beyondRows, sourceRows] = await Promise.all([
+        readRenderedRows(page.locator("article.powers .powers-table tr")),
+        readRenderedRows(sourcePage.locator("article.powers .powers-table tr")),
+      ]);
+      expect(beyondRows).toEqual(sourceRows);
+      expect(sourceRows.map(({ cells }) => cells[2])).toEqual(
+        exactEffectScenario.rows.map(({ cell }) => cell?.text ?? ""),
+      );
+      await expect(page.locator("[data-power-prestige='0']")).toBeDisabled();
+      await expect(
+        sourcePage
+          .locator("article.powers .powers-table tr")
+          .nth(0)
+          .locator("button"),
+      ).toBeDisabled();
+      await expectSameScreen(
+        page,
+        sourcePage,
+        `${theme} exact-effect Powers state 1366x768`,
+      );
+    } finally {
+      await sourceContext.close().catch(() => undefined);
+    }
+  });
 }
 
 for (const theme of ["light", "dark"] as const) {

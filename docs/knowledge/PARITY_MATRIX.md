@@ -40,6 +40,11 @@ Status reflects evidence and validation, not code presence. Unstarted areas rema
 now covers the exact-effect disabled Prestige button at Mining Power `1e6` in
 both themes. The row remains In Progress for other visual states.
 
+**Wisdom and Powers viewport update (2026-11-07):** the same exact-effect
+disabled action now has paired Remix/Beyond full-screen comparisons at the
+standard 1366x768 viewport in both themes on Windows; Linux asserts the source
+rows and disabled control. Other viewport/state combinations remain open.
+
 **Shop screenshot repeatability (2026-11-07):** the isolated dark, level-one
 catalog comparison differed once at Planet Coins pixel `(810,152)` (Beyond RGB
 3, Remix RGB 4), then passed on immediate rerun. The strict shop visual gap
