@@ -732,6 +732,25 @@ for (const theme of ["light", "dark"] as const) {
                 matches: pair.matches,
               });
             }
+            const restoredStateCaptures: Array<{
+              afterProbe: string;
+              beyondHash: string;
+              remixHash: string;
+              matches: boolean;
+            }> = [];
+            const captureRestoredState = async (afterProbe: string) => {
+              const pair = await captureMiningPairInOrder(
+                page,
+                sourcePage,
+                false,
+              );
+              restoredStateCaptures.push({
+                afterProbe,
+                beyondHash: pair.beyondHash,
+                remixHash: pair.remixHash,
+                matches: pair.matches,
+              });
+            };
             const [beyondPaint, remixPaint] = await Promise.all([
               readMiningPixelStack(page),
               readMiningPixelStack(sourcePage),
@@ -748,6 +767,7 @@ for (const theme of ["light", "dark"] as const) {
             const remixBackgroundHash = createHash("sha256")
               .update(remixBackgroundPng)
               .digest("hex");
+            await captureRestoredState("body-children-hidden");
             const [beyondRootPng, remixRootPng] = await Promise.all([
               captureWithRootBackground(page),
               captureWithRootBackground(sourcePage),
@@ -758,6 +778,7 @@ for (const theme of ["light", "dark"] as const) {
             const remixRootHash = createHash("sha256")
               .update(remixRootPng)
               .digest("hex");
+            await captureRestoredState("root-background");
             const [beyondArticleHiddenPng, remixArticleHiddenPng] =
               await Promise.all([
                 captureWithElementHidden(page, "article.main"),
@@ -769,6 +790,7 @@ for (const theme of ["light", "dark"] as const) {
             const remixArticleHiddenHash = createHash("sha256")
               .update(remixArticleHiddenPng)
               .digest("hex");
+            await captureRestoredState("article-hidden");
             const [beyondMineObjectHiddenPng, remixMineObjectHiddenPng] =
               await Promise.all([
                 captureWithElementHidden(page, ".mineobject"),
@@ -780,6 +802,7 @@ for (const theme of ["light", "dark"] as const) {
             const remixMineObjectHiddenHash = createHash("sha256")
               .update(remixMineObjectHiddenPng)
               .digest("hex");
+            await captureRestoredState("mineobject-hidden");
             const [beyondCanvasHiddenPng, remixCanvasHiddenPng] =
               await Promise.all([
                 captureWithElementHidden(page, "canvas.mine-object"),
@@ -791,6 +814,7 @@ for (const theme of ["light", "dark"] as const) {
             const remixCanvasHiddenHash = createHash("sha256")
               .update(remixCanvasHiddenPng)
               .digest("hex");
+            await captureRestoredState("canvas-display-none");
             const [beyondCanvasInvisiblePng, remixCanvasInvisiblePng] =
               await Promise.all([
                 captureWithElementVisibilityHidden(page, "canvas.mine-object"),
@@ -805,15 +829,18 @@ for (const theme of ["light", "dark"] as const) {
             const remixCanvasInvisibleHash = createHash("sha256")
               .update(remixCanvasInvisiblePng)
               .digest("hex");
+            await captureRestoredState("canvas-visibility-hidden");
             const scopeClassProbe = await captureWithoutCanvasScopeClass(page);
             const scopeClassHash = createHash("sha256")
               .update(scopeClassProbe.png)
               .digest("hex");
+            await captureRestoredState("canvas-scope-class-removed");
             const cachePlacementProbe =
               await captureWithReferenceCachePlacement(page);
             const cachePlacementHash = createHash("sha256")
               .update(cachePlacementProbe.png)
               .digest("hex");
+            await captureRestoredState("reference-cache-repositioned");
             const [beyondOpacityZero, remixOpacityZero] = await Promise.all([
               captureWithElementOpacityZero(page, "canvas.mine-object"),
               captureWithElementOpacityZero(sourcePage, "canvas.mine-object"),
@@ -824,6 +851,7 @@ for (const theme of ["light", "dark"] as const) {
             const remixOpacityZeroHash = createHash("sha256")
               .update(remixOpacityZero.png)
               .digest("hex");
+            await captureRestoredState("canvas-opacity-zero");
             const beyondFirstPair = await captureMiningPairInOrder(
               page,
               sourcePage,
@@ -1004,6 +1032,7 @@ for (const theme of ["light", "dark"] as const) {
                     remixComputedOpacity: remixOpacityZero.computedOpacity,
                   },
                   unmodifiedSequentialCaptures,
+                  restoredStateCaptures,
                   sequentialCaptures: {
                     beyondFirst: {
                       beyondHash: beyondFirstPair.beyondHash,

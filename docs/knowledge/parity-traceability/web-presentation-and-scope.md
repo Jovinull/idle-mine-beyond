@@ -353,11 +353,11 @@ The full-screen prestige differential in `tests/e2e/powers-prestige-differential
 | `Scripts/main.js:update` and `drawStone`: frame-driven mining/render composition and Canvas compositing                                                                                   | `simulationFrameSemantics`, source RGBA goldens, and captured mine objects                                                                                                 | `tests/parity/mining-transitions.test.ts`, `tests/parity/story-runtime.test.ts`, and `tests/e2e/mine-object-renderer.spec.ts` compare frame transitions and pixels                                            |
 | `functions.craftPick`: strict-damage replacement, equal-damage dud, and insufficient-Gem result in the Mining panel; unaffordable craft consumes no RNG                                   | `pickaxeCraftingSemantics.attempts` with source-captured sequences for `better-craft-replaces-and-saves`, `equal-damage-is-a-dud`, and `insufficient-gems-consumes-no-rng` | `tests/e2e/pickaxe-crafting-visual.spec.ts` asserts all three outcomes and exact full-screen pixels at 1440×900 in light and dark; both runtimes consume the captured draw count (zero for insufficient Gems) |
 | `index.html`: `settings.showMinCraftDamage` condition renders the minimum-base-damage label in the craft button only when enabled                                                         | Fresh source save with live Settings toggle to true and false                                                                                                              | `tests/e2e/mining-preferences-visual.spec.ts` asserts source/Beyond label text and exact full Mining screen hashes for both preference states and themes                                                      |
-| `index.html`: `settings.showMineObjLevel` conditional heading shows `#{{mineObjectLevel + 1}}` or is omitted in Mining                                                                    | Fresh source save with live Settings toggle to true and false                                                                                                              | `tests/e2e/mining-preferences-visual.spec.ts` asserts heading text; Windows exact all six; Linux exact five; dark enabled case still differs at pixel `(7,209)` in CI run 92                                  |
+| `index.html`: `settings.showMineObjLevel` conditional heading shows `#{{mineObjectLevel + 1}}` or is omitted in Mining                                                                    | Fresh source save with live Settings toggle to true and false                                                                                                              | `tests/e2e/mining-preferences-visual.spec.ts` asserts heading text; Windows exact all six; Linux exact five; dark enabled case still differs at pixel `(7,209)` in CI run 93                                  |
 | Full Mining screen with controlled Clay save and selected Gem craft cost 3 in light and dark at 1440×900                                                                                  | both `craft-mining-panel-{light,dark}-1440x900.json` sidecars pin source state, theme, browser, viewport, and screenshot hashes                                            | `tests/e2e/remix-app.spec.ts` compares both full screens at zero pixels on Windows and Linux                                                                                                                  |
 | Selected primary Mining screen at 1366×768, 1920×1080, and 2560×1440                                                                                                                      | paired source screenshots for both themes and each viewport                                                                                                                | `tests/e2e/priority-visual.spec.ts` compares each selected viewport; `tests/parity/visual-baselines.test.ts` validates metadata and hashes                                                                    |
 
-**Linux Mining visual evidence (CI runs 88–92, 2026-11-06):** the
+**Linux Mining visual evidence (CI runs 88–93, 2026-11-06):** the
 `showMineObjLevel` dark full-screen branch remains open after one pixel differs
 at `(7,209)`. Hiding the canvas verifies that the complete screenshots then
 match; its visible bitmap hash, bounds, and recorded paint styles match Remix.
@@ -371,9 +371,11 @@ delta, without distinguishing paint from an associated compositor effect. Run
 92 changed the primary comparison to sequential captures and still reproduced
 the delta in both retries. Later sequential captures matched after prior
 DOM/style diagnostic mutations, so they do not establish serial capture as the
-fix. A new failure-only diagnostic records repeated sequential captures before
-any page mutation. The path remains covered by its source assertion, while
-exact screenshot evidence is unresolved.
+fix. CI run 93's four alternating-order pairs before any page mutation all
+reproduced the same two hashes in both retries. The current failure-only probe
+records the unmodified screenshot pair after each DOM/style diagnostic has
+restored the page, to identify the transition. The path remains covered by its
+source assertion, while exact screenshot evidence is unresolved.
 
 ## Visual slice: primary screens
 

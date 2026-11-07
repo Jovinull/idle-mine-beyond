@@ -144,10 +144,13 @@ primary comparison itself to Beyond-then-Remix sequential captures and still
 reproduced the pixel on both retries. The additional sequential pairs in run
 92 matched only after prior DOM/style diagnostic mutations. Thus serializing
 the primary screenshot calls alone does not resolve the discrepancy; the
-post-mutation equality does not establish why the render changes. The next
-failure-only probe records repeated sequential captures before any diagnostic
-mutation. Keep exact PNG equality and do not mask or tolerate the pixel; Linux
-Mining visual parity remains open.
+post-mutation equality does not establish why the render changes. CI run 93
+recorded four alternating-order pairs before any diagnostic mutation; all
+eight pair captures in each retry retained Beyond hash `2b981324…` and Remix
+hash `ee3291e6…`. Capture order and repetition alone do not resolve the delta.
+The next failure-only probe records the restored full-screen pair after each
+individual DOM/style diagnostic. Keep exact PNG equality and do not mask or
+tolerate the pixel; Linux Mining visual parity remains open.
 
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 
