@@ -138666,6 +138666,88 @@
           }
         },
         {
+          "name": "special-anchor-generated-name-live-craft",
+          "input": {
+            "name": "special-anchor-generated-name-live-craft",
+            "gems": "1",
+            "usedGemsLevel": 0,
+            "equippedPickaxe": {
+              "name": "Toy Pickaxe",
+              "power": "0",
+              "quality": "0"
+            },
+            "highestMineObjectLevel": 215,
+            "powers": ["1", "1", "1", "1", "1"],
+            "upgradeLevels": {},
+            "shiftHeld": false,
+            "randomValues": [0.3, 0.8, 0.4, 0.4, 0.7, 0.6, 0.4, 0.8, 0.8, 0.9],
+            "craftGems": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          },
+          "randomCalls": 10,
+          "saveCalls": 1,
+          "saveSnapshots": [
+            {
+              "gems": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "pickaxe": {
+                "name": "Sturdy HD 4943-b Pick",
+                "power": {
+                  "decimal": "29.2",
+                  "mantissa": 2.92,
+                  "exponent": 1
+                },
+                "quality": {
+                  "decimal": "1.0215",
+                  "mantissa": 1.0215,
+                  "exponent": 0
+                }
+              }
+            }
+          ],
+          "eventOrder": [
+            "log:Got a new Pickaxe! \"Sturdy HD 4943-b Pick\"",
+            "save"
+          ],
+          "messageLog": [
+            {
+              "message": "Got a new Pickaxe! \"Sturdy HD 4943-b Pick\"",
+              "color": "#00b400"
+            }
+          ],
+          "result": {
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "pickaxe": {
+              "name": "Sturdy HD 4943-b Pick",
+              "power": {
+                "decimal": "29.2",
+                "mantissa": 2.92,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "1.0215",
+                "mantissa": 1.0215,
+                "exponent": 0
+              },
+              "damage": {
+                "decimal": "29.8278",
+                "mantissa": 2.98278,
+                "exponent": 1
+              }
+            }
+          }
+        },
+        {
           "name": "insufficient-gems-consumes-no-rng",
           "input": {
             "name": "insufficient-gems-consumes-no-rng",

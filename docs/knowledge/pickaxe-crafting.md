@@ -12,7 +12,7 @@ Quality receives repeated 1.15 multipliers on successive 50% rolls, stopping on 
 
 **Verified RNG order:** each random craft evaluates the Blacksmith Expertise effect after the Gem quality-bonus roll and before the Power and base-Quality rolls. Its first `Math.random()` call occurs even at upgrade level zero. At a positive level, a value below `0.25` causes one additional draw to choose `floor(random * level)` bonus points. The quality streak then consumes one draw per successful multiplier and one final failing draw, unless all 15 rolls succeed. Preserve these calls, including calls whose level-zero result is always zero, because they shift every later name roll.
 
-`Pickaxe.generateName()` reads `game.mineObjects[id]` directly. If that entry is missing, it calls `functions.generateMineObject(id)` rather than `functions.getMineObject(id)`. Therefore an exact special-mine anchor can be bypassed during pickaxe naming: the controlled `pickaxeCraftingSemantics` case selects ID 210, where the pickaxe name uses the generated `HD 4943-b` fallback even though the mine-object catalog's ID 210 is `Galaxy Supercluster`. Preserve this source-observed distinction.
+`Pickaxe.generateName()` reads `game.mineObjects[id]` directly. If that entry is missing, it calls `functions.generateMineObject(id)` rather than `functions.getMineObject(id)`. Therefore an exact special-mine anchor can be bypassed during pickaxe naming: the controlled `pickaxeCraftingSemantics` case selects ID 210, where the pickaxe name uses the generated `HD 4943-b` fallback even though the mine-object catalog's ID 210 is `Galaxy Supercluster`. Preserve this source-observed distinction. A live one-Gem craft at high-water level 215 captures the player-reachable version: the source-generated name is `Sturdy HD 4943-b Pick`, uses ten fixed RNG draws, and replaces the Toy Pickaxe; the special-object catalog still names ID 210 `Galaxy Supercluster`.
 
 The average and minimum-craft display paths use a separate deterministic average mode. Do not use that mode as the implementation for a real craft.
 
@@ -22,7 +22,7 @@ The average and minimum-craft display paths use a separate deterministic average
 
 The caller supplies the source upgrade context, RNG, and a name resolver that preserves the source's direct base-array lookup versus generated fallback. The core transition returns ordered events; `packages/formatting` renders the source success, dud, and insufficient-Gem messages. The web session interleaves those messages with each injected save effect; each successful replacement is persisted before its `Game Saved!` confirmation. The route inserts new log entries first and preserves Remix's six-entry window. Seeded outcome distributions and required source boundaries are covered, but additional craft UI states and viewports remain open, so the broader crafting area is still in progress.
 
-The three source-paired craft outcomes also have exact full-screen Chromium
+The source-paired special-anchor naming case also exercises the real Craft button, compares the captured name and success feedback, checks the ten RNG draws, and matches the full Mining screen in both themes at 1440x900. The three source-paired replacement craft outcomes also have exact full-screen Chromium
 comparisons at 1366x768 in light and dark, alongside the existing 1440x900
 comparisons. These selected viewport cases do not cover all Mining panel states
 or resolutions.

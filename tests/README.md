@@ -38,3 +38,5 @@ state but defers the two pixel baselines to the external WSL workflow.
 `e2e/legacy-save-optional-groups.spec.ts` imports the pinned absent-group and present-empty-group saves into the same populated source/Beyond session through Settings. It compares complete legacy export objects and asserts resource defaults, retained/reset upgrade levels, Power values, pickaxe, and Settings state. Run it with `pnpm exec playwright test tests/e2e/legacy-save-optional-groups.spec.ts --workers=1`.
 
 `e2e/upgrade-cap-purchase-differential.spec.ts` compares a Shift purchase from `cap - 1` to cap, then a Control no-op at cap, for one finite-capped Money, Gem, and Planet Coin upgrade against pinned Remix. Run it with `pnpm exec playwright test tests/e2e/upgrade-cap-purchase-differential.spec.ts --workers=1`.
+
+`e2e/pickaxe-special-anchor-name.spec.ts` replays the pinned one-Gem craft at high-water level 215, checks the special-anchor fallback name, message, and RNG count, and compares full Mining screens against Remix in both themes. Run it with `pnpm exec playwright test tests/e2e/pickaxe-special-anchor-name.spec.ts --workers=1`.
