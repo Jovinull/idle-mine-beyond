@@ -191,9 +191,9 @@ variant changes Beyond's screenshot hash. Both hidden cache canvases are
 `87529dc5` Remix), while the visible mine-canvas hashes match. This cache
 difference is recorded but is not evidence of the screen mismatch's cause.
 No product styling or strict pixel assertion has changed; Desktop UI remains
-In Progress.
+In Progress while other screen states remain open.
 
-**Linux Mining screenshot sequence result (CI runs 90–96, 2026-11-07):** on
+**Linux Mining screenshot sequence result (CI runs 90–97, 2026-11-07):** on
 both run 90 retries, setting both visible canvases to `opacity:0` produced
 identical full-screen hashes while preserving DOM and layout boxes. CI run 91's
 failure-only sequential captures in both page orders also matched, but only
@@ -220,8 +220,11 @@ toggle; neither state had active animations. The screenshot hash nevertheless
 changed to Beyond's, supporting stale raster/compositor invalidation rather
 than a visible style or animation change. The test now refreshes the pinned
 Remix paint with a two-frame direct-body display toggle/restore before its
-ordinary exact capture. CI 97 must verify all six Linux Mining preference
-screens; until then, keep this branch and Desktop UI In Progress.
+ordinary exact capture. CI 97 passed both workflow jobs, including the full
+Ubuntu browser smoke; all six Linux Mining preference/theme screenshots now
+match at zero pixels with the strict hash assertion. This closes this specific
+visual gap. Desktop UI remains In Progress for the other uncompleted screens
+and states.
 
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover

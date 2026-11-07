@@ -161,9 +161,12 @@ though the full-screen hash changed. This supports raster/compositor
 invalidation rather than a visible style or animation change. The test now
 refreshes the pinned source paint with a two-frame direct-body display
 toggle/restore (without taking a screenshot while hidden), then performs the
-ordinary exact screenshot comparison. Keep exact PNG equality and do not mask
-or tolerate the pixel; Linux Mining visual parity remains open until CI 97
-validates all six preference captures.
+ordinary exact screenshot comparison. CI 97 passed the full browser smoke and
+the complete workflow; all six preference/theme PNG comparisons on Ubuntu are
+exact. This settles the source-page raster invalidation for this capture path,
+not the broader Desktop UI row. The comparison still uses exact hashes with no
+mask or tolerance; the source-only refresh is test capture preparation and
+does not alter product code or game state.
 
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 
