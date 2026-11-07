@@ -692,10 +692,8 @@ for (const theme of ["light", "dark"] as const) {
           ]);
         }
 
-        const [beyondPng, remixPng] = await Promise.all([
-          waitForStableMiningScreenshot(page),
-          waitForStableMiningScreenshot(sourcePage),
-        ]);
+        const beyondPng = await waitForStableMiningScreenshot(page);
+        const remixPng = await waitForStableMiningScreenshot(sourcePage);
         const beyondHash = createHash("sha256").update(beyondPng).digest("hex");
         const remixHash = createHash("sha256").update(remixPng).digest("hex");
         if (beyondHash !== remixHash) {
