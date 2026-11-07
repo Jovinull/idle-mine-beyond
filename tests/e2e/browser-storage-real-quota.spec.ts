@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
 
 const primarySaveKey = "IdleMineBeyond";
-const backupSaveKey = "IdleMineBeyondBackup";
 
 test("surfaces an actual browser storage quota failure without confirming a save", async ({
   page,
