@@ -64,11 +64,16 @@ async function readLegacySlot(page: Page): Promise<string> {
   return value;
 }
 
-async function readBeyondState(page: Page): Promise<ObservableBeyondState> {
-  const serialized = await page.evaluate(() =>
-    localStorage.getItem("IdleMineBeyond"),
+async function readBeyondState(
+  page: Page,
+  key = "IdleMineBeyond",
+): Promise<ObservableBeyondState> {
+  const serialized = await page.evaluate(
+    (storageKey) => localStorage.getItem(storageKey),
+    key,
   );
-  if (serialized === null) throw new Error("The Beyond primary save is empty.");
+  if (serialized === null)
+    throw new Error(`The Beyond save slot ${key} is empty.`);
   const decoded = decodeRemixBeyondSave(serialized);
   if (decoded.status !== "valid") {
     throw new Error(`Expected a valid Beyond v1 save, got ${decoded.status}.`);
@@ -239,6 +244,11 @@ test("a stale second tab purchase overwrites the newer save like pinned Remix", 
     expect(beyondStaleState.upgrades.money["blacksmith"]).toBe(0);
     expect(beyondStaleState.resources.money).toBe(remixStaleState.money);
     expect(remixStaleState.money).toBe("1000");
+    const backupAfterStaleOverwrite = await readBeyondState(
+      page,
+      "IdleMineBeyondBackup",
+    );
+    expect(backupAfterStaleOverwrite).toEqual(beyondFirstState);
 
     // The newer snapshot can become the final writer again without merging.
     await Promise.all([
@@ -266,6 +276,11 @@ test("a stale second tab purchase overwrites the newer save like pinned Remix", 
     expect(await page.evaluate(() => localStorage.getItem("IdleMine"))).toBe(
       encodedInitialSave,
     );
+    const backupAfterFreshOverwrite = await readBeyondState(
+      page,
+      "IdleMineBeyondBackup",
+    );
+    expect(backupAfterFreshOverwrite).toEqual(beyondStaleState);
 
     // A later action from the stale tab writes its whole local snapshot. This
     // loses the newer Blacksmith purchase while retaining its own Active Power.
@@ -320,6 +335,11 @@ test("a stale second tab purchase overwrites the newer save like pinned Remix", 
       remixStaleActionState.money,
     );
     expect(remixStaleActionState.money).toBe("0");
+    const backupAfterStaleAction = await readBeyondState(
+      page,
+      "IdleMineBeyondBackup",
+    );
+    expect(backupAfterStaleAction).toEqual(beyondFinalState);
     await Promise.all([
       page.locator("footer button").filter({ hasText: "Mining" }).click(),
       sourcePage.locator("footer button").filter({ hasText: "Mining" }).click(),

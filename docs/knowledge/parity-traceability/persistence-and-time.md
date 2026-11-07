@@ -295,8 +295,12 @@ overwrites it with level 0, then the updated tab writes level 1 again. Finally,
 the stale tab buys Active Power from its old state and saves, leaving
 Blacksmith 0 / Active Power 1 / Money 0. Remix legacy fields and Beyond v1 state
 match after all four writes; the updated tab still displays Blacksmith 1. Beyond
-keeps the imported `IdleMine` legacy key unchanged. Other action/write
-interleavings and browser storage races remain open.
+keeps the imported `IdleMine` legacy key unchanged. After each stale, fresh, and
+stale-action overwrite, the E2E also decodes the backup and asserts its observed
+resource/upgrade projection equals the primary snapshot that existed
+immediately before that write. This checks browser backup retention across the
+three explicit stale-tab sequences; other action/write interleavings and browser
+storage races remain open.
 
 **Browser E2E validation (2026-10-05):**
 `pnpm.cmd exec playwright test tests/e2e/browser-storage-failure.spec.ts

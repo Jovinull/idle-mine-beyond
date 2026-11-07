@@ -1501,3 +1501,10 @@ the browser's caret movement, preserve its position, and select the next mine
 object. The focused test passed 1/1. Settings and input controls remains In
 Progress for physical keyboard layouts, IME, other event variants, and broader
 state coverage.
+
+**Cross-tab backup snapshots (2026-11-07):** extended the source-paired
+same-origin stale-write E2E to decode Beyond's backup after stale, fresh, and
+stale-action overwrites. In each sequence, its resource and upgrade projection
+matches the previous primary snapshot, including passive resource changes at
+the actual save time. The focused test passed 1/1; other cross-tab
+interleavings and storage races remain open.
