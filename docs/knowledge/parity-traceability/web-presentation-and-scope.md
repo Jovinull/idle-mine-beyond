@@ -339,11 +339,13 @@ image pairs (two frames × three modifier cases × two themes) match exactly.
   `current=1000,next=1` displays the disabled action; the alternate
   `current=100,next=2` condition also displays its disabled action. The pinned
   source outputs drive full-screen comparisons for all three cases in both
-  themes at 1440x900.
+  themes at 1440x900. At `current=1e6`, a next Power exactly equal to the
+  `31.622776601683796` prestige effect keeps the visible button disabled; this
+  exact-equality screen also has full-screen comparisons in both themes.
 - **Sampled:** representative full-screen comparisons cover the initial,
   stale-after-prestige, remounted table, the hidden/visible 999/1,000 boundary,
   the alternate `current=100,next=2` visibility condition, the all-row state at
-  Power 1,001, and a mixed high-balance state
+  Power 1,001, the exact-equality disabled button, and a mixed high-balance state
   (`1e12,1e4,1e2,1,1`) at 1440x900 in both themes. Other balances, prestige
   inputs, and unselected theme/viewport combinations remain open. The full
   Wisdom panel after Shift buys `Power Power (Active)` to level 10 is also
@@ -359,6 +361,7 @@ image pairs (two frames × three modifier cases × two themes) match exactly.
 | `Scripts/Components/powers-table.js`: row visibility, current/next-Power labels, prestige control enabled/disabled, indexed-write stale display, observed idle `Vue.set` refresh, tab re-entry refresh, and reset outcome | all source rows and named prestige states in `powersTableSemantics`, plus paired pinned browser observations | `tests/parity/remix-powers.test.ts` compares row outputs and resulting values; `tests/e2e/powers-prestige-differential.spec.ts` compares all four actions, the no-op, stale rows, idle-hit refresh, and tab re-entry with Remix         |
 | `prestige-effect-above-threshold`: four visible row/button labels at Power 1,001 with mixed enabled/disabled states                                                                                                       | `powersTableSemantics.scenarios` source output and the captured `1001,1001,1001,1001,1` input                | `tests/e2e/powers-prestige-differential.spec.ts` asserts the rendered text against the source fixture and compares full-screen source/Beyond pixels in both themes at 1440x900                                                          |
 | `button-shows-from-next-power-above-one`: first row is visible at current Power 100 because next Power is 2, even below current threshold 1,000                                                                           | `powersTableSemantics.scenarios` source output for `100,2,1,1,1`, with a disabled `Prestige: x1.00` button   | `tests/e2e/powers-prestige-differential.spec.ts` compares every rendered row with Remix and compares the full screen at 1440x900 in both themes                                                                                         |
+| `button-is-disabled-at-exact-prestige-effect`: next Power `31.622776601683796` exactly equals the effect at current Mining Power `1e6`; the visible Prestige button stays disabled                                        | `powersTableSemantics.scenarios` source output records equal Decimal values and `Prestige: x31.62` disabled  | `tests/e2e/powers-prestige-differential.spec.ts` compares every rendered row with Remix and compares the full screen at 1440x900 in both themes                                                                                         |
 | `high-power-balance-mixed-prestige-state`: Mining Power `1e12`, Craftsmanship `1e4`, Expertise `1e2`, and Wisdom/Exquisity `1`; Mining and Craftsmanship rows show distinct enabled/disabled prestige states              | `powersTableSemantics.scenarios` output captured from pinned Remix for `1e12,1e4,1e2,1,1`                    | `tests/e2e/powers-prestige-differential.spec.ts` asserts all rendered rows against the source fixture and compares full-screen source/Beyond pixels in both themes at 1440x900                                                          |
 | `upgrade-standalone.js:getBuyAmount()` and card render refresh after modifier purchase: Shift buys ten, and only a card with changed displayed level/effect/price refreshes its label                                     | pinned browser run with Wisdom `1e100`, Shift purchase, released-key card labels, and full-screen captures   | `tests/e2e/wisdom-upgrade-buy-amount-differential.spec.ts` asserts level 10, all card labels and balance against Remix, then compares the complete panel at 1440x900 in both themes (exact Windows pixels; Linux text/state assertions) |
 

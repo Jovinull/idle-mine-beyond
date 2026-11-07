@@ -59,6 +59,13 @@ of the current-Power threshold; exact 1440x900 captures passed in light and dark
 the visual slice; other Powers states remain open and the matrix row stays
 In Progress. The pinned corpus verification and focused differential passed.
 
+**Powers exact-effect disabled visual (2026-11-07):** added the pinned
+`button-is-disabled-at-exact-prestige-effect` state to the full-screen
+Remix/Beyond differential. At current Mining Power `1e6`, the next Power equals
+the prestige effect (`31.622776601683796`), so the visible `Prestige: x31.62`
+control is disabled. The 1440x900 comparisons cover both themes; Powers remains
+In Progress for other balances, prestige inputs, and visual states.
+
 **Powers visual differential (2026-11-07):**
 `pnpm.cmd exec playwright test tests/e2e/powers-prestige-differential.spec.ts --workers=1 --retries=0`
 passed 15/15. It covers source-paired prestige actions/no-op and stale-table

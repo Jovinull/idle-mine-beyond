@@ -314,6 +314,7 @@ const powersVisualScenarioNames = new Set([
   "prestige-effect-above-threshold",
   "high-power-balance-mixed-prestige-state",
   "button-shows-from-next-power-above-one",
+  "button-is-disabled-at-exact-prestige-effect",
   "power-row-hidden-below-current-threshold",
   "power-row-visible-at-current-threshold",
 ]);
