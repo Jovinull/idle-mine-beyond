@@ -167,7 +167,9 @@ explicit visual gaps above.
   levels zero and one in both themes (12 paired viewports), plus the zero-
   resource boundary for each tab, the Money below-price boundary, and the exact-
   price boundary for all three tabs in both themes (14 paired viewports). Other
-  balances and broader application-state combinations remain open. A dedicated
+  balances and broader application-state combinations remain open. The Gem
+  exact-price screen also matches at 1366×768 in both themes (two additional
+  source/Beyond full-viewport pairs on Windows). A dedicated
   full-screen differential covers the immediate stale labels and the refreshed
   active hints for Shift, Control, and Shift+Control on Money Active Power in
   both themes; it does not cover all shop states. The
@@ -330,6 +332,15 @@ image pairs (two frames × three modifier cases × two themes) match exactly.
 - **Beyond assertion:**
   `tests/e2e/upgrade-tab-state-differential.spec.ts` compares Gem and Planet Coin
   selection, Story/Mining navigation, decoded export, and fresh-page behavior.
+
+#### Gem exact-price alternate-viewport differential
+
+The pinned `buy-uses-gem-resource` save is shown with the Gem resource exactly
+equal to the selected upgrade price. The focused affordability test now repeats
+that full-screen source/Beyond comparison at 1366×768 in light and dark after
+its existing 1440×900 comparison; both new pairs match at zero pixels on
+Windows Chromium (2/2). Linux evidence for this new viewport is pending CI.
+Other shop balances, card levels, and viewport/theme combinations remain open.
 
 ## Visual slice: Powers
 

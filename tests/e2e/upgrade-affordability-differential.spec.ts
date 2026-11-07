@@ -407,16 +407,19 @@ async function screenshotHash(locator: Locator): Promise<string> {
   return createHash("sha256").update(screenshot).digest("hex");
 }
 
-async function stableAppScreenshot(page: Page): Promise<Buffer> {
-  const bounds = await page.locator("#app").boundingBox();
+async function stableAppScreenshot(
+  page: Page,
+  expectedViewport = { width: 1440, height: 900 },
+): Promise<Buffer> {
+  const viewport = page.viewportSize();
   if (
-    !bounds ||
-    bounds.x !== 0 ||
-    bounds.y !== 0 ||
-    bounds.width !== 1440 ||
-    bounds.height !== 900
+    !viewport ||
+    viewport.width !== expectedViewport.width ||
+    viewport.height !== expectedViewport.height
   ) {
-    throw new Error("The app root does not match the canonical viewport.");
+    throw new Error(
+      `The browser viewport does not match the expected ${expectedViewport.width}x${expectedViewport.height} size.`,
+    );
   }
   let previous: string | undefined;
   for (let attempt = 0; attempt < 8; attempt += 1) {
@@ -481,9 +484,13 @@ async function expectSinglePageFullViewportMatch(
         modifier,
       )
     : undefined;
+  const expectedViewport = page.viewportSize() ?? {
+    width: 1440,
+    height: 900,
+  };
   const beyondScreenshot = beyondModifierScreens
     ? beyondModifierScreens.refreshed
-    : await stableAppScreenshot(page);
+    : await stableAppScreenshot(page, expectedViewport);
   const beyondState = await page.evaluate(() => {
     const card = document.querySelector<HTMLElement>(".upgradelist .upgrade");
     const bounds = card?.getBoundingClientRect();
@@ -585,7 +592,7 @@ async function expectSinglePageFullViewportMatch(
       : undefined;
     sourceScreenshot = sourceModifierScreens
       ? sourceModifierScreens.refreshed
-      : await stableAppScreenshot(page);
+      : await stableAppScreenshot(page, expectedViewport);
     sourceState = await page.evaluate(() => {
       const sourceGame = (
         window as Window & {
@@ -1184,6 +1191,19 @@ for (const theme of ["light", "dark"] as const) {
             `${scenario.name} full viewport pixels`,
             imageName,
           );
+          if (scenario.name === "gems exact-price boundary") {
+            await page.setViewportSize({ width: 1366, height: 768 });
+            await expectSinglePageFullViewportMatch(
+              page,
+              sourceUrl,
+              encodedSave,
+              scenario.group,
+              theme,
+              `${scenario.name} full viewport at 1366x768`,
+              imageName,
+            );
+            await page.setViewportSize({ width: 1440, height: 900 });
+          }
           if (scenario.group === "money" && scenario.affordable) {
             const otherCard = page
               .locator('[data-upgrade-group="money"][data-upgrade-key]')

@@ -1451,6 +1451,15 @@ errors. The focused codec E2E passed 2/2. Arbitrary external bytes and
 historical save shapes remain open, so Save encoding and save shape stays In
 Progress.
 
+**Shop Gem exact-price alternate viewport (2026-11-07):** extended the pinned
+Remix/Beyond affordability differential to capture the full Gem exact-price
+screen at 1366x768 in both themes. The slow Chromium file passed both themes
+and its existing resource/price-boundary checks (2/2, 6.1 minutes); the new
+screenshots match at zero pixels on Windows. The browser-screenshot helper now
+asserts the actual viewport size instead of requiring the app root to equal the
+viewport bounds. Linux evidence for the new captures remains pending CI; the
+broader shop visual state space remains open.
+
 **Mining craft-panel alternate viewport (2026-11-07):** extended the paired
 Remix/Beyond craft visual test to capture the full pre-craft Mining panel at
 1366x768 with Gem cost set to 3. The fixed replacement input matches at zero
