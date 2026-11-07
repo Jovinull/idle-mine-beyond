@@ -390,13 +390,15 @@ with those defaults do not establish ordinary browser scheduling. The probe
 now accepts `--headed --normal-backgrounding`, which filters those three
 Playwright defaults using the documented [`ignoreDefaultArgs` launch option](https://playwright.dev/docs/api/class-browsertype#browser-type-launch).
 With that mode, switching to a second page in the same headed window still
-left both pages visible/focused. Minimizing the headed window for 12 seconds
-reported CDP state `minimized`, but the page remained visible/focused with no
-visibility event; its 100 ms interval recorded 121 ticks and its animation
-frame loop recorded 722 frames during that interval. The normal-backgrounding
-mode removes Playwright's known scheduler overrides, but this host/browser
-session still does not produce `visibilityState === "hidden"`; it cannot close
-the real browser/OS background-scheduling gap.
+left both pages `visible`: the background page reported `hasFocus() === false`
+and the foreground page reported `hasFocus() === true`. Minimizing the headed
+window for 12 seconds reported CDP state `minimized`; the page remained visible
+but unfocused, with no visibility event. Its 100 ms interval recorded 121 ticks
+and its animation-frame loop recorded 722 frames during that interval. The
+probe also disables `Emulation.setFocusEmulationEnabled` so `hasFocus()` is not
+forced by automation. The host/browser session still does not produce
+`visibilityState === "hidden"`; it cannot close the real browser/OS
+background-scheduling gap.
 
 ### Offline/time function and branch trace
 

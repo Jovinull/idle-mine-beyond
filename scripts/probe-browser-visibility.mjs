@@ -19,6 +19,8 @@ const browser = await chromium.launch({
   headless: !headed,
   ...(normalBackgrounding
     ? {
+        // Restore normal background behavior for this diagnostic; Playwright
+        // disables these scheduler paths in its default Chromium launch.
         ignoreDefaultArgs: [
           "--disable-background-timer-throttling",
           "--disable-backgrounding-occluded-windows",
@@ -56,6 +58,11 @@ try {
     await firstPage.goto("data:text/html,<title>visibility probe</title>");
 
     const cdp = await context.newCDPSession(firstPage);
+    if (normalBackgrounding) {
+      await cdp.send("Emulation.setFocusEmulationEnabled", {
+        enabled: false,
+      });
+    }
     let originalBounds;
     let windowId;
     try {
@@ -143,6 +150,16 @@ try {
     await secondPage.goto("data:text/html,<title>second</title>");
     const firstSession = await context.newCDPSession(firstPage);
     const secondSession = await context.newCDPSession(secondPage);
+    if (normalBackgrounding) {
+      await Promise.all([
+        firstSession.send("Emulation.setFocusEmulationEnabled", {
+          enabled: false,
+        }),
+        secondSession.send("Emulation.setFocusEmulationEnabled", {
+          enabled: false,
+        }),
+      ]);
+    }
     const firstWindowId = (
       await firstSession.send("Browser.getWindowForTarget")
     ).windowId;
@@ -175,7 +192,7 @@ try {
           browserVersion: browser.version(),
           mode: headed ? "headed" : "headless",
           backgroundingMode: normalBackgrounding
-            ? "Chromium defaults"
+            ? "Playwright scheduler overrides removed; focus emulation disabled"
             : "Playwright defaults",
           firstWindowId,
           secondWindowId,

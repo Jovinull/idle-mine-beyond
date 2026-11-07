@@ -28,9 +28,10 @@ default Chromium launch args disable timer throttling, occluded-window
 backgrounding, and renderer backgrounding. The visibility probe now has a
 `--normal-backgrounding` mode that removes those overrides. Headed tab switching
 and a 12-second CDP-confirmed window minimization still left the document
-visible/focused, with no visibility event and ongoing callbacks. This host's
-automation browser does not provide the required hidden-state evidence; offline
-progression remains In Progress.
+visible with `hasFocus()` false for the background/minimized page, no visibility
+event, and ongoing callbacks. The probe disables focus emulation as well. This
+host's automation browser does not provide the required hidden-state evidence;
+offline progression remains In Progress.
 
 **Current closeout (2026-11-03):** the sampled-domain review and rule are
 committed and pushed in `f2f8fd5`; all 14 entries marked `Sampled (qualified)`
