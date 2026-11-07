@@ -1340,6 +1340,8 @@ focused Powers parity test (4/4), the complete Powers E2E (15/15), typecheck,
 lint, traceability (36 areas), docs (85 files), global Prettier, and
 `git diff --check`.
 
+**Powers mixed high-balance visual (2026-11-07):** added a pinned Remix `powersTableSemantics` scenario with Power values `1e12,1e4,1e2,1,1`. It captures distinct Mining and Craftsmanship prestige labels and enabled/disabled states, plus hidden later rows. The paired 1440x900 Chromium screenshots and row assertions match in both themes (2/2). Cold light-theme Beyond hydration took about 17 seconds, so this visual scenario waits up to 20 seconds for `data-app-state=ready`. Other Power balances and visual states remain open; Wisdom and Powers stays In Progress. `pnpm.cmd research:check`, `node scripts/reference-probe.mjs verify`, focused Powers parity tests (4/4), and the complete Powers E2E (17/17) passed; traceability (36 areas), docs (85 files), formatting, and `git diff --check` also passed.
+
 **Mining partial-damage visual state (2026-10-05):** the pinned fresh Remix
 route now captures one active click on Mud, leaving it at 80 HP without a
 break or break RNG. Added full-screen 1440x900 light/dark source baselines and

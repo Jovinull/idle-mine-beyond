@@ -2071,6 +2071,11 @@ async function capture(reference, dependencies, dependencySnapshots) {
               values: ["1001", "1001", "1001", "1001", "1"],
             },
             {
+              name: "high-power-balance-mixed-prestige-state",
+              powerResetKeepLevel: 0,
+              values: ["1e12", "1e4", "1e2", "1", "1"],
+            },
+            {
               name: "button-shows-from-next-power-above-one",
               powerResetKeepLevel: 0,
               values: ["100", "2", "1", "1", "1"],

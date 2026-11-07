@@ -340,9 +340,9 @@ image pairs (two frames × three modifier cases × two themes) match exactly.
   source outputs drive full-screen comparisons in both themes at 1440x900.
 - **Sampled:** representative full-screen comparisons cover the initial,
   stale-after-prestige, remounted table, the hidden/visible 999/1,000 boundary,
-  and the all-row state at Power 1,001 at 1440x900 in both themes. Other
-  balances, prestige inputs, and unselected theme/viewport combinations remain
-  open.
+  the all-row state at Power 1,001, and a mixed high-balance state
+  (`1e12,1e4,1e2,1,1`) at 1440x900 in both themes. Other balances, prestige
+  inputs, and unselected theme/viewport combinations remain open.
 
 ### Powers visual function and branch trace
 
@@ -351,16 +351,24 @@ image pairs (two frames × three modifier cases × two themes) match exactly.
 | `game.powers.unlocked()`: locked below high-water 170; visible at and above 170                                                                                                                                           | captured 169/170/171 saves and source screenshot state                                                       | `tests/parity/remix-powers.test.ts` asserts the strict gate; `tests/e2e/remix-app.spec.ts` asserts the tab/panel boundary                                                                                                       |
 | `Scripts/Components/powers-table.js`: row visibility, current/next-Power labels, prestige control enabled/disabled, indexed-write stale display, observed idle `Vue.set` refresh, tab re-entry refresh, and reset outcome | all source rows and named prestige states in `powersTableSemantics`, plus paired pinned browser observations | `tests/parity/remix-powers.test.ts` compares row outputs and resulting values; `tests/e2e/powers-prestige-differential.spec.ts` compares all four actions, the no-op, stale rows, idle-hit refresh, and tab re-entry with Remix |
 | `prestige-effect-above-threshold`: four visible row/button labels at Power 1,001 with mixed enabled/disabled states                                                                                                       | `powersTableSemantics.scenarios` source output and the captured `1001,1001,1001,1001,1` input                | `tests/e2e/powers-prestige-differential.spec.ts` asserts the rendered text against the source fixture and compares full-screen source/Beyond pixels in both themes at 1440x900                                                  |
+| `high-power-balance-mixed-prestige-state`: Mining Power `1e12`, Craftsmanship `1e4`, Expertise `1e2`, and Wisdom/Exquisity `1`; Mining and Craftsmanship rows show distinct enabled/disabled prestige states              | `powersTableSemantics.scenarios` output captured from pinned Remix for `1e12,1e4,1e2,1,1`                    | `tests/e2e/powers-prestige-differential.spec.ts` asserts all rendered rows against the source fixture and compares full-screen source/Beyond pixels in both themes at 1440x900                                                  |
 
 The full-screen prestige differential in `tests/e2e/powers-prestige-differential.spec.ts` also compares the initial, stale-after-prestige, and remounted states against pinned Remix at 1440x900 in both themes. The pinned `Themes/dark.css` selector `button:not(.chapter-control button)` gives non-chapter controls the `#636363` background even at rest; this source branch is included in those screenshot assertions.
 | Captured Wisdom/Stars visual state, both themes at 1440×900 | pinned priority source screenshot pair | `tests/e2e/priority-visual.spec.ts` compares the selected screenshot pair; `tests/parity/visual-baselines.test.ts` checks its hashes |
 
 Validation on 2026-11-07: `pnpm.cmd exec playwright test
 tests/e2e/powers-prestige-differential.spec.ts --workers=1 --retries=0`
-passed 15/15 on Windows Chromium 153.0.8010.12. The six pinned full-screen
+passed 17/17 on Windows Chromium 153.0.8010.12. The eight pinned full-screen
 boundary captures and the existing action, disabled no-op, stale-table,
 remount, and idle-hit refresh differentials all passed. This revalidates the
 mapped scenarios; other balances and unselected visual states remain open.
+
+High-balance visual extension on 2026-11-07: the source probe now captures a
+mixed `1e12,1e4,1e2,1,1` Power state. Its row outputs and full 1440x900 screens
+match pinned Remix in light and dark themes (2/2). The Beyond shell needed up to
+20 seconds to hydrate during the first cold light-theme run, so this visual
+scenario allows that readiness interval; other balance and visual states remain
+open.
 
 ## Visual slice: Mining
 

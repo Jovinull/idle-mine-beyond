@@ -224,6 +224,7 @@ for (const sample of prestigeSamples) {
       await expect(page.locator("#app")).toHaveAttribute(
         "data-app-state",
         "ready",
+        { timeout: 20_000 },
       );
       await sourcePage.waitForFunction(() =>
         Boolean(
@@ -311,6 +312,7 @@ for (const sample of prestigeSamples) {
 
 const powersVisualScenarioNames = new Set([
   "prestige-effect-above-threshold",
+  "high-power-balance-mixed-prestige-state",
   "power-row-hidden-below-current-threshold",
   "power-row-visible-at-current-threshold",
 ]);
@@ -357,6 +359,7 @@ for (const scenario of powersVisualScenarios) {
         await expect(page.locator("#app")).toHaveAttribute(
           "data-app-state",
           "ready",
+          { timeout: 20_000 },
         );
         await sourcePage.waitForFunction(() =>
           Boolean(
@@ -427,6 +430,7 @@ for (const theme of ["light", "dark"] as const) {
       await expect(page.locator("#app")).toHaveAttribute(
         "data-app-state",
         "ready",
+        { timeout: 20_000 },
       );
       await sourcePage.waitForFunction(() =>
         Boolean(
@@ -531,6 +535,7 @@ test("refreshes the stale Powers table after a Remix idle hit uses Vue.set", asy
     await expect(page.locator("#app")).toHaveAttribute(
       "data-app-state",
       "ready",
+      { timeout: 20_000 },
     );
     await sourcePage.waitForFunction(() =>
       Boolean(
