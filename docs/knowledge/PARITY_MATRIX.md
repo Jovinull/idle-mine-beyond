@@ -112,9 +112,10 @@ exact-price state differs at pixel (697,152), Beyond RGB 17 versus Remix RGB
 19; the dark all-affordable catalog at upgrade level 1 differs at five card
 corners, x=810, 923, 1036, 1149, and 1262 at y=152, Beyond RGB 3 versus Remix
 RGB 4. The prior dark exact-price case has also alternated between a match and
-one differing corner pixel across runs. A targeted dark level-1 rerun showed
+one differing corner pixel across runs; three complete dark affordability runs
+on 2026-11-07 passed, so the strict mismatch remains intermittent and open. A targeted dark level-1 rerun showed
 the same five-pixel corner pattern on the Gem catalog, so the raster difference
-is not specific to Planet Coins. State, card geometry, border, and radius match;
+is not specific to Planet Coins. Three additional full dark affordability runs on 2026-11-07 passed all strict screenshot checks, but the earlier exact-price pixel mismatch remains unexplained. State, card geometry, border, and radius match;
 there is no pixel tolerance or masking. The 2026-10-04 full E2E 150/150
 pass and its then-clean affordability run remain historical results; the newer
 strict revalidation keeps the affected shop/desktop UI rows In progress.

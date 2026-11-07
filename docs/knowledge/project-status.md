@@ -22,6 +22,16 @@ test cleanup and were byte-identical; the differential now saves the exact
 compared source/Beyond buffers as attachments on mismatch. No render change or
 tolerance was introduced, so the Shop and Desktop UI rows remain In Progress.
 
+**Repeated dark affordability run (2026-11-07):** reran the complete dark-theme
+source-paired affordability test three times; each run passed all nine states
+and exact full-screen comparisons. This confirms the earlier one-pixel mismatch
+is intermittent, but does not explain or close the strict screenshot gap.
+
+**Repeated dark affordability run (2026-11-07):** reran the complete dark-theme
+source-paired affordability test three times; each run passed all nine states
+and exact full-screen comparisons. This confirms the earlier one-pixel mismatch
+is intermittent, but does not explain or close the strict screenshot gap.
+
 **Selected-tab lifecycle probe (2026-11-07):** a project Chrome DevTools MCP
 session kept an instrumented page `visible` and focused while a second target
 was selected; reading the first target by page ID recorded no visibility event
