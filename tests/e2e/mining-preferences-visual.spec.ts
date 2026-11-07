@@ -275,6 +275,50 @@ async function readMiningPixelStack(page: Page) {
   });
 }
 
+async function readAnimationState(page: Page) {
+  return page.evaluate(() =>
+    document.getAnimations().map((animation) => {
+      const effect = animation.effect;
+      const target =
+        effect instanceof KeyframeEffect && effect.target instanceof Element
+          ? effect.target
+          : null;
+      const style = target ? getComputedStyle(target) : null;
+      return {
+        kind: animation.constructor.name,
+        animationName:
+          "animationName" in animation
+            ? (animation as CSSAnimation).animationName
+            : null,
+        transitionProperty:
+          "transitionProperty" in animation
+            ? (animation as CSSTransition).transitionProperty
+            : null,
+        playState: animation.playState,
+        currentTime:
+          animation.currentTime === null ? null : String(animation.currentTime),
+        startTime:
+          animation.startTime === null ? null : String(animation.startTime),
+        timing: effect?.getComputedTiming() ?? null,
+        target: target
+          ? `${target.tagName.toLowerCase()}${target.id ? `#${target.id}` : ""}${target.className ? `.${String(target.className).trim().replace(/\s+/g, ".")}` : ""}`
+          : null,
+        computed: style
+          ? {
+              opacity: style.opacity,
+              transform: style.transform,
+              filter: style.filter,
+              backgroundColor: style.backgroundColor,
+              transition: style.transition,
+            }
+          : null,
+        keyframes:
+          effect instanceof KeyframeEffect ? effect.getKeyframes() : null,
+      };
+    }),
+  );
+}
+
 async function captureWithBodyChildrenHidden(page: Page) {
   const original = await page.evaluate(() =>
     Array.from(document.body.children).map((element) => {
@@ -781,6 +825,16 @@ for (const theme of ["light", "dark"] as const) {
                 matches: pair.matches,
               });
             }
+            const initialRenderState = {
+              beyond: {
+                paint: await readMiningPixelStack(page),
+                animations: await readAnimationState(page),
+              },
+              remix: {
+                paint: await readMiningPixelStack(sourcePage),
+                animations: await readAnimationState(sourcePage),
+              },
+            };
             const restoredStateCaptures: Array<{
               afterProbe: string;
               beyondHash: string;
@@ -805,6 +859,10 @@ for (const theme of ["light", "dark"] as const) {
               "beyond-body-children-display-toggle-no-hidden-screenshot",
             );
             await toggleBodyChildrenDisplayAndWait(sourcePage);
+            const remixAfterDisplayToggle = {
+              paint: await readMiningPixelStack(sourcePage),
+              animations: await readAnimationState(sourcePage),
+            };
             await captureRestoredState(
               "remix-body-children-display-toggle-no-hidden-screenshot",
             );
@@ -1028,6 +1086,8 @@ for (const theme of ["light", "dark"] as const) {
               test.info().outputPath("linux-dark-level-pixel-stack.json"),
               JSON.stringify(
                 {
+                  initialRenderState,
+                  remixAfterDisplayToggle,
                   beforeWrapperRemoval: {
                     beyond: beyondPaint,
                     remix: remixPaint,

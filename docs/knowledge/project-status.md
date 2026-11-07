@@ -193,7 +193,7 @@ difference is recorded but is not evidence of the screen mismatch's cause.
 No product styling or strict pixel assertion has changed; Desktop UI remains
 In Progress.
 
-**Linux Mining screenshot sequence result (CI runs 90–94, 2026-11-06):** on
+**Linux Mining screenshot sequence result (CI runs 90–95, 2026-11-06):** on
 both run 90 retries, setting both visible canvases to `opacity:0` produced
 identical full-screen hashes while preserving DOM and layout boxes. CI run 91's
 failure-only sequential captures in both page orders also matched, but only
@@ -209,10 +209,16 @@ do not resolve the delta. In run 94, the first pair after hiding/restoring all
 direct `body` children on both pages matched; all later restored-state pairs
 also matched. Since the probe ran concurrently on both pages and captured
 while hidden, this does not isolate which page or whether the screenshot or
-display toggle triggers the change. The next probe performs a display toggle
-without a hidden screenshot on each page separately, then captures each
-hidden-page variant separately. Keep exact screenshot equality; the Linux
-Mining branch and Desktop UI remain In Progress.
+display toggle triggers the change. In run 95, toggling direct body-child
+`display` on Beyond without taking a hidden-state screenshot left the mismatch
+unchanged. Performing the same toggle on pinned Remix changed its full-screen
+hash from `ee3291e6…` to Beyond's `2b981324…`; this happened in both retries.
+The source-page toggle, rather than capture order or the hidden-state
+screenshot, now isolates the transition. Before normalizing captures around
+that toggle, the next probe records computed styles and active animations
+before/after it to check whether it merely flushes paint or cancels a visible
+transition. Keep exact screenshot equality; the Linux Mining branch and
+Desktop UI remain In Progress.
 
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
