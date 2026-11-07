@@ -2086,6 +2086,155 @@ test("matches trusted browser ArrowRight input in the Settings save field", asyn
   }
 });
 
+test("matches trusted repeated ArrowLeft input in the Settings save field", async ({
+  page,
+  browser,
+}) => {
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as SettingsRuntimeFixture;
+  const legacySave = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as {
+    mineObjectLevel: number;
+    highestMineObjectLevel: number;
+    lastActive: number;
+    settings: { tab: string; showMineObjLevel: boolean };
+  };
+  legacySave.mineObjectLevel = 3;
+  legacySave.highestMineObjectLevel = 3;
+  legacySave.lastActive = 1_700_000_000_000;
+  legacySave.settings.tab = "main";
+  legacySave.settings.showMineObjLevel = true;
+  const encodedSave = encodeRemixLegacySave(legacySave);
+  const sourceContext = await browser.newContext({
+    colorScheme: "light",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    const sourcePage = await sourceContext.newPage();
+    await sourcePage.addInitScript((save) => {
+      localStorage.clear();
+      localStorage.setItem("IdleMine", save);
+      Date.now = () => 1_700_000_000_000;
+    }, encodedSave);
+    await page.addInitScript((save) => {
+      localStorage.clear();
+      localStorage.setItem("IdleMine", save);
+      Date.now = () => 1_700_000_000_000;
+    }, encodedSave);
+
+    await Promise.all([sourcePage.goto(sourceUrl), page.goto("/")]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await expect(sourcePage.locator(".mineobject h2")).toBeVisible();
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage.getByRole("button", { name: /Settings/ }).click(),
+    ]);
+
+    const targets = [
+      { page, field: page.locator("[data-settings-save-field]") },
+      { page: sourcePage, field: sourcePage.locator("textarea") },
+    ];
+    for (const target of targets) {
+      await target.field.fill("ABCD");
+      await target.field.evaluate((element) => {
+        type KeyboardRepeatProbeWindow = Window & {
+          __keyboardRepeatProbe?: {
+            readonly key: string;
+            readonly repeat: boolean;
+            readonly isTrusted: boolean;
+            readonly defaultPrevented: boolean;
+          }[];
+        };
+        const probeWindow = window as KeyboardRepeatProbeWindow;
+        probeWindow.__keyboardRepeatProbe = [];
+        window.addEventListener("keydown", (event) => {
+          if (event.key === "ArrowLeft") {
+            probeWindow.__keyboardRepeatProbe?.push({
+              key: event.key,
+              repeat: event.repeat,
+              isTrusted: event.isTrusted,
+              defaultPrevented: event.defaultPrevented,
+            });
+          }
+        });
+        if (!(element instanceof HTMLTextAreaElement)) {
+          throw new Error("The Settings save field is not a textarea.");
+        }
+        element.focus();
+        element.setSelectionRange(2, 2);
+      });
+      await target.page.keyboard.down("ArrowLeft");
+      await target.page.keyboard.down("ArrowLeft");
+      await target.page.keyboard.up("ArrowLeft");
+    }
+
+    const results = await Promise.all(
+      targets.map(({ field }) =>
+        field.evaluate((element) => {
+          type KeyboardRepeatProbeWindow = Window & {
+            __keyboardRepeatProbe?: {
+              readonly key: string;
+              readonly repeat: boolean;
+              readonly isTrusted: boolean;
+              readonly defaultPrevented: boolean;
+            }[];
+          };
+          if (!(element instanceof HTMLTextAreaElement)) {
+            throw new Error("The Settings save field is not a textarea.");
+          }
+          return {
+            selectionStart: element.selectionStart,
+            keydowns: (window as KeyboardRepeatProbeWindow)
+              .__keyboardRepeatProbe,
+          };
+        }),
+      ),
+    );
+    expect(results[0]).toEqual(results[1]);
+    expect(results[0]).toEqual({
+      selectionStart: 2,
+      keydowns: [
+        {
+          key: "ArrowLeft",
+          repeat: false,
+          isTrusted: true,
+          defaultPrevented: true,
+        },
+        {
+          key: "ArrowLeft",
+          repeat: true,
+          isTrusted: true,
+          defaultPrevented: true,
+        },
+      ],
+    });
+
+    await Promise.all([
+      page.locator("[data-game-tab='mining']").click(),
+      sourcePage.getByRole("button", { name: /Mining/ }).click(),
+    ]);
+    await expect(page.locator("[data-mine-object-level]")).toHaveText("#2");
+    await expect(sourcePage.locator(".mineobject h4")).toHaveText("#2");
+  } finally {
+    await sourceContext.close();
+  }
+});
+
 test("applies and saves source-backed Settings preferences", async ({
   page,
 }) => {

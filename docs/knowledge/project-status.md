@@ -1527,3 +1527,10 @@ source/Beyond comparisons at 1366x768 for all three upgrade tabs at level one
 with abundant resources. Each representative hovered-card view matched in
 light and dark (six captures; focused tests passed 2/2). Broader levels and
 viewport combinations remain open.
+
+**Trusted Settings key-repeat input (2026-11-07):** added a pinned-Remix
+source-paired Chromium E2E that sends two real ArrowLeft keydowns with no
+intervening keyup while the Settings save field is focused. Both runtimes
+report trusted `repeat=false` and `repeat=true` events, prevent caret movement,
+and select the same prior mine object; the resulting level and event details
+match (1/1). Keyboard layouts and IME behavior remain open.
