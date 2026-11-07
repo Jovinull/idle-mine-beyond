@@ -33,6 +33,13 @@ event, and ongoing callbacks. The probe disables focus emulation as well. This
 host's automation browser does not provide the required hidden-state evidence;
 offline progression remains In Progress.
 
+**Powers visual differential (2026-11-07):**
+`pnpm.cmd exec playwright test tests/e2e/powers-prestige-differential.spec.ts --workers=1 --retries=0`
+passed 15/15. It covers source-paired prestige actions/no-op and stale-table
+refresh behavior plus six exact full-screen captures for three pinned boundary
+states in light and dark at 1440x900. The broader Wisdom/Powers row remains
+In Progress for other balances and states.
+
 **Current closeout (2026-11-03):** the sampled-domain review and rule are
 committed and pushed in `f2f8fd5`; all 14 entries marked `Sampled (qualified)`
 have mapped boundary, sample, and differential evidence. They comprise twelve

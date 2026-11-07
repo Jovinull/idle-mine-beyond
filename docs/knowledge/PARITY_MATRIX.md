@@ -209,3 +209,8 @@ tracked probe now removes those flags and focus emulation in
 12-second minimization left the page visible but unfocused, with callbacks
 running. This host does not supply a true hidden-document observation, so
 offline lifecycle remains open.
+
+Powers visual differential (2026-11-07): the pinned source/Beyond suite passed
+15/15 on Windows Chromium 153.0.8010.12. It revalidates the mapped prestige
+actions/no-op, table refresh states, and six 1440x900 light/dark boundary
+screenshots; other Wisdom/Powers balances and visual states remain open.

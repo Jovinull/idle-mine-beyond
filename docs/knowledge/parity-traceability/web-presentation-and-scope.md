@@ -346,6 +346,13 @@ image pairs (two frames × three modifier cases × two themes) match exactly.
 The full-screen prestige differential in `tests/e2e/powers-prestige-differential.spec.ts` also compares the initial, stale-after-prestige, and remounted states against pinned Remix at 1440x900 in both themes. The pinned `Themes/dark.css` selector `button:not(.chapter-control button)` gives non-chapter controls the `#636363` background even at rest; this source branch is included in those screenshot assertions.
 | Captured Wisdom/Stars visual state, both themes at 1440×900 | pinned priority source screenshot pair | `tests/e2e/priority-visual.spec.ts` compares the selected screenshot pair; `tests/parity/visual-baselines.test.ts` checks its hashes |
 
+Validation on 2026-11-07: `pnpm.cmd exec playwright test
+tests/e2e/powers-prestige-differential.spec.ts --workers=1 --retries=0`
+passed 15/15 on Windows Chromium 153.0.8010.12. The six pinned full-screen
+boundary captures and the existing action, disabled no-op, stale-table,
+remount, and idle-hit refresh differentials all passed. This revalidates the
+mapped scenarios; other balances and unselected visual states remain open.
+
 ## Visual slice: Mining
 
 - **Remix source branches:** `index.html` selected object/resources/upgrade
