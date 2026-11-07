@@ -593,6 +593,19 @@ is not the cause of that observed source/Beyond pixel delta. The remaining
 one-channel border-raster difference is unexplained. Keep exact comparisons
 and the shop visual row In Progress; do not apply a mask or tolerance.
 
+**Shop recheck (2026-11-07):** the existing focused level-one catalog tests
+passed 1/1 in each theme at 1440x900 with exact full-screen hashes. The light
+nine-state affordability test passed 1/1. The dark test passed eight full-screen
+states and failed the Planet Coin exact-price state at `(697,152)` (Beyond RGB
+`(4,4,4)`, Remix `(3,3,3)`); the first card's box and recorded computed styles
+match. A temporary reference-only display hide/restore changed the source
+capture hash from the Beyond hash `b0cf6c5a…` to the previous source hash
+`36028bc8…`, and the resulting source/Beyond comparison still failed. The
+experiment was removed; no screenshot masking or product adjustment was made.
+The level-one corner mismatch did not reproduce in this focused rerun, but the
+remaining exact-price state and broader shop-state coverage keep the visual
+area In Progress.
+
 `pnpm check` passed content/assets checks, traceability, formatting, lint,
 strict TypeScript/Svelte checks, and 46 unit tests, but its parity suite
 remained CPU-active without output for more than ten minutes and was stopped;

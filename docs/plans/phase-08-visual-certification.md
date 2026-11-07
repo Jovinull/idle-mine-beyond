@@ -22,6 +22,16 @@ remains in `tests/e2e/mining-preferences-visual.spec.ts`. This closes only this
 Linux Mining preference slice; the broader Mining and Desktop UI rows remain
 In Progress for their separately tracked states and evidence.
 
+**Shop visual rerun (2026-11-07):** the focused level-one catalog comparison
+passed in both themes (one test per theme), including all three resource tabs,
+card/detail interactions, and exact full-screen hashes. The earlier level-one
+corner deltas did not recur. The nine-state affordability differential passed
+in light and failed in dark only for the exact-price Planet Coin full screen,
+at one pixel `(697,152)` (Beyond RGB `(4,4,4)`, Remix `(3,3,3)`). A temporary
+reference-only paint refresh changed the source capture back to its prior
+hash and did not close the delta; the experiment was removed. Keep this shop
+visual slice and Desktop UI In Progress with zero-pixel assertions.
+
 **Story scope certified (2026-11-03):** the approved chapter-level visual scope
 is complete. All nine all-unlocked chapter pages match the pinned source at
 zero pixels in light and dark at 1440x900; selected natural progression states

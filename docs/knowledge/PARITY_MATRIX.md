@@ -38,6 +38,15 @@ Status reflects evidence and validation, not code presence. Unstarted areas rema
 
 Latest shop visual revalidation (2026-11-03): `pnpm.cmd test:e2e:slow --workers=1 --retries=0` passed 8/9. The only failure was the level-one light full-screen catalog: the suite reported Planet Coins, while a focused rerun reported Gems. Both runs differed at the same five top-left corners by RGB 17 vs. 19; the prior dark differences passed in the new suite. See the [shop trace map](parity-traceability/web-presentation-and-scope.md) for the detailed diagnosis.
 
+**Shop visual recheck (2026-11-07):** the focused level-one catalog test passed
+in light and dark (2/2), including all three resource tabs, card/detail
+interactions, and exact full-screen hashes. The two themes' prior level-one
+corner deltas did not reproduce. In the nine-state affordability test, light
+passed and dark failed only the Planet Coin exact-price full-screen hash at
+`(697,152)` (Beyond RGB `(4,4,4)`, Remix `(3,3,3)`); source card geometry and
+computed styles match. The shop row remains In Progress for this exact visual
+difference and its remaining state coverage.
+
 Browser persistence failure evidence (2026-10-05): the Chromium write/read failure tests passed 4/4, covering injected backup/primary `QuotaExceededError`, primary/backup `SecurityError`, retained save slots, recovery UI, retry, and export failure. Real quota policy, cross-tab races, and process termination remain separate open environment evidence; Beyond save storage and recovery stays In progress.
 
 Offline-message formatter differential (2026-10-05): `tests/e2e/offline-progression.spec.ts` asserts the source save selects formatter index 3 (`Letters`) and compares cold-start return messages and complete legacy exports between pinned Remix and Beyond. The message-log crop also matches at zero pixels in light and dark. The focused file passed 4/4; this closes the alternate-notation message-composition path only. Offline progression remains In Progress for broader live-rate states and actual OS/browser background scheduling.

@@ -254,6 +254,26 @@ the same screenshot hash as the original Beyond capture, so the wrapper does
 not explain this state either. The visual difference remains unresolved and
 the strict assertion remains unchanged.
 
+**Focused shop recheck (2026-11-07):** the existing level-one catalog E2E
+passed in light and dark (2/2) at 1440x900, including all three resource tabs,
+card/detail interactions, and exact full-screen hashes; the previously reported
+level-one corner deltas did not reproduce. The existing nine-state affordability
+E2E passed in light. In dark it passed eight full-screen states and failed the
+Planet Coin exact-price state at `(697,152)`, Beyond RGB `(4,4,4)` versus Remix
+RGB `(3,3,3)`. The first card bounds and recorded computed styles match. A
+temporary source-only display hide/restore across two frames changed the Remix
+hash from `b0cf6c5a…` to `36028bc8…`; the refreshed capture retained the same
+one-pixel mismatch, so this experiment did not establish a fix and was removed.
+The prior reported level-one differences are not reproduced in this focused
+run, but the affordability mismatch and broader unselected shop states keep
+the shop and Desktop UI rows In Progress. No mask, tolerance, or exception was
+added. These runs used Windows Chromium `153.0.8010.12`, DPR 1, at 1440x900.
+Reproduce with `pnpm.cmd test:e2e:slow --grep "matches shop cards, details,
+and full screens against Remix at level 1 in <light|dark> theme" --workers=1
+--retries=0` for each theme, and `pnpm.cmd test:e2e:slow --grep "matches Remix
+shop affordability boundaries in" --workers=1 --retries=0` for both affordability
+themes.
+
 ### Upgrade-shop visual function and branch trace
 
 | Pinned Remix function/path and branch                                                                                                                  | Source evidence                                                                             | Beyond assertion                                                                                                                                                                     |

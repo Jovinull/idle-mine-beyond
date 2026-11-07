@@ -6,6 +6,15 @@ Last updated: 2026-11-07
 
 **Phase 1 - Deterministic core (in progress).** The source-to-test audit maps all 36 parity-matrix areas to pinned Remix functions/branches, fixtures, and assertions. Fourteen rows are Certified: Random distributions and RNG; Big-number math and serialization; Fresh simulation-state initialization; Simulation action composition; Active and idle damage; Object drops and random outcomes; Fixed mine objects; Special mine objects; Procedural mine objects; Mine rendering and compositing; Number formatting and notations; Progression route and phase replay; Beyond versioned save schema; and Story and notifications. The Story row was certified on 2026-11-03 at the approved chapter-level visual scope after its 61 condition boundaries, route/phase differentials, app interactions, all nine chapter screens in both themes, and all 48 preview hashes were reviewed. Fresh-state coverage traces Remix's no-save startup and verifies the complete initial state, live browser startup/interactions, and fresh Mining visuals in both themes. Action-composition coverage compares source frame, click, break, purchase, and craft branches in core, then verifies browser event wiring, save-before-Story ordering, random draws, and persisted state. Active/idle damage has browser assertions for a fresh-Mud click and a pinned full-health idle break; procedural-object coverage loads all three generator regions plus a sparse high ID through the Beyond save and Mining Canvas. Qualified non-exhaustive formula/RNG samples do not block certification; unresolved source boundaries, save/platform domains, and visual/UI evidence still can. The checker flags Certified rows that retain mapped gaps or unqualified sampled domains, and does not infer certification from code presence. parity-v1 remains web-only; native packaging, storage, and running Tauri WebView validation are post-v1.
 
+**Shop visual recheck (2026-11-07):** the fixed level-one full-screen catalog
+test passed in light and dark (2/2), covering all three tabs and their card/detail
+interactions. The nine-state affordability differential passed in light but
+failed in dark on the exact-price Planet Coin screen: one pixel at `(697,152)`
+is Beyond RGB `(4,4,4)` versus Remix `(3,3,3)`, with matching card bounds and
+computed styles. A temporary source-only paint refresh did not remove the
+difference and was discarded. Shop and Desktop UI remain In Progress; strict
+pixel comparison remains unchanged.
+
 **Current closeout (2026-11-03):** the sampled-domain review and rule are
 committed and pushed in `f2f8fd5`; all 14 entries marked `Sampled (qualified)`
 have mapped boundary, sample, and differential evidence. They comprise twelve
