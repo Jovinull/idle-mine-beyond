@@ -195,3 +195,10 @@ its ordinary capture; it keeps exact SHA-256 comparisons and changes no product
 code. CI 97 passed all six Linux Mining preference/theme screenshots at zero
 pixels, closing this specific visual slice. Broader Mining and desktop visual
 parity remain In Progress.
+
+Offline tab-visibility probe (2026-11-07): the project Chrome DevTools MCP
+selected page 3 while page 1 was queried by ID without activation. Page 1
+remained visible and focused, with no visibility-change event and 33 interval
+ticks plus 203 animation frames over three seconds. This adds no hidden-tab
+evidence; offline progression remains In Progress. See the [persistence/time
+trace map](parity-traceability/persistence-and-time.md).

@@ -15,6 +15,14 @@ computed styles. A temporary source-only paint refresh did not remove the
 difference and was discarded. Shop and Desktop UI remain In Progress; strict
 pixel comparison remains unchanged.
 
+**Selected-tab lifecycle probe (2026-11-07):** a project Chrome DevTools MCP
+session kept an instrumented page `visible` and focused while a second target
+was selected; reading the first target by page ID recorded no visibility event
+and continued timer/animation-frame callbacks over three seconds. This does
+not exercise a real hidden tab or OS throttling. Offline progression remains
+In Progress for actual browser/OS background scheduling; details and the
+official protocol references are in the [persistence/time trace map](parity-traceability/persistence-and-time.md).
+
 **Current closeout (2026-11-03):** the sampled-domain review and rule are
 committed and pushed in `f2f8fd5`; all 14 entries marked `Sampled (qualified)`
 have mapped boundary, sample, and differential evidence. They comprise twelve

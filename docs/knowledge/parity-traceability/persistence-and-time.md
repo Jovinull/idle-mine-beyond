@@ -367,6 +367,20 @@ pages remained `visible` and focused. This confirms that the current headless
 launch path still cannot exercise a hidden tab; it does not add lifecycle
 parity evidence.
 
+**Selected-tab MCP probe (2026-11-07):** using the project Chrome DevTools MCP,
+I instrumented page 1, opened page 3 as the selected foreground page, waited
+three seconds, and queried page 1 by ID without selecting or activating it.
+Page 1 still reported `visibilityState === "visible"`, `hidden === false`, and
+`hasFocus() === true`; it recorded no `visibilitychange` event, 33 interval
+ticks, and 203 animation frames. This is another automation-target result, not
+evidence for an ordinary browser hidden tab or OS throttling. The current
+official [Page protocol](https://chromedevtools.github.io/devtools-protocol/tot/Page/)
+documents `Page.setWebLifecycleState`, while the [Emulation protocol](https://chromedevtools.github.io/devtools-protocol/tot/Emulation/)
+does not document a command to set the document visibility state. Do not
+override the page's JS visibility properties and count that as lifecycle
+evidence. A real `visibilityState === "hidden"` observation remains required
+to close this web-v1 environment domain.
+
 ### Offline/time function and branch trace
 
 | Pinned Remix function/path and branch                                                                                                                                                           | Source evidence                                                                           | Beyond assertion                                                                                                                                                                                                       |
