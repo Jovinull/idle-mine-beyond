@@ -13,6 +13,8 @@ type PurchaseScenario = {
   startingLevel: number;
   startingResources: Record<string, { decimal: string }>;
   currentPrice: { decimal: string };
+  endingLevel: number;
+  purchases: number;
 };
 type UpgradeFixture = {
   data: {
@@ -2168,7 +2170,111 @@ test(
           });
         }
       }
-      expect(compared).toBe(100);
+
+      const alignedStopCases = [
+        {
+          name: "buy10-aligns-current-level",
+          modifier: "Shift" as const,
+          expectedLevel: 10,
+        },
+        {
+          name: "buy100-aligns-current-level",
+          modifier: "Control" as const,
+          expectedLevel: 100,
+        },
+      ];
+      for (const alignedCase of alignedStopCases) {
+        const purchase = fixture.data.upgradeSemantics.purchaseSemantics.find(
+          ({ name }) => name === alignedCase.name,
+        );
+        if (!purchase) {
+          throw new Error(
+            `Missing source purchase fixture: ${alignedCase.name}`,
+          );
+        }
+        expect(purchase.endingLevel).toBe(alignedCase.expectedLevel);
+        expect(purchase.purchases).toBe(1);
+        const encodedSave = makeScenarioSave(originalSave, {
+          group: purchase.group,
+          key: purchase.key,
+          level: purchase.startingLevel,
+          resource: purchase.startingResources[purchase.group]!.decimal,
+          theme: "light",
+        });
+        await test.step(`${alignedCase.modifier} stops at the next aligned level from ${purchase.startingLevel}`, async () => {
+          await Promise.all([
+            page.evaluate((encoded) => {
+              localStorage.clear();
+              localStorage.setItem("IdleMine", encoded);
+            }, encodedSave),
+            sourcePage.evaluate((encoded) => {
+              localStorage.clear();
+              localStorage.setItem("IdleMine", encoded);
+            }, encodedSave),
+          ]);
+          await Promise.all([page.reload(), sourcePage.reload()]);
+          await expect(page.locator("#app")).toHaveAttribute(
+            "data-app-state",
+            "ready",
+          );
+          await sourcePage.waitForFunction(() =>
+            Boolean((window as Window & { game?: unknown }).game),
+          );
+          await Promise.all([
+            page.locator('[data-upgrade-tab="money"]').click(),
+            sourcePage
+              .locator(".upg-tabs button")
+              .filter({ hasText: tabLabels.money })
+              .click(),
+          ]);
+
+          const imageName =
+            upgradeGroups.money[purchase.key]!.image.split("/").at(-1)!;
+          const card = page.locator(
+            `[data-upgrade-group="money"][data-upgrade-key="${purchase.key}"]`,
+          );
+          const sourceCard = sourcePage
+            .locator(".upgradelist .upgrade")
+            .filter({
+              has: sourcePage.locator(`img[src$="${imageName}"]`),
+            })
+            .first();
+          await expect(card).toHaveAttribute(
+            "data-upgrade-level",
+            String(purchase.startingLevel),
+          );
+          await Promise.all([
+            page.keyboard.down(alignedCase.modifier),
+            sourcePage.keyboard.down(alignedCase.modifier),
+          ]);
+          try {
+            await Promise.all([card.click(), sourceCard.click()]);
+          } finally {
+            await Promise.all([
+              page.keyboard.up(alignedCase.modifier),
+              sourcePage.keyboard.up(alignedCase.modifier),
+            ]);
+          }
+
+          await expect(card).toHaveAttribute(
+            "data-upgrade-level",
+            String(alignedCase.expectedLevel),
+          );
+          expect(normalizeText(await card.locator(".lvl").innerText())).toBe(
+            normalizeText(await sourceCard.locator(".lvl").innerText()),
+          );
+          expect(await readCardPresentation(card)).toEqual(
+            await readCardPresentation(sourceCard),
+          );
+          const [beyondHeader, sourceHeader] = await Promise.all([
+            page.locator("header").innerText(),
+            sourcePage.locator("header").innerText(),
+          ]);
+          expect(normalizeText(beyondHeader)).toBe(normalizeText(sourceHeader));
+          compared += 1;
+        });
+      }
+      expect(compared).toBe(102);
     } finally {
       await sourceContext.close().catch(() => undefined);
     }
