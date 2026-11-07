@@ -269,3 +269,5 @@ tabs, the updated tab saves Blacksmith 1, the stale tab overwrites it with
 level 0, then the updated tab writes level 1 again. Remix legacy fields and
 Beyond v1 state match after all three writes; the E2E also covers a stale-tab Active Power purchase/save that overwrites the newer Blacksmith state. Other action/write interleavings,
 quota, and process termination remain open.
+
+Historical save UI integration (2026-11-07): tests/e2e/legacy-save-historical-shape.spec.ts imports the synthetic, provenance-recorded community save shape through Settings and asserts persisted Beyond state, including defaults for omitted Planet Coin/Wisdom resources. The pinned complete-output differential remains in tests/parity/legacy-save-historical-shape.test.ts. General historical-format support remains In Progress.

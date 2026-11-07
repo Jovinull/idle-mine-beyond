@@ -1540,3 +1540,5 @@ visual E2E to replay one active, non-lethal Mud click in pinned Remix and
 Beyond, then compare complete source/runtime screenshots at zero pixels in
 light and dark. Windows passed both comparisons (2/2); Linux runs the same live
 comparison in CI, replacing the earlier state-only check for this slice.
+
+**Historical-shaped save import E2E (2026-11-07):** the synthetic, provenance-recorded community specimen now passes through the live Settings import field. The test verifies persisted resources, mine progress, pickaxe, and default zero values for absent Planet Coin/Wisdom resources. The focused Playwright test passed 1/1; this adds one UI integration case and does not establish support for other historical save shapes.

@@ -467,3 +467,7 @@ formula coverage. The browser differentials cover capped positive elapsed time,
 a negative elapsed boundary, and an advancing inter-read startup clock.
 Actual OS/browser background lifecycle remains a separate environment gap;
 native background lifecycle is out of web-v1 scope.
+
+### Historical-shaped save UI integration (2026-11-07)
+
+tests/e2e/legacy-save-historical-shape.spec.ts imports the checked-in synthetic community shape through the live Settings text field. It asserts persisted Money, Gems, progress, and pickaxe data, plus zero defaults for absent Planet Coin/Wisdom resources. This supplements the pinned complete-output hash differential in tests/parity/legacy-save-historical-shape.test.ts. The single specimen does not establish support for other historical formats.
