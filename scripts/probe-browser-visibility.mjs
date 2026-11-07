@@ -3,15 +3,29 @@ import { getChromiumLaunchOptions } from "./playwright-browser.mjs";
 
 const headed = process.argv.includes("--headed");
 const minimizeWindow = process.argv.includes("--minimize-window");
+const normalBackgrounding = process.argv.includes("--normal-backgrounding");
 const minimizedWaitMs = 12_000;
 
 if (minimizeWindow && !headed) {
   throw new Error("--minimize-window requires --headed.");
 }
 
+if (normalBackgrounding && !headed) {
+  throw new Error("--normal-backgrounding requires --headed.");
+}
+
 const browser = await chromium.launch({
   ...getChromiumLaunchOptions(),
   headless: !headed,
+  ...(normalBackgrounding
+    ? {
+        ignoreDefaultArgs: [
+          "--disable-background-timer-throttling",
+          "--disable-backgrounding-occluded-windows",
+          "--disable-renderer-backgrounding",
+        ],
+      }
+    : {}),
 });
 const context = await browser.newContext();
 
@@ -160,6 +174,9 @@ try {
         {
           browserVersion: browser.version(),
           mode: headed ? "headed" : "headless",
+          backgroundingMode: normalBackgrounding
+            ? "Chromium defaults"
+            : "Playwright defaults",
           firstWindowId,
           secondWindowId,
           sameBrowserWindow: firstWindowId === secondWindowId,

@@ -202,3 +202,9 @@ remained visible and focused, with no visibility-change event and 33 interval
 ticks plus 203 animation frames over three seconds. This adds no hidden-tab
 evidence; offline progression remains In Progress. See the [persistence/time
 trace map](parity-traceability/persistence-and-time.md).
+
+Playwright 1.63.0's default Chromium args disable background throttling. The
+tracked probe now removes those flags in `--normal-backgrounding` mode; headed
+tab switching and CDP-confirmed 12-second minimization still left the page
+visible/focused with callbacks running. This host does not supply a true hidden
+document observation, so offline lifecycle remains open.

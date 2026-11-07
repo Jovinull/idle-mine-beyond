@@ -381,6 +381,23 @@ override the page's JS visibility properties and count that as lifecycle
 evidence. A real `visibilityState === "hidden"` observation remains required
 to close this web-v1 environment domain.
 
+**Playwright backgrounding follow-up (2026-11-07):** inspecting the project-
+installed Playwright 1.63.0 launch bundle showed its default Chromium arguments
+include `--disable-background-timer-throttling`,
+`--disable-backgrounding-occluded-windows`, and
+`--disable-renderer-backgrounding`. Earlier timer/animation measurements made
+with those defaults do not establish ordinary browser scheduling. The probe
+now accepts `--headed --normal-backgrounding`, which filters those three
+Playwright defaults using the documented [`ignoreDefaultArgs` launch option](https://playwright.dev/docs/api/class-browsertype#browser-type-launch).
+With that mode, switching to a second page in the same headed window still
+left both pages visible/focused. Minimizing the headed window for 12 seconds
+reported CDP state `minimized`, but the page remained visible/focused with no
+visibility event; its 100 ms interval recorded 121 ticks and its animation
+frame loop recorded 722 frames during that interval. The normal-backgrounding
+mode removes Playwright's known scheduler overrides, but this host/browser
+session still does not produce `visibilityState === "hidden"`; it cannot close
+the real browser/OS background-scheduling gap.
+
 ### Offline/time function and branch trace
 
 | Pinned Remix function/path and branch                                                                                                                                                           | Source evidence                                                                           | Beyond assertion                                                                                                                                                                                                       |

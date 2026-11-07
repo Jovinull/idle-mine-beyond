@@ -23,6 +23,15 @@ not exercise a real hidden tab or OS throttling. Offline progression remains
 In Progress for actual browser/OS background scheduling; details and the
 official protocol references are in the [persistence/time trace map](parity-traceability/persistence-and-time.md).
 
+**Playwright backgrounding follow-up (2026-11-07):** Playwright 1.63.0's
+default Chromium launch args disable timer throttling, occluded-window
+backgrounding, and renderer backgrounding. The visibility probe now has a
+`--normal-backgrounding` mode that removes those overrides. Headed tab switching
+and a 12-second CDP-confirmed window minimization still left the document
+visible/focused, with no visibility event and ongoing callbacks. This host's
+automation browser does not provide the required hidden-state evidence; offline
+progression remains In Progress.
+
 **Current closeout (2026-11-03):** the sampled-domain review and rule are
 committed and pushed in `f2f8fd5`; all 14 entries marked `Sampled (qualified)`
 have mapped boundary, sample, and differential evidence. They comprise twelve
