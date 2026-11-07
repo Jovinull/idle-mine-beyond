@@ -357,15 +357,19 @@ The full-screen prestige differential in `tests/e2e/powers-prestige-differential
 | Full Mining screen with controlled Clay save and selected Gem craft cost 3 in light and dark at 1440×900                                                                                  | both `craft-mining-panel-{light,dark}-1440x900.json` sidecars pin source state, theme, browser, viewport, and screenshot hashes                                            | `tests/e2e/remix-app.spec.ts` compares both full screens at zero pixels on Windows and Linux                                                                                                                  |
 | Selected primary Mining screen at 1366×768, 1920×1080, and 2560×1440                                                                                                                      | paired source screenshots for both themes and each viewport                                                                                                                | `tests/e2e/priority-visual.spec.ts` compares each selected viewport; `tests/parity/visual-baselines.test.ts` validates metadata and hashes                                                                    |
 
-**Linux Mining visual evidence (CI runs 88–89, 2026-11-06):** the
+**Linux Mining visual evidence (CI runs 88–90, 2026-11-06):** the
 `showMineObjLevel` dark full-screen branch remains open after one pixel differs
 at `(7,209)`. Hiding the canvas verifies that the complete screenshots then
 match; its visible bitmap hash, bounds, and recorded paint styles match Remix.
 Removing the generated Svelte canvas class with layout styles preserved, and
 moving the hidden cache canvas to the Remix DOM position, both leave Beyond's
 original screenshot hash unchanged. The hidden cache bitmap hash differs from
-Remix, but this has not been linked to the screen delta. The path remains
-covered by its source assertion, while exact screenshot evidence is unresolved.
+Remix, but this has not been linked to the screen delta. Setting both visible
+canvases to `opacity:0` also makes their full-screen captures identical with
+the DOM and layout boxes intact. Thus suppressing visible paint removes the
+delta, without distinguishing paint from an associated compositor effect. The
+path remains covered by its source assertion, while exact screenshot evidence
+is unresolved.
 
 ## Visual slice: primary screens
 

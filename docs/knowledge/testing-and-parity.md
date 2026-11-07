@@ -134,11 +134,18 @@ canvas to the first child of `#app` also did not change its screenshot hash.
 Both cache canvases are 256x224, `display:none`, and have zero-sized layout
 boxes; their pixel hashes differ (`13f648ea` Beyond, `87529dc5` Remix), while
 the visible canvas bitmap hashes match. This cache-buffer difference is not
-evidence of the one-pixel screen delta's cause. The next failure-only variant
-sets `opacity:0` on both visible canvases to test whether the screenshot delta
-requires the painted image or merely the Canvas element/compositor presence.
-All variants are diagnostic only; the production DOM and exact screenshot
-assertion remain unchanged. Run 89's only E2E failure was the same one-pixel
+evidence of the one-pixel screen delta's cause.
+
+CI run 90 repeated the original one-pixel result on both retries. Setting both
+visible canvases to `opacity:0` produced identical source/Beyond full-screen
+hashes with their DOM and layout boxes intact. Together with `visibility:hidden`
+and `display:none`, this shows that suppressing visible Canvas paint removes
+the delta, but does not distinguish actual paint from an associated browser
+compositing effect. The next failure-only variant captures the unchanged
+visible state sequentially in both source-first and Beyond-first order, to test
+whether concurrent Playwright screenshots contribute to the difference. All
+variants are diagnostic only; the production DOM and exact screenshot
+assertion remain unchanged. Run 90's only E2E failure was the same one-pixel
 dark Mining comparison; exact visual parity remains open.
 
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.

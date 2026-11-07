@@ -401,6 +401,31 @@ async function captureWithElementOpacityZero(page: Page, selector: string) {
   }
 }
 
+async function captureMiningPairInOrder(
+  beyondPage: Page,
+  remixPage: Page,
+  remixFirst: boolean,
+) {
+  let beyondPng: Buffer;
+  let remixPng: Buffer;
+  if (remixFirst) {
+    remixPng = await waitForStableMiningScreenshot(remixPage);
+    beyondPng = await waitForStableMiningScreenshot(beyondPage);
+  } else {
+    beyondPng = await waitForStableMiningScreenshot(beyondPage);
+    remixPng = await waitForStableMiningScreenshot(remixPage);
+  }
+  const beyondHash = createHash("sha256").update(beyondPng).digest("hex");
+  const remixHash = createHash("sha256").update(remixPng).digest("hex");
+  return {
+    beyondPng,
+    remixPng,
+    beyondHash,
+    remixHash,
+    matches: beyondHash === remixHash,
+  };
+}
+
 async function captureWithoutCanvasScopeClass(page: Page) {
   const canvas = page.locator("canvas.mine-object");
   const original = await canvas.evaluate((node) => {
@@ -782,6 +807,16 @@ for (const theme of ["light", "dark"] as const) {
             const remixOpacityZeroHash = createHash("sha256")
               .update(remixOpacityZero.png)
               .digest("hex");
+            const beyondFirstPair = await captureMiningPairInOrder(
+              page,
+              sourcePage,
+              false,
+            );
+            const remixFirstPair = await captureMiningPairInOrder(
+              page,
+              sourcePage,
+              true,
+            );
             for (const [name, png] of [
               [
                 "mining-dark-level-background-only-beyond.png",
@@ -840,6 +875,22 @@ for (const theme of ["light", "dark"] as const) {
               [
                 "mining-dark-level-canvas-opacity-zero-remix.png",
                 remixOpacityZero.png,
+              ],
+              [
+                "mining-dark-level-sequential-beyond-first-beyond.png",
+                beyondFirstPair.beyondPng,
+              ],
+              [
+                "mining-dark-level-sequential-beyond-first-remix.png",
+                beyondFirstPair.remixPng,
+              ],
+              [
+                "mining-dark-level-sequential-remix-first-beyond.png",
+                remixFirstPair.beyondPng,
+              ],
+              [
+                "mining-dark-level-sequential-remix-first-remix.png",
+                remixFirstPair.remixPng,
               ],
             ] as const) {
               await test.info().attach(name, {
@@ -934,6 +985,18 @@ for (const theme of ["light", "dark"] as const) {
                     matches: beyondOpacityZeroHash === remixOpacityZeroHash,
                     beyondComputedOpacity: beyondOpacityZero.computedOpacity,
                     remixComputedOpacity: remixOpacityZero.computedOpacity,
+                  },
+                  sequentialCaptures: {
+                    beyondFirst: {
+                      beyondHash: beyondFirstPair.beyondHash,
+                      remixHash: beyondFirstPair.remixHash,
+                      matches: beyondFirstPair.matches,
+                    },
+                    remixFirst: {
+                      beyondHash: remixFirstPair.beyondHash,
+                      remixHash: remixFirstPair.remixHash,
+                      matches: remixFirstPair.matches,
+                    },
                   },
                   wrapper,
                   afterWrapperRemoval: {

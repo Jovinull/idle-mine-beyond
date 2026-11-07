@@ -190,9 +190,17 @@ variant changes Beyond's screenshot hash. Both hidden cache canvases are
 256x224 and zero-sized; their pixel hashes differ (`13f648ea` Beyond,
 `87529dc5` Remix), while the visible mine-canvas hashes match. This cache
 difference is recorded but is not evidence of the screen mismatch's cause.
-CI 90 will compare source/Beyond captures with both visible canvases at
-`opacity: 0`, keeping their DOM and layout boxes. No product styling or strict
-pixel assertion has changed; Desktop UI remains In Progress.
+No product styling or strict pixel assertion has changed; Desktop UI remains
+In Progress.
+
+**Linux Mining zero-opacity result (CI run 90, 2026-11-06):** on both retries,
+the normal full-screen comparison still differed by the same pixel. Setting
+both visible canvases to `opacity:0` produced identical full-screen hashes
+while preserving their DOM and layout boxes. Together with the `visibility`
+and `display` controls, this ties the difference to visible canvas painting
+or a compositing effect it triggers; it does not distinguish those causes.
+The next probe captures the original state sequentially in both page orders to
+test whether concurrent Playwright screenshots contribute to the pixel.
 
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
