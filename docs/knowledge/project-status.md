@@ -893,7 +893,7 @@ overrode the resting state. The scoped Svelte selector now matches the source
 cascade. Both affordability-boundary theme cases passed twice after waiting for
 both pages' upgrade images to decode; the complete focused file passed 7/7 in
 4.3 minutes. The full `pnpm.cmd test:e2e --workers=1` run passed 149/149 in
-13.8 minutes. Other resource balances, modifier hints, and broader application
+13.8 minutes. Other resource balances, additional modifier-hint states, and broader application
 states remain open; upgrade and desktop UI rows stay In progress.
 This validated slice remains uncommitted and unpushed because this managed
 workspace exposes `.git` as read-only.
@@ -1553,4 +1553,6 @@ comparison in CI, replacing the earlier state-only check for this slice.
 
 **Live shop cap purchase boundaries (2026-11-07):** added a pinned Remix differential for three finite-capped upgrades, one each for Money, Gems, and Planet Coins. Shift from `cap - 1` reaches exactly the cap; Control at the cap leaves the level and resource balance unchanged. All six source-paired browser actions passed (1/1 test); broader shop states and visual coverage remain open.
 
-**Reachable special-anchor pickaxe name (2026-11-07):** the pinned craft corpus now includes a live `functions.craftPick()` case with one Gem, fixed RNG, and high-water level 215. Remix produces Sturdy HD 4943-b Pick from generated object ID 210, rather than the special catalog object's Galaxy Supercluster name, and consumes ten RNG draws. The source-paired Craft-button E2E asserts the name/feedback and exact 1440x900 Mining screenshot in both themes (2/2). Other craft panel states and viewports remain open.
+**Reachable special-anchor pickaxe name (2026-11-07):** the pinned craft corpus now includes a live `functions.craftPick()` case with one Gem, fixed RNG, and high-water level 215. Remix produces Sturdy HD 4943-b Pick from generated object ID 210, rather than the special catalog object's Galaxy Supercluster name, and consumes ten RNG draws. The source-paired Craft-button E2E asserts the name/feedback and exact 1440x900 Mining screenshot in both themes (2/2). The core action composer now asserts all nine captured craft transactions; the full parity suite passed 159/159. Other craft panel states and viewports remain open.
+
+**Shop modifier-hint full screens (2026-11-07):** added a pinned Remix/Beyond differential for the first card in each Money, Gem, and Planet Coin group. After Shift, Control, and combined Shift+Control are pressed, the test forces the pinned hover-driven Vue refresh, checks the two active hint classes, and compares exact full-screen hashes in light and dark at 1440x900. All 18 source/Beyond comparisons passed across six Playwright cases (44.1 seconds). This extends the selected modifier visual slice; broader shop states and the separate strict affordability screenshot gap remain open.
