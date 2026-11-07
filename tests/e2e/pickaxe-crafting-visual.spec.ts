@@ -142,6 +142,13 @@ for (const theme of ["light", "dark"] as const) {
         pow: attempt.input.equippedPickaxe.power,
         quality: attempt.input.equippedPickaxe.quality,
       };
+      const compareFullCraftPanel =
+        caseName === "better-craft-replaces-and-saves" &&
+        viewport.width === 1366;
+      if (compareFullCraftPanel) {
+        save.upgrades["gemWaster"] = { level: 1 };
+        save.gemUpgrades["gemWaster"] = { level: 2 };
+      }
       const encoded = encodeRemixLegacySave(save);
       const sourceContext = await browser.newContext({
         colorScheme: theme,
@@ -196,6 +203,61 @@ for (const theme of ["light", "dark"] as const) {
           installCraftRandomSequence(page, attempt.input.randomValues),
           installCraftRandomSequence(sourcePage, attempt.input.randomValues),
         ]);
+
+        if (compareFullCraftPanel) {
+          const beyondIncrease = page.locator(
+            '[data-craft-gem-level="increase"]',
+          );
+          const sourceIncrease = sourcePage
+            .locator(".craft-pickaxe button.level-change")
+            .last();
+          await Promise.all([beyondIncrease.click(), sourceIncrease.click()]);
+          await Promise.all([
+            expect(page.locator("[data-craft-gem-cost]")).toHaveText("3"),
+            expect(
+              sourcePage.locator(".craft-pickaxe button:not(.level-change)"),
+            ).toContainText("3"),
+          ]);
+
+          const [panelPng, sourcePanelPng] = await Promise.all([
+            waitForStableScreen(page, viewport),
+            waitForStableScreen(sourcePage, viewport),
+          ]);
+          const panelHash = createHash("sha256").update(panelPng).digest("hex");
+          const sourcePanelHash = createHash("sha256")
+            .update(sourcePanelPng)
+            .digest("hex");
+          if (panelHash !== sourcePanelHash) {
+            await Promise.all([
+              test.info().attach(`craft-panel-${theme}-beyond-1366x768.png`, {
+                body: panelPng,
+                contentType: "image/png",
+              }),
+              test.info().attach(`craft-panel-${theme}-remix-1366x768.png`, {
+                body: sourcePanelPng,
+                contentType: "image/png",
+              }),
+            ]);
+          }
+          expect(
+            panelHash,
+            `full Mining craft panel at 1366x768 in ${theme}`,
+          ).toBe(sourcePanelHash);
+
+          const beyondDecrease = page.locator(
+            '[data-craft-gem-level="decrease"]',
+          );
+          const sourceDecrease = sourcePage
+            .locator(".craft-pickaxe button.level-change")
+            .first();
+          await Promise.all([beyondDecrease.click(), sourceDecrease.click()]);
+          await Promise.all([
+            expect(page.locator("[data-craft-gem-cost]")).toHaveText("1"),
+            expect(
+              sourcePage.locator(".craft-pickaxe button:not(.level-change)"),
+            ).toContainText("1"),
+          ]);
+        }
 
         await Promise.all([
           page.locator("[data-craft-pickaxe]").click(),

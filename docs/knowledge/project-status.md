@@ -1450,3 +1450,10 @@ multibyte sequences; Beyond matches decode status and exact decode/parse
 errors. The focused codec E2E passed 2/2. Arbitrary external bytes and
 historical save shapes remain open, so Save encoding and save shape stays In
 Progress.
+
+**Mining craft-panel alternate viewport (2026-11-07):** extended the paired
+Remix/Beyond craft visual test to capture the full pre-craft Mining panel at
+1366x768 with Gem cost set to 3. The fixed replacement input matches at zero
+pixels in light and dark on Windows Chromium (2/2), after which the selector
+returns to cost 1 and the existing craft/RNG assertions still pass. Linux
+comparison is pending CI; other panel states and viewports remain open.
