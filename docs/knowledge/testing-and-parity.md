@@ -154,10 +154,16 @@ direct-child `display` on Beyond without a hidden screenshot left the original
 mismatch; toggling it on Remix changed the source hash from `ee3291e6…` to
 Beyond's `2b981324…`, matching it in both retries. Thus the reference-page
 display toggle causes the observed screenshot transition; whether it cancels a
-visible transition or only flushes paint is unverified. The next probe records
-computed styles and active animations on Remix before and after that toggle.
-Keep exact PNG equality and do not mask or tolerate the pixel; Linux Mining
-visual parity remains open.
+visible transition or only flushes paint was unverified. CI 96 found the
+captured geometry, paint-style, and canvas-bitmap metadata unchanged before
+and after the Remix toggle, with no active animations in either state, even
+though the full-screen hash changed. This supports raster/compositor
+invalidation rather than a visible style or animation change. The test now
+refreshes the pinned source paint with a two-frame direct-body display
+toggle/restore (without taking a screenshot while hidden), then performs the
+ordinary exact screenshot comparison. Keep exact PNG equality and do not mask
+or tolerate the pixel; Linux Mining visual parity remains open until CI 97
+validates all six preference captures.
 
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 
