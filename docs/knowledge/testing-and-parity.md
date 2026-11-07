@@ -148,9 +148,14 @@ post-mutation equality does not establish why the render changes. CI run 93
 recorded four alternating-order pairs before any diagnostic mutation; all
 eight pair captures in each retry retained Beyond hash `2b981324…` and Remix
 hash `ee3291e6…`. Capture order and repetition alone do not resolve the delta.
-The next failure-only probe records the restored full-screen pair after each
-individual DOM/style diagnostic. Keep exact PNG equality and do not mask or
-tolerate the pixel; Linux Mining visual parity remains open.
+In CI run 94, the first full-screen pair after hiding/restoring all direct
+`body` children on both pages matched, and later restored-state pairs continued
+to match. That probe was concurrent across pages and captured while hidden, so
+it does not isolate the page or the triggering operation. The next
+failure-only probe toggles `display` on each page independently without
+capturing while hidden, then repeats the hidden-page capture separately. Keep
+exact PNG equality and do not mask or tolerate the pixel; Linux Mining visual
+parity remains open.
 
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 

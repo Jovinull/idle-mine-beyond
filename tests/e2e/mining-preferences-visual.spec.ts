@@ -313,6 +313,55 @@ async function captureWithBodyChildrenHidden(page: Page) {
   }
 }
 
+async function toggleBodyChildrenDisplayAndWait(page: Page) {
+  const original = await page.evaluate(() =>
+    Array.from(document.body.children).map((element) => {
+      const style = (element as HTMLElement).style;
+      return {
+        value: style.getPropertyValue("display"),
+        priority: style.getPropertyPriority("display"),
+      };
+    }),
+  );
+  try {
+    await page.evaluate(() => {
+      for (const element of document.body.children) {
+        (element as HTMLElement).style.setProperty(
+          "display",
+          "none",
+          "important",
+        );
+      }
+    });
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        ),
+    );
+  } finally {
+    await page.evaluate((styles) => {
+      Array.from(document.body.children).forEach((element, index) => {
+        const style = (element as HTMLElement).style;
+        style.removeProperty("display");
+        if (styles[index]?.value) {
+          style.setProperty(
+            "display",
+            styles[index].value,
+            styles[index].priority,
+          );
+        }
+      });
+    }, original);
+  }
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
+}
+
 async function captureWithElementHidden(page: Page, selector: string) {
   const element = page.locator(selector);
   const original = await element.evaluate((node) => {
@@ -751,23 +800,30 @@ for (const theme of ["light", "dark"] as const) {
                 matches: pair.matches,
               });
             };
+            await toggleBodyChildrenDisplayAndWait(page);
+            await captureRestoredState(
+              "beyond-body-children-display-toggle-no-hidden-screenshot",
+            );
+            await toggleBodyChildrenDisplayAndWait(sourcePage);
+            await captureRestoredState(
+              "remix-body-children-display-toggle-no-hidden-screenshot",
+            );
             const [beyondPaint, remixPaint] = await Promise.all([
               readMiningPixelStack(page),
               readMiningPixelStack(sourcePage),
             ]);
-            const [beyondBackgroundPng, remixBackgroundPng] = await Promise.all(
-              [
-                captureWithBodyChildrenHidden(page),
-                captureWithBodyChildrenHidden(sourcePage),
-              ],
-            );
+            const beyondBackgroundPng =
+              await captureWithBodyChildrenHidden(page);
             const beyondBackgroundHash = createHash("sha256")
               .update(beyondBackgroundPng)
               .digest("hex");
+            await captureRestoredState("beyond-body-children-hidden");
+            const remixBackgroundPng =
+              await captureWithBodyChildrenHidden(sourcePage);
             const remixBackgroundHash = createHash("sha256")
               .update(remixBackgroundPng)
               .digest("hex");
-            await captureRestoredState("body-children-hidden");
+            await captureRestoredState("remix-body-children-hidden");
             const [beyondRootPng, remixRootPng] = await Promise.all([
               captureWithRootBackground(page),
               captureWithRootBackground(sourcePage),
