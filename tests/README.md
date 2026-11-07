@@ -41,4 +41,4 @@ state but defers the two pixel baselines to the external WSL workflow.
 
 `e2e/pickaxe-special-anchor-name.spec.ts` replays the pinned one-Gem craft at high-water level 215, checks the special-anchor fallback name, message, and RNG count, and compares full Mining screens against Remix in both themes. Run it with `pnpm exec playwright test tests/e2e/pickaxe-special-anchor-name.spec.ts --workers=1`.
 
-`e2e/upgrade-modifier-visual-differential.spec.ts` compares full shop screens for Shift, Control, and combined modifier hints on the first card in each resource group, in both themes. Run it with `pnpm exec playwright test tests/e2e/upgrade-modifier-visual-differential.spec.ts --workers=1`.
+`e2e/upgrade-modifier-visual-differential.spec.ts` compares full shop screens at 1440x900 and 1366x768 for Shift, Control, and combined modifier hints on the first card in each resource group, in both themes. Run it with `pnpm exec playwright test tests/e2e/upgrade-modifier-visual-differential.spec.ts --workers=1`.

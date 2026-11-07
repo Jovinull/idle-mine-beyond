@@ -283,9 +283,9 @@ Planet Coin exact-price mismatch or broader shop state coverage.
 modifier visual slice to the first card in each Money, Gem, and Planet Coin
 group. For Shift, Control, and both keys, it forces the source-observed hover
 refresh, asserts each hint's active class, and compares exact full-screen PNG
-hashes at 1440x900 in both themes (18 source/Beyond pairs, 6 Playwright cases).
-The wider shop visual state space and the unrelated exact-price mismatch remain
-open. Run it with:
+hashes at 1440x900 and 1366x768 in both themes (36 source/Beyond pairs, 12
+Playwright cases). The wider shop visual state space and the unrelated
+exact-price mismatch remain open. Run it with:
 
 ```sh
 pnpm exec playwright test tests/e2e/upgrade-modifier-visual-differential.spec.ts --workers=1 --retries=0

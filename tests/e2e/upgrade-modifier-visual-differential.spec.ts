@@ -5,7 +5,10 @@ import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
 const fixedTime = 1_700_000_000_000;
-const viewport = { width: 1440, height: 900 };
+const viewports = [
+  { name: "1440x900", size: { width: 1440, height: 900 } },
+  { name: "1366x768", size: { width: 1366, height: 768 } },
+] as const;
 
 const groups = [
   { beyond: "money", remix: "Money Upgrades", key: "blacksmith" },
@@ -52,6 +55,7 @@ async function startPages(
   beyondPage: Page,
   encoded: string,
   theme: Theme,
+  viewport: { width: number; height: number },
 ) {
   const sourceContext = await browser.newContext({
     colorScheme: theme,
@@ -103,133 +107,142 @@ async function waitForStableScreen(page: Page): Promise<Buffer> {
 
 for (const theme of ["light", "dark"] as const) {
   for (const group of groups) {
-    test(`matches full-screen ${group.beyond} shop modifier hints in ${theme} theme`, async ({
-      browser,
-      page,
-    }) => {
-      test.setTimeout(120_000);
-      const fixture = JSON.parse(
-        await readFile(
-          new URL(
-            "../fixtures/parity/remix-reference-corpus.json",
-            import.meta.url,
-          ),
-          "utf8",
-        ),
-      ) as Fixture;
-      const save = JSON.parse(
-        fixture.data.saveApplicationSemantics.inputJson,
-      ) as LegacySave;
-      save.money = "1e1000";
-      save.gems = "1e1000";
-      save.planetCoins = "1e1000";
-      save.highestMineObjectLevel = 90;
-      save.mineObjectLevel = 1;
-      save.lastActive = fixedTime;
-      save.settings["tab"] = "main";
-      save.settings["theme"] = theme;
-      save.settings["upgradeTab"] = "money";
-      save.upgrades = { activePower: { level: 0 } };
-      save.gemUpgrades = { offlineGems: { level: 0 } };
-      save.planetCoinUpgrades = { activePower: { level: 0 } };
-
-      const { sourceContext, sourcePage } = await startPages(
+    for (const viewport of viewports) {
+      test(`matches full-screen ${group.beyond} shop modifier hints in ${theme} theme at ${viewport.name}`, async ({
         browser,
         page,
-        encodeRemixLegacySave(save),
-        theme,
-      );
+      }) => {
+        test.setTimeout(120_000);
+        const fixture = JSON.parse(
+          await readFile(
+            new URL(
+              "../fixtures/parity/remix-reference-corpus.json",
+              import.meta.url,
+            ),
+            "utf8",
+          ),
+        ) as Fixture;
+        const save = JSON.parse(
+          fixture.data.saveApplicationSemantics.inputJson,
+        ) as LegacySave;
+        save.money = "1e1000";
+        save.gems = "1e1000";
+        save.planetCoins = "1e1000";
+        save.highestMineObjectLevel = 90;
+        save.mineObjectLevel = 1;
+        save.lastActive = fixedTime;
+        save.settings["tab"] = "main";
+        save.settings["theme"] = theme;
+        save.settings["upgradeTab"] = "money";
+        save.upgrades = { activePower: { level: 0 } };
+        save.gemUpgrades = { offlineGems: { level: 0 } };
+        save.planetCoinUpgrades = { activePower: { level: 0 } };
 
-      try {
-        if (group.beyond !== "money") {
-          await Promise.all([
-            page.locator(`[data-upgrade-tab="${group.beyond}"]`).click(),
-            sourcePage
-              .locator(".upg-tabs button")
-              .filter({ hasText: group.remix })
-              .click(),
-          ]);
-        }
-
-        const beyondCard = page.locator(
-          `[data-upgrade-group="${group.beyond}"][data-upgrade-key="${group.key}"]`,
+        const { sourceContext, sourcePage } = await startPages(
+          browser,
+          page,
+          encodeRemixLegacySave(save),
+          theme,
+          viewport.size,
         );
-        const sourceCard = sourcePage.locator(".upgradelist .upgrade").first();
-        const beyondRefreshCard = page
-          .locator(`[data-upgrade-group="${group.beyond}"][data-upgrade-key]`)
-          .nth(1);
-        const sourceRefreshCard = sourcePage
-          .locator(".upgradelist .upgrade")
-          .nth(1);
-        await Promise.all([beyondCard.hover(), sourceCard.hover()]);
-        const beyondHints = page.locator(
-          `[data-upgrade-details="${group.key}"] .multibuy`,
-        );
-        const sourceHints = sourcePage.locator(".highlightedupgrade .multibuy");
-        await expect(beyondHints).toHaveCount(2);
-        await expect(sourceHints).toHaveCount(2);
 
-        for (const state of modifierStates) {
-          for (const key of state.keys) {
+        try {
+          if (group.beyond !== "money") {
             await Promise.all([
-              page.keyboard.down(key),
-              sourcePage.keyboard.down(key),
+              page.locator(`[data-upgrade-tab="${group.beyond}"]`).click(),
+              sourcePage
+                .locator(".upg-tabs button")
+                .filter({ hasText: group.remix })
+                .click(),
             ]);
           }
 
-          // Remix updates these classes on a later Vue render, not on keydown.
-          await Promise.all([
-            beyondRefreshCard.hover(),
-            sourceRefreshCard.hover(),
-          ]);
-          await Promise.all([beyondCard.hover(), sourceCard.hover()]);
-          const expected = state.active;
-          for (let index = 0; index < expected.length; index += 1) {
-            await Promise.all([
-              expect(beyondHints.nth(index)).toHaveClass(
-                expected[index] ? /active/ : /^(?!.*active)/,
-              ),
-              expect(sourceHints.nth(index)).toHaveClass(
-                expected[index] ? /active/ : /^(?!.*active)/,
-              ),
-            ]);
-          }
-
-          const [beyondPng, remixPng] = await Promise.all([
-            waitForStableScreen(page),
-            waitForStableScreen(sourcePage),
-          ]);
-          const beyondHash = createHash("sha256")
-            .update(beyondPng)
-            .digest("hex");
-          const remixHash = createHash("sha256").update(remixPng).digest("hex");
-          const screenshotName = `shop-modifier-${group.beyond}-${state.name}-${theme}`;
-          if (beyondHash !== remixHash) {
-            await Promise.all([
-              test.info().attach(`${screenshotName}-beyond.png`, {
-                body: beyondPng,
-                contentType: "image/png",
-              }),
-              test.info().attach(`${screenshotName}-remix.png`, {
-                body: remixPng,
-                contentType: "image/png",
-              }),
-            ]);
-          }
-          expect(beyondHash, `${screenshotName} full-screen PNG`).toBe(
-            remixHash,
+          const beyondCard = page.locator(
+            `[data-upgrade-group="${group.beyond}"][data-upgrade-key="${group.key}"]`,
           );
+          const sourceCard = sourcePage
+            .locator(".upgradelist .upgrade")
+            .first();
+          const beyondRefreshCard = page
+            .locator(`[data-upgrade-group="${group.beyond}"][data-upgrade-key]`)
+            .nth(1);
+          const sourceRefreshCard = sourcePage
+            .locator(".upgradelist .upgrade")
+            .nth(1);
+          await Promise.all([beyondCard.hover(), sourceCard.hover()]);
+          const beyondHints = page.locator(
+            `[data-upgrade-details="${group.key}"] .multibuy`,
+          );
+          const sourceHints = sourcePage.locator(
+            ".highlightedupgrade .multibuy",
+          );
+          await expect(beyondHints).toHaveCount(2);
+          await expect(sourceHints).toHaveCount(2);
 
-          for (const key of [...state.keys].reverse()) {
+          for (const state of modifierStates) {
+            for (const key of state.keys) {
+              await Promise.all([
+                page.keyboard.down(key),
+                sourcePage.keyboard.down(key),
+              ]);
+            }
+
+            // Remix updates these classes on a later Vue render, not on keydown.
             await Promise.all([
-              page.keyboard.up(key),
-              sourcePage.keyboard.up(key),
+              beyondRefreshCard.hover(),
+              sourceRefreshCard.hover(),
             ]);
+            await Promise.all([beyondCard.hover(), sourceCard.hover()]);
+            const expected = state.active;
+            for (let index = 0; index < expected.length; index += 1) {
+              await Promise.all([
+                expect(beyondHints.nth(index)).toHaveClass(
+                  expected[index] ? /active/ : /^(?!.*active)/,
+                ),
+                expect(sourceHints.nth(index)).toHaveClass(
+                  expected[index] ? /active/ : /^(?!.*active)/,
+                ),
+              ]);
+            }
+
+            const [beyondPng, remixPng] = await Promise.all([
+              waitForStableScreen(page),
+              waitForStableScreen(sourcePage),
+            ]);
+            const beyondHash = createHash("sha256")
+              .update(beyondPng)
+              .digest("hex");
+            const remixHash = createHash("sha256")
+              .update(remixPng)
+              .digest("hex");
+            const screenshotName = `shop-modifier-${group.beyond}-${state.name}-${theme}-${viewport.name}`;
+            if (beyondHash !== remixHash) {
+              await Promise.all([
+                test.info().attach(`${screenshotName}-beyond.png`, {
+                  body: beyondPng,
+                  contentType: "image/png",
+                }),
+                test.info().attach(`${screenshotName}-remix.png`, {
+                  body: remixPng,
+                  contentType: "image/png",
+                }),
+              ]);
+            }
+            expect(beyondHash, `${screenshotName} full-screen PNG`).toBe(
+              remixHash,
+            );
+
+            for (const key of [...state.keys].reverse()) {
+              await Promise.all([
+                page.keyboard.up(key),
+                sourcePage.keyboard.up(key),
+              ]);
+            }
           }
+        } finally {
+          await sourceContext.close().catch(() => undefined);
         }
-      } finally {
-        await sourceContext.close().catch(() => undefined);
-      }
-    });
+      });
+    }
   }
 }
