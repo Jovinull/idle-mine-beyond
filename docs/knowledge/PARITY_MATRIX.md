@@ -271,3 +271,5 @@ Beyond v1 state match after all three writes; the E2E also covers a stale-tab Ac
 quota, and process termination remain open.
 
 Historical save UI integration (2026-11-07): tests/e2e/legacy-save-historical-shape.spec.ts imports the synthetic, provenance-recorded community save shape through Settings and asserts persisted Beyond state, including defaults for omitted Planet Coin/Wisdom resources. The pinned complete-output differential remains in tests/parity/legacy-save-historical-shape.test.ts. General historical-format support remains In Progress.
+
+Historical save import/export differential (2026-11-07): the Settings E2E applies the same synthetic fixture through the live text-import flow in Remix and Beyond, then asserts exact encoded export equality. The result adds one source-paired historical shape; general legacy-format compatibility remains In Progress.

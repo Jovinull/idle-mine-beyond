@@ -1542,3 +1542,5 @@ light and dark. Windows passed both comparisons (2/2); Linux runs the same live
 comparison in CI, replacing the earlier state-only check for this slice.
 
 **Historical-shaped save import E2E (2026-11-07):** the synthetic, provenance-recorded community specimen now passes through the live Settings import field. The test verifies persisted resources, mine progress, pickaxe, and default zero values for absent Planet Coin/Wisdom resources. The focused Playwright test passed 1/1; this adds one UI integration case and does not establish support for other historical save shapes.
+
+**Historical-shaped export differential (2026-11-07):** the Settings E2E now imports the same synthetic fixture in pinned Remix and Beyond, exports from both runtimes, and asserts exact encoded save equality. The source-paired test passed 1/1 on Windows Chromium; the case remains limited to one community-derived shape.

@@ -127,3 +127,5 @@ The current persistence package implements the legacy codec, current-save field 
 ### Historical-shaped save UI integration (2026-11-07)
 
 The synthetic community-derived fixture now also passes through the live Settings text import in tests/e2e/legacy-save-historical-shape.spec.ts. The test checks the persisted Beyond state and zero defaults for omitted Planet Coin/Wisdom resources. This is one integration case; historical save migration and general format support remain open.
+
+The historical-shape Settings E2E also performs a live pinned-Remix comparison: both runtimes import the same synthetic save through the text field and their subsequent Settings exports match exactly. This covers one specimen through import and export; it does not establish other historical formats.
