@@ -169,3 +169,11 @@ mismatches and these tests do not cover every shop state, this rerun does not
 close the visual gap; shop and desktop UI remain In progress.
 
 `pnpm reference:priority-visuals` reproduces the pinned Remix captures for the current platform and verifies screenshot/state metadata. Linux compares these 32 cases at zero pixels against their `-linux` baselines. Tauri WebView save/reload remains deferred until native packaging.
+
+Linux Mining exact-pixel follow-up (CI run 88, 2026-11-06): the dark
+`showMineObjLevel=true` full-screen comparison still differs at `(7,209)` by
+RGB `(54,54,54)` versus `(54,54,58)`. Hiding only the visible canvas, including
+with `visibility:hidden`, makes the complete screenshots match. Its 256x224
+bitmap hash, bounds, and recorded paint styles match Remix; the source and
+Beyond cache-canvas placement and generated scope class are now being isolated
+in screenshot-only probes. Mining and desktop visual parity remain In Progress.

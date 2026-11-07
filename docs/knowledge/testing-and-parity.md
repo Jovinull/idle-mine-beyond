@@ -120,6 +120,20 @@ necessary condition, not a direct pixel overlap. The next probe uses
 `visibility:hidden` to preserve the Canvas layout box, and records its computed
 paint styles, bounds, attributes, and rendered bitmap hash on each page.
 
+CI run 88 confirms that `visibility:hidden` also removes the mismatch while
+preserving the Canvas layout box. The visible source/Beyond canvases both have
+a 256x224 bitmap, identical pixel hash, matching bounds, and matching recorded
+paint styles. Beyond adds a generated Svelte scope class. The source places its
+hidden `canvas#cache` as the first child of `#app`; Beyond's cache is currently
+appended to `body`. The Linux-only failure probe now (1) removes only the
+generated canvas scope class while pinning its computed height and transition
+inline, and (2) moves Beyond's hidden cache canvas to the source DOM position.
+It also records both cache canvases' placement and bitmap hashes. These are
+diagnostic DOM variants only; the production DOM and exact comparison remain
+unchanged. CI run 88's only failure was still the one-pixel dark Mining
+comparison; the visual gap remains open until the cause is identified and the
+unmodified screenshots match exactly.
+
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 
 The pinned `initialState` capture records the fresh Remix values and the constructor test compares the core simulation subset against it: starting object/progress, all resources and upgrade levels, pickaxe, Powers, timers, and Story page/notification progress. It also checks that two new states do not share mutable objects. This does not compare settings, notation instances, message history, or the complete Remix runtime object.

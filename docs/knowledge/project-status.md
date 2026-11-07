@@ -173,6 +173,17 @@ point lies outside its bounds. The next probe sets only its visibility to
 hidden while preserving its layout box and records each canvas's dimensions,
 attributes, computed paint styles, and bitmap-pixel hash.
 
+**Linux Mining Canvas paint-state check (CI run 88, 2026-11-06):** setting the
+visible canvas to `visibility:hidden` also removes the mismatch while
+preserving its layout box. The source and Beyond visible canvases have the same
+256x224 bitmap, pixel hash, bounds, and recorded paint styles. Their DOM class
+lists differ by Svelte's generated scope class. The pinned `index.html` also
+places `canvas#cache` first inside `#app`, while Beyond currently appends it to
+`body`; both canvases are hidden during capture. CI 89 will test these two
+source-visible differences independently with screenshot-only DOM variants.
+No production style or strict screenshot assertion has changed; cause remains
+unresolved and Desktop UI remains In Progress.
+
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
 all 61 condition boundaries, dynamic objective outputs across 152 mine-level

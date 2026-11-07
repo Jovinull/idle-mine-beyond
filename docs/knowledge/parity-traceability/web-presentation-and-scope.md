@@ -357,6 +357,14 @@ The full-screen prestige differential in `tests/e2e/powers-prestige-differential
 | Full Mining screen with controlled Clay save and selected Gem craft cost 3 in light and dark at 1440×900                                                                                  | both `craft-mining-panel-{light,dark}-1440x900.json` sidecars pin source state, theme, browser, viewport, and screenshot hashes                                            | `tests/e2e/remix-app.spec.ts` compares both full screens at zero pixels on Windows and Linux                                                                                                                  |
 | Selected primary Mining screen at 1366×768, 1920×1080, and 2560×1440                                                                                                                      | paired source screenshots for both themes and each viewport                                                                                                                | `tests/e2e/priority-visual.spec.ts` compares each selected viewport; `tests/parity/visual-baselines.test.ts` validates metadata and hashes                                                                    |
 
+**Linux Mining visual evidence (CI run 88, 2026-11-06):** the `showMineObjLevel`
+dark full-screen branch remains open after one pixel differs at `(7,209)`.
+The diagnostic hides the canvas and verifies that the complete screenshots
+then match; its bitmap hash, bounds, and recorded paint styles match Remix.
+The source/Beyond cache-canvas DOM positions and generated Svelte class are
+being compared in screenshot-only variants. The path remains covered by its
+source assertion, while the exact screenshot evidence is unresolved.
+
 ## Visual slice: primary screens
 
 - **Remix source branches:** screen/tab selection and shared source layout in

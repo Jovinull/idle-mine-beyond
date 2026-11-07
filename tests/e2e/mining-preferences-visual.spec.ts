@@ -107,6 +107,9 @@ async function readMiningPixelStack(page: Page) {
       "display",
       "contain",
       "filter",
+      "transition",
+      "transitionProperty",
+      "transitionDuration",
       "isolation",
       "mixBlendMode",
       "backdropFilter",
@@ -214,6 +217,57 @@ async function readMiningPixelStack(page: Page) {
             }
           : null;
       })(),
+      cacheCanvas: (() => {
+        const canvas =
+          document.querySelector<HTMLCanvasElement>("canvas#cache");
+        if (!canvas) return null;
+        const context = canvas.getContext("2d");
+        const pixels = context?.getImageData(
+          0,
+          0,
+          canvas.width,
+          canvas.height,
+        ).data;
+        let pixelHash = 2166136261;
+        if (pixels) {
+          for (const value of pixels) {
+            pixelHash = Math.imul(pixelHash ^ value, 16777619);
+          }
+        }
+        const ancestors: string[] = [];
+        for (
+          let node: Element | null = canvas;
+          node;
+          node = node.parentElement
+        ) {
+          ancestors.push(
+            `${node.tagName.toLowerCase()}${node.id ? `#${node.id}` : ""}`,
+          );
+        }
+        const style = getComputedStyle(canvas);
+        return {
+          bitmap: { width: canvas.width, height: canvas.height },
+          attributes: Array.from(canvas.attributes).map(({ name, value }) => [
+            name,
+            value,
+          ]),
+          pixelHash: pixels ? (pixelHash >>> 0).toString(16) : null,
+          isConnected: canvas.isConnected,
+          ancestors,
+          display: style.display,
+          visibility: style.visibility,
+          position: style.position,
+          rect: (() => {
+            const rect = canvas.getBoundingClientRect();
+            return {
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+            };
+          })(),
+        };
+      })(),
       stack: stack.map(describe),
       coveringElements,
       ancestry: ancestry.map(describe),
@@ -312,6 +366,97 @@ async function captureWithElementVisibilityHidden(
       if (style.value) {
         inlineStyle.setProperty("visibility", style.value, style.priority);
       }
+    }, original);
+  }
+}
+
+async function captureWithoutCanvasScopeClass(page: Page) {
+  const canvas = page.locator("canvas.mine-object");
+  const original = await canvas.evaluate((node) => {
+    const style = (node as HTMLCanvasElement).style;
+    const computed = getComputedStyle(node);
+    return {
+      className: node.className,
+      height: style.getPropertyValue("height"),
+      heightPriority: style.getPropertyPriority("height"),
+      transition: style.getPropertyValue("transition"),
+      transitionPriority: style.getPropertyPriority("transition"),
+      computedHeight: computed.height,
+      computedTransition: computed.transition,
+    };
+  });
+  try {
+    await canvas.evaluate((node, saved) => {
+      const element = node as HTMLCanvasElement;
+      element.style.setProperty("height", saved.computedHeight, "important");
+      element.style.setProperty(
+        "transition",
+        saved.computedTransition,
+        "important",
+      );
+      for (const className of [...element.classList]) {
+        if (/^svelte-/.test(className)) element.classList.remove(className);
+      }
+    }, original);
+    const computed = await canvas.evaluate((node) => {
+      const style = getComputedStyle(node);
+      return { height: style.height, transition: style.transition };
+    });
+    return { png: await waitForStableMiningScreenshot(page), computed };
+  } finally {
+    await canvas.evaluate((node, saved) => {
+      const element = node as HTMLCanvasElement;
+      element.className = saved.className;
+      element.style.removeProperty("height");
+      element.style.removeProperty("transition");
+      if (saved.height) {
+        element.style.setProperty("height", saved.height, saved.heightPriority);
+      }
+      if (saved.transition) {
+        element.style.setProperty(
+          "transition",
+          saved.transition,
+          saved.transitionPriority,
+        );
+      }
+    }, original);
+  }
+}
+
+async function captureWithReferenceCachePlacement(page: Page) {
+  const cache = page.locator("canvas#cache");
+  const original = await cache.evaluate((node) => {
+    const parent = node.parentElement;
+    if (!parent) throw new Error("The Remix cache canvas is detached.");
+    return {
+      parentSelector: parent.id
+        ? `#${parent.id}`
+        : parent.tagName.toLowerCase(),
+      childIndex: Array.from(parent.childNodes).indexOf(node),
+    };
+  });
+  try {
+    await cache.evaluate((node) => {
+      const app = document.getElementById("app");
+      if (!app) throw new Error("The app root is missing.");
+      app.prepend(node);
+    });
+    const placement = await cache.evaluate((node) => {
+      const style = getComputedStyle(node);
+      const parent = node.parentElement;
+      return {
+        parent: parent ? `${parent.tagName.toLowerCase()}#${parent.id}` : null,
+        firstChild: parent?.firstElementChild === node,
+        display: style.display,
+        visibility: style.visibility,
+      };
+    });
+    return { png: await waitForStableMiningScreenshot(page), placement };
+  } finally {
+    await cache.evaluate((node, saved) => {
+      const parent = document.querySelector(saved.parentSelector);
+      if (!parent) throw new Error("The original cache parent is missing.");
+      parent.insertBefore(node, parent.childNodes[saved.childIndex] ?? null);
     }, original);
   }
 }
@@ -587,6 +732,15 @@ for (const theme of ["light", "dark"] as const) {
             const remixCanvasInvisibleHash = createHash("sha256")
               .update(remixCanvasInvisiblePng)
               .digest("hex");
+            const scopeClassProbe = await captureWithoutCanvasScopeClass(page);
+            const scopeClassHash = createHash("sha256")
+              .update(scopeClassProbe.png)
+              .digest("hex");
+            const cachePlacementProbe =
+              await captureWithReferenceCachePlacement(page);
+            const cachePlacementHash = createHash("sha256")
+              .update(cachePlacementProbe.png)
+              .digest("hex");
             for (const [name, png] of [
               [
                 "mining-dark-level-background-only-beyond.png",
@@ -629,6 +783,14 @@ for (const theme of ["light", "dark"] as const) {
               [
                 "mining-dark-level-canvas-invisible-remix.png",
                 remixCanvasInvisiblePng,
+              ],
+              [
+                "mining-dark-level-beyond-without-canvas-scope-class.png",
+                scopeClassProbe.png,
+              ],
+              [
+                "mining-dark-level-beyond-reference-cache-placement.png",
+                cachePlacementProbe.png,
               ],
             ] as const) {
               await test.info().attach(name, {
@@ -702,6 +864,20 @@ for (const theme of ["light", "dark"] as const) {
                     remixHash: remixCanvasInvisibleHash,
                     matchesRemix:
                       beyondCanvasInvisibleHash === remixCanvasInvisibleHash,
+                  },
+                  canvasScopeClassRemoved: {
+                    hash: scopeClassHash,
+                    matchesRemix: scopeClassHash === remixHash,
+                    computedStyle: scopeClassProbe.computed,
+                  },
+                  cacheCanvas: {
+                    beyond: beyondPaint.cacheCanvas,
+                    remix: remixPaint.cacheCanvas,
+                  },
+                  referenceCachePlacement: {
+                    hash: cachePlacementHash,
+                    matchesRemix: cachePlacementHash === remixHash,
+                    placement: cachePlacementProbe.placement,
                   },
                   wrapper,
                   afterWrapperRemoval: {
