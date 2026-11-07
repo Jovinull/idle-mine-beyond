@@ -1578,3 +1578,10 @@ interior state, with its increase control enabled and arrow image visible, to
 the source-paired full Mining comparison. Cost 10 and maximum cost 35 now match
 in both themes at 1440x900 and 1366x768 (eight focused Playwright cases passed).
 Other selector states and resolutions remain open.
+
+**Shop level-two catalog visuals (2026-11-07):** extended the live
+source/Beyond catalog comparison to level two for all 22 Money, Gem, and
+Planet Coin cards. It compares each card, hovered details, and each full-screen
+resource tab in both themes; the focused Chromium tests passed 2/2. Combined
+with levels zero and one, this provides 18 exact full-screen pairs. Other shop
+balances and state combinations remain open.

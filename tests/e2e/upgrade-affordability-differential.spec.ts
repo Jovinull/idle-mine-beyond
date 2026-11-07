@@ -1651,7 +1651,7 @@ for (const theme of ["light", "dark"] as const) {
 }
 
 for (const theme of ["light", "dark"] as const) {
-  for (const startingLevel of [0, 1] as const) {
+  for (const startingLevel of [0, 1, 2] as const) {
     test(
       `matches shop cards, details, and full screens against Remix at level ${startingLevel} in ${theme} theme`,
       { tag: "@slow" },

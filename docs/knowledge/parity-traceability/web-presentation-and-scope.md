@@ -153,7 +153,7 @@ explicit visual gaps above.
   `tests/e2e/foundation.spec.ts`, and `tests/e2e/priority-visual.spec.ts`;
   source/implementation screenshot pairs compare at 1440×900 in both themes.
   A separate 1440×900 paired Chromium differential visits all 22 cards at
-  level zero with abundant resources in both themes, comparing source order,
+  levels zero, one, and two with abundant resources in both themes, comparing source order,
   labels, image, affordability/style/geometry, exact resting-card pixels, and
   each hovered detail panel's exact pixels.
   `tests/e2e/upgrade-affordability-differential.spec.ts` also compares live
@@ -185,7 +185,7 @@ explicit visual gaps above.
   level-zero state with abundant resources; the affordability differential
   covers representative zero/exact-price resource cases and one below-price
   Money case. Full-screen comparisons cover each Money/Gem/Planet Coin tab at
-  levels zero and one in both themes (12 paired viewports), plus the zero-
+  levels zero, one, and two in both themes (18 paired viewports), plus the zero-
   resource boundary for each tab, the Money below-price boundary, and the exact-
   price boundary for all three tabs in both themes (14 paired viewports). Other
   balances and broader application-state combinations remain open. All three
