@@ -313,7 +313,7 @@ at zero pixels; Linux still checks the award state and RNG draw count without a
 pixel baseline. These four sidecars are included in the visual inventory and
 remain Windows-only pending an external Linux capture.
 
-The selected visual matrix uses 1366x768, 1440x900, 1920x1080, and 2560x1440 in light and dark themes. At 1440x900 it covers chosen Story progression, all nine controlled Story pages, Mining, Settings, all upgrade tabs, Powers at its controlled unlock boundary, and representative Space/Wisdom/galaxy Mining states. At the three other viewports it covers only the primary Mining, Story, and Settings screens. This is selected visual evidence, not exhaustive screen/state certification.
+The selected visual matrix uses 1366x768, 1440x900, 1920x1080, and 2560x1440 in light and dark themes. At 1440x900 it covers chosen Story progression, all nine controlled Story pages, Mining, Settings, all upgrade tabs, Powers at its controlled unlock boundary, and representative Space/Wisdom/galaxy Mining states. At 1366x768 it also covers the three source-paired craft outcomes; at 1920x1080 and 2560x1440 it covers only the primary Mining, Story, and Settings screens. This is selected visual evidence, not exhaustive screen/state certification.
 
 The Powers boundary screenshot is derived from the captured Wisdom phase-start save in `remix-phase-differentials.json`. If that pinned save changes, run `pnpm reference:priority-visuals:capture` and review the resulting source-state fixture plus screenshot hashes; the check compares the complete encoded save and reports the first differing JSON path. A matching screenshot alone does not establish that the underlying source state is still synchronized.
 

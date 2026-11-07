@@ -22,6 +22,11 @@ The average and minimum-craft display paths use a separate deterministic average
 
 The caller supplies the source upgrade context, RNG, and a name resolver that preserves the source's direct base-array lookup versus generated fallback. The core transition returns ordered events; `packages/formatting` renders the source success, dud, and insufficient-Gem messages. The web session interleaves those messages with each injected save effect; each successful replacement is persisted before its `Game Saved!` confirmation. The route inserts new log entries first and preserves Remix's six-entry window. Seeded outcome distributions and required source boundaries are covered, but additional craft UI states and viewports remain open, so the broader crafting area is still in progress.
 
+The three source-paired craft outcomes also have exact full-screen Chromium
+comparisons at 1366x768 in light and dark, alongside the existing 1440x900
+comparisons. These selected viewport cases do not cover all Mining panel states
+or resolutions.
+
 ## Craft flow
 
 Scripts/Define/functions.js computes Gems used through Gem Waster, supports a bulk loop while Shift is held, subtracts and rounds Gems per attempt, and replaces the current tool only when new damage is strictly greater. Each successful replacement logs before saving; a dud emits a message containing the crafted P, Q, and damage values. A bulk craft saves at each successful replacement, so successive saves can contain different Gem balances and pickaxes; the pinned two-replacement case captures 3 Gems with `Bad Mud Pick`, then 0 Gems with `Sturdy Mud Pick`. Duds and unaffordable attempts do not save. The captured `fractional-gem-balance-rounds-after-spend` case shows that subtracting one Gem from 2.6 rounds the balance to 2, an observable legacy quirk to preserve.

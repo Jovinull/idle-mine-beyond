@@ -45,6 +45,11 @@ disabled action now has paired Remix/Beyond full-screen comparisons at the
 standard 1366x768 viewport in both themes on Windows; Linux asserts the source
 rows and disabled control. Other viewport/state combinations remain open.
 
+**Pickaxe craft viewport update (2026-11-07):** source/Beyond screenshots for
+replacement, equal-damage dud, and insufficient Gems match at 1366x768 in both
+themes, with the captured RNG count preserved in each runtime. Other craft
+states and viewports remain open.
+
 **Shop screenshot repeatability (2026-11-07):** the isolated dark, level-one
 catalog comparison differed once at Planet Coins pixel `(810,152)` (Beyond RGB
 3, Remix RGB 4), then passed on immediate rerun. The strict shop visual gap

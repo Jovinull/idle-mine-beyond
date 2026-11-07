@@ -178,8 +178,9 @@ Remix/Beyond views at 1440x900 in both themes.
 `insufficient-gems-consumes-no-rng` sequences in both themes. It checks the
 displayed pickaxe name, consumes the source-recorded RNG draw count in each
 runtime (zero for the unaffordable attempt), and compares the full 1440x900
-Mining screen at zero differing pixels. All six outcome/theme comparisons
-passed; this closes these three visible result branches only.
+Mining screen at zero differing pixels. The same outcomes now also compare at
+1366x768. All twelve outcome/theme/viewport comparisons pass; this closes these
+three visible result branches at the two selected viewports only.
 
 - **Sampled (qualified):** source-forced cases cover the strict Expertise,
   quality-streak, name-type, cap, affordability, replacement, and bulk-stop

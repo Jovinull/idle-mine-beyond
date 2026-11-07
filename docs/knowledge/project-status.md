@@ -78,6 +78,13 @@ the 1440x900 cases. The pinned Remix rows and disabled control match in both
 themes; Windows full-screen screenshots also match exactly. Linux retains those
 state assertions because of the known Wisdom-description antialiasing delta.
 
+**Pickaxe craft alternate viewport differential (2026-11-07):** the replacement,
+equal-damage dud, and insufficient-Gem outcomes now compare full source/Beyond
+Mining screens at 1366x768 in both themes, in addition to the existing 1440x900
+cases. All six new outcome/theme screenshots match exactly, and both runtimes
+consume the fixture's expected RNG draws (zero for insufficient Gems). Other
+craft states and viewports remain open.
+
 **Powers visual differential (2026-11-07):**
 `pnpm.cmd exec playwright test tests/e2e/powers-prestige-differential.spec.ts --workers=1 --retries=0`
 passed 15/15. It covers source-paired prestige actions/no-op and stale-table

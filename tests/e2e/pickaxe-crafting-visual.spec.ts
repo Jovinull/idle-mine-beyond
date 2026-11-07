@@ -54,6 +54,13 @@ const cases = [
   "equal-damage-is-a-dud",
   "insufficient-gems-consumes-no-rng",
 ] as const;
+const viewports = [
+  { width: 1440, height: 900 },
+  { width: 1366, height: 768 },
+] as const;
+const viewportCases = viewports.flatMap((viewport) =>
+  cases.map((caseName) => ({ caseName, viewport })),
+);
 
 function seedLegacySave({ encoded, now }: { encoded: string; now: number }) {
   localStorage.clear();
@@ -61,8 +68,11 @@ function seedLegacySave({ encoded, now }: { encoded: string; now: number }) {
   Date.now = () => now;
 }
 
-async function waitForStableScreen(page: Page): Promise<Buffer> {
-  await page.mouse.move(1439, 899);
+async function waitForStableScreen(
+  page: Page,
+  viewport: { width: number; height: number },
+): Promise<Buffer> {
+  await page.mouse.move(viewport.width - 1, viewport.height - 1);
   await page.evaluate(() => document.fonts.ready);
   await page.evaluate(
     () =>
@@ -94,8 +104,8 @@ async function installCraftRandomSequence(
 }
 
 for (const theme of ["light", "dark"] as const) {
-  for (const caseName of cases) {
-    test(`matches Remix ${caseName} craft screen in ${theme} theme`, async ({
+  for (const { caseName, viewport } of viewportCases) {
+    test(`matches Remix ${caseName} craft screen at ${viewport.width}x${viewport.height} in ${theme} theme`, async ({
       browser,
       page,
     }) => {
@@ -138,7 +148,7 @@ for (const theme of ["light", "dark"] as const) {
         deviceScaleFactor: 1,
         locale: "en-US",
         timezoneId: "UTC",
-        viewport: { width: 1440, height: 900 },
+        viewport,
       });
       const sourcePage = await sourceContext.newPage();
       const beyondPageErrors: string[] = [];
@@ -150,7 +160,7 @@ for (const theme of ["light", "dark"] as const) {
       try {
         const sourceUrl = await routePinnedRemixOracle(sourceContext);
         await Promise.all([
-          page.setViewportSize({ width: 1440, height: 900 }),
+          page.setViewportSize(viewport),
           page.addInitScript(seedLegacySave, { encoded, now: fixedClock }),
           sourcePage.addInitScript(seedLegacySave, {
             encoded,
@@ -227,8 +237,8 @@ for (const theme of ["light", "dark"] as const) {
         expect(remixCalls).toBe(attempt.randomCalls);
 
         const [beyondPng, remixPng] = await Promise.all([
-          waitForStableScreen(page),
-          waitForStableScreen(sourcePage),
+          waitForStableScreen(page, viewport),
+          waitForStableScreen(sourcePage, viewport),
         ]);
         const beyondHash = createHash("sha256").update(beyondPng).digest("hex");
         const remixHash = createHash("sha256").update(remixPng).digest("hex");
@@ -244,9 +254,10 @@ for (const theme of ["light", "dark"] as const) {
             }),
           ]);
         }
-        expect(beyondHash, `${caseName} full-screen pixels in ${theme}`).toBe(
-          remixHash,
-        );
+        expect(
+          beyondHash,
+          `${caseName} full-screen pixels at ${viewport.width}x${viewport.height} in ${theme}`,
+        ).toBe(remixHash);
       } finally {
         await sourceContext.close().catch(() => undefined);
       }
