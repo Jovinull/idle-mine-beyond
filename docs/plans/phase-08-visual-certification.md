@@ -12,6 +12,16 @@ Provide reviewable visual parity evidence for fixed viewport, theme, and state f
 
 ## Current evidence
 
+**Linux Mining preference screenshot gap closed (2026-11-07):** CI run 97
+passed all six full-screen comparisons (three `showMineObjLevel` / craft-label
+states across light and dark) at zero differing pixels. The pinned Remix page
+needs a test-only display hide/restore across two animation frames before its
+ordinary capture to refresh raster output; no hidden screenshot is captured,
+Beyond is not mutated, and no tolerance or mask is used. The exact comparison
+remains in `tests/e2e/mining-preferences-visual.spec.ts`. This closes only this
+Linux Mining preference slice; the broader Mining and Desktop UI rows remain
+In Progress for their separately tracked states and evidence.
+
 **Story scope certified (2026-11-03):** the approved chapter-level visual scope
 is complete. All nine all-unlocked chapter pages match the pinned source at
 zero pixels in light and dark at 1440x900; selected natural progression states
@@ -154,6 +164,7 @@ The visual corpus has 93 Windows sidecars (92 full-screen captures plus one crop
 - Complete: compare Money/Gem/Planet Coin upgrade tabs, Powers at its controlled unlock boundary, and Space/Wisdom/galaxy Mining states at 1440x900 in both themes against pinned Remix captures.
 - Complete: compare the Planet Coin header/tab gate at source high-water 89/90 in light and dark; Linux retains semantic visibility assertions without pixel baselines.
 - Complete: compare only primary Mining, Story, and Settings screens at 1366x768, 1920x1080, and 2560x1440 in both themes; do not expand every state to every viewport.
+- Complete: compare all six Mining preference/label states at 1440x900 in both themes on Windows and Linux; CI run 97 closes this specific Linux screenshot gap with exact pixel equality.
 - Defer running-Tauri-WebView save/reload certification until native packaging. Keep its procedure documented, but do not make it a gate for this visual-certification phase.
 - Completed in the Phase 1 follow-up: added selected procedural probes above ID 768 and verified four gameplay-generated route-end saves through Beyond import and v1 restore. This is not exhaustive generator or historical-save certification; see [the follow-up plan](phase-01-parity-depth-follow-up.md).
 - Record every intentional visible difference in `docs/knowledge/BEHAVIORAL_EXCEPTIONS.md`; current default remains no exceptions.

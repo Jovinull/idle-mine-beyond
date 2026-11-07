@@ -32,11 +32,14 @@ In pinned `index.html`, `settings.showMinCraftDamage` conditionally renders a
 heading. These settings change visible labels only. The source-paired
 `tests/e2e/mining-preferences-visual.spec.ts` toggles each setting in Settings
 and compares complete Mining screens with both labels absent, then each label
-present separately in light and dark themes at 1440x900. Windows compares all
-six states at zero pixels. Linux also compares five states at zero pixels; for
-the dark `showMineObjLevel=true` state it asserts matching label, body color,
-and article geometry because runs 72–75 captured one unexplained Remix-only
-pixel at `(7,209)`. This specific Linux screenshot remains open evidence.
+present separately in light and dark themes at 1440x900. Windows and Linux
+compare all six states at zero pixels. On Linux, a test-only paint refresh of
+the pinned Remix page (temporarily hiding and restoring direct body children
+across two animation frames) is required before the normal screenshot capture;
+the hidden page is never captured, Beyond is not mutated, and the full-screen
+SHA-256 comparison remains exact. CI run 97 (2026-11-07) passed all six Linux
+comparisons. This closes the specific Mining-preference screenshot gap; it
+does not certify other Mining states or the broader desktop UI.
 
 ## Story source styles
 
