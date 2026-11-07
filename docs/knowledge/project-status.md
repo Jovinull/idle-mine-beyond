@@ -1432,3 +1432,12 @@ in both themes. The light capture differs at one rounded-border pixel
 `(697,152)` (Beyond RGB 19, Remix RGB 17); the dark full-screen hash also
 differs, but this run did not retain its pixel map. No tolerance or mask was
 added; the shop remains In Progress.
+
+**Settings Save/Export visual parity (2026-11-07):** extended the paired pinned
+Remix/Beyond Settings session to return from dark to light, compare the full
+screen after the theme change, manually Save in light, and Export again. The
+focused `tests/e2e/settings-visual.spec.ts` passed 3/3; both dark and light
+changed-preference Save/Export screens compare at zero differing pixels, saved
+storage is present in both runtimes, and exported text matches exactly. Other
+Settings states and save-text contents remain open; Desktop UI and visual
+parity remains In Progress.

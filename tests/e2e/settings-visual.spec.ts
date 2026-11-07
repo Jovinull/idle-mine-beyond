@@ -290,6 +290,53 @@ test("matches Remix after changing and saving Settings preferences", async ({
     ]);
     expect(beyondExport, "Settings export text").toBe(remixExport);
     await compareScreen("settings-export-dark");
+
+    await Promise.all([
+      beyondSettings.getByRole("button", { name: "Light" }).click(),
+      remixSettings.getByRole("button", { name: "Light" }).click(),
+    ]);
+    await Promise.all([
+      expect(page.locator("body")).toHaveCSS(
+        "background-color",
+        "rgb(250, 250, 250)",
+      ),
+      sourcePage.waitForFunction(
+        () =>
+          document.querySelector<HTMLLinkElement>("#css_theme")?.sheet !==
+            null &&
+          getComputedStyle(document.body).backgroundColor ===
+            "rgb(250, 250, 250)",
+      ),
+    ]);
+    await compareScreen("settings-preferences-light-after-dark");
+
+    await Promise.all([
+      beyondSettings.getByRole("button", { name: "Save" }).click(),
+      remixSettings.getByRole("button", { name: "Save" }).click(),
+    ]);
+    const [beyondSavedLight, remixSavedLight] = await Promise.all([
+      page.evaluate(() => localStorage.getItem("IdleMineBeyond")),
+      sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+    ]);
+    expect(
+      beyondSavedLight,
+      "Beyond manual save in light theme",
+    ).not.toBeNull();
+    expect(remixSavedLight, "Remix manual save in light theme").not.toBeNull();
+    await compareScreen("settings-preferences-saved-light");
+
+    await Promise.all([
+      beyondSettings.getByRole("button", { name: "Export" }).click(),
+      remixSettings.getByRole("button", { name: "Export" }).click(),
+    ]);
+    const [beyondExportLight, remixExportLight] = await Promise.all([
+      beyondSettings.locator("textarea").inputValue(),
+      remixSettings.locator("textarea").inputValue(),
+    ]);
+    expect(beyondExportLight, "Settings export text in light theme").toBe(
+      remixExportLight,
+    );
+    await compareScreen("settings-export-light");
   } finally {
     await sourceContext.close().catch(() => undefined);
   }

@@ -37,7 +37,10 @@ of those maps.
   `tests/parity/remix-web-game-session.test.ts` and
   `tests/e2e/remix-app.spec.ts`. `tests/e2e/settings-visual.spec.ts` also
   compares the source and Beyond Settings screen after changing notation,
-  enabling both preferences, switching to dark, saving, and exporting. The
+  enabling both preferences, switching to dark, saving, and exporting, then
+  returning to light and comparing manual Save and Export again. The full-screen
+  changed-preference/save/export state is compared in both themes at 1440x900.
+  The
   `tests/e2e/mining-preferences-visual.spec.ts` toggles both Mining display
   preferences through Settings and compares the label-present and label-absent
   Mining screens in both themes. The
@@ -62,6 +65,7 @@ of those maps.
 | `index.html`: `settings.showMinCraftDamage` condition includes or omits the minimum-base-damage span in the Mining craft button                                                                                                             | Fresh source save defaults the preference to false; the paired E2E toggles it on and off through Settings       | `tests/e2e/mining-preferences-visual.spec.ts` asserts label presence/text or absence and compares complete Mining screenshots in both themes                                    |
 | `index.html`: `settings.showMineObjLevel` condition includes or omits the selected mineral-level heading in Mining                                                                                                                          | Fresh source save defaults the preference to false; the paired E2E toggles it on and off through Settings       | `tests/e2e/mining-preferences-visual.spec.ts` asserts label states; Windows and Linux full screens exact for all six preference/theme combinations in CI run 97                 |
 | `Scripts/Define/functions.js:exportGame`, `Scripts/Define/functions.js:getSaveString`, and `Scripts/Define/functions.js:saveGame`: serialize the current source game into the Settings field; save path updates time, localStorage, and log | `saveApplicationSemantics` and `saveExportSemantics` pin source output                                          | `tests/e2e/save-codec.spec.ts` and `tests/e2e/remix-app.spec.ts` compare import/export and persisted state                                                                      |
+| `index.html` Settings Light/Dark controls, `functions.js:setTheme`, `saveGame`, and `exportGame`: theme selection saves; Save updates persisted state/message; Export fills the text field                                                  | Pinned source handlers; paired runtime session replays dark then light Save/Export                              | `tests/e2e/settings-visual.spec.ts` compares full-screen changed-preference Save and Export states in light and dark at 1440x900, saved storage, and exact exported text        |
 | `Scripts/Define/functions.js:hardReset`: each confirmation returns early without changing game/storage when dismissed; three accepts clear origin storage and reload defaults                                                               | `hardResetSemantics.cancelled` covers each dismissal index; `hardResetSemantics.confirmed` covers three accepts | `tests/parity/remix-hard-reset.test.ts` checks every source result; `tests/e2e/remix-app.spec.ts` compares each cancellation point with pinned Remix and checks confirmed reset |
 
 ## Light and dark themes
