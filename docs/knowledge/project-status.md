@@ -74,6 +74,14 @@ tab writes level 1 again. Remix's legacy save and Beyond's v1 state match after
 all three writes. Other action/write interleavings and real storage-environment
 failures remain open.
 
+**Cross-tab stale-action write differential (2026-11-07):** extended the
+source-paired scenario: after the updated tab writes Blacksmith 1 and the stale
+tab overwrites it, the updated tab writes Blacksmith 1 again. The stale tab then
+buys Active Power at its exact `$1,000` price from its original state and saves,
+leaving persisted Blacksmith 0 / Active Power 1 / Money 0. Remix and Beyond
+match after all four writes; the updated tab still shows Blacksmith 1 while the
+shared save has the stale snapshot. The E2E passed 1/1.
+
 **Current closeout (2026-11-03):** the sampled-domain review and rule are
 committed and pushed in `f2f8fd5`; all 14 entries marked `Sampled (qualified)`
 have mapped boundary, sample, and differential evidence. They comprise twelve

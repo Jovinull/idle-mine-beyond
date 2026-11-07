@@ -83,7 +83,14 @@ function sourceBlacksmithCard(page: Page) {
     .first();
 }
 
-test("a stale second tab overwrites the newer save like pinned Remix", async ({
+function sourceActivePowerCard(page: Page) {
+  return page
+    .locator(".upgradelist .upgrade")
+    .filter({ has: page.locator('img[src$="activepower.png"]') })
+    .first();
+}
+
+test("a stale second tab purchase overwrites the newer save like pinned Remix", async ({
   page,
   browser,
 }) => {
@@ -256,6 +263,71 @@ test("a stale second tab overwrites the newer save like pinned Remix", async ({
     );
     expect(beyondFinalState.upgrades.money["blacksmith"]).toBe(1);
     expect(beyondFinalState.resources.money).toBe(remixFinalState.money);
+    expect(await page.evaluate(() => localStorage.getItem("IdleMine"))).toBe(
+      encodedInitialSave,
+    );
+
+    // A later action from the stale tab writes its whole local snapshot. This
+    // loses the newer Blacksmith purchase while retaining its own Active Power.
+    await Promise.all([
+      beyondStalePage
+        .locator("footer button")
+        .filter({ hasText: "Mining" })
+        .click(),
+      sourceStalePage
+        .locator("footer button")
+        .filter({ hasText: "Mining" })
+        .click(),
+    ]);
+    const beyondStaleActivePower = beyondStalePage.locator(
+      '[data-upgrade-group="money"][data-upgrade-key="activePower"]',
+    );
+    const remixStaleActivePower = sourceActivePowerCard(sourceStalePage);
+    await Promise.all([
+      beyondStaleActivePower.click(),
+      remixStaleActivePower.click(),
+    ]);
+    await Promise.all([
+      expect(beyondStaleActivePower).toHaveAttribute("data-upgrade-level", "1"),
+      expect(remixStaleActivePower.locator(".lvl")).toHaveText("1"),
+    ]);
+    await Promise.all([
+      beyondStalePage.locator("[data-game-tab='settings']").click(),
+      sourceStalePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      beyondStalePage.getByRole("button", { name: "Save" }).click(),
+      sourceStalePage.getByRole("button", { name: "Save" }).click(),
+    ]);
+
+    const [beyondStaleActionState, remixStaleActionSave] = await Promise.all([
+      readBeyondState(beyondStalePage),
+      readLegacySlot(sourceStalePage),
+    ]);
+    const remixStaleActionState = readSaveState(remixStaleActionSave);
+    expect(beyondStaleActionState.upgrades.money["blacksmith"]).toBe(
+      remixStaleActionState.upgrades["blacksmith"]?.level,
+    );
+    expect(beyondStaleActionState.upgrades.money["activePower"]).toBe(
+      remixStaleActionState.upgrades["activePower"]?.level,
+    );
+    expect(beyondStaleActionState.upgrades.money["blacksmith"]).toBe(0);
+    expect(beyondStaleActionState.upgrades.money["activePower"]).toBe(1);
+    expect(beyondStaleActionState.resources.money).toBe(
+      remixStaleActionState.money,
+    );
+    expect(remixStaleActionState.money).toBe("0");
+    await Promise.all([
+      page.locator("footer button").filter({ hasText: "Mining" }).click(),
+      sourcePage.locator("footer button").filter({ hasText: "Mining" }).click(),
+    ]);
+    await Promise.all([
+      expect(beyondCard).toHaveAttribute("data-upgrade-level", "1"),
+      expect(remixCard.locator(".lvl")).toHaveText("1"),
+    ]);
     expect(await page.evaluate(() => localStorage.getItem("IdleMine"))).toBe(
       encodedInitialSave,
     );
