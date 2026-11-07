@@ -370,6 +370,37 @@ async function captureWithElementVisibilityHidden(
   }
 }
 
+async function captureWithElementOpacityZero(page: Page, selector: string) {
+  const element = page.locator(selector);
+  const original = await element.evaluate((node) => {
+    const style = (node as HTMLElement).style;
+    return {
+      value: style.getPropertyValue("opacity"),
+      priority: style.getPropertyPriority("opacity"),
+    };
+  });
+  try {
+    await element.evaluate((node) => {
+      (node as HTMLElement).style.setProperty("opacity", "0", "important");
+    });
+    const computedOpacity = await element.evaluate(
+      (node) => getComputedStyle(node).opacity,
+    );
+    return {
+      png: await waitForStableMiningScreenshot(page),
+      computedOpacity,
+    };
+  } finally {
+    await element.evaluate((node, style) => {
+      const inlineStyle = (node as HTMLElement).style;
+      inlineStyle.removeProperty("opacity");
+      if (style.value) {
+        inlineStyle.setProperty("opacity", style.value, style.priority);
+      }
+    }, original);
+  }
+}
+
 async function captureWithoutCanvasScopeClass(page: Page) {
   const canvas = page.locator("canvas.mine-object");
   const original = await canvas.evaluate((node) => {
@@ -741,6 +772,16 @@ for (const theme of ["light", "dark"] as const) {
             const cachePlacementHash = createHash("sha256")
               .update(cachePlacementProbe.png)
               .digest("hex");
+            const [beyondOpacityZero, remixOpacityZero] = await Promise.all([
+              captureWithElementOpacityZero(page, "canvas.mine-object"),
+              captureWithElementOpacityZero(sourcePage, "canvas.mine-object"),
+            ]);
+            const beyondOpacityZeroHash = createHash("sha256")
+              .update(beyondOpacityZero.png)
+              .digest("hex");
+            const remixOpacityZeroHash = createHash("sha256")
+              .update(remixOpacityZero.png)
+              .digest("hex");
             for (const [name, png] of [
               [
                 "mining-dark-level-background-only-beyond.png",
@@ -791,6 +832,14 @@ for (const theme of ["light", "dark"] as const) {
               [
                 "mining-dark-level-beyond-reference-cache-placement.png",
                 cachePlacementProbe.png,
+              ],
+              [
+                "mining-dark-level-canvas-opacity-zero-beyond.png",
+                beyondOpacityZero.png,
+              ],
+              [
+                "mining-dark-level-canvas-opacity-zero-remix.png",
+                remixOpacityZero.png,
               ],
             ] as const) {
               await test.info().attach(name, {
@@ -878,6 +927,13 @@ for (const theme of ["light", "dark"] as const) {
                     hash: cachePlacementHash,
                     matchesRemix: cachePlacementHash === remixHash,
                     placement: cachePlacementProbe.placement,
+                  },
+                  canvasOpacityZero: {
+                    beyondHash: beyondOpacityZeroHash,
+                    remixHash: remixOpacityZeroHash,
+                    matches: beyondOpacityZeroHash === remixOpacityZeroHash,
+                    beyondComputedOpacity: beyondOpacityZero.computedOpacity,
+                    remixComputedOpacity: remixOpacityZero.computedOpacity,
                   },
                   wrapper,
                   afterWrapperRemoval: {

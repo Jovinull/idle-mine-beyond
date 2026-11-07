@@ -125,14 +125,21 @@ preserving the Canvas layout box. The visible source/Beyond canvases both have
 a 256x224 bitmap, identical pixel hash, matching bounds, and matching recorded
 paint styles. Beyond adds a generated Svelte scope class. The source places its
 hidden `canvas#cache` as the first child of `#app`; Beyond's cache is currently
-appended to `body`. The Linux-only failure probe now (1) removes only the
-generated canvas scope class while pinning its computed height and transition
-inline, and (2) moves Beyond's hidden cache canvas to the source DOM position.
-It also records both cache canvases' placement and bitmap hashes. These are
-diagnostic DOM variants only; the production DOM and exact comparison remain
-unchanged. CI run 88's only failure was still the one-pixel dark Mining
-comparison; the visual gap remains open until the cause is identified and the
-unmodified screenshots match exactly.
+appended to `body`.
+
+CI run 89 tested those two DOM differences on both retries. Removing only the
+generated canvas scope class while pinning computed height and transition
+inline did not change Beyond's screenshot hash. Moving Beyond's hidden cache
+canvas to the first child of `#app` also did not change its screenshot hash.
+Both cache canvases are 256x224, `display:none`, and have zero-sized layout
+boxes; their pixel hashes differ (`13f648ea` Beyond, `87529dc5` Remix), while
+the visible canvas bitmap hashes match. This cache-buffer difference is not
+evidence of the one-pixel screen delta's cause. The next failure-only variant
+sets `opacity:0` on both visible canvases to test whether the screenshot delta
+requires the painted image or merely the Canvas element/compositor presence.
+All variants are diagnostic only; the production DOM and exact screenshot
+assertion remain unchanged. Run 89's only E2E failure was the same one-pixel
+dark Mining comparison; exact visual parity remains open.
 
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 

@@ -1,6 +1,6 @@
 # Project status
 
-Last updated: 2026-11-04
+Last updated: 2026-11-06
 
 ## Phase
 
@@ -179,10 +179,20 @@ preserving its layout box. The source and Beyond visible canvases have the same
 256x224 bitmap, pixel hash, bounds, and recorded paint styles. Their DOM class
 lists differ by Svelte's generated scope class. The pinned `index.html` also
 places `canvas#cache` first inside `#app`, while Beyond currently appends it to
-`body`; both canvases are hidden during capture. CI 89 will test these two
-source-visible differences independently with screenshot-only DOM variants.
-No production style or strict screenshot assertion has changed; cause remains
-unresolved and Desktop UI remains In Progress.
+`body`; both canvases are hidden during capture. The source/Beyond DOM
+differences are hypotheses only; no cause has been established.
+
+**Linux Mining DOM-variant result (CI run 89, 2026-11-06):** on both retries,
+the exact one-pixel mismatch persisted after removing only the generated
+Svelte canvas class while preserving computed height/transition, and after
+moving Beyond's hidden cache canvas to the first child of `#app`. Neither
+variant changes Beyond's screenshot hash. Both hidden cache canvases are
+256x224 and zero-sized; their pixel hashes differ (`13f648ea` Beyond,
+`87529dc5` Remix), while the visible mine-canvas hashes match. This cache
+difference is recorded but is not evidence of the screen mismatch's cause.
+CI 90 will compare source/Beyond captures with both visible canvases at
+`opacity: 0`, keeping their DOM and layout boxes. No product styling or strict
+pixel assertion has changed; Desktop UI remains In Progress.
 
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover
