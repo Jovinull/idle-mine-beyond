@@ -240,6 +240,12 @@ does not locate the intermittent full-screen difference. Keep the strict
 comparison and the desktop/shop rows In Progress; no mask or tolerance is
 permitted.
 
+**Isolated dark catalog repeat (2026-11-07):** with Vite held in a separate
+managed session, the level-one dark catalog comparison first differed on the
+Planet Coin full screen at `(810,152)` (Beyond RGB 3, Remix RGB 4), then passed
+on immediate rerun. This confirms an intermittent rounded-corner pixel delta;
+the strict full-screen comparison remains open and unchanged.
+
 **Focused catalog follow-up (2026-11-04):**
 `pnpm.cmd exec playwright test -c playwright.slow.config.ts
 tests/e2e/upgrade-affordability-differential.spec.ts --project=chromium

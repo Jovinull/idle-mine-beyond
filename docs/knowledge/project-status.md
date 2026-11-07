@@ -66,6 +66,12 @@ the prestige effect (`31.622776601683796`), so the visible `Prestige: x31.62`
 control is disabled. The 1440x900 comparisons cover both themes; Powers remains
 In Progress for other balances, prestige inputs, and visual states.
 
+**Shop pixel-delta recheck (2026-11-07):** the isolated level-one dark catalog
+comparison failed once on Planet Coins at `(810,152)` by one RGB channel
+(Beyond 3, Remix 4), then passed on immediate rerun with Vite in a managed
+session. No CSS, tolerance, or mask changed; the strict shop visual gap remains
+open.
+
 **Powers visual differential (2026-11-07):**
 `pnpm.cmd exec playwright test tests/e2e/powers-prestige-differential.spec.ts --workers=1 --retries=0`
 passed 15/15. It covers source-paired prestige actions/no-op and stale-table

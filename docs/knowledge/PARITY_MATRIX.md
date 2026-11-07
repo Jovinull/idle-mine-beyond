@@ -40,6 +40,11 @@ Status reflects evidence and validation, not code presence. Unstarted areas rema
 now covers the exact-effect disabled Prestige button at Mining Power `1e6` in
 both themes. The row remains In Progress for other visual states.
 
+**Shop screenshot repeatability (2026-11-07):** the isolated dark, level-one
+catalog comparison differed once at Planet Coins pixel `(810,152)` (Beyond RGB
+3, Remix RGB 4), then passed on immediate rerun. The strict shop visual gap
+remains open; no pixel was masked.
+
 Latest shop visual revalidation (2026-11-03): `pnpm.cmd test:e2e:slow --workers=1 --retries=0` passed 8/9. The only failure was the level-one light full-screen catalog: the suite reported Planet Coins, while a focused rerun reported Gems. Both runs differed at the same five top-left corners by RGB 17 vs. 19; the prior dark differences passed in the new suite. See the [shop trace map](parity-traceability/web-presentation-and-scope.md) for the detailed diagnosis.
 
 **Shop visual recheck (2026-11-07):** the focused level-one catalog test passed
