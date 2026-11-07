@@ -1484,3 +1484,12 @@ Remix/Beyond craft visual test to capture the full pre-craft Mining panel at
 pixels in light and dark on Windows Chromium (2/2), after which the selector
 returns to cost 1 and the existing craft/RNG assertions still pass. Linux
 comparison is pending CI; other panel states and viewports remain open.
+
+**Real backup-write quota failure (2026-11-07):** extended the Chromium
+localStorage quota E2E to begin with a valid primary save, fill remaining
+origin quota, and exercise the actual `QuotaExceededError` while the coordinator
+copies the prior primary to backup. The old primary remains byte-identical,
+backup remains absent, and the failed save appends no confirmation log. The
+focused quota E2E passed 2/2 including the existing real primary-write failure.
+Beyond storage and recovery remains In Progress for other browser/profile
+quota policies, cross-tab interleavings, and process termination.

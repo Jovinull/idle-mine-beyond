@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const primarySaveKey = "IdleMineBeyond";
+const backupSaveKey = "IdleMineBeyondBackup";
 
 test("surfaces an actual browser storage quota failure without confirming a save", async ({
   page,
@@ -118,4 +119,117 @@ test("surfaces an actual browser storage quota failure without confirming a save
 
   await page.locator("[data-game-tab='mining']").click();
   await expect(page.locator(".messagelog")).not.toContainText("Game Saved!");
+});
+
+test("preserves the primary when a real quota failure prevents backup retention", async ({
+  page,
+}) => {
+  test.setTimeout(120_000);
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+  await page.locator("[data-game-tab='settings']").click();
+  const settings = page.locator("article.settings");
+
+  await settings.locator("[data-settings-save]").click();
+  const primaryBeforeQuota = await page.evaluate(
+    (key) => localStorage.getItem(key),
+    primarySaveKey,
+  );
+  expect(primaryBeforeQuota).not.toBeNull();
+  expect(
+    await page.evaluate((key) => localStorage.getItem(key), backupSaveKey),
+  ).toBeNull();
+  await page.locator("[data-game-tab='mining']").click();
+  const saveMessagesBeforeQuota = await page.locator(".messagelog").innerText();
+  await page.locator("[data-game-tab='settings']").click();
+
+  const quotaProbe = await page.evaluate(() => {
+    type QuotaTestWindow = Window & {
+      __idleMineQuotaProbe?: {
+        readonly errorName: string;
+        readonly writeAttempts: string[];
+        readonly writeErrors: Array<{ key: string; name: string }>;
+      };
+    };
+
+    const primaryKey = "IdleMineBeyond";
+    const backupKey = "IdleMineBeyondBackup";
+    const chunk = "q".repeat(1024);
+    let errorName = "";
+    for (let index = 0; index < 10_000; index += 1) {
+      try {
+        localStorage.setItem(`__quota_probe_${index}`, chunk);
+      } catch (error) {
+        errorName = error instanceof DOMException ? error.name : "unknown";
+        break;
+      }
+    }
+    if (errorName !== "QuotaExceededError") {
+      throw new Error(
+        `Expected a real browser quota error, received ${errorName || "none"}.`,
+      );
+    }
+
+    const writeAttempts: string[] = [];
+    const writeErrors: Array<{ key: string; name: string }> = [];
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function setItem(key, value) {
+      if (key === primaryKey || key === backupKey) {
+        writeAttempts.push(key);
+      }
+      try {
+        originalSetItem.call(this, key, value);
+      } catch (error) {
+        if (key === primaryKey || key === backupKey) {
+          writeErrors.push({
+            key,
+            name: error instanceof DOMException ? error.name : "unknown",
+          });
+        }
+        throw error;
+      }
+    };
+
+    const keyCountBeforeSave = localStorage.length;
+    (window as QuotaTestWindow).__idleMineQuotaProbe = {
+      errorName,
+      writeAttempts,
+      writeErrors,
+    };
+    return { errorName, keyCountBeforeSave };
+  });
+  expect(quotaProbe.errorName).toBe("QuotaExceededError");
+
+  await settings.locator("[data-settings-save]").click();
+  const result = await page.evaluate(() => {
+    type QuotaTestWindow = Window & {
+      __idleMineQuotaProbe?: {
+        readonly errorName: string;
+        readonly writeAttempts: string[];
+        readonly writeErrors: Array<{ key: string; name: string }>;
+      };
+    };
+    const probe = (window as QuotaTestWindow).__idleMineQuotaProbe;
+    if (!probe) throw new Error("The browser quota probe result is missing.");
+    return {
+      ...probe,
+      keyCountAfterSave: localStorage.length,
+      primary: localStorage.getItem("IdleMineBeyond"),
+      backup: localStorage.getItem("IdleMineBeyondBackup"),
+    };
+  });
+
+  expect(result.writeAttempts, JSON.stringify(result)).toEqual([backupSaveKey]);
+  expect(result.writeErrors, JSON.stringify(result)).toEqual([
+    { key: backupSaveKey, name: "QuotaExceededError" },
+  ]);
+  await expect(settings.getByRole("alert")).toHaveText(
+    "Save failed: storageFailed",
+  );
+  expect(result.primary).toBe(primaryBeforeQuota);
+  expect(result.backup).toBeNull();
+  expect(result.keyCountAfterSave).toBe(quotaProbe.keyCountBeforeSave);
+
+  await page.locator("[data-game-tab='mining']").click();
+  await expect(page.locator(".messagelog")).toHaveText(saveMessagesBeforeQuota);
 });

@@ -314,6 +314,15 @@ visible failure result, unchanged key count, absent primary/backup slots, and
 no `Game Saved!` log. This covers one Chromium profile's quota path; policies
 across browsers and profiles remain open.
 
+**Real backup-retention quota follow-up (2026-11-07):** the same E2E now first
+writes a valid primary, fills the remaining origin quota, and exercises the
+native `QuotaExceededError` on `writeBackup(previous)`. It verifies the primary
+is byte-identical after failure, backup remains absent, the key count does not
+change, the Settings alert is shown, and no second confirmation log is added.
+The complete focused Chromium file passes 2/2. The assertion maps the real
+browser failure to the coordinator's existing backup-write failure branch; it
+does not expand coverage to other browser quota policies.
+
 ## Native save adapter
 
 - **Remix source:** no native storage adapter exists in Remix; its observable
