@@ -1514,3 +1514,9 @@ source/Beyond comparisons at 1366x768 with each Money, Gem, and Planet Coin
 balance set to zero. All six captures match exactly in light and dark; the
 focused theme tests passed 2/2. The viewport-specific result does not close
 other balances or the remaining shop/Desktop UI state space.
+
+**Shop level-one catalog alternate viewport (2026-11-07):** added full-screen
+source/Beyond comparisons at 1366x768 for all three upgrade tabs at level one
+with abundant resources. Each representative hovered-card view matched in
+light and dark (six captures; focused tests passed 2/2). Broader levels and
+viewport combinations remain open.

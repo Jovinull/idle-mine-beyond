@@ -360,6 +360,14 @@ pixels on Windows Chromium (6 source/Beyond captures; focused test 2/2). These
 states already had 1440x900 comparisons; other balances and viewport/theme
 combinations remain open.
 
+#### Level-one catalog alternate-viewport differential
+
+The same E2E compares the full Money, Gem, and Planet Coin catalog screens at
+level one with abundant resources at 1366x768. It hovers a representative card
+in each tab before taking the complete viewport capture. All six source/Beyond
+pairs match at zero pixels on Windows Chromium (focused test 2/2); broader
+levels and other viewport/theme combinations remain open.
+
 ## Visual slice: Powers
 
 - **Remix source branches:** `game.powers.unlocked()` and
