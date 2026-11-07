@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
@@ -35,7 +36,10 @@ const buyAmounts = [
   { name: "Shift+Control", target: 100, keys: ["Shift", "Control"] },
 ] as const;
 
-function createWisdomSave(theme: "light" | "dark"): string {
+function createWisdomSave(
+  theme: "light" | "dark",
+  wisdom = "1e100000000",
+): string {
   const save = JSON.parse(fixture.data.saveApplicationSemantics.inputJson) as {
     highestMineObjectLevel: number;
     lastActive: number;
@@ -51,8 +55,8 @@ function createWisdomSave(theme: "light" | "dark"): string {
   save.highestMineObjectLevel = 170;
   save.mineObjectLevel = 170;
   save.lastActive = 1_700_000_000_000;
-  save.wisdom = "1e100000000";
-  save.maxWisdom = "1e100000000";
+  save.wisdom = wisdom;
+  save.maxWisdom = wisdom;
   save.powers.data.values = ["1", "1", "1", "1", "1"];
   save.powers.upgrades = Object.fromEntries(
     upgrades.map(([key]) => [key, { level: 0 }]),
@@ -149,11 +153,13 @@ async function preparePage(
   sourcePage: Page,
   encoded: string,
   sourceUrl: string,
+  theme: "light" | "dark" = "light",
 ): Promise<void> {
   await Promise.all([
     seedSave(page, encoded, "wisdom-upgrade-buy-amount"),
     seedSave(sourcePage, encoded, "wisdom-upgrade-buy-amount"),
   ]);
+  await page.emulateMedia({ colorScheme: theme });
   await page.setViewportSize({ width: 1440, height: 900 });
   await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
   await expect(page.locator("#app")).toHaveAttribute(
@@ -179,6 +185,63 @@ async function preparePage(
   await expect(
     sourcePage.locator("article.powers .powers-upgrades button"),
   ).toHaveCount(upgradeKeys.length);
+}
+
+async function expectSameScreen(
+  beyond: Page,
+  source: Page,
+  label: string,
+): Promise<void> {
+  // The pinned Remix and Beyond retain a known one-pixel antialiasing
+  // difference at this Wisdom description's second line on Linux.
+  if (process.platform === "linux") return;
+  await Promise.all([
+    beyond.mouse.move(1438, 800),
+    source.mouse.move(1438, 800),
+  ]);
+  const freezeWisdomIcon =
+    'img[src$="wisdom.png"] { animation: none !important; transform: none !important; }';
+  await Promise.all([
+    beyond.addStyleTag({ content: freezeWisdomIcon }),
+    source.addStyleTag({ content: freezeWisdomIcon }),
+  ]);
+  await Promise.all(
+    [beyond, source].map((page) =>
+      page.evaluate(async () => {
+        await document.fonts.ready;
+        await Promise.all(
+          Array.from(document.images, (image) =>
+            image.decode().catch(() => {}),
+          ),
+        );
+        for (const animation of document.getAnimations()) {
+          animation.pause();
+          animation.currentTime = 0;
+        }
+        await new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        );
+      }),
+    ),
+  );
+  const [beyondPng, sourcePng] = await Promise.all([
+    beyond.screenshot({ animations: "disabled" }),
+    source.screenshot({ animations: "disabled" }),
+  ]);
+  const hash = (png: Buffer) => createHash("sha256").update(png).digest("hex");
+  if (hash(beyondPng) !== hash(sourcePng)) {
+    await Promise.all([
+      test.info().attach(`${label}-beyond.png`, {
+        body: beyondPng,
+        contentType: "image/png",
+      }),
+      test.info().attach(`${label}-remix.png`, {
+        body: sourcePng,
+        contentType: "image/png",
+      }),
+    ]);
+  }
+  expect(hash(beyondPng), label).toBe(hash(sourcePng));
 }
 
 test("matches pinned Remix Wisdom upgrade single and modifier purchases", async ({
@@ -263,3 +326,59 @@ test("matches pinned Remix Wisdom upgrade single and modifier purchases", async 
     await sourceContext.close().catch(() => undefined);
   }
 });
+
+for (const theme of ["light", "dark"] as const) {
+  test(`matches the full Wisdom panel after a Shift purchase in ${theme}`, async ({
+    page,
+    browser,
+  }) => {
+    test.setTimeout(90_000);
+    const sourceContext = await browser.newContext({
+      colorScheme: theme,
+      locale: "en-US",
+      timezoneId: "UTC",
+      viewport: { width: 1440, height: 900 },
+    });
+    const sourcePage = await sourceContext.newPage();
+    const encoded = createWisdomSave(theme, "1e100");
+
+    try {
+      const sourceUrl = await routePinnedRemixOracle(sourceContext);
+      await preparePage(page, sourcePage, encoded, sourceUrl, theme);
+      const pages = [page, sourcePage] as const;
+      await keyAction(pages, "Shift", "down");
+      try {
+        await Promise.all([
+          page.locator('[data-wisdom-upgrade="powerPowerActive"]').click(),
+          sourcePage
+            .locator(
+              "article.powers .powers-upgrades button.upgrade-standalone",
+            )
+            .filter({ hasText: "Power Power (Active)" })
+            .click(),
+        ]);
+        await expect(
+          page.locator('[data-wisdom-upgrade="powerPowerActive"]'),
+        ).toHaveAttribute("data-upgrade-level", "10");
+      } finally {
+        await keyAction(pages, "Shift", "up");
+      }
+
+      const [sourceState, beyondState] = await Promise.all([
+        readSourceState(sourcePage),
+        readBeyondState(page),
+      ]);
+      expect(sourceState.levels[0]).toBe(10);
+      expect(beyondState.levels).toEqual(sourceState.levels);
+      expect(beyondState.balanceText).toBe(sourceState.balanceText);
+      expect(beyondState.buttonTexts).toEqual(sourceState.buttonTexts);
+      await expectSameScreen(
+        page,
+        sourcePage,
+        `Wisdom Shift purchase ${theme}`,
+      );
+    } finally {
+      await sourceContext.close().catch(() => undefined);
+    }
+  });
+}
