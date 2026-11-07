@@ -131,6 +131,8 @@ The formatter branch audit added pinned Japanese notation cases for its 18-entry
 
 The 2026-10-03 Settings E2E traverses all 40 formatter options and checks the visible currency against pinned outputs for the 38 deterministic formatters. A second test opens both the pinned Remix runtime and Beyond from the same legacy save, resets the same PRNG seed before selecting ALL and Zalgo, and compares visible currency/Gems text plus exact random draw counts. Both stochastic UI paths match; the notation row is Certified. Overall page visual parity remains in the separate Desktop UI and visual parity row.
 
+Trusted keyboard input follow-up (2026-11-07): a source-paired Chromium E2E sends a real ArrowRight key press to the focused Settings save field. Pinned Remix and Beyond both report a trusted, prevented event, retain the text caret, and advance the selected mine object from level 1 to 2. Other physical-keyboard, IME, and browser event variants remain open.
+
 The pinned Tritetrated source's binary-search method is compared at ten targeted
 inputs; the shared 32-value fixed-seed formatter sample remains unchanged. The
 Flags source follow-up compares its complete ordered 258-entry table, eleven

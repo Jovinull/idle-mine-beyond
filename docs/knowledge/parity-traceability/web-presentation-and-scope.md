@@ -68,6 +68,13 @@ of those maps.
 | `index.html` Settings Light/Dark controls, `functions.js:setTheme`, `saveGame`, and `exportGame`: theme selection saves; Save updates persisted state/message; Export fills the text field                                                  | Pinned source handlers; paired runtime session replays dark then light Save/Export                              | `tests/e2e/settings-visual.spec.ts` compares full-screen changed-preference Save and Export states in light and dark at 1440x900, saved storage, and exact exported text        |
 | `Scripts/Define/functions.js:hardReset`: each confirmation returns early without changing game/storage when dismissed; three accepts clear origin storage and reload defaults                                                               | `hardResetSemantics.cancelled` covers each dismissal index; `hardResetSemantics.confirmed` covers three accepts | `tests/parity/remix-hard-reset.test.ts` checks every source result; `tests/e2e/remix-app.spec.ts` compares each cancellation point with pinned Remix and checks confirmed reset |
 
+**Trusted keyboard event differential (2026-11-07):** `tests/e2e/remix-app.spec.ts`
+also pairs a real Chromium `ArrowRight` key press in the focused Settings text
+field on pinned Remix and Beyond. Both events are trusted and prevented, keep
+the text caret at the same position, and move the selected mine object from
+level 1 to level 2. The focused test passed 1/1. Physical keyboard layouts,
+IME composition, and other browser-generated key variants remain open.
+
 ## Light and dark themes
 
 - **Remix source branches:** `functions.setTheme` applies the selected theme;

@@ -1493,3 +1493,11 @@ backup remains absent, and the failed save appends no confirmation log. The
 focused quota E2E passed 2/2 including the existing real primary-write failure.
 Beyond storage and recovery remains In Progress for other browser/profile
 quota policies, cross-tab interleavings, and process termination.
+
+**Trusted Settings keyboard event (2026-11-07):** added a live Chromium
+differential that presses ArrowRight while the Settings save field is focused
+in both pinned Remix and Beyond. Both runtimes receive a trusted event, prevent
+the browser's caret movement, preserve its position, and select the next mine
+object. The focused test passed 1/1. Settings and input controls remains In
+Progress for physical keyboard layouts, IME, other event variants, and broader
+state coverage.
