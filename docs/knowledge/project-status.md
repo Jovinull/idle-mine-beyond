@@ -40,6 +40,13 @@ refresh behavior plus six exact full-screen captures for three pinned boundary
 states in light and dark at 1440x900. The broader Wisdom/Powers row remains
 In Progress for other balances and states.
 
+**Cross-tab save differential (2026-11-07):**
+`pnpm.cmd exec playwright test tests/e2e/save-cross-tab-overwrite.spec.ts --workers=1 --retries=0`
+passed 1/1. Two tabs per runtime load the same captured seed; after the first
+tab saves a Blacksmith purchase, the stale second tab's manual Save overwrites
+it. Remix's legacy save and Beyond's v1 state match after both writes. This
+covers that last-writer order only; save-storage parity remains In Progress.
+
 **Current closeout (2026-11-03):** the sampled-domain review and rule are
 committed and pushed in `f2f8fd5`; all 14 entries marked `Sampled (qualified)`
 have mapped boundary, sample, and differential evidence. They comprise twelve

@@ -18,6 +18,20 @@ The thirteenth compact source variant is a **synthetic high-magnitude Decimal sa
 
 The probe confirms the source's exact encode/decode order and a Unicode corruption on round-trip. See the dedicated legacy quirk entry; preserve the observed behavior while parity is the goal. `loadGame()` performs field-by-field assignment rather than schema validation or a versioned migration. Its defaults are not uniform: raw settings, Story, and progress values use `loadVal`, but resource and pickaxe Decimal expressions call `new Decimal(value)` before `loadVal`; in the pinned runtime omitted resource fields therefore load as Decimal zero (including Gems despite the nominal alternate of 5). A missing pickaxe group retains the current pickaxe, while a present empty group loads name `Toy Pickaxe` and Decimal-zero power/quality. The synthetic `{ "story": {} }` case also shows absent Gem and Planet Coin upgrade groups resetting to zero while absent settings, Money upgrades, Powers, and pickaxe leave seeded runtime values in place. If the Powers group is present but its upgrades are absent, Wisdom upgrade levels reset to zero. These controlled captures prove those specific branches, not a complete catalog of old-save variants or corrupt-input behavior.
 
+## Multiple browser tabs
+
+**Verified source behavior (2026-11-07):** Remix `saveGame()` serializes the
+entire current `game` value and writes it directly to `localStorage` key
+`IdleMine`; the pinned scripts do not install a `storage` event listener or
+merge another tab's save. In the source-paired
+`tests/e2e/save-cross-tab-overwrite.spec.ts`, both tabs load the same state,
+one buys Blacksmith and saves, then the still-stale second tab saves. Remix's
+final save returns to the second tab's older Blacksmith level and balance.
+Beyond matches that state using its versioned `IdleMineBeyond` primary save and
+leaves the imported `IdleMine` legacy key untouched. This verifies that exact
+last-writer scenario; it does not cover other cross-tab orderings, profile
+quota behavior, or process termination.
+
 ### Historical save evidence
 
 **Verified research finding (2026-09-30):** the canonical repository has five commits and no Git tags or releases. GitHub file history shows `Scripts/Define/functions.js` and `Scripts/Define/game.js` only in the initial source commit [`719cf126`](https://github.com/veprogames/idle-mine-remix/commit/719cf126678a56c53c0ad8e68cebd059b3101201); the later commits update README links and the license. The [functions.js history](https://github.com/veprogames/idle-mine-remix/commits/main/Scripts/Define/functions.js), [game.js history](https://github.com/veprogames/idle-mine-remix/commits/main/Scripts/Define/game.js), [tags](https://github.com/veprogames/idle-mine-remix/tags), and [releases](https://github.com/veprogames/idle-mine-remix/releases) were checked. Existing absent/empty-group captures are synthetic inputs to the final pinned loader; they are not payloads captured from older releases. No first-party historical save schema has been verified. **Project decision:** do not invent migrations for unsupported historical formats. Keep broad historical compatibility open; the single community specimen recheck below proves only that the pinned final loader and Beyond accept that one input.

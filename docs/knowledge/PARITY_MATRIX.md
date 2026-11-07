@@ -214,3 +214,9 @@ Powers visual differential (2026-11-07): the pinned source/Beyond suite passed
 15/15 on Windows Chromium 153.0.8010.12. It revalidates the mapped prestige
 actions/no-op, table refresh states, and six 1440x900 light/dark boundary
 screenshots; other Wisdom/Powers balances and visual states remain open.
+
+Cross-tab stale-save differential (2026-11-07):
+`tests/e2e/save-cross-tab-overwrite.spec.ts` passed 1/1. In two same-origin
+tabs, the first saves a Blacksmith purchase; a still-stale second tab then
+saves and overwrites it. Remix legacy fields and Beyond v1 state match after
+both writes. Other write orders, quota, and process termination remain open.
