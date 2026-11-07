@@ -150,6 +150,7 @@ function makeAllAffordableSave(
 function makeModifierPurchaseSave(
   input: LegacySave,
   upgradeGroups: UpgradeFixture["data"]["upgradeSemantics"]["groups"],
+  startingLevel = 0,
 ): string {
   const save = structuredClone(input);
   save.money = "1e1000";
@@ -164,7 +165,10 @@ function makeModifierPurchaseSave(
   save.settings["numberFormatterIndex"] = 0;
   const zeroLevels = (group: ShopGroup) =>
     Object.fromEntries(
-      Object.keys(upgradeGroups[group]).map((key) => [key, { level: 0 }]),
+      Object.keys(upgradeGroups[group]).map((key) => [
+        key,
+        { level: startingLevel },
+      ]),
     );
   save.upgrades = zeroLevels("money");
   save.gemUpgrades = zeroLevels("gems");
@@ -2071,6 +2075,100 @@ test(
         }
       }
       expect(compared).toBe(88);
+
+      const levelOneSave = makeModifierPurchaseSave(
+        originalSave,
+        upgradeGroups,
+        1,
+      );
+      const levelOneCases = [
+        { group: "money", key: "activePower" },
+        { group: "gems", key: "gemMultiply" },
+        { group: "planetCoins", key: "gemMultiply" },
+      ] as const;
+      const expectedLevels = [2, 10, 100, 100];
+
+      for (const { group, key } of levelOneCases) {
+        for (const [modeIndex, mode] of modes.entries()) {
+          await test.step(`${group}.${key} from level one with ${mode.name}`, async () => {
+            await Promise.all([
+              page.evaluate((encoded) => {
+                localStorage.clear();
+                localStorage.setItem("IdleMine", encoded);
+              }, levelOneSave),
+              sourcePage.evaluate((encoded) => {
+                localStorage.clear();
+                localStorage.setItem("IdleMine", encoded);
+              }, levelOneSave),
+            ]);
+            await Promise.all([page.reload(), sourcePage.reload()]);
+            await expect(page.locator("#app")).toHaveAttribute(
+              "data-app-state",
+              "ready",
+            );
+            await sourcePage.waitForFunction(() =>
+              Boolean((window as Window & { game?: unknown }).game),
+            );
+            await Promise.all([
+              page.locator(`[data-upgrade-tab="${group}"]`).click(),
+              sourcePage
+                .locator(".upg-tabs button")
+                .filter({ hasText: tabLabels[group] })
+                .click(),
+            ]);
+
+            const imageName =
+              upgradeGroups[group][key]!.image.split("/").at(-1)!;
+            const card = page.locator(
+              `[data-upgrade-group="${group}"][data-upgrade-key="${key}"]`,
+            );
+            const sourceCard = sourcePage
+              .locator(".upgradelist .upgrade")
+              .filter({
+                has: sourcePage.locator(`img[src$="${imageName}"]`),
+              })
+              .first();
+            await expect(card).toHaveAttribute("data-upgrade-level", "1");
+            for (const pressedKey of mode.keys) {
+              await Promise.all([
+                page.keyboard.down(pressedKey),
+                sourcePage.keyboard.down(pressedKey),
+              ]);
+            }
+            try {
+              await Promise.all([card.click(), sourceCard.click()]);
+            } finally {
+              for (const pressedKey of [...mode.keys].reverse()) {
+                await Promise.all([
+                  page.keyboard.up(pressedKey),
+                  sourcePage.keyboard.up(pressedKey),
+                ]);
+              }
+            }
+
+            const expectedLevel = expectedLevels[modeIndex]!;
+            await expect(card).toHaveAttribute(
+              "data-upgrade-level",
+              String(expectedLevel),
+            );
+            expect(normalizeText(await card.locator(".lvl").innerText())).toBe(
+              normalizeText(await sourceCard.locator(".lvl").innerText()),
+            );
+            expect(await readCardPresentation(card)).toEqual(
+              await readCardPresentation(sourceCard),
+            );
+            const [beyondHeader, sourceHeader] = await Promise.all([
+              page.locator("header").innerText(),
+              sourcePage.locator("header").innerText(),
+            ]);
+            expect(normalizeText(beyondHeader)).toBe(
+              normalizeText(sourceHeader),
+            );
+            compared += 1;
+          });
+        }
+      }
+      expect(compared).toBe(100);
     } finally {
       await sourceContext.close().catch(() => undefined);
     }
