@@ -431,6 +431,91 @@ async function stableAppScreenshot(
   throw new Error("The app-root screenshot did not stabilize.");
 }
 
+async function expectPairedPagesFullViewportMatch(
+  page: Page,
+  sourcePage: Page,
+  sourceUrl: string,
+  encodedSave: string,
+  group: ShopGroup,
+  theme: "light" | "dark",
+  description: string,
+  hoverImageName: string,
+): Promise<void> {
+  const viewport = { width: 1366, height: 768 };
+  await Promise.all([
+    page.setViewportSize(viewport),
+    sourcePage.setViewportSize(viewport),
+    navigateWithLegacySave(page, "/", encodedSave),
+    navigateWithLegacySave(sourcePage, sourceUrl, encodedSave),
+  ]);
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+  await Promise.all([
+    sourcePage.waitForFunction(() =>
+      Boolean(
+        (window as Window & { game?: unknown }).game &&
+        document.querySelector("#app > footer"),
+      ),
+    ),
+    expect(page.locator("body")).toHaveAttribute("data-theme", theme),
+  ]);
+  await sourcePage.waitForFunction(
+    (selectedTheme) =>
+      document.querySelector("#css_theme")?.getAttribute("href") ===
+        `Themes/${selectedTheme}.css` &&
+      document.querySelector<HTMLLinkElement>("#css_theme")?.sheet !== null,
+    theme,
+  );
+  await Promise.all([
+    page.locator(`[data-upgrade-tab="${group}"]`).click(),
+    sourcePage
+      .locator(".upg-tabs button")
+      .filter({ hasText: tabLabels[group] })
+      .click(),
+  ]);
+  await Promise.all([
+    waitForUpgradeImages(page),
+    waitForUpgradeImages(sourcePage),
+  ]);
+  const card = page
+    .locator(`[data-upgrade-group="${group}"][data-upgrade-key]`)
+    .filter({ has: page.locator(`img[src$="${hoverImageName}"]`) })
+    .first();
+  const sourceCard = sourcePage
+    .locator(".upgradelist .upgrade")
+    .filter({ has: sourcePage.locator(`img[src$="${hoverImageName}"]`) })
+    .first();
+  await Promise.all([card.hover(), sourceCard.hover()]);
+  await Promise.all([
+    page.evaluate(() => document.fonts.ready),
+    sourcePage.evaluate(() => document.fonts.ready),
+    waitForNextTwoFrames(page),
+    waitForNextTwoFrames(sourcePage),
+  ]);
+  const [beyondScreenshot, sourceScreenshot] = await Promise.all([
+    stableAppScreenshot(page, viewport),
+    stableAppScreenshot(sourcePage, viewport),
+  ]);
+  const beyondHash = createHash("sha256")
+    .update(beyondScreenshot)
+    .digest("hex");
+  const sourceHash = createHash("sha256")
+    .update(sourceScreenshot)
+    .digest("hex");
+  if (beyondHash !== sourceHash) {
+    await Promise.all([
+      test.info().attach(`${description}-beyond.png`, {
+        body: beyondScreenshot,
+        contentType: "image/png",
+      }),
+      test.info().attach(`${description}-remix.png`, {
+        body: sourceScreenshot,
+        contentType: "image/png",
+      }),
+    ]);
+  }
+  expect(beyondHash, description).toBe(sourceHash);
+}
+
 async function prepareBeyondScreenshot(
   page: Page,
   encodedSave: string,
@@ -1316,6 +1401,89 @@ for (const theme of ["light", "dark"] as const) {
             ]),
             `${scenario.name} purchase result`,
           ).toEqual([String(nextLevel), resultSample.levelDisplay]);
+        }
+      } finally {
+        await context.close().catch(() => undefined);
+      }
+    },
+  );
+}
+
+for (const theme of ["light", "dark"] as const) {
+  test(
+    `matches exact-price shop screens at 1366x768 in ${theme} theme`,
+    { tag: "@slow" },
+    async ({ browser }) => {
+      test.setTimeout(180_000);
+      const fixture = JSON.parse(
+        await readFile(
+          new URL(
+            "../fixtures/parity/remix-reference-corpus.json",
+            import.meta.url,
+          ),
+          "utf8",
+        ),
+      ) as UpgradeFixture;
+      const originalSave = JSON.parse(
+        fixture.data.saveApplicationSemantics.inputJson,
+      ) as LegacySave;
+      const purchases = fixture.data.upgradeSemantics.purchaseSemantics;
+      const exactScenarios = [
+        purchases.find(({ name }) => name === "buy-exact-affordability"),
+        purchases.find(({ name }) => name === "buy-uses-gem-resource"),
+        purchases.find(({ name }) => name === "buy-uses-planet-coin-resource"),
+      ];
+      if (exactScenarios.some((scenario) => !scenario)) {
+        throw new Error("Pinned exact-price shop cases are incomplete.");
+      }
+      const context = await browser.newContext({
+        colorScheme: theme,
+        locale: "en-US",
+        timezoneId: "UTC",
+        viewport: { width: 1366, height: 768 },
+      });
+      const sourcePage = await context.newPage();
+      const page = await context.newPage();
+      try {
+        const sourceUrl = await routePinnedRemixOracle(sourcePage);
+        await Promise.all([
+          page.addInitScript(seedPendingSaveAtNavigation, {
+            prefix: pendingSavePrefix,
+            time: fixedTime,
+          }),
+          sourcePage.addInitScript(seedPendingSaveAtNavigation, {
+            prefix: pendingSavePrefix,
+            time: fixedTime,
+          }),
+        ]);
+        for (const scenario of exactScenarios) {
+          if (!scenario)
+            throw new Error("A pinned exact-price case is missing.");
+          const encodedViewportSave = makeScenarioSave(originalSave, {
+            group: scenario.group,
+            key: scenario.key,
+            level: scenario.startingLevel,
+            resource: scenario.startingResources[scenario.group]!.decimal,
+            theme,
+          });
+          const upgrade =
+            fixture.data.upgradeSemantics.groups[scenario.group][scenario.key];
+          const hoverImageName = upgrade?.image.split("/").at(-1);
+          if (!hoverImageName) {
+            throw new Error(
+              `Missing image for ${scenario.group}.${scenario.key}.`,
+            );
+          }
+          await expectPairedPagesFullViewportMatch(
+            page,
+            sourcePage,
+            sourceUrl,
+            encodedViewportSave,
+            scenario.group,
+            theme,
+            `${scenario.group} exact-price boundary full viewport at 1366x768`,
+            hoverImageName,
+          );
         }
       } finally {
         await context.close().catch(() => undefined);

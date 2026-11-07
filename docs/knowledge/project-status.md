@@ -1460,6 +1460,15 @@ asserts the actual viewport size instead of requiring the app root to equal the
 viewport bounds. Linux evidence for the new captures remains pending CI; the
 broader shop visual state space remains open.
 
+**Shop exact-price resource alternate viewports (2026-11-07):** added an
+isolated source/Beyond comparison for the Money, Gem, and Planet Coin exact-
+price screens at 1366x768. `matches exact-price shop screens at 1366x768`
+passed both themes (2/2; 48.1 seconds), with all six full-screen PNG pairs
+matching at zero pixels on Windows Chromium. The broader affordability test
+still reports its documented intermittent 1440x900 card-corner deltas; those
+screens remain strict and are independent of the new viewport evidence. Linux
+alternate-viewport captures and broader shop states remain open.
+
 **Mining craft-panel alternate viewport (2026-11-07):** extended the paired
 Remix/Beyond craft visual test to capture the full pre-craft Mining panel at
 1366x768 with Gem cost set to 3. The fixed replacement input matches at zero

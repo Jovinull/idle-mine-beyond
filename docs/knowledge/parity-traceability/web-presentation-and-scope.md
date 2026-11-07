@@ -167,9 +167,11 @@ explicit visual gaps above.
   levels zero and one in both themes (12 paired viewports), plus the zero-
   resource boundary for each tab, the Money below-price boundary, and the exact-
   price boundary for all three tabs in both themes (14 paired viewports). Other
-  balances and broader application-state combinations remain open. The Gem
-  exact-price screen also matches at 1366×768 in both themes (two additional
-  source/Beyond full-viewport pairs on Windows). A dedicated
+  balances and broader application-state combinations remain open. All three
+  exact-price resource screens also match at 1366×768 in both themes (six
+  source/Beyond full-viewport pairs on Windows), asserted in the isolated
+  `matches exact-price shop screens at 1366x768` test. Linux evidence for these
+  alternate-viewport captures remains open. A dedicated
   full-screen differential covers the immediate stale labels and the refreshed
   active hints for Shift, Control, and Shift+Control on Money Active Power in
   both themes; it does not cover all shop states. The

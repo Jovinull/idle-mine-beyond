@@ -121,11 +121,12 @@ Pinned `main.css` styles `.upgrade` as an inline-block with 3% margins, `0.4em` 
 
 The all-card differential uses a source-shaped level-zero save with `1e100` of each resource. At 1440x900 in both themes, it visits all 8 Money, 7 Gem, and 7 Planet Coin cards, compares their source order, level text, image, affordability class, computed presentation and geometry, captures exact resting-card PNGs, and compares every hovered detail panel at zero differing pixels. This is a catalog presentation state, not exhaustive affordability coverage: other resource balances, card levels, cap/overshoot states, full-screen card-specific states, and all modifier/card combinations remain separately tracked.
 
-The Gem exact-price affordability state also has full-viewport source/Beyond
-comparisons at 1366x768 in light and dark themes. The focused
-`tests/e2e/upgrade-affordability-differential.spec.ts` passed both new captures
-at zero differing pixels on Windows Chromium (2/2); Linux evidence for this
-alternate viewport is pending CI.
+All three exact-price affordability states have full-viewport source/Beyond
+comparisons at 1366x768 in light and dark themes. The isolated
+`matches exact-price shop screens at 1366x768` test in
+`tests/e2e/upgrade-affordability-differential.spec.ts` passed 2/2 themes and
+compared six PNG pairs with zero differing pixels on Windows Chromium. Linux
+evidence for these alternate-viewport captures remains open.
 
 The source `Scripts/Components/upgrade.js` handles a pointer click on its `div`: Control takes precedence and invokes `buy100`; otherwise Shift invokes `buy10`; otherwise it invokes one exact-price `buy`. Hover sets and clears `highlightedUpgrade`, where the detail panel shows the name, description, effect string, current price, and both shortcut instructions. The source card has no keyboard activation; the Beyond component preserves that input boundary during parity. Vitest compares all captured Money/Gem/Planet Coin display strings, and Playwright checks the initial cards/details plus single, Shift, and Ctrl purchase paths. The selected tabs now have full-screen paired comparisons in the visual-baseline set below; other upgrade states remain open.
 
