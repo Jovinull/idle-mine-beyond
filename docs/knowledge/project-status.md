@@ -1556,3 +1556,9 @@ comparison in CI, replacing the earlier state-only check for this slice.
 **Reachable special-anchor pickaxe name (2026-11-07):** the pinned craft corpus now includes a live `functions.craftPick()` case with one Gem, fixed RNG, and high-water level 215. Remix produces Sturdy HD 4943-b Pick from generated object ID 210, rather than the special catalog object's Galaxy Supercluster name, and consumes ten RNG draws. The source-paired Craft-button E2E asserts the name/feedback and exact 1440x900 Mining screenshot in both themes (2/2). The core action composer now asserts all nine captured craft transactions; the full parity suite passed 159/159. Other craft panel states and viewports remain open.
 
 **Shop modifier-hint full screens (2026-11-07):** added a pinned Remix/Beyond differential for the first card in each Money, Gem, and Planet Coin group. After Shift, Control, and combined Shift+Control are pressed, the test forces the pinned hover-driven Vue refresh and checks the two active hint classes. Exact full-screen hashes now match in light and dark at 1440x900 and 1366x768: 36 source/Beyond comparisons across 12 Playwright cases passed (53.7 seconds). This extends the selected modifier visual slice; broader shop states and the separate strict affordability screenshot gap remain open.
+
+**Gem Waster maximum-cost alternate viewport (2026-11-07):** extended the
+source-paired full Mining screen comparison for selector cost 35 and the
+disabled increase control to 1366x768. Together with the existing 1440x900
+case, exact hashes now match in both themes at both viewports (4/4 focused
+Playwright cases). Other crafting panel states and viewports remain open.

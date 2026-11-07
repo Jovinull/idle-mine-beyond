@@ -27,6 +27,12 @@ comparisons at 1366x768 in light and dark, alongside the existing 1440x900
 comparisons. These selected viewport cases do not cover all Mining panel states
 or resolutions.
 
+The Gem Waster maximum-cost selector state (cost 35, increase control disabled
+with no arrow image) now also matches the full source screen at 1366x768 in both
+themes, in addition to 1440x900. The focused Playwright comparison passed all
+four viewport/theme cases; other selector states, craft outcomes, and
+resolutions remain open.
+
 ## Craft flow
 
 Scripts/Define/functions.js computes Gems used through Gem Waster, supports a bulk loop while Shift is held, subtracts and rounds Gems per attempt, and replaces the current tool only when new damage is strictly greater. Each successful replacement logs before saving; a dud emits a message containing the crafted P, Q, and damage values. A bulk craft saves at each successful replacement, so successive saves can contain different Gem balances and pickaxes; the pinned two-replacement case captures 3 Gems with `Bad Mud Pick`, then 0 Gems with `Sturdy Mud Pick`. Duds and unaffordable attempts do not save. The captured `fractional-gem-balance-rounds-after-spend` case shows that subtracting one Gem from 2.6 rounds the balance to 2, an observable legacy quirk to preserve.
