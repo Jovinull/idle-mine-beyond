@@ -1508,3 +1508,9 @@ stale-action overwrites. In each sequence, its resource and upgrade projection
 matches the previous primary snapshot, including passive resource changes at
 the actual save time. The focused test passed 1/1; other cross-tab
 interleavings and storage races remain open.
+
+**Shop zero-resource alternate viewport (2026-11-07):** added full-screen
+source/Beyond comparisons at 1366x768 with each Money, Gem, and Planet Coin
+balance set to zero. All six captures match exactly in light and dark; the
+focused theme tests passed 2/2. The viewport-specific result does not close
+other balances or the remaining shop/Desktop UI state space.

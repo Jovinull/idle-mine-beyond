@@ -1493,6 +1493,89 @@ for (const theme of ["light", "dark"] as const) {
 }
 
 for (const theme of ["light", "dark"] as const) {
+  test(
+    `matches zero-resource shop screens at 1366x768 in ${theme} theme`,
+    { tag: "@slow" },
+    async ({ browser }) => {
+      test.setTimeout(180_000);
+      const fixture = JSON.parse(
+        await readFile(
+          new URL(
+            "../fixtures/parity/remix-reference-corpus.json",
+            import.meta.url,
+          ),
+          "utf8",
+        ),
+      ) as UpgradeFixture;
+      const originalSave = JSON.parse(
+        fixture.data.saveApplicationSemantics.inputJson,
+      ) as LegacySave;
+      const purchases = fixture.data.upgradeSemantics.purchaseSemantics;
+      const groupScenarios = [
+        purchases.find(({ name }) => name === "buy-exact-affordability"),
+        purchases.find(({ name }) => name === "buy-uses-gem-resource"),
+        purchases.find(({ name }) => name === "buy-uses-planet-coin-resource"),
+      ];
+      if (groupScenarios.some((scenario) => !scenario)) {
+        throw new Error("Pinned resource-group shop cases are incomplete.");
+      }
+      const context = await browser.newContext({
+        colorScheme: theme,
+        locale: "en-US",
+        timezoneId: "UTC",
+        viewport: { width: 1366, height: 768 },
+      });
+      const sourcePage = await context.newPage();
+      const page = await context.newPage();
+      try {
+        const sourceUrl = await routePinnedRemixOracle(sourcePage);
+        await Promise.all([
+          page.addInitScript(seedPendingSaveAtNavigation, {
+            prefix: pendingSavePrefix,
+            time: fixedTime,
+          }),
+          sourcePage.addInitScript(seedPendingSaveAtNavigation, {
+            prefix: pendingSavePrefix,
+            time: fixedTime,
+          }),
+        ]);
+        for (const scenario of groupScenarios) {
+          if (!scenario)
+            throw new Error("A pinned resource-group case is missing.");
+          const encodedViewportSave = makeScenarioSave(originalSave, {
+            group: scenario.group,
+            key: scenario.key,
+            level: scenario.startingLevel,
+            resource: "0",
+            theme,
+          });
+          const upgrade =
+            fixture.data.upgradeSemantics.groups[scenario.group][scenario.key];
+          const hoverImageName = upgrade?.image.split("/").at(-1);
+          if (!hoverImageName) {
+            throw new Error(
+              `Missing image for ${scenario.group}.${scenario.key}.`,
+            );
+          }
+          await expectPairedPagesFullViewportMatch(
+            page,
+            sourcePage,
+            sourceUrl,
+            encodedViewportSave,
+            scenario.group,
+            theme,
+            `${scenario.group} zero-resource boundary full viewport at 1366x768`,
+            hoverImageName,
+          );
+        }
+      } finally {
+        await context.close().catch(() => undefined);
+      }
+    },
+  );
+}
+
+for (const theme of ["light", "dark"] as const) {
   for (const startingLevel of [0, 1] as const) {
     test(
       `matches shop cards, details, and full screens against Remix at level ${startingLevel} in ${theme} theme`,

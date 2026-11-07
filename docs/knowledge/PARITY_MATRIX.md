@@ -186,6 +186,8 @@ retains semantic gate assertions without pixel baselines.
 | Mining          | Objects 124, 169, and 198 plus fresh Mud after one active click (100 to 80 HP), at 1440x900 in both themes; pinned source and Beyond screenshots compare at zero pixels | Selected phase-start and one non-lethal hit state; Linux has source-state assertions but no pixel baselines for the two new screenshots |
 | Primary screens | Mining, Story, and Settings at 1366x768, 1920x1080, and 2560x1440 in both themes; all compare at zero pixels                                                            | Selected primary screens only; no expansion to every state at each viewport                                                             |
 
+Shop zero-resource alternate viewport (2026-11-07): the focused source-paired Chromium E2E captures Money, Gem, and Planet Coin screens at 1366x768 with the relevant balance at zero. All three groups match at zero pixels in light and dark (6 captures; 2/2 theme tests). Other shop states and viewports remain open.
+
 The source-paired catalog differential compares full viewports for Money, Gem,
 and Planet Coin at starting levels 0 and 1 in both themes (12 comparisons).
 The affordability differential adds 18 full-viewport comparisons: zero,

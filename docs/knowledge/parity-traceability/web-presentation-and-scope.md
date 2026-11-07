@@ -351,6 +351,15 @@ its existing 1440×900 comparison; both new pairs match at zero pixels on
 Windows Chromium (2/2). Linux evidence for this new viewport is pending CI.
 Other shop balances, card levels, and viewport/theme combinations remain open.
 
+#### Zero-resource alternate-viewport differential
+
+`tests/e2e/upgrade-affordability-differential.spec.ts` also compares the full
+1366x768 shop screen after selecting each of Money, Gem, and Planet Coin with
+the corresponding resource at zero. Both themes match pinned Remix at zero
+pixels on Windows Chromium (6 source/Beyond captures; focused test 2/2). These
+states already had 1440x900 comparisons; other balances and viewport/theme
+combinations remain open.
+
 ## Visual slice: Powers
 
 - **Remix source branches:** `game.powers.unlocked()` and
