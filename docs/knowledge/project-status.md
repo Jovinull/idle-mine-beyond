@@ -193,14 +193,18 @@ difference is recorded but is not evidence of the screen mismatch's cause.
 No product styling or strict pixel assertion has changed; Desktop UI remains
 In Progress.
 
-**Linux Mining zero-opacity result (CI run 90, 2026-11-06):** on both retries,
-the normal full-screen comparison still differed by the same pixel. Setting
-both visible canvases to `opacity:0` produced identical full-screen hashes
-while preserving their DOM and layout boxes. Together with the `visibility`
-and `display` controls, this ties the difference to visible canvas painting
-or a compositing effect it triggers; it does not distinguish those causes.
-The next probe captures the original state sequentially in both page orders to
-test whether concurrent Playwright screenshots contribute to the pixel.
+**Linux Mining sequential-capture result (CI runs 90–92, 2026-11-06):** on
+both run 90 retries, setting both visible canvases to `opacity:0` produced
+identical full-screen hashes while preserving DOM and layout boxes. CI run 91's
+failure-only sequential captures in both page orders also matched, but only
+after earlier capture-only DOM/style probes. Run 92 changed the primary exact
+comparison to capture Beyond and Remix sequentially; both retries still
+reproduced the one-pixel difference. Its later sequential pairs, again after
+the diagnostic mutations, matched. These post-mutation captures do not show
+that sequential capture alone fixes the issue or identify which mutation
+changes rendering. The next probe records repeated sequential captures of the
+untouched pages before any diagnostic mutation. Keep exact screenshot equality;
+the Linux Mining branch and Desktop UI remain In Progress.
 
 **Story and notifications certification (2026-11-03):** the row moved to
 Certified within its approved chapter-level web visual scope. Pinned tests cover

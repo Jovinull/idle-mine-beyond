@@ -138,15 +138,16 @@ evidence of the one-pixel screen delta's cause.
 
 CI run 90 repeated the original one-pixel result on both retries. Setting both
 visible canvases to `opacity:0` produced identical source/Beyond full-screen
-hashes with their DOM and layout boxes intact. Together with `visibility:hidden`
-and `display:none`, this shows that suppressing visible Canvas paint removes
-the delta, but does not distinguish actual paint from an associated browser
-compositing effect. The next failure-only variant captures the unchanged
-visible state sequentially in both source-first and Beyond-first order, to test
-whether concurrent Playwright screenshots contribute to the difference. All
-variants are diagnostic only; the production DOM and exact screenshot
-assertion remain unchanged. Run 90's only E2E failure was the same one-pixel
-dark Mining comparison; exact visual parity remains open.
+hashes with their DOM and layout boxes intact. CI run 91's post-probe
+sequential captures matched in both page orders, but CI run 92 changed the
+primary comparison itself to Beyond-then-Remix sequential captures and still
+reproduced the pixel on both retries. The additional sequential pairs in run
+92 matched only after prior DOM/style diagnostic mutations. Thus serializing
+the primary screenshot calls alone does not resolve the discrepancy; the
+post-mutation equality does not establish why the render changes. The next
+failure-only probe records repeated sequential captures before any diagnostic
+mutation. Keep exact PNG equality and do not mask or tolerate the pixel; Linux
+Mining visual parity remains open.
 
 The native save adapter is checked at two boundaries. `pnpm test:unit -- tests/unit/remix-tauri-save-storage.test.ts` verifies the TypeScript command mapping; `pnpm native:test` verifies the Rust slot allowlist, replacement, and scoped reset behavior in a temporary directory. `pnpm native:check` compiles the Tauri host after a frontend build. CI runs these Rust tests/checks on Windows, where the project initially targets desktop Tauri. These tests do not certify a full WebView save/reload session.
 

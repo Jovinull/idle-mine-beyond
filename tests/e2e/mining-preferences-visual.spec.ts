@@ -713,6 +713,25 @@ for (const theme of ["light", "dark"] as const) {
             theme === "dark" &&
             mineObjectLevel
           ) {
+            const unmodifiedSequentialCaptures: Array<{
+              order: string;
+              beyondHash: string;
+              remixHash: string;
+              matches: boolean;
+            }> = [];
+            for (let index = 0; index < 4; index += 1) {
+              const pair = await captureMiningPairInOrder(
+                page,
+                sourcePage,
+                index % 2 === 1,
+              );
+              unmodifiedSequentialCaptures.push({
+                order: index % 2 === 1 ? "remix-first" : "beyond-first",
+                beyondHash: pair.beyondHash,
+                remixHash: pair.remixHash,
+                matches: pair.matches,
+              });
+            }
             const [beyondPaint, remixPaint] = await Promise.all([
               readMiningPixelStack(page),
               readMiningPixelStack(sourcePage),
@@ -984,6 +1003,7 @@ for (const theme of ["light", "dark"] as const) {
                     beyondComputedOpacity: beyondOpacityZero.computedOpacity,
                     remixComputedOpacity: remixOpacityZero.computedOpacity,
                   },
+                  unmodifiedSequentialCaptures,
                   sequentialCaptures: {
                     beyondFirst: {
                       beyondHash: beyondFirstPair.beyondHash,
