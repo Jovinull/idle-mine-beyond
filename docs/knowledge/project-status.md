@@ -1515,6 +1515,13 @@ balance set to zero. All six captures match exactly in light and dark; the
 focused theme tests passed 2/2. The viewport-specific result does not close
 other balances or the remaining shop/Desktop UI state space.
 
+**Gem Waster maximum-cost visual state (2026-11-07):** added a pinned-Remix
+source-paired full Mining screen comparison at the selector's maximum Gem cost
+of 35 in light and dark at 1440×900. The test asserts the increase control is
+disabled and its arrow image is absent in both runtimes, then requires exact
+screen hashes. Both Chromium comparisons passed (2/2); other crafting panel
+states and viewports remain open.
+
 **Shop level-one catalog alternate viewport (2026-11-07):** added full-screen
 source/Beyond comparisons at 1366x768 for all three upgrade tabs at level one
 with abundant resources. Each representative hovered-card view matched in

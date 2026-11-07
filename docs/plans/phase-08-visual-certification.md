@@ -32,6 +32,13 @@ reference-only paint refresh changed the source capture back to its prior
 hash and did not close the delta; the experiment was removed. Keep this shop
 visual slice and Desktop UI In Progress with zero-pixel assertions.
 
+**Gem Waster maximum-cost panel (2026-11-07):** a new source-paired Mining
+screen case advances the selector through costs 3, 10, and 35, asserts the
+increase control is disabled with its arrow image absent in both pinned Remix
+and Beyond, and compares complete 1440×900 screen hashes in light and dark.
+The focused Chromium run passed 2/2. The craft panel's remaining states and
+viewports stay open.
+
 **Story scope certified (2026-11-03):** the approved chapter-level visual scope
 is complete. All nine all-unlocked chapter pages match the pinned source at
 zero pixels in light and dark at 1440x900; selected natural progression states
