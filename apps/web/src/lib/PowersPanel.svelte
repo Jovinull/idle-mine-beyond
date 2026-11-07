@@ -46,6 +46,46 @@
 
   const presentation = upgradePresentation as PowerPresentation;
   const upgradeKeys = REMIX_UPGRADE_KEYS.wisdom;
+  const buyAmount = $derived(
+    pressedKeys.includes("Control")
+      ? 100
+      : pressedKeys.includes("Shift")
+        ? 10
+        : 1,
+  );
+  // Remix reads a non-reactive keymap while rendering each card. Keep each
+  // modifier label until that card's displayed level, effect, or price changes.
+  const wisdomDisplayFingerprint = (key: RemixUpgradeKey<"wisdom">) => {
+    const display = getRemixWisdomUpgradeDisplay({
+      key,
+      state: simulation,
+      formatter: selectedNotation,
+    });
+    return JSON.stringify([
+      display.levelDisplay,
+      display.effectDisplay,
+      display.priceDisplay,
+    ]);
+  };
+  let displayedBuyAmounts = $state(
+    Object.fromEntries(upgradeKeys.map((key) => [key, 1])) as Record<
+      RemixUpgradeKey<"wisdom">,
+      number
+    >,
+  );
+  let previousWisdomDisplayFingerprints = untrack(
+    () =>
+      new Map(upgradeKeys.map((key) => [key, wisdomDisplayFingerprint(key)])),
+  );
+  $effect(() => {
+    for (const key of upgradeKeys) {
+      const fingerprint = wisdomDisplayFingerprint(key);
+      if (fingerprint !== previousWisdomDisplayFingerprints.get(key)) {
+        previousWisdomDisplayFingerprints.set(key, fingerprint);
+        displayedBuyAmounts[key] = buyAmount;
+      }
+    }
+  });
   // Remix's prestige handler uses direct array-index writes, which Vue 2 does
   // not observe. Keep those values until this panel remounts or an idle hit
   // triggers the source's Vue.set update to Power of Mining.
@@ -60,13 +100,6 @@
       getRemixPowerPrestigeRows(simulation, powerValueExtras),
     );
   });
-  const buyAmount = $derived(
-    pressedKeys.includes("Control")
-      ? 100
-      : pressedKeys.includes("Shift")
-        ? 10
-        : 1,
-  );
   const wisdom = $derived(simulation.resources.wisdom ?? new Decimal(0));
 </script>
 
@@ -132,7 +165,9 @@
       >
         <h4>
           {display.name}
-          {#if buyAmount > 1}<span>{buyAmount}</span>{/if}
+          {#if displayedBuyAmounts[key] > 1}
+            <span>{displayedBuyAmounts[key]}</span>
+          {/if}
           {#if Number.isFinite(display.maxLevel)}<span>
               {display.level} / {display.maxLevel}
             </span>{/if}

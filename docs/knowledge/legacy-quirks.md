@@ -93,6 +93,19 @@ found and corrected a dark-theme CSS specificity mismatch: an active multibuy
 label remains green (`#00bc00`) in Remix, while only inactive labels use the dark
 theme gray. Coverage: `tests/e2e/upgrade-affordability-differential.spec.ts`.
 
+The seven Powers-panel cards use the separate
+`Scripts/Components/upgrade-standalone.js` component. Its `getBuyAmount()` also
+reads the non-reactive keymap, and `buy()` passes that live amount to
+`buyN(amount, true)`. After releasing a modifier, each rendered card keeps its
+last displayed amount until one of that card's bound values changes. This is
+per-card: `Upgrade Damage Upgrade` refreshes when the total Wisdom-upgrade level
+changes, and Power Power (Active/Idle) refresh when Power Power Power changes;
+unrelated card labels can stay stale. Beyond mirrors this using each card's
+level/effect/price display dependencies. The pinned differential checks single,
+Shift, Control, and simultaneous Shift+Control purchases for all seven cards,
+then compares levels, Wisdom balance, and all rendered labels after key release:
+`tests/e2e/wisdom-upgrade-buy-amount-differential.spec.ts`.
+
 ## Reported player concerns (not specifications)
 
 The bootstrap research records community criticism about long gem grinds, dud frustration, autoclicker advantage, one-hit farming, story pacing, background-tab progress, and save loss. These reports are valuable research leads, not proof of exact mechanics. Preserve them in the post-parity backlog with source links and do not change parity behavior based on them.

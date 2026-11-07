@@ -40,6 +40,8 @@ event, and ongoing callbacks. The probe disables focus emulation as well. This
 host's automation browser does not provide the required hidden-state evidence;
 offline progression remains In Progress.
 
+**Wisdom standalone multibuy parity (2026-11-07):** pinned `upgrade-standalone.js:getBuyAmount()` reads the global keymap on render, while `buy()` passes the live Control/Shift choice to aligned `buyN`. The new Chromium differential compares all seven Wisdom cards under single, Shift, Control, and simultaneous Shift+Control purchases, including resulting levels, Wisdom balance, caps, cross-upgrade display dependencies, and all card labels after key release. It exposed per-card stale modifier labels in Remix: only a card whose level/effect/price display changes refreshes its label. `PowersPanel.svelte` now preserves that behavior per card while purchase counts still read live pressed keys. The new test passed 1/1; the Powers group passed 18/18. `pnpm.cmd check` passed 159 parity tests, 46 unit tests, lint, typecheck, traceability (36 areas), and web/site builds; `pnpm.cmd docs:check` (85 files) and `pnpm.cmd research:check` passed. Wisdom/Powers remains In Progress for the other state and visual evidence.
+
 **Powers visual differential (2026-11-07):**
 `pnpm.cmd exec playwright test tests/e2e/powers-prestige-differential.spec.ts --workers=1 --retries=0`
 passed 15/15. It covers source-paired prestige actions/no-op and stale-table
