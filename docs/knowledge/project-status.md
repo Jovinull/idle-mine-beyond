@@ -1441,3 +1441,12 @@ changed-preference Save/Export screens compare at zero differing pixels, saved
 storage is present in both runtimes, and exported text matches exactly. Other
 Settings states and save-text contents remain open; Desktop UI and visual
 parity remains In Progress.
+
+**Malformed save byte-boundary differential (2026-11-07):** `save-codec.spec.ts`
+now compares 237 deterministically generated percent-encoded byte sequences
+against Chromium's implementation of Remix's decoder expression. Cases cover
+single high bytes, selected UTF-8 lead/tail boundaries, and truncated
+multibyte sequences; Beyond matches decode status and exact decode/parse
+errors. The focused codec E2E passed 2/2. Arbitrary external bytes and
+historical save shapes remain open, so Save encoding and save shape stays In
+Progress.

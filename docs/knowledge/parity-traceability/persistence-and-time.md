@@ -13,6 +13,9 @@
   and `tests/fixtures/parity/remix-reference-corpus.json`. The Settings import
   E2E checks all eleven source-captured malformed/error cases against the exact
   Chromium alert and parse messages and verifies failed imports do not write.
+  `tests/e2e/save-codec.spec.ts` also differentially checks generated
+  percent-encoded UTF-8 byte boundaries against Chromium's native decoder
+  pipeline used by the pinned source.
 - **Boundary evidence (2026-10-04):** six canonical captures call the pinned
   live `functions.getSaveString()` and then `functions.loadGame()` using the
   full source-shaped fresh save. They cover the legacy `escape` safe set and
@@ -27,6 +30,14 @@
   format. Synthetic codec vectors cover all three Base64 output padding
   classes. The UTF-8 byte-to-code-unit corruption on canonical import is
   observed legacy behavior and must be preserved.
+- **Additional external-byte evidence (2026-11-07):** 237 controlled wrappers
+  cover each single byte from `0x80` through `0xFF`, selected UTF-8 lead/tail
+  pairs across valid and invalid boundaries, and truncated two-, three-, and
+  four-byte prefixes. Their encoded input is compared with the source's
+  `atob` → `decodeURIComponent` → `unescape` → JSON parse expression in
+  Chromium; Beyond matches decode status and exact decode/parse errors. These
+  are manually constructed import probes, not canonical exports. The arbitrary
+  external byte domain and historical save shapes remain open.
 - **Open input domain:** arbitrary malformed external byte strings beyond the
   named Base64/URI/JSON error classes are not exhaustively enumerated. This is
   not a formula/RNG sample claim. Do not infer historical save-schema support
