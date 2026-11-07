@@ -138604,6 +138604,68 @@
           }
         },
         {
+          "name": "strictly-weaker-craft-is-a-dud",
+          "input": {
+            "name": "strictly-weaker-craft-is-a-dud",
+            "gems": "1",
+            "usedGemsLevel": 0,
+            "equippedPickaxe": {
+              "name": "Higher Damage Pickaxe",
+              "power": "31.5",
+              "quality": "1"
+            },
+            "highestMineObjectLevel": 0,
+            "powers": ["1", "1", "1", "1", "1"],
+            "upgradeLevels": {},
+            "shiftHeld": false,
+            "randomValues": [
+              0.8, 0.9, 0.5, 0.2, 0.75, 0.2, 0.2, 0.5, 0.5, 0.75
+            ],
+            "craftGems": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          },
+          "randomCalls": 10,
+          "saveCalls": 0,
+          "saveSnapshots": [],
+          "eventOrder": [
+            "log:Sorry, I crafted a dud! (P: 32, Q: 99%, Dmg: 31)"
+          ],
+          "messageLog": [
+            {
+              "message": "Sorry, I crafted a dud! (P: 32, Q: 99%, Dmg: 31)",
+              "color": "#ff0900"
+            }
+          ],
+          "result": {
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "pickaxe": {
+              "name": "Higher Damage Pickaxe",
+              "power": {
+                "decimal": "31.5",
+                "mantissa": 3.15,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "1",
+                "mantissa": 1,
+                "exponent": 0
+              },
+              "damage": {
+                "decimal": "31.5",
+                "mantissa": 3.15,
+                "exponent": 1
+              }
+            }
+          }
+        },
+        {
           "name": "insufficient-gems-consumes-no-rng",
           "input": {
             "name": "insufficient-gems-consumes-no-rng",

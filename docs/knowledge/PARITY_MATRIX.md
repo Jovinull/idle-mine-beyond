@@ -273,3 +273,5 @@ quota, and process termination remain open.
 Historical save UI integration (2026-11-07): tests/e2e/legacy-save-historical-shape.spec.ts imports the synthetic, provenance-recorded community save shape through Settings and asserts persisted Beyond state, including defaults for omitted Planet Coin/Wisdom resources. The pinned complete-output differential remains in tests/parity/legacy-save-historical-shape.test.ts. General historical-format support remains In Progress.
 
 Historical save import/export differential (2026-11-07): the Settings E2E applies the same synthetic fixture through the live text-import flow in Remix and Beyond, then asserts exact encoded export equality. The result adds one source-paired historical shape; general legacy-format compatibility remains In Progress.
+
+Pickaxe strict-replacement boundary (2026-11-07): the reference fixture now captures candidate damage below the equipped pickaxe; parity asserts the above/equal/below outcomes, and a source-paired E2E compares the weaker-dud screen in both themes at 1440x900 and 1366x768 (4/4). Pickaxe crafting/naming remains In Progress for its other states.

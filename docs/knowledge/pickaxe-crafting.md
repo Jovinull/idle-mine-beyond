@@ -56,3 +56,7 @@ The source calls Math.random directly in crafting and naming, and the normal obj
 ## Prior art warning
 
 Remux's generator sets quality to 1 and calculates power from input gems × 20 × one random value. That is not the Remix algorithm and must not be ported as the compatibility implementation.
+
+## Strict craft replacement boundary
+
+The pinned functions.craftPick() result now has a source-captured lower-than-equipped case as well as the equal-damage dud and stronger replacement. With the same ten recorded random draws, the crafted Bad Mud Pick deals 31.185000000000002: it replaces Toy Pickaxe damage 20, is a dud at equal damage, and is a dud against Higher Damage Pickaxe damage 31.5. tests/parity/pickaxe-crafting.test.ts asserts the above/equal/below relation and save/pickaxe outcomes; tests/e2e/pickaxe-crafting-visual.spec.ts compares the weaker-dud Mining screen with pinned Remix in both themes at 1440x900 and 1366x768.

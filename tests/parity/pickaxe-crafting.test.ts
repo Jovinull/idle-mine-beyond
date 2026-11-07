@@ -579,4 +579,28 @@ it("matches source Gem spending, replacement, duds, bulk attempts, and feedback"
       scenario.name,
     ).toEqual(scenario.result);
   }
+
+  const attempts = new Map(
+    fixture.attempts.map((scenario) => [scenario.name, scenario]),
+  );
+  const better = attempts.get("better-craft-replaces-and-saves");
+  const equal = attempts.get("equal-damage-is-a-dud");
+  const weaker = attempts.get("strictly-weaker-craft-is-a-dud");
+  if (!better || !equal || !weaker) {
+    throw new Error("The source replacement-boundary cases are incomplete.");
+  }
+
+  const candidateDamage = new Decimal(better.result.pickaxe.damage.decimal);
+  const equippedDamage = (scenario: CraftAttemptCase) =>
+    new Decimal(scenario.input.equippedPickaxe.power).mul(
+      scenario.input.equippedPickaxe.quality,
+    );
+  expect(candidateDamage.gt(equippedDamage(better))).toBe(true);
+  expect(candidateDamage.eq(equippedDamage(equal))).toBe(true);
+  expect(candidateDamage.lt(equippedDamage(weaker))).toBe(true);
+  expect(better.saveCalls).toBe(1);
+  expect(equal.saveCalls).toBe(0);
+  expect(weaker.saveCalls).toBe(0);
+  expect(equal.result.pickaxe.name).toBe(equal.input.equippedPickaxe.name);
+  expect(weaker.result.pickaxe.name).toBe(weaker.input.equippedPickaxe.name);
 });

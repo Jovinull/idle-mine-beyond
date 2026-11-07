@@ -169,18 +169,17 @@ Remix/Beyond views at 1440x900 in both themes.
 | `Pickaxe.generateName`: bonus suffix only when bonus is positive                                                                                                                                           | `expertise-bonus-and-quality-streak` and zero-bonus craft fixtures                                                                                               | `tests/parity/pickaxe-crafting.test.ts` compares full generated name in both cases                                                                                                                                              |
 | `Pickaxe.getDamage`: Power × Quality                                                                                                                                                                       | every `pickaxeCraftingSemantics.crafts` and `attempts[*].result` snapshot                                                                                        | `tests/parity/pickaxe-crafting.test.ts` compares the exact Decimal damage field                                                                                                                                                 |
 | `Scripts/Define/functions.js:craftPick`: Shift selects bulk-attempt count; each attempt checks Gem affordability; insufficient Gems logs without RNG; affordable attempts round/spend Gems before crafting | `insufficient-gems-consumes-no-rng`, `bulk-success-dud-then-insufficient`, `fractional-gem-balance-rounds-after-spend`, `selected-gem-level-controls-craft-cost` | `tests/parity/pickaxe-crafting.test.ts` compares RNG count, resulting Gems, log order, and save snapshots; `tests/e2e/pickaxe-crafting-visual.spec.ts` compares the no-RNG insufficient-Gem screen against Remix in both themes |
-| `craftPick`: candidate damage strictly greater replaces and saves; equal/lower damage is a dud and does not save                                                                                           | `better-craft-replaces-and-saves`, `equal-damage-is-a-dud`                                                                                                       | `tests/parity/pickaxe-crafting.test.ts` compares equipped pickaxe, feedback, and save count; `tests/e2e/pickaxe-crafting-visual.spec.ts` compares replacement and equal-damage dud screens against Remix in both themes         |
+| `craftPick`: candidate damage strictly greater replaces and saves; equal/lower damage is a dud and does not save                                                                                           | `better-craft-replaces-and-saves`, `equal-damage-is-a-dud`, `strictly-weaker-craft-is-a-dud`                                                                     | `tests/parity/pickaxe-crafting.test.ts` asserts candidate damage above/equal/below equipped damage and exact save/pickaxe outcome; `tests/e2e/pickaxe-crafting-visual.spec.ts` compares all three boundaries against Remix |
 | `craftPick`: bulk loop continues after success and dud, stops at `times`, and saves each successful replacement using that intermediate pickaxe                                                            | `bulk-success-dud-then-insufficient`, `bulk-replacements-save-each-intermediate-state`                                                                           | `tests/parity/pickaxe-crafting.test.ts` compares ordered events, every saved snapshot, final state, and RNG consumption                                                                                                         |
 
-**Visual integration evidence (2026-11-04):**
+**Visual integration evidence (2026-11-07):**
 `tests/e2e/pickaxe-crafting-visual.spec.ts` replays the pinned
-`better-craft-replaces-and-saves`, `equal-damage-is-a-dud`, and
-`insufficient-gems-consumes-no-rng` sequences in both themes. It checks the
-displayed pickaxe name, consumes the source-recorded RNG draw count in each
-runtime (zero for the unaffordable attempt), and compares the full 1440x900
-Mining screen at zero differing pixels. The same outcomes now also compare at
-1366x768. All twelve outcome/theme/viewport comparisons pass; this closes these
-three visible result branches at the two selected viewports only.
+`better-craft-replaces-and-saves`, `equal-damage-is-a-dud`,
+`strictly-weaker-craft-is-a-dud`, and `insufficient-gems-consumes-no-rng`
+sequences in both themes. It checks the displayed pickaxe name, consumes the
+source-recorded RNG draw count in each runtime (zero for the unaffordable
+attempt), and compares the full Mining screen at zero differing pixels at
+1440x900 and 1366x768. All sixteen outcome/theme/viewport comparisons pass.
 
 - **Sampled (qualified):** source-forced cases cover the strict Expertise,
   quality-streak, name-type, cap, affordability, replacement, and bulk-stop

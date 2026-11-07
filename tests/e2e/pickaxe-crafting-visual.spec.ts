@@ -52,6 +52,7 @@ const fixedClock = 1_700_000_000_000;
 const cases = [
   "better-craft-replaces-and-saves",
   "equal-damage-is-a-dud",
+  "strictly-weaker-craft-is-a-dud",
   "insufficient-gems-consumes-no-rng",
 ] as const;
 const viewports = [

@@ -6799,6 +6799,21 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 randomValues: [...baselineRandomValues],
               },
               {
+                name: "strictly-weaker-craft-is-a-dud",
+                gems: "1",
+                usedGemsLevel: 0,
+                equippedPickaxe: {
+                  name: "Higher Damage Pickaxe",
+                  power: "31.5",
+                  quality: "1",
+                },
+                highestMineObjectLevel: 0,
+                powers: ["1", "1", "1", "1", "1"],
+                upgradeLevels: {},
+                shiftHeld: false,
+                randomValues: [...baselineRandomValues],
+              },
+              {
                 name: "insufficient-gems-consumes-no-rng",
                 gems: "0.5",
                 usedGemsLevel: 0,
