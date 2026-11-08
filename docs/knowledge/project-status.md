@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-08
 
+**Same-upgrade stale-tab write (2026-11-08):** added a source-paired
+same-origin sequence where both tabs buy Blacksmith from level zero before
+either tab saves. Each local tab reaches level 1 / 970 Money; after both writes,
+Remix and Beyond retain the same level-1 / 970-Money snapshot instead of
+merging to level 2. The focused Chromium E2E passed 1/1 and verifies the
+backup equals the first write. Other cross-tab action/write interleavings
+remain open.
+
 **Dark Planet Coin exact-price raster rerun (2026-11-08):** the focused
 `matches Remix shop affordability boundaries in dark theme` E2E reproduced one
 viewport pixel delta at `(697,152)` for the exact-price Active Power state at

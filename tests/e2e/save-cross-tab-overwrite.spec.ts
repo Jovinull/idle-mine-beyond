@@ -355,3 +355,163 @@ test("a stale second tab purchase overwrites the newer save like pinned Remix", 
     await sourceContext.close().catch(() => undefined);
   }
 });
+
+test("two stale tabs save the same upgrade purchase without merging like pinned Remix", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90_000);
+  const fixture = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as SaveFixture;
+  const save = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  save.money = "1000";
+  save.highestMoney = "1000";
+  save.settings.theme = "light";
+  save.settings.tab = "main";
+  save.settings.upgradeTab = "money";
+  save.upgrades["blacksmith"] = { level: 0 };
+  save.lastActive = fixedTime;
+  const encodedInitialSave = encodeRemixLegacySave(save);
+
+  const beyondContext = page.context();
+  const beyondSecondPage = await beyondContext.newPage();
+  const sourceContext = await browser.newContext({
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+  const sourceSecondPage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all(
+      [page, beyondSecondPage, sourcePage, sourceSecondPage].map((target) =>
+        target.addInitScript(initializeSharedStorage, {
+          encoded: encodedInitialSave,
+          now: fixedTime,
+        }),
+      ),
+    );
+    await Promise.all([
+      page.goto("/"),
+      beyondSecondPage.goto("/"),
+      sourcePage.goto(sourceUrl),
+      sourceSecondPage.goto(sourceUrl),
+    ]);
+    await Promise.all([
+      expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready"),
+      expect(beyondSecondPage.locator("#app")).toHaveAttribute(
+        "data-app-state",
+        "ready",
+      ),
+      ...[sourcePage, sourceSecondPage].map((target) =>
+        target.waitForFunction(() =>
+          Boolean(
+            (window as Window & { game?: unknown }).game &&
+            document.querySelector("#app > footer"),
+          ),
+        ),
+      ),
+    ]);
+
+    const beyondCard = page.locator(
+      '[data-upgrade-group="money"][data-upgrade-key="blacksmith"]',
+    );
+    const beyondSecondCard = beyondSecondPage.locator(
+      '[data-upgrade-group="money"][data-upgrade-key="blacksmith"]',
+    );
+    const remixCard = sourceBlacksmithCard(sourcePage);
+    const remixSecondCard = sourceBlacksmithCard(sourceSecondPage);
+    await Promise.all(
+      [beyondCard, beyondSecondCard, remixCard, remixSecondCard].map((card) =>
+        expect(card).toBeVisible(),
+      ),
+    );
+    await Promise.all([
+      expect(beyondCard).toHaveAttribute("data-upgrade-level", "0"),
+      expect(beyondSecondCard).toHaveAttribute("data-upgrade-level", "0"),
+      expect(remixCard.locator(".lvl")).toHaveText("0"),
+      expect(remixSecondCard.locator(".lvl")).toHaveText("0"),
+    ]);
+
+    // Both tabs buy from their own level-zero snapshot before either saves.
+    await Promise.all([
+      beyondCard.click(),
+      beyondSecondCard.click(),
+      remixCard.click(),
+      remixSecondCard.click(),
+    ]);
+    await Promise.all([
+      expect(beyondCard).toHaveAttribute("data-upgrade-level", "1"),
+      expect(beyondSecondCard).toHaveAttribute("data-upgrade-level", "1"),
+      expect(remixCard.locator(".lvl")).toHaveText("1"),
+      expect(remixSecondCard.locator(".lvl")).toHaveText("1"),
+    ]);
+
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      page.getByRole("button", { name: "Save" }).click(),
+      sourcePage.getByRole("button", { name: "Save" }).click(),
+    ]);
+
+    const [beyondFirstWrite, remixFirstWrite] = await Promise.all([
+      readBeyondState(page),
+      readLegacySlot(sourcePage),
+    ]);
+    const remixFirstState = readSaveState(remixFirstWrite);
+    expect(beyondFirstWrite.upgrades.money["blacksmith"]).toBe(1);
+    expect(beyondFirstWrite.resources.money).toBe("970");
+    expect(beyondFirstWrite.upgrades.money["blacksmith"]).toBe(
+      remixFirstState.upgrades["blacksmith"]?.level,
+    );
+    expect(beyondFirstWrite.resources.money).toBe(remixFirstState.money);
+
+    await Promise.all([
+      beyondSecondPage.locator("[data-game-tab='settings']").click(),
+      sourceSecondPage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      beyondSecondPage.getByRole("button", { name: "Save" }).click(),
+      sourceSecondPage.getByRole("button", { name: "Save" }).click(),
+    ]);
+
+    const [beyondFinalState, remixFinalSave] = await Promise.all([
+      readBeyondState(beyondSecondPage),
+      readLegacySlot(sourceSecondPage),
+    ]);
+    const remixFinalState = readSaveState(remixFinalSave);
+    expect(beyondFinalState.upgrades.money["blacksmith"]).toBe(1);
+    expect(beyondFinalState.resources.money).toBe("970");
+    expect(beyondFinalState.upgrades.money["blacksmith"]).toBe(
+      remixFinalState.upgrades["blacksmith"]?.level,
+    );
+    expect(beyondFinalState.resources.money).toBe(remixFinalState.money);
+    expect(await readBeyondState(page, "IdleMineBeyondBackup")).toEqual(
+      beyondFirstWrite,
+    );
+    expect(await page.evaluate(() => localStorage.getItem("IdleMine"))).toBe(
+      encodedInitialSave,
+    );
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});

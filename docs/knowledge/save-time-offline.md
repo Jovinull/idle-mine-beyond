@@ -6,6 +6,15 @@ Scripts/Define/functions.js stores the save under localStorage key IdleMine. It 
 
 The selected upgrade group is a session setting with a legacy persistence quirk: clicking a group updates live `settings.upgradeTab`, panel navigation retains it, and export includes it; the pinned `loadGame()` does not apply that field on cold start, which returns to the `game.js` default `money`. The source-paired E2E `tests/e2e/upgrade-tab-state-differential.spec.ts` verifies panel retention, exported values, and the cold-load reset. Preserve this asymmetry.
 
+**Same-origin tab overwrite behavior (2026-11-08):** each Remix tab buys
+Blacksmith from its own level-zero snapshot, reaching level 1 with 970 Money.
+When both tabs save in sequence, `functions.saveGame()` serializes the local
+`game` object and overwrites the shared `IdleMine` slot; it does not merge the
+two purchases into level 2 / 940 Money. The new source-paired case in
+`tests/e2e/save-cross-tab-overwrite.spec.ts` confirms the same last-writer
+result and backup snapshot in Beyond. Other cross-tab action/write
+interleavings remain open.
+
 **Live purchase export differential (2026-11-08):** the pinned purchase corpus now includes Shift `buy10` from level 0 to 10 for Gem and Planet Coin Gem Multiplication. `tests/e2e/save-export-purchase-differential.spec.ts` makes each purchase in both Remix and Beyond, then compares the complete exported object and encoded bytes. Both cases pass in Chromium, Firefox, and WebKit. The captured remaining balances are 33422.1074644512 Gems and 18152641816.016598 Planet Coins.
 
 The pinned current save shape and a deliberately minimal partial-save load are captured in `saveSemantics` in the reference corpus. The current serialized object has 27 top-level fields and no version field; `serializableShape` recursively records JSON types, ordered object fields, array lengths, and distinct array-element shapes throughout that runtime object. Seven Decimal resource values serialize as strings, and JSON omits upgrade `getPrice`/`getEffect` functions. This describes the captured current runtime, not every historical save or every dynamic field value.

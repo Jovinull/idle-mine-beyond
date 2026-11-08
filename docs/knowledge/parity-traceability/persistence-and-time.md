@@ -336,6 +336,15 @@ immediately before that write. This checks browser backup retention across the
 three explicit stale-tab sequences; other action/write interleavings and browser
 storage races remain open.
 
+**Same-upgrade stale-tab interleaving (2026-11-08):** the same test file now
+loads two tabs from the captured level-zero save, buys Blacksmith once in each
+local game, then saves the updated tab followed by the stale tab. Both tabs
+show level 1 / 970 Money after their purchase, while both source Remix and
+Beyond retain only level 1 / 970 Money after the second write rather than
+merging to level 2 / 940 Money. The Beyond backup decodes to the first write.
+The focused Chromium case passed 1/1. Other stale-action and concurrent
+storage interleavings remain open.
+
 **Browser E2E validation (2026-10-05):**
 `pnpm.cmd exec playwright test tests/e2e/browser-storage-failure.spec.ts
 tests/e2e/browser-storage-read-failure.spec.ts --project=chromium --workers=1
