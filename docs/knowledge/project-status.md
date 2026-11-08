@@ -31,10 +31,13 @@ source's explicit normal/400 descriptors, and the Story differential asserts
 that Work Sans is loaded in both runtimes. Run 42496892093 confirms the font
 check and font-face list now match, but the same two Chapter 3 light pixels and
 two Chapter 4 dark pixels remain at 1366x768, so the duplicate-face issue was
-not their cause. Failure diagnostics now capture all computed styles for the
-objective elements and check bold Work Sans loading. No mask or tolerance was
-added. Later Linux viewports have not run because the test stops at the first
-mismatch. Source PNG baselines remain Windows-only.
+not their cause. CI run 42499004054 confirms all captured computed CSS
+properties, objective text geometry, and regular/bold Work Sans checks now
+match across source and Beyond; the two raster pixels still differ.
+Diagnostics now also record the exact objective markup/text and Chromium's
+platform font for its bold text node. No mask or tolerance was added. Later
+Linux viewports have not run because the test stops at the first mismatch.
+Source PNG baselines remain Windows-only.
 
 **Natural Chapter 3-6 dark Linux differential (2026-11-08):** the full Chromium
 E2E suite passed in Ubuntu CI run 42484538684 (255 passed). The natural route-end

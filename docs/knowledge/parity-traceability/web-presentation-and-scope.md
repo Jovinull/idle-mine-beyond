@@ -27,8 +27,9 @@ the source-paired natural Story E2E asserts `document.fonts.check` after
 `document.fonts.ready` in both runtimes. CI run 42494765267 captured the
 previous duplicate-face state. Run 42496892093 confirms the font state now
 matches, while the pixel delta persists; the raster cause remains open. On
-failure, the E2E records all computed styles for the objective elements and
-checks bold Work Sans loading.
+failure, the E2E records all computed styles, objective markup/text, regular
+and bold font checks, and Chromium's platform font for the objective's bold
+text node.
 
 ## Settings and input controls
 

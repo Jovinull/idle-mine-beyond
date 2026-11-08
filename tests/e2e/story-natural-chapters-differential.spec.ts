@@ -42,7 +42,7 @@ async function prepareStoryScreen(page: Page, expectedHeading: string) {
 }
 
 async function captureStoryRenderDiagnostics(page: Page) {
-  return page.evaluate(() => {
+  const pageDiagnostics = await page.evaluate(() => {
     const selectors = [
       "body",
       "#app",
@@ -137,8 +137,27 @@ async function captureStoryRenderDiagnostics(page: Page) {
       },
       elements,
       firstObjectiveCharacter: firstCharacterRect,
+      objectiveText: objective?.textContent,
+      objectiveHtml: objective?.innerHTML,
     };
   });
+  const session = await page.context().newCDPSession(page);
+  try {
+    await session.send("DOM.enable");
+    await session.send("CSS.enable");
+    const { root } = await session.send("DOM.getDocument");
+    const { nodeId } = await session.send("DOM.querySelector", {
+      nodeId: root.nodeId,
+      selector: ".objective b",
+    });
+    const { fonts: platformFonts } = await session.send(
+      "CSS.getPlatformFontsForNode",
+      { nodeId },
+    );
+    return { ...pageDiagnostics, platformFonts };
+  } finally {
+    await session.detach();
+  }
 }
 
 const storyViewports = [
