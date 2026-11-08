@@ -1617,3 +1617,10 @@ the comparison state on failure. This rerun passed, including the 1440x900
 Planet Coins viewport. Earlier mismatches and intermittent one-channel corner
 differences remain in the evidence record, so this pass does not close the
 strict full-screen gap.
+
+**Natural Story chapter live visual differential (2026-11-08):** added a
+source/Beyond full-screen pixel comparison for the captured natural Chapter 3,
+4, 5, and 6 route-end saves at 1440x900 in light theme. The focused Windows
+Chromium run passed 4/4 with no pixel differences. The same test is part of the
+Linux browser suite; its CI result is pending. This strengthens selected Story
+visual evidence without changing the approved Story certification scope.
