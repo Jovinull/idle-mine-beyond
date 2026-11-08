@@ -56,9 +56,8 @@ At the pinned source, the header title uses `flex-grow: 1`, Money uses `flex-gro
 The pinned Chromium runtime records native `1px 6px` padding on the chapter arrow buttons. Preserve it: setting padding to zero visibly shifts the right arrow. Tracked source screenshots cover all nine controlled all-unlocked Story pages in both themes at 1440x900; the Beyond route matches all eighteen at zero differing pixels. The dark capture uses the pinned `Themes/dark.css` and its source body colors `#363636` / `#c1c1c1`; the source also overrides the quote text to `#c1c1c1`. The first dark comparison exposed a white Beyond Story host and dark text because the standalone Story renderer sets its own light colors. `remix-story.css` now applies the captured dark background, inherited foreground, and quote color. CSS animations are paused at time zero in all captures. Together with the fresh Game Start, first-Mud, and selected natural progression captures below, this completes the approved Story visual scope at 1440x900. Per-milestone screenshots are not required; every condition, objective, and template branch has source assertions. Other game screens and their viewports remain in the broader desktop UI matrix row.
 
 Natural Story route-end captures for Chapters 3-6 now have a live pinned-source
-versus Beyond pixel comparison at 1440x900 in light theme. The Windows
-Chromium comparison passed all four routes exactly. Linux uses the same
-runtime differential rather than a Windows screenshot baseline; Ubuntu CI run 42449122130 passed the browser suite (229 passed, one skip).
+versus Beyond pixel comparison at 1440x900 in light and dark themes. The Windows
+Chromium comparison passed all four routes exactly in each theme. The existing Ubuntu CI run 42449122130 predates the dark test parameter and passed the light-only route comparison (229 passed, one skip); Linux dark comparison remains pending.
 
 | Story page | Light baseline                                                                  | Dark baseline                                                                  |
 | ---------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |

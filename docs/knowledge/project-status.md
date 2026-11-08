@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-08
 
+**Natural Chapter 3-6 dark route-end screens (2026-11-08):** extended the live
+pinned-Remix/Beyond full-screen differential to dark theme at 1440x900. All four
+natural route-end states matched at zero pixels in Chromium; the existing light
+test also passed, so both themes now pass 4/4 on Windows. This covers the route
+endpoints only; other desktop UI states and Linux dark captures remain open.
+
 **Same-upgrade stale-tab write (2026-11-08):** added a source-paired
 same-origin sequence where both tabs buy Blacksmith from level zero before
 either tab saves. Each local tab reaches level 1 / 970 Money; after both writes,
