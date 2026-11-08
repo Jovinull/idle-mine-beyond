@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-08
 
+**Failed save-import partial-state exports (2026-11-08):** added a source-paired
+post-error export check for all twenty captured field-application failures.
+Remix and Beyond exports match byte-for-byte in Chromium, Firefox, and WebKit,
+while every import still leaves persisted storage unchanged. This covers the
+source-ordered in-memory partial state after an error; arbitrary malformed save
+shapes and historical formats remain open.
+
 **Source-paired Shift bulk crafting (2026-11-08):** added a live Remix/Beyond
 differential for the captured success, dud, then insufficient-Gem sequence.
 Both apps consume 20 identical RNG values, match all four visible messages,

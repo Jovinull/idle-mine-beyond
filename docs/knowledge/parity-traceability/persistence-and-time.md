@@ -99,6 +99,9 @@ Other arbitrary byte strings remain an input-domain gap, not an unlisted branch.
   `tests/e2e/save-import-error.spec.ts`; that Chromium suite also submits all
   twenty captured field-application failures, compares each visible error, and
   verifies every localStorage slot is unchanged before and after reload;
+  `tests/e2e/save-import-error-browser-compat.spec.ts` additionally source-pairs
+  the post-failure Settings export bytes for all twenty partial-application
+  errors in Chromium, Firefox, and WebKit, without writing the partial state;
   decode failure and `nooffline` behavior
   in `tests/parity/legacy-save-offline-application.test.ts`;
   recovery file/slot branches in

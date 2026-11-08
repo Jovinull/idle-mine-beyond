@@ -62,6 +62,32 @@ async function storageSnapshot(page: Page): Promise<Record<string, string>> {
   );
 }
 
+async function comparePartialStateExports(
+  beyondPage: Page,
+  sourcePage: Page,
+  scenarioName: string,
+): Promise<void> {
+  await Promise.all([
+    beyondPage
+      .locator("article.settings")
+      .getByRole("button", { name: "Export" })
+      .click(),
+    sourcePage
+      .locator("article.settings")
+      .getByRole("button", { name: "Export" })
+      .click(),
+  ]);
+  const [beyondExport, sourceExport] = await Promise.all([
+    beyondPage
+      .locator("article.settings [data-settings-save-field]")
+      .inputValue(),
+    sourcePage.locator("article.settings textarea").inputValue(),
+  ]);
+  expect(beyondExport, `${scenarioName} partial-state export bytes`).toBe(
+    sourceExport,
+  );
+}
+
 async function instrumentSourceLoadErrors(page: Page): Promise<void> {
   await page.evaluate(() => {
     type SourceRuntime = Window & {
@@ -214,6 +240,7 @@ test("matches captured codec and field-application errors in this browser", asyn
       ]);
       await test.step(scenario.name, async () => {
         await importCase(page, sourcePage, scenario);
+        await comparePartialStateExports(page, sourcePage, scenario.name);
         expect(
           await storageSnapshot(page),
           `${scenario.name} Beyond storage`,
