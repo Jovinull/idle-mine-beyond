@@ -100,10 +100,13 @@ remain open, and native WebView lifecycle is outside web-v1.
 
 **Live purchase export differential (2026-11-08):**
 `tests/e2e/save-export-purchase-differential.spec.ts` starts pinned Remix and
-Beyond from the source `buy-exact-affordability` save, buys Money Active Power
-for exactly 1000 Money in both, and exports through Settings. The complete
-decoded legacy objects and encoded bytes match. This covers one live dynamic
-state; other purchase/export combinations remain open.
+Beyond from the captured `buy-exact-affordability`, `buy-uses-gem-resource`,
+and `buy-uses-planet-coin-resource` saves, selects each matching shop group,
+makes the successful purchase, and exports through Settings. The complete
+decoded legacy objects and encoded bytes match for Money Active Power at 1000
+Money, Gem Offline Gems at 4444 Gems, and Planet Coin Active Power at 100 Planet
+Coins. Wisdom purchases, other levels/actions, and wider runtime states remain
+open.
 
 ## Main simulation time and autosave timer
 

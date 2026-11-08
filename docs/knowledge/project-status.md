@@ -15,6 +15,12 @@ decoded save object and exact encoded bytes. It passed 1/1 in Firefox and 1/1
 in WebKit against the built web app; CI runs both from the static preview after
 `pnpm check` builds the app. Other dynamic runtime exports remain open.
 
+**Live shop purchase exports (2026-11-08):** the pinned-source Chromium E2E
+now purchases the captured Money Active Power, Gem Offline Gems, and Planet
+Coin Active Power cases in both apps, then compares complete Settings export
+objects and encoded bytes. The focused suite passed 3/3; Wisdom purchases and
+other dynamic runtime exports remain open.
+
 **WebKit save codec vectors (2026-11-08):** the captured valid-codec browser
 comparison also passes in Playwright WebKit (1/1), covering exact encoded
 strings, decoded JSON, UTF-8/escape boundaries, UTF-16 units, hashes, and

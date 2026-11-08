@@ -275,7 +275,7 @@ Historical save UI integration (2026-11-07): tests/e2e/legacy-save-historical-sh
 
 Historical save import/export differential (2026-11-07): the Settings E2E applies the same synthetic fixture through the live text-import flow in Remix and Beyond, then asserts exact encoded export equality. The result adds one source-paired historical shape; general legacy-format compatibility remains In Progress.
 
-Live purchase export differential (2026-11-08): `tests/e2e/save-export-purchase-differential.spec.ts` buys the pinned exact-affordability Money Active Power upgrade (1000 Money) in both live apps, then compares complete decoded Settings export objects and exact encoded bytes. The focused Windows Chromium test passed 1/1. This adds one dynamic exported state; broader combinations remain open.
+Live purchase export differential (2026-11-08): `tests/e2e/save-export-purchase-differential.spec.ts` buys the pinned Money Active Power (1000 Money), Gem Offline Gems (4444 Gems), and Planet Coin Active Power (100 Planet Coins) captures in both live apps, then compares each complete decoded Settings export object and exact encoded bytes. The focused Windows Chromium suite passed 3/3. This adds three dynamic exported states; Wisdom purchases and other levels/actions remain open.
 
 Pickaxe strict-replacement boundary (2026-11-07): the reference fixture now captures candidate damage below the equipped pickaxe; parity asserts the above/equal/below outcomes, and a source-paired E2E compares the weaker-dud screen in both themes at 1440x900 and 1366x768 (4/4). Pickaxe crafting/naming remains In Progress for its other states.
 

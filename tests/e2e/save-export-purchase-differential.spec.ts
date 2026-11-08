@@ -1,16 +1,23 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Browser, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
 import { createBeyondVisualSaveFromRemixSave } from "./visual-state.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
 const fixedTime = 1_700_000_000_000;
+type ShopGroup = "money" | "gems" | "planetCoins";
+
+const groupLabels: Record<ShopGroup, string> = {
+  money: "Money Upgrades",
+  gems: "Gem Upgrades",
+  planetCoins: "PC Upgrades",
+};
 
 type DecimalCapture = { decimal: string };
 
 type PurchaseCapture = {
   name: string;
-  group: "money" | "gems" | "planetCoins";
+  group: ShopGroup;
   key: string;
   startingLevel: number;
   startingResources: {
@@ -96,10 +103,11 @@ function seedBeyond({ encoded, now }: { encoded: string; now: number }) {
   Date.now = () => now;
 }
 
-test("exports the live save after a source-paired upgrade purchase", async ({
-  browser,
-  page,
-}) => {
+async function comparePurchaseExport(
+  browser: Browser,
+  page: Page,
+  purchaseName: string,
+) {
   const corpus = JSON.parse(
     await readFile(
       new URL(
@@ -110,10 +118,9 @@ test("exports the live save after a source-paired upgrade purchase", async ({
     ),
   ) as ReferenceCorpus;
   const purchase = corpus.data.upgradeSemantics.purchaseSemantics.find(
-    ({ name }) => name === "buy-exact-affordability",
+    ({ name }) => name === purchaseName,
   );
-  if (!purchase)
-    throw new Error("Pinned exact-affordability purchase is missing.");
+  if (!purchase) throw new Error(`Pinned purchase ${purchaseName} is missing.`);
   const imageName = corpus.data.upgradeSemantics.groups[purchase.group]?.[
     purchase.key
   ]?.image
@@ -134,11 +141,17 @@ test("exports the live save after a source-paired upgrade purchase", async ({
   sourceSave.settings.tab = "main";
   sourceSave.settings.theme = "light";
   sourceSave.settings.upgradeTab = "money";
-  sourceSave.upgrades = {
-    [purchase.key]: { level: purchase.startingLevel },
+  const upgradeLevels: Record<ShopGroup, Record<string, { level: number }>> = {
+    money: { activePower: { level: 0 } },
+    gems: { offlineGems: { level: 0 } },
+    planetCoins: { activePower: { level: 0 } },
   };
-  sourceSave.gemUpgrades = { offlineGems: { level: 0 } };
-  sourceSave.planetCoinUpgrades = { activePower: { level: 0 } };
+  upgradeLevels[purchase.group][purchase.key] = {
+    level: purchase.startingLevel,
+  };
+  sourceSave.upgrades = upgradeLevels.money;
+  sourceSave.gemUpgrades = upgradeLevels.gems;
+  sourceSave.planetCoinUpgrades = upgradeLevels.planetCoins;
   sourceSave.pickaxe = { name: "Probe Pickaxe", pow: "0", quality: "0" };
   const encodedSourceSave = encodeRemixLegacySave(sourceSave);
   const encodedBeyondSave = await createBeyondVisualSaveFromRemixSave({
@@ -176,8 +189,17 @@ test("exports the live save after a source-paired upgrade purchase", async ({
       Boolean((window as Window & { game?: unknown }).game),
     );
 
+    if (purchase.group !== "money") {
+      await Promise.all([
+        page.locator(`[data-upgrade-tab="${purchase.group}"]`).click(),
+        sourcePage
+          .locator(".upg-tabs button")
+          .filter({ hasText: groupLabels[purchase.group] })
+          .click(),
+      ]);
+    }
     const beyondCard = page.locator(
-      `[data-upgrade-group="money"][data-upgrade-key="${purchase.key}"]`,
+      `[data-upgrade-group="${purchase.group}"][data-upgrade-key="${purchase.key}"]`,
     );
     const sourceCard = sourcePage
       .locator(".upgradelist .upgrade")
@@ -188,7 +210,9 @@ test("exports the live save after a source-paired upgrade purchase", async ({
       "data-upgrade-level",
       String(purchase.startingLevel + 1),
     );
-    await expect(sourceCard.locator(".lvl")).toHaveText("1");
+    await expect(sourceCard.locator(".lvl")).toHaveText(
+      await beyondCard.locator(".lvl").innerText(),
+    );
 
     await Promise.all([
       page.locator("[data-game-tab='settings']").click(),
@@ -230,4 +254,15 @@ test("exports the live save after a source-paired upgrade purchase", async ({
   } finally {
     await sourceContext.close().catch(() => undefined);
   }
-});
+}
+
+for (const purchaseName of [
+  "buy-exact-affordability",
+  "buy-uses-gem-resource",
+  "buy-uses-planet-coin-resource",
+]) {
+  test(`exports the live save after ${purchaseName}`, async ({
+    browser,
+    page,
+  }) => comparePurchaseExport(browser, page, purchaseName));
+}
