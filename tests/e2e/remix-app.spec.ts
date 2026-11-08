@@ -88,6 +88,7 @@ type SettingsRuntimeFixture = {
         name: string;
         confirmationPrompts: string[];
       }[];
+      confirmed: { confirmationPrompts: string[] };
     };
     payUSDebtSemantics: {
       scenarios: {
@@ -3222,6 +3223,139 @@ test("matches pinned Remix Hard Reset cancellation at each confirmation", async 
       expect(after[0]?.field, scenario.name).toBe(after[1]?.field);
       expect(after[0]?.themeColor, scenario.name).toBe(after[1]?.themeColor);
     }
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
+test("matches pinned Remix after confirming Hard Reset", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90_000);
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as SettingsRuntimeFixture;
+  const save = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as { lastActive: number };
+  save.lastActive = 1_700_000_000_000;
+  const encodedSave = encodeRemixLegacySave(save);
+  const sourceContext = await browser.newContext({
+    colorScheme: "dark",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+  const initializePage = (encoded: string) => {
+    localStorage.clear();
+    localStorage.setItem("IdleMine", encoded);
+    localStorage.setItem("unrelated-origin-data", "must be removed");
+    Date.now = () => 1_700_000_000_000;
+  };
+  const collectAcceptedPrompts = (target: typeof page) => {
+    const prompts: string[] = [];
+    target.on("dialog", async (dialog) => {
+      prompts.push(dialog.message());
+      await dialog.accept();
+    });
+    return prompts;
+  };
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all([
+      page.addInitScript(initializePage, encodedSave),
+      sourcePage.addInitScript(initializePage, encodedSave),
+    ]);
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean((window as Window & { game?: unknown }).game),
+    );
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      page.locator("[data-settings-save-field]").fill("old export text"),
+      sourcePage.locator("article.settings textarea").fill("old export text"),
+    ]);
+    const [beyondPrompts, sourcePrompts] = [
+      collectAcceptedPrompts(page),
+      collectAcceptedPrompts(sourcePage),
+    ];
+
+    await Promise.all([
+      page.locator("[data-settings-hard-reset]").click(),
+      sourcePage
+        .locator("article.settings button")
+        .filter({ hasText: "Hard Reset" })
+        .click(),
+    ]);
+    await expect.poll(() => beyondPrompts.length).toBe(3);
+    await expect.poll(() => sourcePrompts.length).toBe(3);
+    expect(beyondPrompts).toEqual(
+      reference.data.hardResetSemantics.confirmed.confirmationPrompts,
+    );
+    expect(sourcePrompts).toEqual(beyondPrompts);
+
+    const storageAfterReset = await Promise.all(
+      [page, sourcePage].map((target) =>
+        target.evaluate(() => ({
+          length: localStorage.length,
+          keys: Object.keys(localStorage),
+        })),
+      ),
+    );
+    expect(storageAfterReset).toEqual([
+      { length: 0, keys: [] },
+      { length: 0, keys: [] },
+    ]);
+
+    await Promise.all([
+      page.getByRole("button", { name: "Export" }).click(),
+      sourcePage
+        .locator("article.settings")
+        .getByRole("button", { name: "Export" })
+        .click(),
+    ]);
+    const [beyondExport, sourceExport] = await Promise.all([
+      page.locator("[data-settings-save-field]").inputValue(),
+      sourcePage.locator("article.settings textarea").inputValue(),
+    ]);
+    expect(beyondExport).toBe(sourceExport);
+    expect(
+      await page.evaluate((value) => {
+        const decoded = unescape(decodeURIComponent(atob(value)));
+        return JSON.parse(decoded) as unknown;
+      }, beyondExport),
+    ).toEqual(
+      await sourcePage.evaluate((value) => {
+        const decoded = unescape(decodeURIComponent(atob(value)));
+        return JSON.parse(decoded) as unknown;
+      }, sourceExport),
+    );
+    expect(
+      await Promise.all(
+        [page, sourcePage].map((target) =>
+          target.evaluate(() => localStorage.length),
+        ),
+      ),
+    ).toEqual([0, 0]);
   } finally {
     await sourceContext.close().catch(() => undefined);
   }

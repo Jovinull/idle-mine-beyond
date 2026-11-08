@@ -111,10 +111,12 @@ Other arbitrary byte strings remain an input-domain gap, not an unlisted branch.
   confirmation loop has each cancellation index, full confirmation, state and
   storage outcomes in `tests/parity/remix-hard-reset.test.ts`. The source-paired
   E2E compares all three cancellation positions, prompts, Settings state, and
-  storage with pinned Remix in Chromium, Firefox, and WebKit; a separate
-  Chromium test also checks the fully confirmed reset in
-  `tests/e2e/remix-app.spec.ts`. Firefox and WebKit run through
-  `test:e2e:hard-reset:browsers`.
+  storage with pinned Remix in Chromium, Firefox, and WebKit. The fully
+  confirmed path also compares the three prompts, cleared origin storage, and
+  complete Settings export bytes/objects across all three browsers in
+  `tests/e2e/remix-app.spec.ts`; the cross-browser gates are
+  `test:e2e:hard-reset:browsers` and
+  `test:e2e:hard-reset-confirmed:browsers`.
   A valid JSON save with the first index past Remix's formatter list is also
   source-paired in `tests/e2e/legacy-save-invalid-formatter.spec.ts`.
 - **Sampled:** one community-shared export with an older-looking field shape

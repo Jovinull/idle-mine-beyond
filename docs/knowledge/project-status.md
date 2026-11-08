@@ -8,6 +8,11 @@ unchanged origin storage against live pinned Remix in Firefox and WebKit, in
 addition to the existing Chromium differential. The focused browser checks
 passed in Firefox and WebKit.
 
+**Confirmed Hard Reset across engines (2026-11-08):** the successful three-
+confirmation branch now compares prompt order, cleared origin storage, and
+complete post-reset export bytes and objects with live pinned Remix in
+Chromium, Firefox, and WebKit. All three focused browser checks passed.
+
 **Optional legacy save groups across engines (2026-11-08):** the live Settings
 comparison for absent optional groups, present-empty groups, and varied
 all-upgrade saves now runs against pinned Remix in Firefox and WebKit as well
