@@ -49,11 +49,6 @@ source-paired affordability test three times; each run passed all nine states
 and exact full-screen comparisons. This confirms the earlier one-pixel mismatch
 is intermittent, but does not explain or close the strict screenshot gap.
 
-**Repeated dark affordability run (2026-11-07):** reran the complete dark-theme
-source-paired affordability test three times; each run passed all nine states
-and exact full-screen comparisons. This confirms the earlier one-pixel mismatch
-is intermittent, but does not explain or close the strict screenshot gap.
-
 **Selected-tab lifecycle probe (2026-11-07):** a project Chrome DevTools MCP
 session kept an instrumented page `visible` and focused while a second target
 was selected; reading the first target by page ID recorded no visibility event
@@ -1602,8 +1597,23 @@ in both themes at 1440x900 and 1366x768 (eight focused Playwright cases passed).
 Other selector states and resolutions remain open.
 
 **Shop level-two catalog visuals (2026-11-07):** extended the live
-source/Beyond catalog comparison to level two for all 22 Money, Gem, and
-Planet Coin cards. It compares each card, hovered details, and each full-screen
-resource tab in both themes; the focused Chromium tests passed 2/2. Combined
-with levels zero and one, this provides 18 exact full-screen pairs. Other shop
-balances and state combinations remain open.
+source/Beyond comparison to level two for all 22 Money, Gem, and Planet Coin
+cards. A strict decoded-RGBA comparison confirms all 22 card/detail pairs in
+dark; it canonicalizes RGB only for fully transparent pixels, whose channel
+values do not render. The focused dark run's only mismatch is the 1440x900
+Planet Coins full-screen at `(810,152)`, Beyond RGB `(4,4,4)` versus Remix
+`(3,3,3)`; the other checked full-screen captures pass. Full-screen level two
+also matches in light at 1440x900 and in both themes at 1366x768. Earlier
+repeated dark 1440x900 captures differed intermittently by one or two
+one-channel pixels on rounded Gem or Planet Coin card corners. A Beyond-only
+root-background diagnostic did not eliminate the mismatch. A two-frame wait
+between stability samples also failed in one of two reruns at `(810,152)` with
+Beyond 3 versus Remix 4; that harness experiment was removed. The strict
+full-screen state remains open without a visible-pixel tolerance or mask.
+
+**Shop pixel diagnostic rerun (2026-11-08):** the focused dark level-two
+catalog test now hashes decoded RGBA pixels and preserves both screenshots and
+the comparison state on failure. This rerun passed, including the 1440x900
+Planet Coins viewport. Earlier mismatches and intermittent one-channel corner
+differences remain in the evidence record, so this pass does not close the
+strict full-screen gap.

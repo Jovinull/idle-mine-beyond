@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { inflateSync } from "node:zlib";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { readFile, writeFile } from "node:fs/promises";
 import { Decimal } from "../../packages/core/src/decimal.js";
@@ -408,9 +409,96 @@ type ModifierScreenSequence = {
   refreshedPresentation: Awaited<ReturnType<typeof readCardPresentation>>;
 };
 
+function renderedPixelHash(screenshot: Buffer): string {
+  const signature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+  if (!screenshot.subarray(0, 8).equals(signature)) {
+    throw new Error("Expected a PNG screenshot.");
+  }
+  let width = 0;
+  let height = 0;
+  let colorType = -1;
+  const imageData: Buffer[] = [];
+  for (let offset = 8; offset < screenshot.length;) {
+    const length = screenshot.readUInt32BE(offset);
+    const type = screenshot.toString("ascii", offset + 4, offset + 8);
+    const dataStart = offset + 8;
+    const dataEnd = dataStart + length;
+    if (type === "IHDR") {
+      width = screenshot.readUInt32BE(dataStart);
+      height = screenshot.readUInt32BE(dataStart + 4);
+      const bitDepth = screenshot[dataStart + 8]!;
+      colorType = screenshot[dataStart + 9]!;
+      const interlace = screenshot[dataStart + 12]!;
+      if (bitDepth !== 8 || ![2, 6].includes(colorType) || interlace !== 0) {
+        throw new Error("Unsupported PNG screenshot format.");
+      }
+    } else if (type === "IDAT") {
+      imageData.push(screenshot.subarray(dataStart, dataEnd));
+    } else if (type === "IEND") {
+      break;
+    }
+    offset = dataEnd + 4;
+  }
+  const bytesPerPixel = colorType === 6 ? 4 : 3;
+  const rowBytes = width * bytesPerPixel;
+  const filtered = inflateSync(Buffer.concat(imageData));
+  const rows = Buffer.alloc(rowBytes * height);
+  const paeth = (left: number, above: number, upperLeft: number) => {
+    const estimate = left + above - upperLeft;
+    const leftDistance = Math.abs(estimate - left);
+    const aboveDistance = Math.abs(estimate - above);
+    const upperLeftDistance = Math.abs(estimate - upperLeft);
+    return leftDistance <= aboveDistance && leftDistance <= upperLeftDistance
+      ? left
+      : aboveDistance <= upperLeftDistance
+        ? above
+        : upperLeft;
+  };
+  for (let y = 0; y < height; y += 1) {
+    const sourceStart = y * (rowBytes + 1);
+    const filter = filtered[sourceStart]!;
+    const destinationStart = y * rowBytes;
+    for (let x = 0; x < rowBytes; x += 1) {
+      const raw = filtered[sourceStart + 1 + x]!;
+      const left =
+        x >= bytesPerPixel ? rows[destinationStart + x - bytesPerPixel]! : 0;
+      const above = y > 0 ? rows[destinationStart + x - rowBytes]! : 0;
+      const upperLeft =
+        y > 0 && x >= bytesPerPixel
+          ? rows[destinationStart + x - rowBytes - bytesPerPixel]!
+          : 0;
+      const predictor =
+        filter === 0
+          ? 0
+          : filter === 1
+            ? left
+            : filter === 2
+              ? above
+              : filter === 3
+                ? Math.floor((left + above) / 2)
+                : filter === 4
+                  ? paeth(left, above, upperLeft)
+                  : undefined;
+      if (predictor === undefined) throw new Error("Unsupported PNG filter.");
+      rows[destinationStart + x] = (raw + predictor) & 0xff;
+    }
+  }
+  const rgba = Buffer.alloc(width * height * 4);
+  for (let source = 0, destination = 0; source < rows.length;) {
+    const alpha = colorType === 6 ? rows[source + 3]! : 255;
+    rgba[destination] = alpha === 0 ? 0 : rows[source]!;
+    rgba[destination + 1] = alpha === 0 ? 0 : rows[source + 1]!;
+    rgba[destination + 2] = alpha === 0 ? 0 : rows[source + 2]!;
+    rgba[destination + 3] = alpha;
+    source += bytesPerPixel;
+    destination += 4;
+  }
+  return createHash("sha256").update(rgba).digest("hex");
+}
+
 async function screenshotHash(locator: Locator): Promise<string> {
   const screenshot = await locator.screenshot({ animations: "disabled" });
-  return createHash("sha256").update(screenshot).digest("hex");
+  return renderedPixelHash(screenshot);
 }
 
 async function stableAppScreenshot(
@@ -530,7 +618,13 @@ async function prepareBeyondScreenshot(
   hoverImageName?: string,
 ): Promise<void> {
   await navigateWithLegacySave(page, "/", encodedSave);
-  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+  await expect(page.locator("#app")).toHaveAttribute(
+    "data-app-state",
+    "ready",
+    {
+      timeout: 15_000,
+    },
+  );
   await expect(page.locator("body")).toHaveAttribute("data-theme", theme);
   await page.locator(`[data-upgrade-tab="${group}"]`).click();
   await waitForUpgradeImages(page);
@@ -785,9 +879,11 @@ async function expectSinglePageFullViewportMatch(
     if (beyondHash !== sourceHash) {
       const beyondPath = test.info().outputPath(`${description}-beyond.png`);
       const sourcePath = test.info().outputPath(`${description}-remix.png`);
+      const statePath = test.info().outputPath(`${description}-state.json`);
       await Promise.all([
         writeFile(beyondPath, beyondScreenshot),
         writeFile(sourcePath, sourceScreenshot),
+        writeFile(statePath, JSON.stringify(JSON.parse(stateDetails), null, 2)),
       ]);
       await Promise.all([
         test.info().attach(`${description}-beyond.png`, {
@@ -799,7 +895,7 @@ async function expectSinglePageFullViewportMatch(
           contentType: "image/png",
         }),
         test.info().attach(`${description}-state.json`, {
-          body: Buffer.from(JSON.stringify(JSON.parse(stateDetails), null, 2)),
+          path: statePath,
           contentType: "application/json",
         }),
       ]);
@@ -844,11 +940,11 @@ async function expectSinglePageFullViewportMatch(
   }
 }
 
-async function stableScreenshotHash(
+async function stableScreenshotCapture(
   page: Page,
   locator: Locator,
   inset = 0,
-): Promise<string> {
+): Promise<{ buffer: Buffer; hash: string }> {
   const bounds = await locator.boundingBox();
   if (!bounds) throw new Error("The rendered upgrade element is not visible.");
   const x = Math.floor(bounds.x) + inset;
@@ -867,11 +963,19 @@ async function stableScreenshotHash(
       clip,
       animations: "disabled",
     });
-    const current = createHash("sha256").update(screenshot).digest("hex");
-    if (current === previous) return current;
+    const current = renderedPixelHash(screenshot);
+    if (current === previous) return { buffer: screenshot, hash: current };
     previous = current;
   }
   throw new Error("The rendered upgrade screenshot did not stabilize.");
+}
+
+async function stableScreenshotHash(
+  page: Page,
+  locator: Locator,
+  inset = 0,
+): Promise<string> {
+  return (await stableScreenshotCapture(page, locator, inset)).hash;
 }
 
 async function dispatchRemixKeyboard(
@@ -1656,7 +1760,7 @@ for (const theme of ["light", "dark"] as const) {
       `matches shop cards, details, and full screens against Remix at level ${startingLevel} in ${theme} theme`,
       { tag: "@slow" },
       async ({ page, browser }) => {
-        test.setTimeout(180_000);
+        test.setTimeout(300_000);
         const fixture = JSON.parse(
           await readFile(
             new URL(
@@ -1696,6 +1800,7 @@ for (const theme of ["light", "dark"] as const) {
           await expect(page.locator("#app")).toHaveAttribute(
             "data-app-state",
             "ready",
+            { timeout: 15_000 },
           );
           await sourcePage.waitForFunction(() =>
             Boolean(
@@ -1778,14 +1883,63 @@ for (const theme of ["light", "dark"] as const) {
                 waitForNextTwoFrames(page),
                 waitForNextTwoFrames(sourcePage),
               ]);
-              const [beyondCardHash, sourceCardHash] = await Promise.all([
-                stableScreenshotHash(page, card),
-                stableScreenshotHash(sourcePage, sourceCard),
+              const [beyondCardCapture, sourceCardCapture] = await Promise.all([
+                stableScreenshotCapture(page, card),
+                stableScreenshotCapture(sourcePage, sourceCard),
               ]);
+              if (beyondCardCapture.hash !== sourceCardCapture.hash) {
+                const [beyondPresentation, sourcePresentation] =
+                  await Promise.all([
+                    readCardPresentation(card),
+                    readCardPresentation(sourceCard),
+                  ]);
+                const [beyondRaster, sourceRaster] = await Promise.all([
+                  readShopRasterDiagnostics(page),
+                  readShopRasterDiagnostics(sourcePage),
+                ]);
+                const diagnostic = JSON.stringify(
+                  {
+                    beyondPresentation,
+                    sourcePresentation,
+                    beyondRaster,
+                    sourceRaster,
+                  },
+                  null,
+                  2,
+                );
+                const beyondPath = test
+                  .info()
+                  .outputPath(`${group}-${key}-beyond-card.png`);
+                const sourcePath = test
+                  .info()
+                  .outputPath(`${group}-${key}-remix-card.png`);
+                const statePath = test
+                  .info()
+                  .outputPath(`${group}-${key}-card-state.json`);
+                await Promise.all([
+                  writeFile(beyondPath, beyondCardCapture.buffer),
+                  writeFile(sourcePath, sourceCardCapture.buffer),
+                  writeFile(statePath, diagnostic),
+                ]);
+                await Promise.all([
+                  test.info().attach(`${group}-${key}-beyond-card.png`, {
+                    path: beyondPath,
+                    contentType: "image/png",
+                  }),
+                  test.info().attach(`${group}-${key}-remix-card.png`, {
+                    path: sourcePath,
+                    contentType: "image/png",
+                  }),
+                  test.info().attach(`${group}-${key}-card-state.json`, {
+                    path: statePath,
+                    contentType: "application/json",
+                  }),
+                ]);
+              }
               expect(
-                beyondCardHash,
+                beyondCardCapture.hash,
                 `${group}.${key} resting card pixels`,
-              ).toBe(sourceCardHash);
+              ).toBe(sourceCardCapture.hash);
               compared += 1;
             }
             await Promise.all([
@@ -1812,6 +1966,18 @@ for (const theme of ["light", "dark"] as const) {
               `${group} full-screen image at upgrade level ${startingLevel}`,
             );
             fullScreensCompared += 1;
+            if (startingLevel === 2) {
+              await page.setViewportSize({ width: 1366, height: 768 });
+              await expectSinglePageFullViewportMatch(
+                page,
+                sourceUrl,
+                encoded,
+                group,
+                theme,
+                `${group} full-screen image at upgrade level 2 at 1366x768`,
+              );
+              await page.setViewportSize({ width: 1440, height: 900 });
+            }
           }
           expect(compared).toBe(22);
           expect(fullScreensCompared).toBe(groups.length);

@@ -182,10 +182,18 @@ explicit visual gaps above.
   `tests/e2e/gem-upgrade-tab-gate-visual.spec.ts` asserts both DOM outcomes and
   exact 1440×900 screenshot hashes in light and dark themes.
 - **Sampled / open visual states:** the all-card comparison is one source-shaped
-  level-zero state with abundant resources; the affordability differential
-  covers representative zero/exact-price resource cases and one below-price
-  Money case. Full-screen comparisons cover each Money/Gem/Planet Coin tab at
-  levels zero, one, and two in both themes (18 paired viewports), plus the zero-
+  state with abundant resources at levels zero, one, and two; the affordability
+  differential covers representative zero/exact-price resource cases and one
+  below-price Money case. Full-screen comparisons cover each Money/Gem/Planet
+  Coin tab at levels zero and one in both themes (12 paired viewports); level
+  two passes full-screen in light at 1440x900 and in both themes at 1366x768.
+  A focused dark level-two run confirms exact decoded-pixel equality for all 22
+  cards and details; one run differed in the 1440x900 dark Planet Coins full-
+  screen at `(810,152)`, Beyond RGB `(4,4,4)` versus Remix `(3,3,3)`, while a
+  subsequent diagnostic rerun passed. Repeated dark 1440x900 comparisons have
+  exposed intermittent one- or two-pixel rounded-card differences. These
+  states remain open, as
+  do the zero-
   resource boundary for each tab, the Money below-price boundary, and the exact-
   price boundary for all three tabs in both themes (14 paired viewports). Other
   balances and broader application-state combinations remain open. All three
