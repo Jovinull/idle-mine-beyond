@@ -316,7 +316,7 @@ coverage; the current version-rejection branch is covered.
 | Recovery file accepts direct save or bundle primary; uses backup only when primary is invalid; rejects malformed/legacy-only bundles and future primary                                       | captured recovery-file cases                                                                                                                                                                                                  | `tests/parity/remix-beyond-recovery-file.test.ts` compares each decode/result branch and protected storage                                                                                                                                                                                                                                       |
 | Import requires acknowledgement, preserves source save on rejection/write failure, and applies legacy offline effects before persistence when applicable                                      | legacy-import, rejection, write-failure, and offline recovery fixtures                                                                                                                                                        | `tests/parity/remix-beyond-recovery-file.test.ts` and `tests/parity/remix-beyond-save-storage.test.ts` assert state, effects, and storage order; `tests/e2e/remix-app.spec.ts` covers Settings recovery UI                                                                                                                                       |
 | Browser adapter stores Beyond primary/backup in separate keys and exports each slot without mutation                                                                                          | key separation and slot export cases                                                                                                                                                                                          | `tests/parity/remix-beyond-save-storage.test.ts` compares exact keys and all returned slots                                                                                                                                                                                                                                                      |
-| Same-origin tabs explicitly save snapshots in different orders; each write replaces the shared value without merging or reconciling the other tab                                             | Four pinned/implementation tabs load one controlled seed; the updated tab saves Blacksmith 1, the stale peer saves level 0, the updated tab saves 1 again, then the stale peer buys Active Power and saves its local snapshot | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares Remix legacy output with Beyond v1 state after all four writes: Blacksmith 1, 0, 1, then 0; the final stale snapshot also has Active Power 1 and Money 0; the updated tab still displays Blacksmith 1                                                                                      |
+| Same-origin tabs explicitly save snapshots in different orders; each write replaces the shared value without merging or reconciling the other tab                                             | Four pinned/implementation tabs load one controlled seed; the updated tab saves Blacksmith 1, the stale peer saves level 0, the updated tab saves 1 again, then the stale peer buys Active Power and saves its local snapshot | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares Remix legacy output with Beyond v1 state in Chromium, Firefox, and WebKit after all four writes: Blacksmith 1, 0, 1, then 0; the final stale snapshot also has Active Power 1 and Money 0; the updated tab still displays Blacksmith 1                                                     |
 | Stale same-upgrade and cross-resource actions save whole snapshots without merging newer resource families                                                                                    | Captured level-zero save; exact-price `buy-uses-gem-resource` fixture; two same-origin tabs per implementation; Blacksmith/Money then Offline Gems/Gems purchase                                                              | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares both live Remix and Beyond after same-upgrade stale writes in Chromium and after updated-tab Blacksmith/Money followed by stale-tab Offline Gems/Gems in Chromium, Firefox, and WebKit; asserts complete final observable snapshot and Beyond backup equals the immediately prior snapshot |
 
 Other cross-tab action/write interleavings, profile-specific quota policies,
@@ -335,8 +335,9 @@ keeps the imported `IdleMine` legacy key unchanged. After each stale, fresh, and
 stale-action overwrite, the E2E also decodes the backup and asserts its observed
 resource/upgrade projection equals the primary snapshot that existed
 immediately before that write. This checks browser backup retention across the
-three explicit stale-tab sequences; other action/write interleavings and browser
-storage races remain open.
+three explicit stale-tab sequences; the four-write Active Power case and
+cross-resource case both pass Firefox and WebKit. Other action/write
+interleavings and browser storage races remain open.
 
 **Cross-resource stale-tab interleaving (2026-11-08):** the same E2E suite uses
 the captured exact-price `buy-uses-gem-resource` case to seed 4,444 Gems and
@@ -348,9 +349,9 @@ Blacksmith 1. The updated primary tab still displays its local Blacksmith 1.
 All three focused cross-tab cases passed in Chromium; other cross-tab
 interleavings remain open. The cross-resource case also passed alone in
 Firefox and WebKit; `pnpm test:e2e:cross-tab:browsers` keeps this exact
-source/Beyond comparison in the Firefox/WebKit CI gate. The other two longer
-interleavings remain Chromium-only because the stale Active Power sequence
-hangs on its final Settings Save click in local WebKit.
+source/Beyond comparison in the Firefox/WebKit CI gate. The four-write Active
+Power case now also passes in both browsers with a 180-second test deadline;
+the CI command runs it and the cross-resource case in Firefox and WebKit.
 
 **Same-upgrade stale-tab interleaving (2026-11-08):** the same test file now
 loads two tabs from the captured level-zero save, buys Blacksmith once in each

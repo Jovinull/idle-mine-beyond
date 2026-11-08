@@ -123,7 +123,7 @@ test("a stale second tab purchase overwrites the newer save like pinned Remix", 
   page,
   browser,
 }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(180_000);
   const fixture = JSON.parse(
     await readFile(
       new URL(

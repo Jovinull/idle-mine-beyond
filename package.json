@@ -73,7 +73,7 @@
     "native:check": "cargo check --manifest-path apps/native/src-tauri/Cargo.toml",
     "test:e2e:save-codec:firefox": "playwright test -c playwright.save-codec.config.ts tests/e2e/save-codec-browser-compat.spec.ts",
     "test:e2e:save-export:browsers": "playwright test -c playwright.save-export.cross-browser.config.ts tests/e2e/save-export-browser-compat.spec.ts tests/e2e/save-export-mining-drop-differential.spec.ts tests/e2e/save-export-purchase-differential.spec.ts",
-    "test:e2e:cross-tab:browsers": "playwright test -c playwright.save-export.cross-browser.config.ts tests/e2e/save-cross-tab-overwrite.spec.ts --grep \"a stale Gem purchase overwrites\" --workers=1",
+    "test:e2e:cross-tab:browsers": "playwright test -c playwright.save-export.cross-browser.config.ts tests/e2e/save-cross-tab-overwrite.spec.ts --grep \"a stale (second tab purchase|Gem purchase)\" --workers=1",
     "test:e2e:save-import-errors:browsers": "playwright test -c playwright.save-export.cross-browser.config.ts tests/e2e/save-import-error-browser-compat.spec.ts",
     "test:e2e:save-storage:browsers": "playwright test -c playwright.save-export.cross-browser.config.ts tests/e2e/browser-storage-failure.spec.ts tests/e2e/browser-storage-read-failure.spec.ts tests/e2e/browser-storage-real-quota.spec.ts",
     "test:e2e:save-codec:webkit": "playwright test -c playwright.save-codec.webkit.config.ts tests/e2e/save-codec-browser-compat.spec.ts"

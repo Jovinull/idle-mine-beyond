@@ -21,9 +21,10 @@ source-captured exact price (4,444 Gems) and saves. Both runtimes end with the
 stale snapshot (`Money 1000`, `Gems 0`, `Blacksmith 0`, `Offline Gems 1`), and
 Beyond's backup preserves the preceding Blacksmith snapshot. This case passes
 in Chromium, Firefox, and WebKit and is now included in CI's cross-browser save
-checks. The longer four-write Active Power stale-save sequence hangs on its
-last Settings Save click in local WebKit; that sequence remains covered in
-Chromium only.
+checks. The longer four-write Active Power stale-save sequence now passes in
+Firefox and WebKit as well as Chromium. The WebKit run completes in about 1.7
+minutes; the test deadline is 180 seconds to accommodate the measured per-click
+latency.
 
 **Natural Story endpoints across desktop viewports (2026-11-08):** extended the
 live pinned-Remix/Beyond comparison for Chapters 3-6 to 1366x768, 1920x1080, and
