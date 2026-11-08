@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-08
 
+**Long-frame autosave after browser resume (2026-11-08):** extended the
+source-paired Chromium freeze/resume case from two seconds to 120 seconds. On
+resume both runtimes perform one auto-pickaxe hit, cross the strict 60-second
+autosave threshold once, reset both timers, emit the same save log, and export
+identical full legacy state with the resumed `lastActive`. The focused E2E
+passed 1/1; real OS background scheduling remains open.
+
 **Historical save import selector state (2026-11-08):** the live
 pinned-Remix/Beyond import comparison now checks a source quirk: importing
 updates the number formatter but leaves the currently mounted Settings select

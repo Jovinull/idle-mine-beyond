@@ -447,7 +447,7 @@ test("matches Remix when the wall clock advances between offline-load reads", as
   }
 });
 
-test("matches one main-loop tick after Chromium freezes and resumes", async ({
+test("matches one main-loop tick and autosave after a 120-second Chromium freeze", async ({
   page,
 }) => {
   test.setTimeout(90_000);
@@ -598,7 +598,7 @@ test("matches one main-loop tick after Chromium freezes and resumes", async ({
         ).__idleMineSuspensionClock;
         if (!clock) throw new Error("Remix test clock is unavailable.");
         clock.advance(milliseconds);
-      }, 2_000),
+      }, 120_000),
       page.evaluate((milliseconds) => {
         const clock = (
           window as Window & {
@@ -609,7 +609,7 @@ test("matches one main-loop tick after Chromium freezes and resumes", async ({
         ).__idleMineSuspensionClock;
         if (!clock) throw new Error("Beyond test clock is unavailable.");
         clock.advance(milliseconds);
-      }, 2_000),
+      }, 120_000),
     ]);
     await Promise.all([
       sourceCdp.send("Page.setWebLifecycleState", { state: "active" }),
@@ -626,7 +626,16 @@ test("matches one main-loop tick after Chromium freezes and resumes", async ({
       String(Number(sourceBefore.hp) - Number(sourceBefore.idleDamage)),
     );
     expect(sourceAfter.autoPickaxeTimer).toBe(0);
-    expect(sourceAfter.saveTimer).toBe(2);
+    expect(sourceAfter.saveTimer).toBe(0);
+    await expect(sourcePage.locator(".messagelog p").first()).toHaveText(
+      "Game Saved!",
+    );
+    await expect(page.locator(".messagelog p").first()).toHaveText(
+      "Game Saved!",
+    );
+    expect(await sourcePage.locator(".messagelog p").allTextContents()).toEqual(
+      await page.locator(".messagelog p").allTextContents(),
+    );
     expect(await page.locator("article.main .mineobject").innerText()).toBe(
       await sourcePage.locator("article.main .mineobject").innerText(),
     );
@@ -660,6 +669,9 @@ test("matches one main-loop tick after Chromium freezes and resumes", async ({
       throw new Error("Could not decode the frozen-resume save comparison.");
     }
     expect(beyondDecoded.value).toEqual(sourceDecoded.value);
+    expect((sourceDecoded.value as { lastActive: number }).lastActive).toBe(
+      startNowMs + 120_000,
+    );
   } finally {
     if (pagesFrozen) {
       await Promise.allSettled([

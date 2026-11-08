@@ -114,11 +114,14 @@ behavior remains outside web-v1.
 **Controlled Chromium lifecycle freeze/resume differential (2026-10-04):**
 `tests/e2e/offline-progression.spec.ts` freezes the pinned Remix and Beyond
 pages with CDP `Page.setWebLifecycleState`, advances each injected wall clock
-by exactly two seconds, and resumes both pages. It compares the resumed frame's
-mine object/HP, idle timers, visible mine panel, and complete exported legacy
-saves; the focused Playwright case passes 1/1. This covers one controlled
-Chromium lifecycle transition. Actual OS background scheduling and throttling
-remain open, and native WebView lifecycle is outside web-v1.
+by exactly 120 seconds, and resumes both pages. The resumed main-loop update
+performs one auto-pickaxe hit despite the long delta, resets the auto timer,
+passes the strict 60-second save threshold once, resets the save timer, updates
+`lastActive`, and emits the save confirmation in both apps. The full exported
+legacy saves and visible log order match; the focused Playwright case passes
+1/1. This covers one controlled Chromium lifecycle transition. Actual OS
+background scheduling and throttling remain open, and native WebView lifecycle
+is outside web-v1.
 
 **Live purchase export differential (2026-11-08):**
 `tests/e2e/save-export-purchase-differential.spec.ts` starts pinned Remix and
