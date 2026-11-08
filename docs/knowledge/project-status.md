@@ -1624,3 +1624,9 @@ source/Beyond full-screen pixel comparison for the captured natural Chapter 3,
 Chromium run passed 4/4 with no pixel differences. The same test is part of the
 Linux browser suite; its CI result is pending. This strengthens selected Story
 visual evidence without changing the approved Story certification scope.
+
+**Zero-resource shop full screens (2026-11-08):** extended the source/Beyond
+zero-resource viewport comparison from 1366x768 to include the canonical
+1440x900 screen for Money, Gems, and Planet Coins in light and dark themes.
+The focused Windows Chromium run passed all 12 full-screen pairs across the
+two viewports. Remaining shop visual states stay open.

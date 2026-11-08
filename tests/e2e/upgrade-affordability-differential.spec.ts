@@ -447,8 +447,8 @@ async function expectPairedPagesFullViewportMatch(
   theme: "light" | "dark",
   description: string,
   hoverImageName: string,
+  viewport = { width: 1366, height: 768 },
 ): Promise<void> {
-  const viewport = { width: 1366, height: 768 };
   await Promise.all([
     page.setViewportSize(viewport),
     sourcePage.setViewportSize(viewport),
@@ -1517,7 +1517,7 @@ for (const theme of ["light", "dark"] as const) {
 
 for (const theme of ["light", "dark"] as const) {
   test(
-    `matches zero-resource shop screens at 1366x768 in ${theme} theme`,
+    `matches zero-resource shop screens at 1440x900 and 1366x768 in ${theme} theme`,
     { tag: "@slow" },
     async ({ browser }) => {
       test.setTimeout(180_000);
@@ -1580,16 +1580,22 @@ for (const theme of ["light", "dark"] as const) {
               `Missing image for ${scenario.group}.${scenario.key}.`,
             );
           }
-          await expectPairedPagesFullViewportMatch(
-            page,
-            sourcePage,
-            sourceUrl,
-            encodedViewportSave,
-            scenario.group,
-            theme,
-            `${scenario.group} zero-resource boundary full viewport at 1366x768`,
-            hoverImageName,
-          );
+          for (const viewport of [
+            { width: 1440, height: 900 },
+            { width: 1366, height: 768 },
+          ]) {
+            await expectPairedPagesFullViewportMatch(
+              page,
+              sourcePage,
+              sourceUrl,
+              encodedViewportSave,
+              scenario.group,
+              theme,
+              `${scenario.group} zero-resource boundary full viewport at ${viewport.width}x${viewport.height}`,
+              hoverImageName,
+              viewport,
+            );
+          }
         }
       } finally {
         await context.close().catch(() => undefined);

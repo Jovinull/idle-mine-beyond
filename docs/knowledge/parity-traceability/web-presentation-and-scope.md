@@ -193,10 +193,7 @@ explicit visual gaps above.
   screen at `(810,152)`, Beyond RGB `(4,4,4)` versus Remix `(3,3,3)`, while a
   subsequent diagnostic rerun passed. Repeated dark 1440x900 comparisons have
   exposed intermittent one- or two-pixel rounded-card differences. These
-  states remain open, as
-  do the zero-
-  resource boundary for each tab, the Money below-price boundary, and the exact-
-  price boundary for all three tabs in both themes (14 paired viewports). Other
+  states remain open, as do the Money below-price boundary and exact-price boundary for all three tabs in both themes (eight paired viewports at 1440x900). Zero-resource screens now match for each tab at 1440x900 and 1366x768 in both themes (12 paired screens). Other
   balances and broader application-state combinations remain open. All three
   exact-price resource screens also match at 1366×768 in both themes (six
   source/Beyond full-viewport pairs on Windows), asserted in the isolated
