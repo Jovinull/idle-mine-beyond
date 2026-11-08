@@ -93,8 +93,9 @@ Remix/Beyond views at 1440x900 in both themes.
   zero). It asserts Control's priority over Shift when both keys are held. The selected shop
   group is source-paired across Mining/Story panel remounts and legacy export in
   `tests/e2e/upgrade-tab-state-differential.spec.ts`. The source-captured
-  `buy-uses-gem-resource` case also compares the full Gem screen after buying
-  level-one Offline Gems at exact cost in both themes through
+  `buy-uses-gem-resource` and `buy-uses-planet-coin-resource` cases also compare
+  their full shop screens after purchasing level-one Offline Gems or Active
+  Power at exact cost in both themes through
   `tests/e2e/save-export-purchase-differential.spec.ts`.
 
 ### Upgrade function and branch trace

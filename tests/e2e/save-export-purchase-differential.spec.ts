@@ -151,6 +151,17 @@ async function comparePurchaseExport(
     expect(purchase.startingResources.gems.decimal).toBe("4444");
     expect(purchase.endingResources.gems.decimal).toBe("0");
   }
+  if (purchaseName === "buy-uses-planet-coin-resource") {
+    expect(purchase).toMatchObject({
+      group: "planetCoins",
+      key: "activePower",
+      startingLevel: 0,
+      endingLevel: 1,
+      operation: { method: "buy" },
+    });
+    expect(purchase.startingResources.planetCoins.decimal).toBe("100");
+    expect(purchase.endingResources.planetCoins.decimal).toBe("0");
+  }
   const upgrade =
     corpus.data.upgradeSemantics.groups[purchase.group]?.[purchase.key];
   if (!upgrade)
@@ -299,7 +310,10 @@ async function comparePurchaseExport(
       );
     }
 
-    if (purchaseName === "buy-uses-gem-resource") {
+    if (
+      purchaseName === "buy-uses-gem-resource" ||
+      purchaseName === "buy-uses-planet-coin-resource"
+    ) {
       await Promise.all([
         page.setViewportSize({ width: 1440, height: 900 }),
         page.mouse.move(1439, 899),
@@ -333,19 +347,24 @@ async function comparePurchaseExport(
       const sourceHash = createHash("sha256").update(sourcePng).digest("hex");
       if (beyondHash !== sourceHash) {
         await Promise.all([
-          test.info().attach(`gem-post-purchase-beyond-${theme}.png`, {
-            body: beyondPng,
-            contentType: "image/png",
-          }),
-          test.info().attach(`gem-post-purchase-remix-${theme}.png`, {
-            body: sourcePng,
-            contentType: "image/png",
-          }),
+          test
+            .info()
+            .attach(`${purchase.group}-post-purchase-beyond-${theme}.png`, {
+              body: beyondPng,
+              contentType: "image/png",
+            }),
+          test
+            .info()
+            .attach(`${purchase.group}-post-purchase-remix-${theme}.png`, {
+              body: sourcePng,
+              contentType: "image/png",
+            }),
         ]);
       }
-      expect(beyondHash, `Gem post-purchase ${theme} full-screen pixels`).toBe(
-        sourceHash,
-      );
+      expect(
+        beyondHash,
+        `${purchase.group} post-purchase ${theme} full-screen pixels`,
+      ).toBe(sourceHash);
     }
 
     await Promise.all([
@@ -415,4 +434,17 @@ test("exports the live save after the Gem purchase in dark theme", async ({
 }) => {
   test.setTimeout(60_000);
   await comparePurchaseExport(browser, page, "buy-uses-gem-resource", "dark");
+});
+
+test("exports the live save after the Planet Coin purchase in dark theme", async ({
+  browser,
+  page,
+}) => {
+  test.setTimeout(60_000);
+  await comparePurchaseExport(
+    browser,
+    page,
+    "buy-uses-planet-coin-resource",
+    "dark",
+  );
 });

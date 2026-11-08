@@ -2,11 +2,12 @@
 
 Last updated: 2026-11-08
 
-**Gem Offline Gems post-purchase screen (2026-11-08):** the source-captured
-`buy-uses-gem-resource` case spends its exact 4,444 Gems on the first Offline
-Gems level, then compares the full Gem shop screen with Remix in light and dark
-at 1440x900. The two focused Chromium cases passed with exact pixels; the same
-test also verifies the live exported save.
+**Gem and Planet Coin post-purchase screens (2026-11-08):** source-captured
+`buy-uses-gem-resource` and `buy-uses-planet-coin-resource` spend exact balances
+of 4,444 Gems and 100 Planet Coins to raise Offline Gems and Active Power from
+level 0 to 1. The full shop screens match Remix in light and dark at 1440x900;
+all four focused Chromium cases passed with exact pixels, and the tests also
+verify the live exported saves.
 
 **Settings alternate-viewport screens (2026-11-08):** the initial light
 Settings screen and changed-preference dark screen now have live pinned-
