@@ -36,7 +36,10 @@ confirmed causal link to the two-pixel raster delta. In CI run 42505857185,
 temporary overflow-visible, transparent-background, combined, and
 `display:contents` variants all retained the Beyond hash and same pixel delta;
 these wrapper-box properties are not the cause. The Chapter 4 dark case passed
-in this run; Chapter 3 light remains open. The strict assertion is unchanged.
+in this run; Chapter 3 light remains open. Retained run 42508151479 screenshots
+show only blue-channel changes at the two objective glyph-edge pixels in the
+Chapter 3 light and Chapter 4 dark cases. The assertion remains exact and
+unchanged.
 
 ## Settings and input controls
 

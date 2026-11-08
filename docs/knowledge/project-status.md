@@ -59,7 +59,7 @@ background, combined, and `display:contents` host variants. All four retained
 the original Beyond hash and the same two differing pixels, ruling out those
 wrapper-box properties as the cause. This run's full browser smoke had 255
 passes and one failure: Chapter 3 light at 1366x768; the Chapter 4 dark case
-passed. The mismatch remains strict, with no mask or tolerance. Later Linux
+passed. Retained run 42508151479 PNGs show only blue-channel changes at `(15,632)` and `(15,633)`: Chapter 3 light source/Beyond values are `(250,250,250)` / `(250,250,242)` and `(250,250,250)` / `(250,250,226)`; Chapter 4 dark values are `(54,54,54)` / `(54,54,58)` and `(54,54,54)` / `(54,54,67)`. The output is consistent with a glyph-edge raster difference, but the cause remains unknown. The mismatch remains strict, with no mask or tolerance. Later Linux
 viewports have not run because the test stops at the first mismatch. Source PNG
 baselines remain Windows-only.
 
