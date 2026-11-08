@@ -25,7 +25,10 @@ The pinned `main.css` Work Sans `@font-face` branch declares normal style and
 weight 400. The Beyond route uses that single rule for the Story renderer and
 the source-paired natural Story E2E asserts `document.fonts.check` after
 `document.fonts.ready` in both runtimes. CI run 42494765267 captured the
-previous duplicate-face state; the corrected Linux pixel result remains open.
+previous duplicate-face state. Run 42496892093 confirms the font state now
+matches, while the pixel delta persists; the raster cause remains open. On
+failure, the E2E records all computed styles for the objective elements and
+checks bold Work Sans loading.
 
 ## Settings and input controls
 

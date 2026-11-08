@@ -84,6 +84,12 @@ async function captureStoryRenderDiagnostics(page: Page) {
               webkitFontSmoothing: style.getPropertyValue(
                 "-webkit-font-smoothing",
               ),
+              all: Object.fromEntries(
+                Array.from(style, (property) => [
+                  property,
+                  style.getPropertyValue(property),
+                ]),
+              ),
             },
           },
         ];
@@ -118,6 +124,7 @@ async function captureStoryRenderDiagnostics(page: Page) {
       fonts: {
         status: document.fonts.status,
         workSansLoaded: document.fonts.check('18px "Work Sans"'),
+        boldWorkSansLoaded: document.fonts.check('bold 18px "Work Sans"'),
         faces: Array.from(
           document.fonts,
           ({ family, status, style, weight }) => ({
