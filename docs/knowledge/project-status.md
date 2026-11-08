@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-08
 
+**Gem Offline Gems post-purchase screen (2026-11-08):** the source-captured
+`buy-uses-gem-resource` case spends its exact 4,444 Gems on the first Offline
+Gems level, then compares the full Gem shop screen with Remix in light and dark
+at 1440x900. The two focused Chromium cases passed with exact pixels; the same
+test also verifies the live exported save.
+
 **Settings alternate-viewport screens (2026-11-08):** the initial light
 Settings screen and changed-preference dark screen now have live pinned-
 Remix/Beyond full-screen comparisons at 1366x768. This extends the existing

@@ -239,7 +239,10 @@ explicit visual gaps above.
   both themes. A second differential now covers the refreshed full-screen hints
   for the first card in all three resource groups, in both themes at 1440×900
   and 1366×768. These remain selected states and do not cover all shop balances
-  or screens. The all-cap differential also compares strict full-screen hashes at the
+  or screens. The pinned exact-cost Gem `buy-uses-gem-resource` purchase now
+  also compares the full screen after Offline Gems reaches level 1 and the Gem
+  balance reaches zero in both themes at the canonical 1440x900 viewport. The
+  all-cap differential also compares strict full-screen hashes at the
   first finite cap in each Money, Gem, and Planet Coin group (Blacksmith Bonus
   10, Blacksmith Skill 50, and Active Power 10), in both themes. These six
   selected screens match pinned Remix; all-card cap boundaries continue to

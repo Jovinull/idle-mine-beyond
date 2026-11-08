@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
 import { createBeyondVisualSaveFromRemixSave } from "./visual-state.js";
@@ -24,6 +25,12 @@ type PurchaseCapture = {
   endingLevel: number;
   operation: { method: "buy" | "buy10" | "buy100" };
   startingResources: {
+    money: DecimalCapture;
+    gems: DecimalCapture;
+    planetCoins: DecimalCapture;
+    wisdom: DecimalCapture;
+  };
+  endingResources: {
     money: DecimalCapture;
     gems: DecimalCapture;
     planetCoins: DecimalCapture;
@@ -118,6 +125,7 @@ async function comparePurchaseExport(
   browser: Browser,
   page: Page,
   purchaseName: string,
+  theme: "light" | "dark" = "light",
 ) {
   const corpus = JSON.parse(
     await readFile(
@@ -132,6 +140,17 @@ async function comparePurchaseExport(
     ({ name }) => name === purchaseName,
   );
   if (!purchase) throw new Error(`Pinned purchase ${purchaseName} is missing.`);
+  if (purchaseName === "buy-uses-gem-resource") {
+    expect(purchase).toMatchObject({
+      group: "gems",
+      key: "offlineGems",
+      startingLevel: 0,
+      endingLevel: 1,
+      operation: { method: "buy" },
+    });
+    expect(purchase.startingResources.gems.decimal).toBe("4444");
+    expect(purchase.endingResources.gems.decimal).toBe("0");
+  }
   const upgrade =
     corpus.data.upgradeSemantics.groups[purchase.group]?.[purchase.key];
   if (!upgrade)
@@ -151,7 +170,7 @@ async function comparePurchaseExport(
   sourceSave.mineObjectLevel = isWisdomPurchase ? 170 : 1;
   sourceSave.highestMineObjectLevel = isWisdomPurchase ? 170 : 90;
   sourceSave.settings.tab = "main";
-  sourceSave.settings.theme = "light";
+  sourceSave.settings.theme = theme;
   sourceSave.settings.upgradeTab = "money";
   const upgradeLevels: Record<ShopGroup, Record<string, { level: number }>> = {
     money: { activePower: { level: 0 } },
@@ -182,13 +201,13 @@ async function comparePurchaseExport(
   const encodedSourceSave = encodeRemixLegacySave(sourceSave);
   const encodedBeyondSave = await createBeyondVisualSaveFromRemixSave({
     clockMs: fixedTime,
-    theme: "light",
+    theme,
     tab: "main",
     saveString: encodedSourceSave,
   });
 
   const sourceContext = await browser.newContext({
-    colorScheme: "light",
+    colorScheme: theme,
     locale: "en-US",
     timezoneId: "UTC",
     viewport: { width: 1440, height: 900 },
@@ -280,6 +299,55 @@ async function comparePurchaseExport(
       );
     }
 
+    if (purchaseName === "buy-uses-gem-resource") {
+      await Promise.all([
+        page.setViewportSize({ width: 1440, height: 900 }),
+        page.mouse.move(1439, 899),
+        sourcePage.mouse.move(1439, 899),
+        page.evaluate(() => document.fonts.ready),
+        sourcePage.evaluate(() => document.fonts.ready),
+      ]);
+      await Promise.all([
+        page.evaluate(
+          () =>
+            new Promise<void>((resolve) =>
+              requestAnimationFrame(() =>
+                requestAnimationFrame(() => resolve()),
+              ),
+            ),
+        ),
+        sourcePage.evaluate(
+          () =>
+            new Promise<void>((resolve) =>
+              requestAnimationFrame(() =>
+                requestAnimationFrame(() => resolve()),
+              ),
+            ),
+        ),
+      ]);
+      const [beyondPng, sourcePng] = await Promise.all([
+        page.screenshot({ animations: "disabled" }),
+        sourcePage.screenshot({ animations: "disabled" }),
+      ]);
+      const beyondHash = createHash("sha256").update(beyondPng).digest("hex");
+      const sourceHash = createHash("sha256").update(sourcePng).digest("hex");
+      if (beyondHash !== sourceHash) {
+        await Promise.all([
+          test.info().attach(`gem-post-purchase-beyond-${theme}.png`, {
+            body: beyondPng,
+            contentType: "image/png",
+          }),
+          test.info().attach(`gem-post-purchase-remix-${theme}.png`, {
+            body: sourcePng,
+            contentType: "image/png",
+          }),
+        ]);
+      }
+      expect(beyondHash, `Gem post-purchase ${theme} full-screen pixels`).toBe(
+        sourceHash,
+      );
+    }
+
     await Promise.all([
       page.locator("[data-game-tab='settings']").click(),
       sourcePage
@@ -340,3 +408,11 @@ for (const purchaseName of [
     await comparePurchaseExport(browser, page, purchaseName);
   });
 }
+
+test("exports the live save after the Gem purchase in dark theme", async ({
+  browser,
+  page,
+}) => {
+  test.setTimeout(60_000);
+  await comparePurchaseExport(browser, page, "buy-uses-gem-resource", "dark");
+});
