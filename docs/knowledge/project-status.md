@@ -1837,3 +1837,5 @@ bytes (2/2 Chromium E2E cases); the focused purchase and composition assertions
 also pass (9/9). Other levels and bulk methods remain open.
 
 **Gem Waster unowned selector state (2026-11-08):** captured the source branch where Money Gem Waster level 0 hides both selector arrows despite secondary Gem Waster level 2; the displayed cost is 1. Paired full-screen Chromium comparisons passed in both themes at 1366x768, 1440x900, and 1920x1080 (6/6). Other selector states and resolutions remain open.
+
+**Save codec three-byte UTF-8 boundaries (2026-11-08):** source-paired Chromium coverage now includes six valid scalar boundary sequences and three overlong/surrogate invalid sequences wrapped as JSON strings. Beyond matched the pinned Remix decoder outputs and success/error classifications in all nine cases. Arbitrary longer external bytes and historical save shapes remain open.

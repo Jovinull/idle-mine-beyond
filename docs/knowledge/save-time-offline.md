@@ -182,3 +182,5 @@ formatter restores the pinned `loadObj` identifier when production
 minification changes expression text and recreates native assignment and
 `Object.keys` errors for branches where the Beyond implementation uses a
 different expression.
+
+The 2026-11-08 external-byte differential also compares nine quote-wrapped three-byte UTF-8 sequences with the live pinned Remix decoder in Chromium: six scalar boundaries from U+0800 through U+FFFF and three overlong/surrogate invalid sequences. All nine classifications and decoder outputs matched. Arbitrary longer byte inputs remain open.

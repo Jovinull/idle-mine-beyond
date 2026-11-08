@@ -228,3 +228,99 @@ test("matches Chromium's Remix decoder for all one- and two-byte sequences", asy
     ).toEqual(sourceResults);
   }
 });
+
+test("matches Remix's three-byte UTF-8 scalar and invalid-sequence boundaries", async ({
+  page,
+}) => {
+  await page.goto("/__test__/save-codec");
+  await expect(page.locator("#result")).toHaveAttribute("data-ready", "true");
+
+  const cases = [
+    { name: "minimum-three-byte-scalar", bytes: [0xe0, 0xa0, 0x80] },
+    { name: "last-scalar-before-next-plane", bytes: [0xe0, 0xbf, 0xbf] },
+    { name: "first-scalar-after-three-byte-floor", bytes: [0xe1, 0x80, 0x80] },
+    { name: "last-scalar-before-surrogates", bytes: [0xed, 0x9f, 0xbf] },
+    { name: "first-scalar-after-surrogates", bytes: [0xee, 0x80, 0x80] },
+    { name: "maximum-three-byte-scalar", bytes: [0xef, 0xbf, 0xbf] },
+    { name: "overlong-three-byte-sequence", bytes: [0xe0, 0x9f, 0xbf] },
+    { name: "first-surrogate-code-point", bytes: [0xed, 0xa0, 0x80] },
+    { name: "last-surrogate-code-point", bytes: [0xed, 0xbf, 0xbf] },
+  ];
+  const encodedInputs = cases.map(({ bytes }) =>
+    Buffer.from(
+      [0x22, ...bytes, 0x22]
+        .map((byte) => `%${byte.toString(16).padStart(2, "0")}`)
+        .join(""),
+      "ascii",
+    ).toString("base64"),
+  );
+
+  const sourceResults = await page.evaluate((encoded) => {
+    const errorShape = (error: unknown) =>
+      error instanceof Error
+        ? { name: error.name, message: error.message }
+        : { name: "Error", message: String(error) };
+    return encoded.map((input) => {
+      let decoded: string | undefined;
+      let decodeError: ReturnType<typeof errorShape> | null = null;
+      try {
+        decoded = unescape(decodeURIComponent(atob(input)));
+      } catch (error) {
+        decodeError = errorShape(error);
+      }
+      try {
+        return {
+          status: "success" as const,
+          json: decoded,
+          value: JSON.parse(decoded as string) as unknown,
+        };
+      } catch (error) {
+        const parseError = errorShape(error);
+        return decodeError
+          ? { status: "invalidEncoding" as const, decodeError, parseError }
+          : {
+              status: "invalidJson" as const,
+              json: decoded,
+              decodeError: null,
+              parseError,
+            };
+      }
+    });
+  }, encodedInputs);
+
+  const beyondResults = encodedInputs.map((encoded) => {
+    const result = decodeRemixLegacySave(encoded);
+    switch (result.status) {
+      case "invalidEncoding":
+        return {
+          status: result.status,
+          decodeError: result.decodeError,
+          parseError: result.parseError,
+        };
+      case "invalidJson":
+        return {
+          status: result.status,
+          json: result.json,
+          decodeError: null,
+          parseError: result.parseError,
+        };
+      case "success":
+        return {
+          status: result.status,
+          json: result.json,
+          value: result.value,
+        };
+    }
+  });
+
+  expect(sourceResults, {
+    message: `Source boundary vectors: ${cases.map(({ name }) => name).join(", ")}`,
+  }).toHaveLength(cases.length);
+  expect(beyondResults).toEqual(sourceResults);
+  expect(sourceResults.slice(0, 6).map(({ status }) => status)).toEqual(
+    Array(6).fill("success"),
+  );
+  expect(sourceResults.slice(6).map(({ status }) => status)).toEqual(
+    Array(3).fill("invalidEncoding"),
+  );
+});

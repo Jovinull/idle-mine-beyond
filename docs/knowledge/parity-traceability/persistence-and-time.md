@@ -54,10 +54,15 @@
   exact decode/parse errors. These are manually constructed import probes, not
   canonical exports. Longer byte strings and historical save shapes remain
   open.
-- **Open input domain:** external byte strings longer than two bytes are not
-  exhaustively enumerated; only three selected three-byte prefixes are covered.
-  This is not a formula/RNG sample claim. Do not infer historical save-schema
-  support from the current serializer.
+- **Additional three-byte UTF-8 boundary evidence (2026-11-08):**
+  `tests/e2e/save-codec.spec.ts` wraps six valid scalar boundaries and three
+  overlong/surrogate sequences in JSON string quotes, compares the complete
+  Remix decoder result with Beyond in live Chromium, and asserts successful
+  versus invalid-encoding classifications (9/9).
+- **Open input domain:** external byte strings longer than these selected
+  boundaries are not exhaustively enumerated. This is not a formula/RNG sample
+  claim. Do not infer historical save-schema support from the current
+  serializer.
 
 ### Save codec function and branch trace
 
