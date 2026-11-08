@@ -118,6 +118,32 @@ async function captureStoryRenderDiagnostics(page: Page) {
         height: rect.height,
       };
     }
+    const objectiveAncestors = [];
+    for (
+      let element = objective;
+      element instanceof HTMLElement;
+      element = element.parentElement
+    ) {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      objectiveAncestors.push({
+        tagName: element.tagName,
+        id: element.id,
+        className: element.className,
+        rect: {
+          x: rect.x,
+          y: rect.y,
+          width: rect.width,
+          height: rect.height,
+        },
+        style: Object.fromEntries(
+          Array.from(style, (property) => [
+            property,
+            style.getPropertyValue(property),
+          ]),
+        ),
+      });
+    }
     return {
       devicePixelRatio: window.devicePixelRatio,
       viewport: { width: window.innerWidth, height: window.innerHeight },
@@ -139,6 +165,7 @@ async function captureStoryRenderDiagnostics(page: Page) {
       firstObjectiveCharacter: firstCharacterRect,
       objectiveText: objective?.textContent,
       objectiveHtml: objective?.innerHTML,
+      objectiveAncestors,
     };
   });
   const session = await page.context().newCDPSession(page);

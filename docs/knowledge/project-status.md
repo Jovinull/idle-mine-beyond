@@ -33,9 +33,11 @@ check and font-face list now match, but the same two Chapter 3 light pixels and
 two Chapter 4 dark pixels remain at 1366x768, so the duplicate-face issue was
 not their cause. CI run 42499004054 confirms all captured computed CSS
 properties, objective text geometry, and regular/bold Work Sans checks now
-match across source and Beyond; the two raster pixels still differ.
-Diagnostics now also record the exact objective markup/text and Chromium's
-platform font for its bold text node. No mask or tolerance was added. Later
+match across source and Beyond; the two raster pixels still differ. CI run
+42500838165 confirms exact objective text/markup and Chromium reports
+`Work Sans` / `WorkSans-Regular` for the bold node in both pages, with 16 glyphs
+each. The diagnostic now records the full ancestor chain's computed CSS and
+geometry for the next differential. No mask or tolerance was added. Later
 Linux viewports have not run because the test stops at the first mismatch.
 Source PNG baselines remain Windows-only.
 

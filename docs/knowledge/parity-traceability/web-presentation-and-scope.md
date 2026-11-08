@@ -28,8 +28,8 @@ the source-paired natural Story E2E asserts `document.fonts.check` after
 previous duplicate-face state. Run 42496892093 confirms the font state now
 matches, while the pixel delta persists; the raster cause remains open. On
 failure, the E2E records all computed styles, objective markup/text, regular
-and bold font checks, and Chromium's platform font for the objective's bold
-text node.
+and bold font checks, Chromium's platform font for the objective's bold text
+node, and its ancestor chain's computed CSS and geometry.
 
 ## Settings and input controls
 
