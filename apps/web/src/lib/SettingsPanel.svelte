@@ -6,6 +6,7 @@
   type Props = {
     settings: RemixLegacySaveSettings;
     formatters: readonly NotationFormatter[];
+    numberFormatterSelection: number | null;
     onNumberFormatterChange: (index: number) => void;
     onThemeChange: (theme: "light" | "dark") => void;
     onPreferenceChange: (key: PreferenceKey, value: boolean) => void;
@@ -20,6 +21,7 @@
   let {
     settings,
     formatters,
+    numberFormatterSelection,
     onNumberFormatterChange,
     onThemeChange,
     onPreferenceChange,
@@ -41,9 +43,10 @@
     your Game.
   </p>
   <span>Number Format</span>
+  <!-- Remix clears the visible choice after importing a save. -->
   <select
     id="numberformatselect"
-    value={settings.numberFormatterIndex}
+    value={numberFormatterSelection}
     onchange={(event) =>
       onNumberFormatterChange(Number(event.currentTarget.value))}
   >

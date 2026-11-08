@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import {
   decodeRemixLegacySave,
@@ -26,6 +27,7 @@ test("imports a minimized historical-shaped save through Settings", async ({
       gems: string;
       mineObjectLevel: number;
       highestMineObjectLevel: number;
+      settings: { numberFormatterIndex: number };
       pickaxe: { name: string; pow: string; quality: string };
     };
   };
@@ -152,6 +154,118 @@ test("imports a minimized historical-shaped save through Settings", async ({
       );
     }
     expect(beyondExport).toBe(sourceExport);
+
+    const [sourceNumberFormat, beyondNumberFormat] = await Promise.all([
+      sourceSettings.locator("select").evaluate((element) => {
+        const select = element as HTMLSelectElement;
+        return {
+          selectedIndex: select.selectedIndex,
+          selectedLabel: select.selectedOptions[0]?.textContent?.trim() ?? "",
+        };
+      }),
+      settings.locator("select").evaluate((element) => {
+        const select = element as HTMLSelectElement;
+        return {
+          selectedIndex: select.selectedIndex,
+          selectedLabel: select.selectedOptions[0]?.textContent?.trim() ?? "",
+        };
+      }),
+    ]);
+    expect(beyondNumberFormat, "imported number-format selection").toEqual(
+      sourceNumberFormat,
+    );
+    expect(sourceNumberFormat).toEqual({
+      selectedIndex: -1,
+      selectedLabel: "",
+    });
+
+    await Promise.all([
+      page.mouse.move(1439, 899),
+      sourcePage.mouse.move(1439, 899),
+      page.evaluate(() => document.fonts.ready),
+      sourcePage.evaluate(() => document.fonts.ready),
+    ]);
+    await Promise.all([
+      page.evaluate(
+        () =>
+          new Promise<void>((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+          ),
+      ),
+      sourcePage.evaluate(
+        () =>
+          new Promise<void>((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+          ),
+      ),
+    ]);
+    const [beyondPng, sourcePng] = await Promise.all([
+      page.screenshot({ animations: "disabled" }),
+      sourcePage.screenshot({ animations: "disabled" }),
+    ]);
+    const beyondHash = createHash("sha256").update(beyondPng).digest("hex");
+    const sourceHash = createHash("sha256").update(sourcePng).digest("hex");
+    if (beyondHash !== sourceHash) {
+      await Promise.all([
+        test.info().attach("historical-save-settings-beyond.png", {
+          body: beyondPng,
+          contentType: "image/png",
+        }),
+        test.info().attach("historical-save-settings-remix.png", {
+          body: sourcePng,
+          contentType: "image/png",
+        }),
+      ]);
+    }
+    expect(beyondHash, "historical-save import full-screen pixels").toBe(
+      sourceHash,
+    );
+
+    await Promise.all([
+      page.locator("[data-game-tab='mining']").click(),
+      sourcePage.locator("footer button").filter({ hasText: "Mining" }).click(),
+    ]);
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await expect
+      .poll(() =>
+        settings
+          .locator("select")
+          .evaluate((element) => (element as HTMLSelectElement).selectedIndex),
+      )
+      .toBe(fixture.input.settings?.numberFormatterIndex ?? 0);
+    await expect
+      .poll(() =>
+        sourceSettings
+          .locator("select")
+          .evaluate((element) => (element as HTMLSelectElement).selectedIndex),
+      )
+      .toBe(fixture.input.settings?.numberFormatterIndex ?? 0);
+    const [sourceAfterReentry, beyondAfterReentry] = await Promise.all([
+      sourceSettings.locator("select").evaluate((element) => {
+        const select = element as HTMLSelectElement;
+        return {
+          selectedIndex: select.selectedIndex,
+          selectedLabel: select.selectedOptions[0]?.textContent?.trim() ?? "",
+        };
+      }),
+      settings.locator("select").evaluate((element) => {
+        const select = element as HTMLSelectElement;
+        return {
+          selectedIndex: select.selectedIndex,
+          selectedLabel: select.selectedOptions[0]?.textContent?.trim() ?? "",
+        };
+      }),
+    ]);
+    expect(
+      beyondAfterReentry,
+      "number-format selection after tab reentry",
+    ).toEqual(sourceAfterReentry);
   } finally {
     await sourceContext.close();
   }

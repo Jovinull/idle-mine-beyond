@@ -68,6 +68,7 @@
   const formatters = createRemixFormatters();
 
   let appState = $state<RemixLegacySaveApplicationState>();
+  let numberFormatterUnselected = $state(false);
   let powerTableRefreshRevision = $state(0);
   let upgradeFeedbackRevision = $state(0);
   let gameSession: RemixWebGameSession | undefined;
@@ -216,6 +217,7 @@
   }
 
   async function changeNumberFormatter(index: number) {
+    numberFormatterUnselected = false;
     await updateApplicationState((state) => ({
       ...state,
       settings: { ...state.settings, numberFormatterIndex: index },
@@ -313,6 +315,8 @@
       }
 
       appState = result.state;
+      // Remix leaves the mounted select unselected until Settings is re-entered.
+      numberFormatterUnselected = true;
       if (result.result.status === "persistenceFailed") {
         actionError = `Save failed: ${result.result.persistence.status}`;
       }
@@ -516,12 +520,7 @@
         }, effect.delayMs);
       } else {
         window.setTimeout(() => {
-          const select = document.querySelector<HTMLSelectElement>(
-            "#numberformatselect",
-          );
-          if (select) {
-            select.selectedIndex = appState?.settings.numberFormatterIndex ?? 0;
-          }
+          numberFormatterUnselected = false;
         }, effect.delayMs);
       }
     }
@@ -783,6 +782,9 @@
         <SettingsPanel
           settings={appState.settings}
           {formatters}
+          numberFormatterSelection={numberFormatterUnselected
+            ? null
+            : appState.settings.numberFormatterIndex}
           onNumberFormatterChange={changeNumberFormatter}
           onThemeChange={changeTheme}
           onPreferenceChange={changePreference}

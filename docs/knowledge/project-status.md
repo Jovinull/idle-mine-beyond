@@ -2,6 +2,15 @@
 
 Last updated: 2026-11-08
 
+**Historical save import selector state (2026-11-08):** the live
+pinned-Remix/Beyond import comparison now checks a source quirk: importing
+updates the number formatter but leaves the currently mounted Settings select
+unselected until Settings is re-entered. The synthetic historical fixture
+matches at `selectedIndex = -1` and on the full-screen screenshot after import;
+both runtimes restore the fixture's formatter index on re-entry, and the
+encoded exports remain byte-identical. The focused historical-save E2E passed
+in Chromium; coverage remains limited to this recorded fixture.
+
 **Exact Wisdom post-purchase screen (2026-11-08):** the pinned
 `buy-uses-wisdom-resource` case spends exactly 10,000,000,000 Wisdom on the
 first Simple Gem Boost level. The full Powers screen matches Remix in light and
