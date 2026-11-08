@@ -1682,3 +1682,11 @@ weaker-damage dud, and insufficient-Gem outcome screens passed in both themes;
 Gem Waster interior cost 10 and maximum cost 35 screens also passed in both
 themes (12 added cases total). The focused Playwright file passed 36/36.
 Other craft panel states and viewports remain open.
+
+**Dark Planet Coin catalog pixel reproduction (2026-11-08):** the focused
+level-two affordability differential failed its strict 1440x900 dark
+full-screen comparison at `(810,152)`: Beyond RGB `(4,4,4)`, Remix RGB
+`(3,3,3)`. The 22 card/detail comparisons passed, and all seven card boxes,
+their computed styles, and corresponding ancestor styles match. The paired
+screenshots and state JSON were retained by the test. The raster cause remains
+unidentified; no tolerance or mask was added, and the visual gap stays open.

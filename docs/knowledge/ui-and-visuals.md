@@ -171,6 +171,16 @@ settle did not remove the discrepancy: three reruns with the settle passed
 twice and failed once. The extra wait was removed; comparisons remain exact and
 the shop remains In Progress.
 
+**Dark Planet Coin level-two pixel reproduction (2026-11-08):** the focused
+slow differential now reproduces one full-screen pixel difference at
+`(810,152)` in the 1440x900 dark Planet Coin catalog: Beyond is RGB `(4,4,4)`
+and pinned Remix is `(3,3,3)`. All 22 card/detail comparisons pass. The seven
+card boxes and all computed styles on the cards and corresponding ancestors
+match exactly; both pages report device-pixel ratio 1. The saved source-paired
+screenshots and state JSON are attached to the failed test. No source-backed
+CSS difference explains the raster delta, so the strict comparison remains
+open without a tolerance or mask.
+
 The web route's `main` container has no source-specific CSS declaration in
 the pinned `main.css`; scrolling is controlled by `body { overflow-y: hidden; }`
 and the source's nested screen scrollers. Beyond previously added
