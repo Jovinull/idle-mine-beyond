@@ -475,7 +475,9 @@ levels and other viewport/theme combinations remain open.
   the alternate `current=100,next=2` visibility condition, the all-row state at
   Power 1,001, the exact-equality disabled button, and a mixed high-balance state
   (`1e12,1e4,1e2,1,1`) at 1440x900 in both themes. The exact-equality state is
-  also compared at 1366x768 in both themes. Other balances, prestige inputs,
+  also compared at 1366x768 and 1920x1080 in both themes. The 1920x1080
+  source-paired screenshot comparison passed in both themes (2/2). Other
+  balances, prestige inputs,
   and unselected theme/viewport combinations remain open. The full
   Wisdom panel after Shift buys `Power Power (Active)` to level 10 is also
   compared in both themes at 1440x900; Windows pixels match exactly, while

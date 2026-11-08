@@ -420,80 +420,86 @@ if (!exactEffectScenario) {
   throw new Error("The pinned exact-effect Powers scenario is missing.");
 }
 
-for (const theme of ["light", "dark"] as const) {
-  test(`matches full-screen Powers exact-effect state at 1366x768 in ${theme} theme`, async ({
-    page,
-    browser,
-  }) => {
-    test.setTimeout(90_000);
-    const viewport = { width: 1366, height: 768 };
-    const sourceContext = await browser.newContext({
-      colorScheme: theme,
-      locale: "en-US",
-      timezoneId: "UTC",
-      viewport,
+for (const viewport of [
+  { width: 1366, height: 768 },
+  { width: 1920, height: 1080 },
+]) {
+  for (const theme of ["light", "dark"] as const) {
+    test(`matches full-screen Powers exact-effect state at ${viewport.width}x${viewport.height} in ${theme} theme`, async ({
+      page,
+      browser,
+    }) => {
+      test.setTimeout(90_000);
+      const sourceContext = await browser.newContext({
+        colorScheme: theme,
+        locale: "en-US",
+        timezoneId: "UTC",
+        viewport,
+      });
+      const sourcePage = await sourceContext.newPage();
+      const encoded = createPrestigeSave(exactEffectScenario, theme);
+
+      try {
+        const sourceUrl = await routePinnedRemixOracle(sourceContext);
+        await Promise.all([
+          page.addInitScript(seedLegacySave, {
+            encoded,
+            sentinel: `powers-exact-effect-${viewport.width}-${theme}`,
+          }),
+          sourcePage.addInitScript(seedLegacySave, {
+            encoded,
+            sentinel: `powers-exact-effect-${viewport.width}-${theme}`,
+          }),
+        ]);
+        await page.emulateMedia({ colorScheme: theme });
+        await page.setViewportSize(viewport);
+        await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+        await expect(page.locator("#app")).toHaveAttribute(
+          "data-app-state",
+          "ready",
+          { timeout: 20_000 },
+        );
+        await sourcePage.waitForFunction(() =>
+          Boolean(
+            (window as Window & { game?: unknown }).game &&
+            document.querySelector("#app > footer"),
+          ),
+        );
+        await Promise.all([
+          page.locator("[data-game-tab='powers']").click(),
+          sourcePage
+            .locator("footer button")
+            .filter({ hasText: "Powers" })
+            .click(),
+        ]);
+
+        const [beyondRows, sourceRows] = await Promise.all([
+          readRenderedRows(page.locator("article.powers .powers-table tr")),
+          readRenderedRows(
+            sourcePage.locator("article.powers .powers-table tr"),
+          ),
+        ]);
+        expect(beyondRows).toEqual(sourceRows);
+        expect(sourceRows.map(({ cells }) => cells[2])).toEqual(
+          exactEffectScenario.rows.map(({ cell }) => cell?.text ?? ""),
+        );
+        await expect(page.locator("[data-power-prestige='0']")).toBeDisabled();
+        await expect(
+          sourcePage
+            .locator("article.powers .powers-table tr")
+            .nth(0)
+            .locator("button"),
+        ).toBeDisabled();
+        await expectSameScreen(
+          page,
+          sourcePage,
+          `${theme} exact-effect Powers state ${viewport.width}x${viewport.height}`,
+        );
+      } finally {
+        await sourceContext.close().catch(() => undefined);
+      }
     });
-    const sourcePage = await sourceContext.newPage();
-    const encoded = createPrestigeSave(exactEffectScenario, theme);
-
-    try {
-      const sourceUrl = await routePinnedRemixOracle(sourceContext);
-      await Promise.all([
-        page.addInitScript(seedLegacySave, {
-          encoded,
-          sentinel: `powers-exact-effect-1366-${theme}`,
-        }),
-        sourcePage.addInitScript(seedLegacySave, {
-          encoded,
-          sentinel: `powers-exact-effect-1366-${theme}`,
-        }),
-      ]);
-      await page.emulateMedia({ colorScheme: theme });
-      await page.setViewportSize(viewport);
-      await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
-      await expect(page.locator("#app")).toHaveAttribute(
-        "data-app-state",
-        "ready",
-        { timeout: 20_000 },
-      );
-      await sourcePage.waitForFunction(() =>
-        Boolean(
-          (window as Window & { game?: unknown }).game &&
-          document.querySelector("#app > footer"),
-        ),
-      );
-      await Promise.all([
-        page.locator("[data-game-tab='powers']").click(),
-        sourcePage
-          .locator("footer button")
-          .filter({ hasText: "Powers" })
-          .click(),
-      ]);
-
-      const [beyondRows, sourceRows] = await Promise.all([
-        readRenderedRows(page.locator("article.powers .powers-table tr")),
-        readRenderedRows(sourcePage.locator("article.powers .powers-table tr")),
-      ]);
-      expect(beyondRows).toEqual(sourceRows);
-      expect(sourceRows.map(({ cells }) => cells[2])).toEqual(
-        exactEffectScenario.rows.map(({ cell }) => cell?.text ?? ""),
-      );
-      await expect(page.locator("[data-power-prestige='0']")).toBeDisabled();
-      await expect(
-        sourcePage
-          .locator("article.powers .powers-table tr")
-          .nth(0)
-          .locator("button"),
-      ).toBeDisabled();
-      await expectSameScreen(
-        page,
-        sourcePage,
-        `${theme} exact-effect Powers state 1366x768`,
-      );
-    } finally {
-      await sourceContext.close().catch(() => undefined);
-    }
-  });
+  }
 }
 
 for (const theme of ["light", "dark"] as const) {
