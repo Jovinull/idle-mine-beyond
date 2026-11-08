@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-08
 
+**Natural Chapter 3-6 dark Linux differential (2026-11-08):** the full Chromium
+E2E suite passed in Ubuntu CI run 42484538684 (255 passed). The natural route-end
+test runs four endpoint saves in both light and dark themes, so its exact live
+Remix/Beyond pixel comparisons now pass in both themes on Windows and Ubuntu.
+Tracked source screenshot baselines remain Windows-only; no Linux baseline was
+added.
+
 **Settings Export alternate viewport (2026-11-08):** extended the live
 pinned-Remix/Beyond Settings comparison to 1366x768 after changing preferences,
 saving, and exporting in light theme. The final full-screen comparison matched
