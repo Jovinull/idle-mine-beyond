@@ -218,6 +218,13 @@ state and text; the known one-pixel antialiasing difference at this card's
 description line prevents full-screen pixel equality there. Wisdom and Powers
 remains In Progress for the other states and visual evidence.
 
+**Wisdom post-purchase viewport (2026-11-08):** the same pinned level-10 state
+now also compares the complete source/Beyond panel at 1366x768 in both themes.
+The focused Chromium differential passes on Windows with exact pixels at both
+viewports; Linux continues to assert state and card text because of the known
+description antialiasing difference. Other balances, prestige inputs, and
+visual states remain open.
+
 **Powers alternate row-visibility visual (2026-11-07):** added the existing
 pinned `button-shows-from-next-power-above-one` scenario (`current=100,next=2`)
 to the live Remix/Beyond full-screen differential. The Prestige control appears

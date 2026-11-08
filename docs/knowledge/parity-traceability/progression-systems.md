@@ -33,7 +33,11 @@
   source-asserted in `tests/parity/remix-powers.test.ts`. Fixed-seed phase
   traces compare complete Power state and RNG after each action with no
   divergence. Additional screenshot states are tracked separately in the web
-  visual map.
+  visual map. The pinned Shift purchase that raises `Power Power (Active)` to
+  level 10 is compared as a complete panel at 1440x900 and 1366x768 in both
+  themes by `tests/e2e/wisdom-upgrade-buy-amount-differential.spec.ts`; Windows
+  requires exact pixels, while Linux asserts state/text because of the known
+  description antialiasing difference.
 
 ### Powers function and branch trace
 

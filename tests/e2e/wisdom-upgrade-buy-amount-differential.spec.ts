@@ -195,9 +195,19 @@ async function expectSameScreen(
   // The pinned Remix and Beyond retain a known one-pixel antialiasing
   // difference at this Wisdom description's second line on Linux.
   if (process.platform === "linux") return;
+  const viewport = beyond.viewportSize();
+  const sourceViewport = source.viewportSize();
+  if (
+    !viewport ||
+    !sourceViewport ||
+    sourceViewport.width !== viewport.width ||
+    sourceViewport.height !== viewport.height
+  ) {
+    throw new Error("Wisdom source and Beyond viewports must match.");
+  }
   await Promise.all([
-    beyond.mouse.move(1438, 800),
-    source.mouse.move(1438, 800),
+    beyond.mouse.move(viewport.width - 2, Math.min(800, viewport.height - 1)),
+    source.mouse.move(viewport.width - 2, Math.min(800, viewport.height - 1)),
   ]);
   const freezeWisdomIcon =
     'img[src$="wisdom.png"] { animation: none !important; transform: none !important; }';
@@ -376,6 +386,15 @@ for (const theme of ["light", "dark"] as const) {
         page,
         sourcePage,
         `Wisdom Shift purchase ${theme}`,
+      );
+      await Promise.all([
+        page.setViewportSize({ width: 1366, height: 768 }),
+        sourcePage.setViewportSize({ width: 1366, height: 768 }),
+      ]);
+      await expectSameScreen(
+        page,
+        sourcePage,
+        `Wisdom Shift purchase ${theme} 1366x768`,
       );
     } finally {
       await sourceContext.close().catch(() => undefined);
