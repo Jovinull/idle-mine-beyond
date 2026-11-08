@@ -729,3 +729,202 @@ test("a stale Gem purchase overwrites a newer Money purchase like pinned Remix",
     await sourceContext.close().catch(() => undefined);
   }
 });
+
+test("a stale Money purchase overwrites a newer Gem purchase like pinned Remix", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90_000);
+  const fixture = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as SaveFixture;
+  const save = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  const gemPurchase = fixture.data.upgradeSemantics.purchaseSemantics.find(
+    ({ name }) => name === "buy-uses-gem-resource",
+  );
+  const startingGemBalance = gemPurchase?.startingResources["gems"]?.decimal;
+  if (
+    !gemPurchase ||
+    gemPurchase.group !== "gems" ||
+    gemPurchase.key !== "offlineGems" ||
+    gemPurchase.startingLevel !== 0 ||
+    startingGemBalance === undefined ||
+    gemPurchase.currentPrice.decimal !== startingGemBalance
+  ) {
+    throw new Error(
+      "Pinned Gem purchase fixture is not an exact-price level-zero case.",
+    );
+  }
+  save.money = "1000";
+  save.highestMoney = "1000";
+  save.gems = startingGemBalance;
+  save.highestMineObjectLevel = 61;
+  save.settings.theme = "light";
+  save.settings.tab = "main";
+  save.settings.upgradeTab = "gems";
+  save.upgrades["blacksmith"] = { level: 0 };
+  save.gemUpgrades["offlineGems"] = { level: 0 };
+  save.lastActive = fixedTime;
+  const encodedInitialSave = encodeRemixLegacySave(save);
+
+  const beyondContext = page.context();
+  const beyondStalePage = await beyondContext.newPage();
+  const sourceContext = await browser.newContext({
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+  const sourceStalePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all(
+      [page, beyondStalePage, sourcePage, sourceStalePage].map((target) =>
+        target.addInitScript(initializeSharedStorage, {
+          encoded: encodedInitialSave,
+          now: fixedTime,
+        }),
+      ),
+    );
+    await Promise.all([
+      page.goto("/"),
+      beyondStalePage.goto("/"),
+      sourcePage.goto(sourceUrl),
+      sourceStalePage.goto(sourceUrl),
+    ]);
+    await Promise.all([
+      expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready"),
+      expect(beyondStalePage.locator("#app")).toHaveAttribute(
+        "data-app-state",
+        "ready",
+      ),
+      ...[sourcePage, sourceStalePage].map((target) =>
+        target.waitForFunction(() =>
+          Boolean(
+            (window as Window & { game?: unknown }).game &&
+            document.querySelector("#app > footer"),
+          ),
+        ),
+      ),
+    ]);
+
+    const updatedBeyondGemTab = page.locator('[data-upgrade-tab="gems"]');
+    const updatedRemixGemTab = sourcePage
+      .locator(".upg-tabs button")
+      .filter({ hasText: "Gem Upgrades" });
+    await Promise.all([
+      expect(updatedBeyondGemTab).toBeVisible(),
+      expect(updatedRemixGemTab).toBeVisible(),
+    ]);
+    await Promise.all([
+      updatedBeyondGemTab.click(),
+      updatedRemixGemTab.click(),
+    ]);
+    const beyondGemCard = page.locator(
+      '[data-upgrade-group="gems"][data-upgrade-key="offlineGems"]',
+    );
+    const remixGemCard = sourceOfflineGemsCard(sourcePage);
+    await Promise.all([
+      expect(beyondGemCard).toHaveAttribute("data-upgrade-level", "0"),
+      expect(remixGemCard.locator(".lvl")).toHaveText("0/15"),
+    ]);
+    await Promise.all([beyondGemCard.click(), remixGemCard.click()]);
+    await Promise.all([
+      expect(beyondGemCard).toHaveAttribute("data-upgrade-level", "1"),
+      expect(remixGemCard.locator(".lvl")).toHaveText("1/15"),
+    ]);
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      page.getByRole("button", { name: "Save" }).click(),
+      sourcePage.getByRole("button", { name: "Save" }).click(),
+    ]);
+
+    const [beyondGemState, remixGemSave] = await Promise.all([
+      readBeyondState(page),
+      readLegacySlot(sourcePage),
+    ]);
+    const remixGemState = readSaveState(remixGemSave);
+    expect(beyondGemState.upgrades.money["blacksmith"]).toBe(0);
+    expect(beyondGemState.upgrades.gems["offlineGems"]).toBe(1);
+    expect(beyondGemState.resources.money).toBe("1000");
+    expect(beyondGemState.resources.gems).toBe("0");
+    expect(remixGemState.upgrades["blacksmith"]?.level).toBe(0);
+    expect(remixGemState.gemUpgrades["offlineGems"]?.level).toBe(1);
+    expect(remixGemState.money).toBe("1000");
+    expect(remixGemState.gems).toBe("0");
+
+    await Promise.all([
+      beyondStalePage.locator('[data-upgrade-tab="money"]').click(),
+      sourceStalePage
+        .locator(".upg-tabs button")
+        .filter({ hasText: "Money Upgrades" })
+        .click(),
+    ]);
+    const beyondMoneyCard = beyondStalePage.locator(
+      '[data-upgrade-group="money"][data-upgrade-key="blacksmith"]',
+    );
+    const remixMoneyCard = sourceBlacksmithCard(sourceStalePage);
+    await Promise.all([
+      expect(beyondMoneyCard).toHaveAttribute("data-upgrade-level", "0"),
+      expect(remixMoneyCard.locator(".lvl")).toHaveText("0"),
+    ]);
+    await Promise.all([beyondMoneyCard.click(), remixMoneyCard.click()]);
+    await Promise.all([
+      expect(beyondMoneyCard).toHaveAttribute("data-upgrade-level", "1"),
+      expect(remixMoneyCard.locator(".lvl")).toHaveText("1"),
+    ]);
+    await Promise.all([
+      beyondStalePage.locator("[data-game-tab='settings']").click(),
+      sourceStalePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      beyondStalePage.getByRole("button", { name: "Save" }).click(),
+      sourceStalePage.getByRole("button", { name: "Save" }).click(),
+    ]);
+
+    const [beyondMoneyState, remixMoneySave] = await Promise.all([
+      readBeyondState(beyondStalePage),
+      readLegacySlot(sourceStalePage),
+    ]);
+    const remixMoneyState = readSaveState(remixMoneySave);
+    expect(beyondMoneyState.upgrades.money["blacksmith"]).toBe(1);
+    expect(beyondMoneyState.upgrades.gems["offlineGems"]).toBe(0);
+    expect(beyondMoneyState.resources.money).toBe("970");
+    expect(beyondMoneyState.resources.gems).toBe(startingGemBalance);
+    expect(remixMoneyState.upgrades["blacksmith"]?.level).toBe(1);
+    expect(remixMoneyState.gemUpgrades["offlineGems"]?.level).toBe(0);
+    expect(remixMoneyState.money).toBe("970");
+    expect(remixMoneyState.gems).toBe(startingGemBalance);
+    expect(await readBeyondState(page, "IdleMineBeyondBackup")).toEqual(
+      beyondGemState,
+    );
+    await Promise.all([
+      page.locator("footer button").filter({ hasText: "Mining" }).click(),
+      sourcePage.locator("footer button").filter({ hasText: "Mining" }).click(),
+    ]);
+    await Promise.all([
+      expect(beyondGemCard).toHaveAttribute("data-upgrade-level", "1"),
+      expect(remixGemCard.locator(".lvl")).toHaveText("1/15"),
+    ]);
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});

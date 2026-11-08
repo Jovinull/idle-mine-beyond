@@ -2,6 +2,15 @@
 
 Last updated: 2026-11-08
 
+**Reverse cross-resource stale-tab save (2026-11-08):** added the complementary
+purchase order: the updated tab saves Offline Gems first, then a stale tab
+buys Blacksmith with Money and overwrites the whole snapshot. Remix and Beyond
+match at Money 970 / Gems 4,444 / Blacksmith 1 / Offline Gems 0; Beyond's backup
+retains the prior Offline Gems state, and the updated tab keeps displaying its
+local level 1. The focused case passed in Chromium, Firefox, and WebKit; both
+cross-resource orders are now in the cross-browser save gate. Other action/write
+interleavings remain open.
+
 **Craft no-save branches (2026-11-08):** the source-paired craft UI test now
 asserts that equal/lower-damage duds and insufficient-Gem attempts leave the
 Remix legacy save and Beyond primary/backup slots unchanged. All three outcomes

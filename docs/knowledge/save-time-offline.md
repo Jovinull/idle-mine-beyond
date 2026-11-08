@@ -22,7 +22,14 @@ Firefox, and WebKit. CI runs the Firefox/WebKit comparisons with
 `pnpm test:e2e:cross-tab:browsers`; the four-write Active Power stale-save
 sequence also passes in Firefox and WebKit with a 180-second test deadline,
 after traces showed its UI actions completed just beyond the prior 90-second
-limit. Other cross-tab action/write interleavings remain open.
+limit. The reverse cross-resource order also passes in Chromium, Firefox, and
+WebKit: the updated tab buys Offline Gems with 4,444 Gems and saves, then the
+stale tab buys Blacksmith with 1,000 Money and overwrites that save. Final Remix
+and Beyond state is Money 970 / Gems 4,444 / Blacksmith 1 / Offline Gems 0;
+Beyond's backup retains the preceding Offline Gems snapshot, while the updated
+tab still displays Offline Gems 1. Both cross-resource orders are included in
+`pnpm test:e2e:cross-tab:browsers`. Other cross-tab action/write interleavings
+remain open.
 
 **Live purchase export differential (2026-11-08):** the pinned purchase corpus now includes Shift `buy10` from level 0 to 10 for Gem and Planet Coin Gem Multiplication. `tests/e2e/save-export-purchase-differential.spec.ts` makes each purchase in both Remix and Beyond, then compares the complete exported object and encoded bytes. Both cases pass in Chromium, Firefox, and WebKit. The captured remaining balances are 33422.1074644512 Gems and 18152641816.016598 Planet Coins.
 
