@@ -41,6 +41,99 @@ async function prepareStoryScreen(page: Page, expectedHeading: string) {
   await page.mouse.move(viewport.width - 1, viewport.height - 1);
 }
 
+async function captureStoryRenderDiagnostics(page: Page) {
+  return page.evaluate(() => {
+    const selectors = [
+      "body",
+      "#app",
+      "main",
+      ".story-panel-host",
+      "article.story",
+      ".objective",
+      ".objective strong",
+      ".objective b",
+    ];
+    const elements = Object.fromEntries(
+      selectors.map((selector) => {
+        const element = document.querySelector(selector);
+        if (!element) return [selector, null];
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return [
+          selector,
+          {
+            rect: {
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+            },
+            style: {
+              backgroundColor: style.backgroundColor,
+              color: style.color,
+              display: style.display,
+              filter: style.filter,
+              fontFamily: style.fontFamily,
+              fontSize: style.fontSize,
+              fontWeight: style.fontWeight,
+              letterSpacing: style.letterSpacing,
+              lineHeight: style.lineHeight,
+              opacity: style.opacity,
+              textRendering: style.textRendering,
+              transform: style.transform,
+              webkitFontSmoothing: style.getPropertyValue(
+                "-webkit-font-smoothing",
+              ),
+            },
+          },
+        ];
+      }),
+    );
+    const objective = document.querySelector(".objective");
+    const walker = objective
+      ? document.createTreeWalker(objective, NodeFilter.SHOW_TEXT)
+      : undefined;
+    const firstText = walker?.nextNode();
+    let firstCharacterRect: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    } | null = null;
+    if (firstText?.textContent) {
+      const range = document.createRange();
+      range.setStart(firstText, 0);
+      range.setEnd(firstText, 1);
+      const rect = range.getBoundingClientRect();
+      firstCharacterRect = {
+        x: rect.x,
+        y: rect.y,
+        width: rect.width,
+        height: rect.height,
+      };
+    }
+    return {
+      devicePixelRatio: window.devicePixelRatio,
+      viewport: { width: window.innerWidth, height: window.innerHeight },
+      fonts: {
+        status: document.fonts.status,
+        workSansLoaded: document.fonts.check('18px "Work Sans"'),
+        faces: Array.from(
+          document.fonts,
+          ({ family, status, style, weight }) => ({
+            family,
+            status,
+            style,
+            weight,
+          }),
+        ),
+      },
+      elements,
+      firstObjectiveCharacter: firstCharacterRect,
+    };
+  });
+}
+
 const storyViewports = [
   { name: "1366x768", width: 1366, height: 768 },
   { name: "1440x900", width: 1440, height: 900 },
@@ -138,6 +231,7 @@ for (const theme of ["light", "dark"] as const) {
         await page.goto(sourceUrl);
         await page.getByRole("button", { name: /Story/ }).click();
         await prepareStoryScreen(page, chapter.heading);
+        const sourceDiagnostics = await captureStoryRenderDiagnostics(page);
         const sourceScreenshot = await page.screenshot({
           animations: "disabled",
         });
@@ -150,6 +244,7 @@ for (const theme of ["light", "dark"] as const) {
         await expect(page.locator("#app")).toHaveAttribute("data-theme", theme);
         await page.locator("[data-game-tab='story']").click();
         await prepareStoryScreen(page, chapter.heading);
+        const beyondDiagnostics = await captureStoryRenderDiagnostics(page);
         const beyondScreenshot = await page.screenshot({
           animations: "disabled",
         });
@@ -177,6 +272,25 @@ for (const theme of ["light", "dark"] as const) {
               contentType: "image/png",
             }),
           ]);
+          await test
+            .info()
+            .attach(`${chapter.id}-${viewport.name}-render-diagnostics.json`, {
+              body: Buffer.from(
+                JSON.stringify(
+                  {
+                    theme,
+                    viewport,
+                    sourceHash,
+                    beyondHash,
+                    source: sourceDiagnostics,
+                    beyond: beyondDiagnostics,
+                  },
+                  null,
+                  2,
+                ),
+              ),
+              contentType: "application/json",
+            });
         }
         expect(
           beyondHash,

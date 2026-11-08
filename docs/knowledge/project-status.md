@@ -18,8 +18,14 @@ live pinned-Remix/Beyond comparison for Chapters 3-6 to 1366x768, 1920x1080, and
 2560x1440 in both themes, retaining 1440x900. All four endpoints matched at
 zero pixels across all four viewports and both themes on Windows Chromium
 (16 pairs per theme). Ubuntu run 42484538684 passed both themes at 1440x900;
-the new Linux viewport pairs await the current CI rerun. Source PNG baselines
-remain Windows-only.
+the Linux alternate-viewport run 42489378984 and rerun 42490501482 both fail
+on the first Chapter 3 light screen at 1366x768, with identical differences
+at two pixels on the initial `W` of “What to do next?” (`(15,632)` and
+`(15,633)`). The captured Work Sans files hash identically in Remix and
+Beyond. Failure-only geometry/font diagnostics are now attached by the E2E for
+the next Linux comparison; no mask or tolerance was added. Later Linux
+viewports have not run because the test stops at this mismatch. Source PNG
+baselines remain Windows-only.
 
 **Natural Chapter 3-6 dark Linux differential (2026-11-08):** the full Chromium
 E2E suite passed in Ubuntu CI run 42484538684 (255 passed). The natural route-end

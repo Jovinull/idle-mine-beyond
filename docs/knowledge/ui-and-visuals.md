@@ -59,7 +59,12 @@ Natural Story route-end captures for Chapters 3-6 have a live pinned-source
 versus Beyond pixel comparison in light and dark themes at 1366x768, 1440x900,
 1920x1080, and 2560x1440. The Windows Chromium comparison passed all four routes
 exactly in each theme at all four viewports. Ubuntu CI run 42484538684 passed
-both themes at 1440x900; Linux comparisons at the other three viewports await CI.
+both themes at 1440x900. Runs 42489378984 and 42490501482 both reproduce a
+two-pixel difference on the first “W” in the Chapter 3 light objective at
+1366x768 (`(15,632)` and `(15,633)`); the source and Beyond Work Sans files have
+identical hashes. A failure-only diagnostic now records effective font state,
+style, and geometry for the next Linux capture. The strict comparison remains
+open without masking or tolerance, and later Linux viewports have not run.
 Tracked source PNG baselines remain Windows-only.
 
 | Story page | Light baseline                                                                  | Dark baseline                                                                  |
