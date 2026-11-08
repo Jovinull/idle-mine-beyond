@@ -140,6 +140,17 @@ async function comparePurchaseExport(
     ({ name }) => name === purchaseName,
   );
   if (!purchase) throw new Error(`Pinned purchase ${purchaseName} is missing.`);
+  if (purchaseName === "buy-exact-affordability") {
+    expect(purchase).toMatchObject({
+      group: "money",
+      key: "activePower",
+      startingLevel: 0,
+      endingLevel: 1,
+      operation: { method: "buy" },
+    });
+    expect(purchase.startingResources.money.decimal).toBe("1000");
+    expect(purchase.endingResources.money.decimal).toBe("0");
+  }
   if (purchaseName === "buy-uses-gem-resource") {
     expect(purchase).toMatchObject({
       group: "gems",
@@ -311,6 +322,7 @@ async function comparePurchaseExport(
     }
 
     if (
+      purchaseName === "buy-exact-affordability" ||
       purchaseName === "buy-uses-gem-resource" ||
       purchaseName === "buy-uses-planet-coin-resource"
     ) {
@@ -434,6 +446,14 @@ test("exports the live save after the Gem purchase in dark theme", async ({
 }) => {
   test.setTimeout(60_000);
   await comparePurchaseExport(browser, page, "buy-uses-gem-resource", "dark");
+});
+
+test("exports the live save after the Money purchase in dark theme", async ({
+  browser,
+  page,
+}) => {
+  test.setTimeout(60_000);
+  await comparePurchaseExport(browser, page, "buy-exact-affordability", "dark");
 });
 
 test("exports the live save after the Planet Coin purchase in dark theme", async ({

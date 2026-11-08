@@ -239,10 +239,11 @@ explicit visual gaps above.
   both themes. A second differential now covers the refreshed full-screen hints
   for the first card in all three resource groups, in both themes at 1440×900
   and 1366×768. These remain selected states and do not cover all shop balances
-  or screens. The pinned exact-cost `buy-uses-gem-resource` and
-  `buy-uses-planet-coin-resource` purchases now compare the full screen after
-  Offline Gems or Active Power reaches level 1 and its resource balance reaches
-  zero in both themes at the canonical 1440x900 viewport. The all-cap
+  or screens. The pinned exact-cost `buy-exact-affordability`,
+  `buy-uses-gem-resource`, and `buy-uses-planet-coin-resource` purchases now
+  compare the full screen after the corresponding level-one purchase spends
+  the complete Money, Gem, or Planet Coin balance in both themes at the
+  canonical 1440x900 viewport. The all-cap
   differential also compares strict full-screen hashes at the
   first finite cap in each Money, Gem, and Planet Coin group (Blacksmith Bonus
   10, Blacksmith Skill 50, and Active Power 10), in both themes. These six

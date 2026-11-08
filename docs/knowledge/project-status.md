@@ -2,12 +2,12 @@
 
 Last updated: 2026-11-08
 
-**Gem and Planet Coin post-purchase screens (2026-11-08):** source-captured
-`buy-uses-gem-resource` and `buy-uses-planet-coin-resource` spend exact balances
-of 4,444 Gems and 100 Planet Coins to raise Offline Gems and Active Power from
-level 0 to 1. The full shop screens match Remix in light and dark at 1440x900;
-all four focused Chromium cases passed with exact pixels, and the tests also
-verify the live exported saves.
+**Exact-price purchase screens across three resources (2026-11-08):** pinned
+`buy-exact-affordability`, `buy-uses-gem-resource`, and
+`buy-uses-planet-coin-resource` spend 1,000 Money, 4,444 Gems, and 100 Planet
+Coins to raise the captured level-zero upgrades to level one. All three full
+shop screens match Remix in light and dark at 1440x900; six focused Chromium
+cases passed with exact pixels, and each test verifies the live exported save.
 
 **Settings alternate-viewport screens (2026-11-08):** the initial light
 Settings screen and changed-preference dark screen now have live pinned-
