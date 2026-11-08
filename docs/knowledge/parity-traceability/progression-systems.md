@@ -21,7 +21,10 @@
   1440x900 in both themes. `tests/e2e/wisdom-upgrade-buy-amount-differential.spec.ts`
   pairs all seven standalone Wisdom cards with single, Shift, Control, and
   combined Shift+Control purchases, comparing levels, balance text, and card
-  labels after each key release.
+  labels after each key release. The source-captured single purchase of Simple
+  Gem Boost also compares the complete Powers screen after spending exact
+  Wisdom in both themes through
+  `tests/e2e/save-export-purchase-differential.spec.ts`.
 - **Sampled (qualified):** the unbounded Power values are sampled. A pinned
   runtime fixture captures `getPrestigeEffect` at zero and at 999, 1,000, and
   1,001 for all four indices, covering its floor transition. It also captures
@@ -97,7 +100,9 @@ Remix/Beyond views at 1440x900 in both themes.
   `buy-uses-planet-coin-resource` cases also compare their full shop screens
   after purchasing level-one Active Power or Offline Gems at exact cost in both
   themes through
-  `tests/e2e/save-export-purchase-differential.spec.ts`.
+  `tests/e2e/save-export-purchase-differential.spec.ts`. The corresponding
+  exact-Wisdom `buy-uses-wisdom-resource` case compares the full Powers screen
+  after the first Simple Gem Boost purchase in both themes.
 
 ### Upgrade function and branch trace
 

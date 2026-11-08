@@ -173,6 +173,17 @@ async function comparePurchaseExport(
     expect(purchase.startingResources.planetCoins.decimal).toBe("100");
     expect(purchase.endingResources.planetCoins.decimal).toBe("0");
   }
+  if (purchaseName === "buy-uses-wisdom-resource") {
+    expect(purchase).toMatchObject({
+      group: "wisdom",
+      key: "gemBoostSimple",
+      startingLevel: 0,
+      endingLevel: 1,
+      operation: { method: "buy" },
+    });
+    expect(purchase.startingResources.wisdom.decimal).toBe("10000000000");
+    expect(purchase.endingResources.wisdom.decimal).toBe("0");
+  }
   const upgrade =
     corpus.data.upgradeSemantics.groups[purchase.group]?.[purchase.key];
   if (!upgrade)
@@ -237,6 +248,7 @@ async function comparePurchaseExport(
   const sourcePage = await sourceContext.newPage();
   try {
     const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await page.setViewportSize({ width: 1440, height: 900 });
     await Promise.all([
       page.addInitScript(seedBeyond, {
         encoded: encodedBeyondSave,
@@ -324,10 +336,10 @@ async function comparePurchaseExport(
     if (
       purchaseName === "buy-exact-affordability" ||
       purchaseName === "buy-uses-gem-resource" ||
-      purchaseName === "buy-uses-planet-coin-resource"
+      purchaseName === "buy-uses-planet-coin-resource" ||
+      purchaseName === "buy-uses-wisdom-resource"
     ) {
       await Promise.all([
-        page.setViewportSize({ width: 1440, height: 900 }),
         page.mouse.move(1439, 899),
         sourcePage.mouse.move(1439, 899),
         page.evaluate(() => document.fonts.ready),
@@ -465,6 +477,19 @@ test("exports the live save after the Planet Coin purchase in dark theme", async
     browser,
     page,
     "buy-uses-planet-coin-resource",
+    "dark",
+  );
+});
+
+test("exports the live save after the Wisdom purchase in dark theme", async ({
+  browser,
+  page,
+}) => {
+  test.setTimeout(60_000);
+  await comparePurchaseExport(
+    browser,
+    page,
+    "buy-uses-wisdom-resource",
     "dark",
   );
 });

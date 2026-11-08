@@ -480,7 +480,9 @@ levels and other viewport/theme combinations remain open.
   Wisdom panel after Shift buys `Power Power (Active)` to level 10 is also
   compared in both themes at 1440x900; Windows pixels match exactly, while
   Linux still asserts state and text because of the known one-pixel description
-  antialiasing difference.
+  antialiasing difference. The source-captured exact-cost Simple Gem Boost
+  purchase also compares the full Powers screen after Wisdom reaches zero and
+  the upgrade reaches level 1 in both themes at 1440x900.
 
 ### Powers visual function and branch trace
 

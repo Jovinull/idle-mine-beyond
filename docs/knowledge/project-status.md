@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-08
 
+**Exact Wisdom post-purchase screen (2026-11-08):** the pinned
+`buy-uses-wisdom-resource` case spends exactly 10,000,000,000 Wisdom on the
+first Simple Gem Boost level. The full Powers screen matches Remix in light and
+dark at 1440x900. Both focused Chromium comparisons passed with exact pixels
+and the live export matches.
+
 **Exact-price purchase screens across three resources (2026-11-08):** pinned
 `buy-exact-affordability`, `buy-uses-gem-resource`, and
 `buy-uses-planet-coin-resource` spend 1,000 Money, 4,444 Gems, and 100 Planet
