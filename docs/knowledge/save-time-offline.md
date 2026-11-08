@@ -145,3 +145,15 @@ The historical-shape Settings E2E also performs a live pinned-Remix comparison: 
 ### Live mining-drop export differential (2026-11-08)
 
 `tests/e2e/save-export-mining-drop-differential.spec.ts` starts from the pinned `planet-coin-drop-roll-follows-gem-roll` case at object 90, applies the same captured RNG sequence to Remix and Beyond, breaks the object, and compares the complete Settings export object and exact encoded bytes in light and dark Chromium. Both runs match. The source UI advances to `#91`, while its serialized `mineObjectLevel` remains 90 and `highestMineObjectLevel` becomes 91; retain this observed distinction. This adds one live post-mining export state; other arbitrary runtime exports and cross-browser dynamic exports remain open.
+
+### Malformed save-import browser compatibility (2026-11-08)
+
+The web route injects native `window.atob` into legacy save loading so malformed
+Base64 failures preserve each browser engine's exception name and message. The
+source-paired `tests/e2e/save-import-error-browser-compat.spec.ts` checks ten
+Base64/URI/JSON failure inputs through live Settings imports in Firefox and
+WebKit, including visible error text and unchanged storage. The default codec
+remains deterministic for non-browser callers. One captured field-application
+TypeError remains Chromium-only because Beyond's minified error string differs
+from the pinned source's unminified identifier; cross-engine parity for that
+message is open.

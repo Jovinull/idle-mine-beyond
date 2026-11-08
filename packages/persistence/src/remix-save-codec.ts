@@ -135,10 +135,11 @@ function parseUndefinedError(): RemixLegacySaveCodecError {
  */
 export function decodeRemixLegacySave(
   saveString: string,
+  decodeBase64: (encoded: string) => string = decodeBase64Binary,
 ): RemixLegacySaveDecodeResult {
   let json: string;
   try {
-    json = legacyUnescape(decodeURIComponent(decodeBase64Binary(saveString)));
+    json = legacyUnescape(decodeURIComponent(decodeBase64(saveString)));
   } catch (error) {
     const decodeError = toCodecError(error);
     return {

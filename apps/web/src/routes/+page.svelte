@@ -609,6 +609,7 @@
         clearBrowserRemixStorage();
       },
       readLegacySave: readBrowserRemixLegacySave,
+      decodeBase64: (encoded) => window.atob(encoded),
       resolveNumberFormatter(index) {
         const formatter = formatters[index];
         if (!formatter) {

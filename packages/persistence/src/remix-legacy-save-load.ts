@@ -31,6 +31,7 @@ export type RemixLegacySaveNumberFormatterResolver = (
 export interface LoadRemixLegacySaveInput {
   state: RemixLegacySaveApplicationState;
   saveString: string;
+  decodeBase64?: (encoded: string) => string;
   catalog: RemixMineObjectCatalog;
   clock: RemixLegacySaveClock & RemixOfflineClock;
   resolveNumberFormatter: RemixLegacySaveNumberFormatterResolver;
@@ -76,7 +77,7 @@ function toLoadedSaveEffect(
 export function loadRemixLegacySaveIntoState(
   input: LoadRemixLegacySaveInput,
 ): LoadRemixLegacySaveResult {
-  const decoded = decodeRemixLegacySave(input.saveString);
+  const decoded = decodeRemixLegacySave(input.saveString, input.decodeBase64);
   if (decoded.status !== "success") return decoded;
 
   let application;

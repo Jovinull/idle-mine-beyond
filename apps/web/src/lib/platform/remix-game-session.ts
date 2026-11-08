@@ -245,6 +245,7 @@ export interface CreateRemixWebGameSessionInput {
   readonly storage: RemixBeyondSaveStorageAdapter;
   readonly clearAllStorage: () => void | Promise<void>;
   readonly readLegacySave: () => string | null | Promise<string | null>;
+  readonly decodeBase64?: (encoded: string) => string;
   readonly resolveNumberFormatter: (
     index: number,
   ) => RemixOfflineNumberFormatter;
@@ -373,6 +374,9 @@ export function createRemixWebGameSession(
       load: {
         state: initialApplicationState(input.catalog),
         saveString: legacySave,
+        ...(input.decodeBase64 === undefined
+          ? {}
+          : { decodeBase64: input.decodeBase64 }),
         catalog: input.catalog,
         clock: input.clock,
         resolveNumberFormatter: input.resolveNumberFormatter,
@@ -629,6 +633,9 @@ export function createRemixWebGameSession(
         load: {
           state: current,
           saveString,
+          ...(input.decodeBase64 === undefined
+            ? {}
+            : { decodeBase64: input.decodeBase64 }),
           catalog: input.catalog,
           clock: input.clock,
           resolveNumberFormatter: input.resolveNumberFormatter,
@@ -670,6 +677,9 @@ export function createRemixWebGameSession(
         load: {
           state: initialApplicationState(input.catalog),
           saveString,
+          ...(input.decodeBase64 === undefined
+            ? {}
+            : { decodeBase64: input.decodeBase64 }),
           catalog: input.catalog,
           clock: input.clock,
           resolveNumberFormatter: input.resolveNumberFormatter,

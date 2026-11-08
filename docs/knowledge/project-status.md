@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-08
 
+**Malformed save-import browser compatibility (2026-11-08):** the web session
+now injects the browser's native Base64 decoder into the pure legacy codec.
+Source-paired Settings imports match all ten captured Base64/URI/JSON failure
+alerts and parse errors in Firefox and WebKit, with no storage writes. The
+captured field-application TypeError remains Chromium-only because the minified
+Beyond error text exposes an identifier difference; this parity gap remains
+open.
+
 **Live post-mining save export (2026-11-08):** the source-paired Settings E2E
 breaks pinned object 90 with the captured Planet Coin drop RNG in Remix and
 Beyond, then compares every exported field and exact encoded bytes in light
