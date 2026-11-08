@@ -52,22 +52,6 @@ async function selectSettings(
   await expect(sourcePage.locator("article.settings textarea")).toBeVisible();
 }
 
-async function resetPairedPages(
-  beyondPage: Page,
-  sourcePage: Page,
-): Promise<void> {
-  await Promise.all([beyondPage.reload(), sourcePage.reload()]);
-  await Promise.all([
-    expect(beyondPage.locator("#app")).toHaveAttribute(
-      "data-app-state",
-      "ready",
-    ),
-    readySourcePage(sourcePage),
-  ]);
-  await selectSettings(beyondPage, sourcePage);
-  await instrumentSourceLoadErrors(sourcePage);
-}
-
 async function storageSnapshot(page: Page): Promise<Record<string, string>> {
   return page.evaluate(() =>
     Object.fromEntries(
@@ -170,11 +154,11 @@ async function importCase(
   }
 }
 
-test("matches captured codec and missing-Story errors in this browser", async ({
+test("matches captured codec and field-application errors in this browser", async ({
   browser,
   page,
 }, testInfo) => {
-  test.setTimeout(180_000);
+  test.setTimeout(360_000);
   const fixture = JSON.parse(
     await readFile(fixtureUrl, "utf8"),
   ) as ErrorFixture;
@@ -223,34 +207,23 @@ test("matches captured codec and missing-Story errors in this browser", async ({
       });
     }
 
-    const missingStoryCase = fixture.data.saveSemantics.fieldApplicationErrors
-      .filter(({ name }) => name === "missing-story-after-resources")
-      .map(({ name, encoded, thrownErrorName, thrownErrorMessage }) => ({
-        name,
-        encoded,
-        thrownErrorName,
-        thrownErrorMessage,
-      }))[0];
-    if (!missingStoryCase) {
-      throw new Error("Missing captured story-field application failure.");
+    for (const scenario of fixture.data.saveSemantics.fieldApplicationErrors) {
+      const [beyondBefore, sourceBefore] = await Promise.all([
+        storageSnapshot(page),
+        storageSnapshot(sourcePage),
+      ]);
+      await test.step(scenario.name, async () => {
+        await importCase(page, sourcePage, scenario);
+        expect(
+          await storageSnapshot(page),
+          `${scenario.name} Beyond storage`,
+        ).toEqual(beyondBefore);
+        expect(
+          await storageSnapshot(sourcePage),
+          `${scenario.name} Remix storage`,
+        ).toEqual(sourceBefore);
+      });
     }
-
-    await resetPairedPages(page, sourcePage);
-    const [beyondBefore, sourceBefore] = await Promise.all([
-      storageSnapshot(page),
-      storageSnapshot(sourcePage),
-    ]);
-    await test.step(missingStoryCase.name, async () => {
-      await importCase(page, sourcePage, missingStoryCase);
-      expect(
-        await storageSnapshot(page),
-        `${missingStoryCase.name} Beyond storage`,
-      ).toEqual(beyondBefore);
-      expect(
-        await storageSnapshot(sourcePage),
-        `${missingStoryCase.name} Remix storage`,
-      ).toEqual(sourceBefore);
-    });
   } finally {
     await sourceContext.close().catch(() => undefined);
   }

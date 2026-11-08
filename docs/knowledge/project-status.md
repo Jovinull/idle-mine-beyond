@@ -6,12 +6,8 @@ Last updated: 2026-11-08
 now injects the browser's native Base64 decoder into the pure legacy codec.
 Source-paired Settings imports match all ten captured Base64/URI/JSON failure
 alerts and parse errors in Firefox and WebKit, with no storage writes. The
-missing-Story field-application TypeError now also matches in Firefox and
-WebKit, including the native expression text; the other nineteen captured
-field-application TypeErrors remain an open cross-browser domain. A paired
-probe confirms the `json-null-root` message still leaks different expressions
-(`t` in Firefox and `t[e]` in WebKit versus `loadObj.money` in Remix); the other
-eighteen cases have not been compared outside Chromium.
+all twenty captured field-application TypeErrors now also match pinned Remix
+in Firefox and WebKit, with storage unchanged after each failed import.
 
 **Live post-mining save export (2026-11-08):** the source-paired Settings E2E
 breaks pinned object 90 with the captured Planet Coin drop RNG in Remix and
@@ -31,7 +27,7 @@ hover-detail boundary comparison at cap-1/cap/cap+1 also passed in both themes
 
 **Phase 1 - Deterministic core (in progress).** The source-to-test audit maps all 36 parity-matrix areas to pinned Remix functions/branches, fixtures, and assertions. Fourteen rows are Certified: Random distributions and RNG; Big-number math and serialization; Fresh simulation-state initialization; Simulation action composition; Active and idle damage; Object drops and random outcomes; Fixed mine objects; Special mine objects; Procedural mine objects; Mine rendering and compositing; Number formatting and notations; Progression route and phase replay; Beyond versioned save schema; and Story and notifications. The Story row was certified on 2026-11-03 at the approved chapter-level visual scope after its 61 condition boundaries, route/phase differentials, app interactions, all nine chapter screens in both themes, and all 48 preview hashes were reviewed. Fresh-state coverage traces Remix's no-save startup and verifies the complete initial state, live browser startup/interactions, and fresh Mining visuals in both themes. Action-composition coverage compares source frame, click, break, purchase, and craft branches in core, then verifies browser event wiring, save-before-Story ordering, random draws, and persisted state. Active/idle damage has browser assertions for a fresh-Mud click and a pinned full-health idle break; procedural-object coverage loads all three generator regions plus a sparse high ID through the Beyond save and Mining Canvas. Qualified non-exhaustive formula/RNG samples do not block certification; unresolved source boundaries, save/platform domains, and visual/UI evidence still can. The checker flags Certified rows that retain mapped gaps or unqualified sampled domains, and does not infer certification from code presence. parity-v1 remains web-only; native packaging, storage, and running Tauri WebView validation are post-v1.
 
-**Cross-browser save codec outputs (2026-11-07/08):** a focused browser comparison covers five captured valid codec vectors, seventeen canonical/controlled UTF-8 and escaping boundaries, and five permissive Base64 variants. Exact encoded strings, decoded values, hashes, and UTF-16 code units match pinned Remix captures in Chromium, Firefox, and WebKit (1/1 per browser). Ten malformed codec/JSON inputs now also match the same-engine pinned Remix Settings import in Firefox and WebKit, as does the missing-Story TypeError. The `json-null-root` TypeError still differs (`t` in Firefox and `t[e]` in WebKit versus `loadObj.money` in Remix); eighteen other field-application cases have not been compared outside Chromium. Dynamic exports outside captured live states remain open. CI installs all three browsers and runs these web-only tests.
+**Cross-browser save codec outputs (2026-11-07/08):** a focused browser comparison covers five captured valid codec vectors, seventeen canonical/controlled UTF-8 and escaping boundaries, and five permissive Base64 variants. Exact encoded strings, decoded values, hashes, and UTF-16 code units match pinned Remix captures in Chromium, Firefox, and WebKit (1/1 per browser). Ten malformed codec/JSON inputs and all twenty field-application TypeErrors now match the same-engine pinned Remix Settings import in Firefox and WebKit. Each failed import leaves storage unchanged. Dynamic exports outside captured live states remain open. CI installs all three browsers and runs these web-only tests.
 
 **Live Firefox/WebKit multi-group save export (2026-11-08):** a dedicated
 cross-browser test imports the pinned `varied-settings-and-all-upgrades`

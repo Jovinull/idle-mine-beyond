@@ -47,6 +47,7 @@
     readBrowserRemixLegacySave,
     readRemixRecoveryData,
   } from "$lib/platform/remix-save-storage.js";
+  import { formatRemixLegacyLoadError } from "$lib/platform/remix-legacy-load-error.js";
   import {
     clearTauriRemixSaveStorage,
     createTauriRemixSaveStorage,
@@ -610,17 +611,7 @@
       },
       readLegacySave: readBrowserRemixLegacySave,
       decodeBase64: (encoded) => window.atob(encoded),
-      formatLegacyLoadError: (error) => ({
-        ...error,
-        message:
-          error.name === "TypeError"
-            ? // Firefox and WebKit include the source expression's local name.
-              error.message.replace(
-                /\b[A-Za-z_$][\w$]*(?=\.(?:story|settings|upgrades|gemUpgrades|planetCoinUpgrades|powers|pickaxe)\b)/g,
-                "loadObj",
-              )
-            : error.message,
-      }),
+      formatLegacyLoadError: formatRemixLegacyLoadError,
       resolveNumberFormatter(index) {
         const formatter = formatters[index];
         if (!formatter) {

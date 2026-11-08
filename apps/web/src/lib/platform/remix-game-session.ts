@@ -246,10 +246,13 @@ export interface CreateRemixWebGameSessionInput {
   readonly clearAllStorage: () => void | Promise<void>;
   readonly readLegacySave: () => string | null | Promise<string | null>;
   readonly decodeBase64?: (encoded: string) => string;
-  readonly formatLegacyLoadError?: (error: {
-    name: string;
-    message: string;
-  }) => { name: string; message: string };
+  readonly formatLegacyLoadError?: (
+    error: {
+      name: string;
+      message: string;
+    },
+    saveValue: unknown,
+  ) => { name: string; message: string };
   readonly resolveNumberFormatter: (
     index: number,
   ) => RemixOfflineNumberFormatter;

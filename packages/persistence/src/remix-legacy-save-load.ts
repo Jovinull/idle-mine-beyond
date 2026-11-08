@@ -32,7 +32,10 @@ export interface LoadRemixLegacySaveInput {
   state: RemixLegacySaveApplicationState;
   saveString: string;
   decodeBase64?: (encoded: string) => string;
-  formatApplicationError?: (error: { name: string; message: string }) => {
+  formatApplicationError?: (
+    error: { name: string; message: string },
+    saveValue: unknown,
+  ) => {
     name: string;
     message: string;
   };
@@ -99,7 +102,8 @@ export function loadRemixLegacySaveIntoState(
       status: "applicationFailed",
       partialState: error.partialState,
       effects: error.effects,
-      error: input.formatApplicationError?.(loadError) ?? loadError,
+      error:
+        input.formatApplicationError?.(loadError, decoded.value) ?? loadError,
       ...(error.evaluatedLastActiveFallbackMs === undefined
         ? {}
         : {
