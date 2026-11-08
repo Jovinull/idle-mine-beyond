@@ -32,10 +32,11 @@ and bold font checks, Chromium's platform font for the objective's bold text
 node, and its ancestor chain's computed CSS and geometry. Run 42503025927
 shows Beyond's `.story-panel-host` between `main` and `article.story`; its
 same-sized `overflow:hidden` box remains a structural difference, with no
-confirmed causal link to the two-pixel raster delta. On mismatch, the E2E also
-captures diagnostic-only overflow-visible, transparent-background, combined,
-and `display:contents` host variants; the production page and exact assertion
-are unchanged.
+confirmed causal link to the two-pixel raster delta. In CI run 42505857185,
+temporary overflow-visible, transparent-background, combined, and
+`display:contents` variants all retained the Beyond hash and same pixel delta;
+these wrapper-box properties are not the cause. The Chapter 4 dark case passed
+in this run; Chapter 3 light remains open. The strict assertion is unchanged.
 
 ## Settings and input controls
 
