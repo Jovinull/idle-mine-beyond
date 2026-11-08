@@ -29,8 +29,10 @@ The updated tab buys Blacksmith and saves, the still-stale second tab overwrites
 it, then the updated tab saves again. Remix and Beyond match the level-one,
 level-zero, and level-one snapshots in order; Beyond uses its versioned
 `IdleMineBeyond` primary save and leaves the imported `IdleMine` legacy key
-untouched. Other action/write interleavings, browser/profile quota policies
-beyond the tested Chromium origin, and process termination remain open.
+untouched. Other action/write interleavings, profile-specific quota policies,
+and process termination remain open. Injected read/write failures and native
+quota errors pass in Firefox and WebKit in addition to Chromium; this does not
+characterize every browser profile's quota policy.
 
 ### Historical save evidence
 

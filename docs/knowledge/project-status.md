@@ -9,6 +9,13 @@ alerts and parse errors in Firefox and WebKit, with no storage writes. The
 all twenty captured field-application TypeErrors now also match pinned Remix
 in Firefox and WebKit, with storage unchanged after each failed import.
 
+**Browser save-storage failure coverage (2026-11-08):** injected primary and
+backup write failures, primary and backup read failures, and native localStorage
+quota failures pass in both Firefox and WebKit (4 injected-failure and 2
+real-quota cases per engine). The checks assert slot preservation, recovery/error UI,
+retry behavior, and no false `Game Saved!` confirmation. CI now runs this web
+storage suite in both engines; profile-specific quota policies remain open.
+
 **Live post-mining save export (2026-11-08):** the source-paired Settings E2E
 breaks pinned object 90 with the captured Planet Coin drop RNG in Remix and
 Beyond, then compares every exported field and exact encoded bytes in light
