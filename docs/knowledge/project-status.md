@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-08
 
+**Natural Story endpoints across desktop viewports (2026-11-08):** extended the
+live pinned-Remix/Beyond comparison for Chapters 3-6 to 1366x768, 1920x1080, and
+2560x1440 in both themes, retaining 1440x900. All four endpoints matched at
+zero pixels across all four viewports and both themes on Windows Chromium
+(16 pairs per theme). Ubuntu run 42484538684 passed both themes at 1440x900;
+the new Linux viewport pairs await the current CI rerun. Source PNG baselines
+remain Windows-only.
+
 **Natural Chapter 3-6 dark Linux differential (2026-11-08):** the full Chromium
 E2E suite passed in Ubuntu CI run 42484538684 (255 passed). The natural route-end
 test runs four endpoint saves in both light and dark themes, so its exact live

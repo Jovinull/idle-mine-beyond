@@ -37,8 +37,16 @@ async function prepareStoryScreen(page: Page, expectedHeading: string) {
       animation.currentTime = 0;
     }
   });
-  await page.mouse.move(1439, 899);
+  const viewport = page.viewportSize() ?? { width: 1440, height: 900 };
+  await page.mouse.move(viewport.width - 1, viewport.height - 1);
 }
+
+const storyViewports = [
+  { name: "1366x768", width: 1366, height: 768 },
+  { name: "1440x900", width: 1440, height: 900 },
+  { name: "1920x1080", width: 1920, height: 1080 },
+  { name: "2560x1440", width: 2560, height: 1440 },
+] as const;
 
 for (const theme of ["light", "dark"] as const) {
   test(`matches live Remix and Beyond natural Chapter 3-6 Story screens in ${theme} theme`, async ({
@@ -67,6 +75,7 @@ for (const theme of ["light", "dark"] as const) {
     await expect(page.locator("#app")).toHaveAttribute(
       "data-app-state",
       "ready",
+      { timeout: 30_000 },
     );
     const appOrigin = new URL(page.url()).origin;
     const appUrl = `${appOrigin}/`;
@@ -124,46 +133,56 @@ for (const theme of ["light", "dark"] as const) {
         },
       );
 
-      await page.goto(sourceUrl);
-      await page.getByRole("button", { name: /Story/ }).click();
-      await prepareStoryScreen(page, chapter.heading);
-      const sourceScreenshot = await page.screenshot({
-        animations: "disabled",
-      });
+      for (const viewport of storyViewports) {
+        await page.setViewportSize(viewport);
+        await page.goto(sourceUrl);
+        await page.getByRole("button", { name: /Story/ }).click();
+        await prepareStoryScreen(page, chapter.heading);
+        const sourceScreenshot = await page.screenshot({
+          animations: "disabled",
+        });
 
-      await page.goto(appUrl);
-      await expect(page.locator("#app")).toHaveAttribute(
-        "data-app-state",
-        "ready",
-      );
-      await expect(page.locator("#app")).toHaveAttribute("data-theme", theme);
-      await page.locator("[data-game-tab='story']").click();
-      await prepareStoryScreen(page, chapter.heading);
-      const beyondScreenshot = await page.screenshot({
-        animations: "disabled",
-      });
-      const sourceHash = renderedPixelHash(sourceScreenshot);
-      const beyondHash = renderedPixelHash(beyondScreenshot);
+        await page.goto(appUrl);
+        await expect(page.locator("#app")).toHaveAttribute(
+          "data-app-state",
+          "ready",
+        );
+        await expect(page.locator("#app")).toHaveAttribute("data-theme", theme);
+        await page.locator("[data-game-tab='story']").click();
+        await prepareStoryScreen(page, chapter.heading);
+        const beyondScreenshot = await page.screenshot({
+          animations: "disabled",
+        });
+        const sourceHash = renderedPixelHash(sourceScreenshot);
+        const beyondHash = renderedPixelHash(beyondScreenshot);
 
-      if (sourceHash !== beyondHash) {
-        const sourcePath = test.info().outputPath(`${chapter.id}-remix.png`);
-        const beyondPath = test.info().outputPath(`${chapter.id}-beyond.png`);
-        await Promise.all([
-          writeFile(sourcePath, sourceScreenshot),
-          writeFile(beyondPath, beyondScreenshot),
-        ]);
-        await Promise.all([
-          test.info().attach(`${chapter.id}-remix.png`, {
-            path: sourcePath,
-            contentType: "image/png",
-          }),
-          test.info().attach(`${chapter.id}-beyond.png`, {
-            path: beyondPath,
-            contentType: "image/png",
-          }),
-        ]);
+        if (sourceHash !== beyondHash) {
+          const sourcePath = test
+            .info()
+            .outputPath(`${chapter.id}-${viewport.name}-remix.png`);
+          const beyondPath = test
+            .info()
+            .outputPath(`${chapter.id}-${viewport.name}-beyond.png`);
+          await Promise.all([
+            writeFile(sourcePath, sourceScreenshot),
+            writeFile(beyondPath, beyondScreenshot),
+          ]);
+          await Promise.all([
+            test.info().attach(`${chapter.id}-${viewport.name}-remix.png`, {
+              path: sourcePath,
+              contentType: "image/png",
+            }),
+            test.info().attach(`${chapter.id}-${viewport.name}-beyond.png`, {
+              path: beyondPath,
+              contentType: "image/png",
+            }),
+          ]);
+        }
+        expect(
+          beyondHash,
+          `${chapter.id} ${theme} full-screen pixels at ${viewport.name}`,
+        ).toBe(sourceHash);
       }
-      expect(beyondHash, `${chapter.id} full-screen pixels`).toBe(sourceHash);
     }
   });
 }
