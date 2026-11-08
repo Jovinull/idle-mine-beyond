@@ -294,6 +294,16 @@ test("matches Remix after changing and saving Settings preferences", async ({
     await compareScreen("settings-export-dark");
 
     await Promise.all([
+      page.setViewportSize({ width: 1366, height: 768 }),
+      sourcePage.setViewportSize({ width: 1366, height: 768 }),
+    ]);
+    await compareScreen("settings-export-dark-1366x768");
+    await Promise.all([
+      page.setViewportSize({ width: 1440, height: 900 }),
+      sourcePage.setViewportSize({ width: 1440, height: 900 }),
+    ]);
+
+    await Promise.all([
       beyondSettings.getByRole("button", { name: "Light" }).click(),
       remixSettings.getByRole("button", { name: "Light" }).click(),
     ]);

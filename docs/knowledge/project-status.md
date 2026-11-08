@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-08
 
+**Settings dark Export alternate viewport (2026-11-08):** extended the live
+pinned-Remix/Beyond comparison to the changed-preference, saved, and exported
+dark Settings state at 1366x768. The full-screen pixels matched exactly in
+Chromium; `settings-visual.spec.ts` passed 3/3. Other Settings state and
+viewport combinations remain open.
+
 **Cross-resource stale-tab overwrite (2026-11-08):** the source-paired E2E
 starts two Remix and Beyond tabs with the same Money/Gem snapshot. One tab buys
 Blacksmith and saves; the stale tab then buys level-zero Offline Gems at its
