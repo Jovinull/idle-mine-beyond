@@ -146,7 +146,7 @@ The historical-shape Settings E2E also performs a live pinned-Remix comparison: 
 
 ### Live mining-drop export differential (2026-11-08)
 
-`tests/e2e/save-export-mining-drop-differential.spec.ts` starts from the pinned `planet-coin-drop-roll-follows-gem-roll` case at object 90, applies the same captured RNG sequence to Remix and Beyond, breaks the object, and compares the complete Settings export object and exact encoded bytes in light and dark Chromium. Both runs match. The source UI advances to `#91`, while its serialized `mineObjectLevel` remains 90 and `highestMineObjectLevel` becomes 91; retain this observed distinction. This adds one live post-mining export state; other arbitrary runtime exports and cross-browser dynamic exports remain open.
+`tests/e2e/save-export-mining-drop-differential.spec.ts` starts from the pinned `planet-coin-drop-roll-follows-gem-roll` case at object 90, applies the same captured RNG sequence to Remix and Beyond, breaks the object, and compares the complete Settings export object and exact encoded bytes in light and dark Chromium, Firefox, and WebKit (6/6 pairs). The source UI advances to `#91`, while its serialized `mineObjectLevel` remains 90 and `highestMineObjectLevel` becomes 91; retain this observed distinction. This adds one live post-mining export state; other arbitrary runtime exports and mining states remain open.
 
 ### Malformed save-import browser compatibility (2026-11-08)
 
