@@ -46,6 +46,8 @@ The pinned `pickaxeCraftingSemantics.craftControls` capture records no controls 
 
 The source-paired `better-craft-replaces-and-saves` browser case now continues from the matched replacement screen into Settings and compares the complete source and Beyond legacy export bytes and decoded objects. It also compares the ordered live message logs. This verifies one successfully equipped replacement through both the save effect and the Settings exporter; bulk intermediate writes remain covered by the dedicated parity/session tests.
 
+The source-paired visual cases also snapshot persistence immediately before and after each attempt. In all three viewports and both themes, equal- and lower-damage duds leave Remix's `IdleMine` string and Beyond's primary and backup strings unchanged; the insufficient-Gem branch also leaves all three unchanged. The focused Chromium comparison passed 18/18. The dud branches still spend Gems in live state, as covered by the transition assertions; this check specifically verifies that the source's no-save behavior is preserved.
+
 **Known legacy quirk:** `functions.getSaveString()` serializes `usedGemsLevel`, but `functions.loadGame()` does not assign that field from `loadObj`. Loading a legacy save into a fresh game therefore leaves the default selection at zero; loading into an existing game leaves its current selection unchanged. Beyond's legacy application must preserve this source behavior instead of restoring the serialized legacy field during import.
 
 ## RNG

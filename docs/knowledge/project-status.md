@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-08
 
+**Craft no-save branches (2026-11-08):** the source-paired craft UI test now
+asserts that equal/lower-damage duds and insufficient-Gem attempts leave the
+Remix legacy save and Beyond primary/backup slots unchanged. All three outcomes
+passed in both themes at 1366x768, 1440x900, and 1920x1080 (18/18 Chromium
+cases). This checks persistence while the existing assertions cover the live
+Gem balance, pickaxe, messages, and RNG draws.
+
 **Live crafted-save export comparison (2026-11-08):** the source-paired
 successful pickaxe replacement case now enters Settings in both apps and
 compares the complete exported legacy bytes and decoded objects. The ordered

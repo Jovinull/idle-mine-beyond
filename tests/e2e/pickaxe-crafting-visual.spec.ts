@@ -207,6 +207,14 @@ for (const theme of ["light", "dark"] as const) {
             ),
           ),
         ]);
+        const [sourcePersistedBeforeCraft, beyondPersistedBeforeCraft] =
+          await Promise.all([
+            sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+            page.evaluate(() => ({
+              primary: localStorage.getItem("IdleMineBeyond"),
+              backup: localStorage.getItem("IdleMineBeyondBackup"),
+            })),
+          ]);
         await Promise.all([
           expect(page.locator("body")).toHaveAttribute("data-theme", theme),
           sourcePage.waitForFunction(
@@ -317,6 +325,25 @@ for (const theme of ["light", "dark"] as const) {
         ]);
         expect(beyondCalls).toBe(attempt.randomCalls);
         expect(remixCalls).toBe(attempt.randomCalls);
+
+        if (caseName !== "better-craft-replaces-and-saves") {
+          const [sourcePersistedAfterCraft, beyondPersistedAfterCraft] =
+            await Promise.all([
+              sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+              page.evaluate(() => ({
+                primary: localStorage.getItem("IdleMineBeyond"),
+                backup: localStorage.getItem("IdleMineBeyondBackup"),
+              })),
+            ]);
+          expect(
+            sourcePersistedAfterCraft,
+            `${caseName} Remix save remains unchanged`,
+          ).toBe(sourcePersistedBeforeCraft);
+          expect(
+            beyondPersistedAfterCraft,
+            `${caseName} Beyond primary and backup remain unchanged`,
+          ).toEqual(beyondPersistedBeforeCraft);
+        }
 
         const [beyondPng, remixPng] = await Promise.all([
           waitForStableScreen(page, viewport),

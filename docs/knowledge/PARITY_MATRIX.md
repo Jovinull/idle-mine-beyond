@@ -17,6 +17,12 @@ dud, weaker-damage dud, and insufficient-Gem outcomes also match at 1920x1080 in
 source/implementation control states are asserted in `tests/e2e/pickaxe-crafting-visual.spec.ts`; other crafting
 panel states and viewports remain open.
 
+**Craft no-save branches (2026-11-08):** the source-paired craft E2E now checks
+the persisted legacy value and Beyond primary/backup before and after equal-
+and lower-damage duds and insufficient-Gem attempts. All 18 Chromium cases
+across three viewports and both themes passed; these cases preserve the old
+stored snapshot even when an affordable dud spends Gems in live state.
+
 **Settings keyboard repeat evidence (2026-11-07):** a source-paired Chromium
 E2E now sends repeated trusted ArrowLeft keydowns while the save text field is
 focused. Both runtimes report `repeat=false` then `repeat=true`, prevent caret
