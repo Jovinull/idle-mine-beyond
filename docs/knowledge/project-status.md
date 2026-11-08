@@ -1586,9 +1586,16 @@ quota policies, cross-tab interleavings, and process termination.
 differential that presses ArrowRight while the Settings save field is focused
 in both pinned Remix and Beyond. Both runtimes receive a trusted event, prevent
 the browser's caret movement, preserve its position, and select the next mine
-object. The focused test passed 1/1. Settings and input controls remains In
-Progress for physical keyboard layouts, IME, other event variants, and broader
-state coverage.
+object. The focused test passed 1/1.
+
+**Synthetic composition-event differential (2026-11-08):** a focused Chromium
+E2E dispatches composition events and composing ArrowLeft (keyCode 37) and
+Process (keyCode 229) events through the Settings field in pinned Remix and
+Beyond. Both runtimes prevent and apply the ArrowLeft selection, ignore Process
+for selection, and retain focus; the test passed 1/1. This is a controlled
+synthetic event comparison, not OS-level IME or physical keyboard evidence.
+Settings and input controls remains In Progress for those environments and
+broader state coverage.
 
 **Cross-tab backup snapshots (2026-11-07):** extended the source-paired
 same-origin stale-write E2E to decode Beyond's backup after stale, fresh, and

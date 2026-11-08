@@ -2235,6 +2235,187 @@ test("matches trusted repeated ArrowLeft input in the Settings save field", asyn
   }
 });
 
+test("matches Remix key handling for composing keyboard events", async ({
+  page,
+  browser,
+}) => {
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as SettingsRuntimeFixture;
+  const legacySave = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as {
+    mineObjectLevel: number;
+    highestMineObjectLevel: number;
+    lastActive: number;
+    settings: { tab: string; showMineObjLevel: boolean };
+  };
+  legacySave.mineObjectLevel = 2;
+  legacySave.highestMineObjectLevel = 3;
+  legacySave.lastActive = 1_700_000_000_000;
+  legacySave.settings.tab = "main";
+  legacySave.settings.showMineObjLevel = true;
+  const encodedSave = encodeRemixLegacySave(legacySave);
+  const sourceContext = await browser.newContext({
+    colorScheme: "light",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    const sourcePage = await sourceContext.newPage();
+    await sourcePage.addInitScript((save) => {
+      localStorage.clear();
+      localStorage.setItem("IdleMine", save);
+      Date.now = () => 1_700_000_000_000;
+    }, encodedSave);
+    await page.addInitScript((save) => {
+      localStorage.clear();
+      localStorage.setItem("IdleMine", save);
+      Date.now = () => 1_700_000_000_000;
+    }, encodedSave);
+
+    await Promise.all([sourcePage.goto(sourceUrl), page.goto("/")]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await expect(sourcePage.locator(".mineobject h2")).toBeVisible();
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage.getByRole("button", { name: /Settings/ }).click(),
+    ]);
+
+    const targets = [page, sourcePage];
+    const results = await Promise.all(
+      targets.map((target) =>
+        target.evaluate(() => {
+          const field = document.querySelector<HTMLTextAreaElement>("textarea");
+          if (!field) throw new Error("The Settings save field is missing.");
+          field.focus();
+
+          const keyEvents: {
+            readonly type: string;
+            readonly key: string;
+            readonly keyCode: number;
+            readonly isComposing: boolean;
+            readonly isTrusted: boolean;
+            readonly defaultPrevented: boolean;
+          }[] = [];
+          const recordKeyEvent = (event: KeyboardEvent) => {
+            if (event.key === "ArrowLeft" || event.key === "Process") {
+              keyEvents.push({
+                type: event.type,
+                key: event.key,
+                keyCode: event.keyCode,
+                isComposing: event.isComposing,
+                isTrusted: event.isTrusted,
+                defaultPrevented: event.defaultPrevented,
+              });
+            }
+          };
+          window.addEventListener("keydown", recordKeyEvent);
+          window.addEventListener("keyup", recordKeyEvent);
+
+          field.dispatchEvent(
+            new CompositionEvent("compositionstart", {
+              bubbles: true,
+              data: "あ",
+            }),
+          );
+          const composingArrow = new KeyboardEvent("keydown", {
+            key: "ArrowLeft",
+            keyCode: 37,
+            which: 37,
+            isComposing: true,
+            bubbles: true,
+            cancelable: true,
+          });
+          field.dispatchEvent(composingArrow);
+          const processKey = new KeyboardEvent("keydown", {
+            key: "Process",
+            keyCode: 229,
+            which: 229,
+            isComposing: true,
+            bubbles: true,
+            cancelable: true,
+          });
+          field.dispatchEvent(processKey);
+          const processKeyUp = new KeyboardEvent("keyup", {
+            key: "Process",
+            keyCode: 229,
+            which: 229,
+            isComposing: true,
+            bubbles: true,
+            cancelable: true,
+          });
+          field.dispatchEvent(processKeyUp);
+          field.dispatchEvent(
+            new CompositionEvent("compositionend", {
+              bubbles: true,
+              data: "あ",
+            }),
+          );
+
+          window.removeEventListener("keydown", recordKeyEvent);
+          window.removeEventListener("keyup", recordKeyEvent);
+          return {
+            keyEvents,
+            activeElementIsSaveField: document.activeElement === field,
+          };
+        }),
+      ),
+    );
+    expect(results[0]).toEqual(results[1]);
+    expect(results[0]).toEqual({
+      keyEvents: [
+        {
+          type: "keydown",
+          key: "ArrowLeft",
+          keyCode: 37,
+          isComposing: true,
+          isTrusted: false,
+          defaultPrevented: true,
+        },
+        {
+          type: "keydown",
+          key: "Process",
+          keyCode: 229,
+          isComposing: true,
+          isTrusted: false,
+          defaultPrevented: false,
+        },
+        {
+          type: "keyup",
+          key: "Process",
+          keyCode: 229,
+          isComposing: true,
+          isTrusted: false,
+          defaultPrevented: false,
+        },
+      ],
+      activeElementIsSaveField: true,
+    });
+
+    await Promise.all([
+      page.locator("[data-game-tab='mining']").click(),
+      sourcePage.getByRole("button", { name: /Mining/ }).click(),
+    ]);
+    await expect(page.locator("[data-mine-object-level]")).toHaveText("#2");
+    await expect(sourcePage.locator(".mineobject h4")).toHaveText("#2");
+  } finally {
+    await sourceContext.close();
+  }
+});
+
 test("applies and saves source-backed Settings preferences", async ({
   page,
 }) => {
