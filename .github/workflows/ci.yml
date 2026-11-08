@@ -91,6 +91,9 @@ jobs:
       - name: Verify live save exports in Firefox and WebKit
         run: pnpm test:e2e:save-export:browsers
 
+      - name: Verify cross-resource stale-tab saves in Firefox and WebKit
+        run: pnpm test:e2e:cross-tab:browsers
+
       - name: Verify malformed save imports in Firefox and WebKit
         run: pnpm test:e2e:save-import-errors:browsers
 

@@ -7,8 +7,11 @@ starts two Remix and Beyond tabs with the same Money/Gem snapshot. One tab buys
 Blacksmith and saves; the stale tab then buys level-zero Offline Gems at its
 source-captured exact price (4,444 Gems) and saves. Both runtimes end with the
 stale snapshot (`Money 1000`, `Gems 0`, `Blacksmith 0`, `Offline Gems 1`), and
-Beyond's backup preserves the preceding Blacksmith snapshot. All three
-cross-tab E2E cases passed in Chromium.
+Beyond's backup preserves the preceding Blacksmith snapshot. This case passes
+in Chromium, Firefox, and WebKit and is now included in CI's cross-browser save
+checks. The longer four-write Active Power stale-save sequence hangs on its
+last Settings Save click in local WebKit; that sequence remains covered in
+Chromium only.
 
 **Natural Story endpoints across desktop viewports (2026-11-08):** extended the
 live pinned-Remix/Beyond comparison for Chapters 3-6 to 1366x768, 1920x1080, and
