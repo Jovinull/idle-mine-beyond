@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-08
 
+**Optional legacy save groups across engines (2026-11-08):** the live Settings
+comparison for absent optional groups, present-empty groups, and varied
+all-upgrade saves now runs against pinned Remix in Firefox and WebKit as well
+as the existing Chromium run. Each case compares complete decoded and encoded
+exports, including retained/reset upgrade levels and pickaxe defaults.
+
 **Offline reward on manual legacy import (2026-11-08):** a source-paired
 Settings text-field import of the pinned 3,601-second save now checks Remix's
 reward message, resource snapshot at the storage write, and byte-identical

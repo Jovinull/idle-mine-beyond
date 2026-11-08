@@ -190,7 +190,9 @@ paths have source-backed assertions.
   varied-settings/all-upgrades save into pinned Remix and Beyond, then compares
   their complete exported objects and encoded bytes. This state includes
   distinct resources, all 29 upgrade levels, five Power values, Story fields,
-  theme, notation, and both display preferences.
+  theme, notation, and both display preferences. The same browser differential
+  also covers the absent-optional-groups and present-empty-groups saves in
+  Firefox and WebKit via `test:e2e:legacy-import:browsers`.
   `tests/e2e/save-export-purchase-differential.spec.ts` also makes the captured
   Money, Gem, Planet Coin, and Wisdom upgrades in both live apps, plus Shift
   buy10 and Control buy100 Money purchases, plus Shift buy10 Gem and Planet
