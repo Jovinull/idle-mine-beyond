@@ -106,7 +106,9 @@ corresponding upgrades view, makes the successful purchase, and exports through
 Settings. The complete decoded legacy objects and encoded bytes match for Money
 Active Power at 1000 Money, Gem Offline Gems at 4444 Gems, Planet Coin Active
 Power at 100 Planet Coins, and Wisdom Simple Gem Boost at 10 billion Wisdom.
-Other levels/actions and wider runtime states remain open.
+Two captured bulk saves also match after live Shift buy10 and Control buy100
+Money Active Power actions, from level 0 through levels 10 and 100. Other
+purchase levels/actions and wider runtime states remain open.
 
 ## Main simulation time and autosave timer
 

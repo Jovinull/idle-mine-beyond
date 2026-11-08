@@ -18,8 +18,10 @@ in WebKit against the built web app; CI runs both from the static preview after
 **Live upgrade purchase exports (2026-11-08):** the pinned-source Chromium E2E
 now purchases the captured Money Active Power, Gem Offline Gems, Planet Coin
 Active Power, and Wisdom Simple Gem Boost cases in both apps, then compares
-complete Settings export objects and encoded bytes. The focused suite passed
-4/4; other purchase levels/actions and dynamic runtime exports remain open.
+complete Settings export objects and encoded bytes. It also compares exports
+after the captured Shift buy10 and Control buy100 Money purchases. The focused
+suite passed 6/6; other purchase levels/actions and dynamic runtime exports
+remain open.
 
 **WebKit save codec vectors (2026-11-08):** the captured valid-codec browser
 comparison also passes in Playwright WebKit (1/1), covering exact encoded

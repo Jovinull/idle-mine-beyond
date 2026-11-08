@@ -21,6 +21,8 @@ type PurchaseCapture = {
   group: PurchaseGroup;
   key: string;
   startingLevel: number;
+  endingLevel: number;
+  operation: { method: "buy" | "buy10" | "buy100" };
   startingResources: {
     money: DecimalCapture;
     gems: DecimalCapture;
@@ -244,10 +246,31 @@ async function comparePurchaseExport(
           .locator(".upgradelist .upgrade")
           .filter({ has: sourcePage.locator(`img[src$="${imageName}"]`) })
           .first();
-    await Promise.all([beyondCard.click(), sourceCard.click()]);
+    const modifier =
+      purchase.operation.method === "buy10"
+        ? "Shift"
+        : purchase.operation.method === "buy100"
+          ? "Control"
+          : undefined;
+    if (modifier) {
+      await Promise.all([
+        page.keyboard.down(modifier),
+        sourcePage.keyboard.down(modifier),
+      ]);
+    }
+    try {
+      await Promise.all([beyondCard.click(), sourceCard.click()]);
+    } finally {
+      if (modifier) {
+        await Promise.all([
+          page.keyboard.up(modifier),
+          sourcePage.keyboard.up(modifier),
+        ]);
+      }
+    }
     await expect(beyondCard).toHaveAttribute(
       "data-upgrade-level",
-      String(purchase.startingLevel + 1),
+      String(purchase.endingLevel),
     );
     if (isWisdomPurchase) {
       expect(await sourceCard.innerText()).toBe(await beyondCard.innerText());
@@ -304,6 +327,8 @@ for (const purchaseName of [
   "buy-uses-gem-resource",
   "buy-uses-planet-coin-resource",
   "buy-uses-wisdom-resource",
+  "buy10-from-zero-aligns-through-level-ten",
+  "buy100-from-zero-aligns-through-level-one-hundred",
 ]) {
   test(`exports the live save after ${purchaseName}`, async ({
     browser,
