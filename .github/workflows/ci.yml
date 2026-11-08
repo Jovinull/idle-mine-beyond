@@ -74,7 +74,7 @@ jobs:
         run: pnpm check
 
       - name: Install Playwright browser
-        run: pnpm exec playwright install --with-deps chromium firefox
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
 
       - name: Verify pinned Remix oracle corpus
         run: pnpm test:reference
@@ -84,6 +84,9 @@ jobs:
 
       - name: Verify save codec outputs in Firefox
         run: pnpm test:e2e:save-codec:firefox
+
+      - name: Verify save codec outputs in WebKit
+        run: pnpm test:e2e:save-codec:webkit
 
       - name: Verify live save export in Firefox
         run: pnpm test:e2e:save-export:firefox
