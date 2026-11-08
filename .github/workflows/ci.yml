@@ -88,8 +88,8 @@ jobs:
       - name: Verify save codec outputs in WebKit
         run: pnpm test:e2e:save-codec:webkit
 
-      - name: Verify live save export in Firefox
-        run: pnpm test:e2e:save-export:firefox
+      - name: Verify live save exports in Firefox and WebKit
+        run: pnpm test:e2e:save-export:browsers
 
       - name: Upload Playwright diagnostic evidence
         if: always() && !cancelled()

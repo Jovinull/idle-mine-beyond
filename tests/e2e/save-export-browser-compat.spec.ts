@@ -73,12 +73,15 @@ async function decodeExport(page: Page, encoded: string): Promise<unknown> {
   }, encoded);
 }
 
-test("matches a live varied all-upgrade save export in Firefox", async ({
+test("matches a live varied all-upgrade save export in this browser", async ({
   browser,
   browserName,
   page,
 }) => {
-  test.skip(browserName !== "firefox", "Dedicated Firefox export gate.");
+  test.skip(
+    browserName !== "firefox" && browserName !== "webkit",
+    "Dedicated Firefox and WebKit export gate.",
+  );
   test.setTimeout(180_000);
 
   const seed = JSON.parse(

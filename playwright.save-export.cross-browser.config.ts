@@ -8,7 +8,10 @@ export default defineConfig({
     baseURL: "http://127.0.0.1:4174",
     launchOptions: {},
   },
-  projects: [{ name: "firefox", use: { ...devices["Desktop Firefox"] } }],
+  projects: [
+    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+    { name: "webkit", use: { ...devices["Desktop Safari"] } },
+  ],
   webServer: {
     command:
       "node ../../node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 4174 --strictPort",

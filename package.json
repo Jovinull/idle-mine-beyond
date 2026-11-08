@@ -14,7 +14,7 @@
     "check": "pnpm content:check && pnpm assets:check && pnpm parity:traceability && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm site:build",
     "format": "prettier --plugin prettier-plugin-svelte --write .",
     "format:check": "prettier --plugin prettier-plugin-svelte --check .",
-    "lint": "eslint apps packages tests scripts eslint.config.js playwright.config.ts playwright.save-codec.config.ts playwright.save-codec.webkit.config.ts playwright.save-export.firefox.config.ts vite.config.ts",
+    "lint": "eslint apps packages tests scripts eslint.config.js playwright.config.ts playwright.save-codec.config.ts playwright.save-codec.webkit.config.ts playwright.save-export.cross-browser.config.ts vite.config.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json && pnpm --dir apps/web check && pnpm --dir apps/site check",
     "test": "pnpm test:unit && pnpm test:parity",
     "test:unit": "vitest run --project unit",
@@ -72,7 +72,7 @@
     "native:test": "cargo test --manifest-path apps/native/src-tauri/Cargo.toml",
     "native:check": "cargo check --manifest-path apps/native/src-tauri/Cargo.toml",
     "test:e2e:save-codec:firefox": "playwright test -c playwright.save-codec.config.ts tests/e2e/save-codec-browser-compat.spec.ts",
-    "test:e2e:save-export:firefox": "playwright test -c playwright.save-export.firefox.config.ts tests/e2e/save-export-firefox.spec.ts",
+    "test:e2e:save-export:browsers": "playwright test -c playwright.save-export.cross-browser.config.ts tests/e2e/save-export-browser-compat.spec.ts",
     "test:e2e:save-codec:webkit": "playwright test -c playwright.save-codec.webkit.config.ts tests/e2e/save-codec-browser-compat.spec.ts"
   },
   "devDependencies": {

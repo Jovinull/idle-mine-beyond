@@ -8,12 +8,17 @@ Last updated: 2026-11-08
 
 **Cross-browser save codec outputs (2026-11-07/08):** a focused browser comparison covers five captured valid codec vectors, seventeen canonical/controlled UTF-8 and escaping boundaries, and five permissive Base64 variants. Exact encoded strings, decoded values, hashes, and UTF-16 code units match pinned Remix captures in Chromium, Firefox, and WebKit (1/1 per browser). Malformed error messages remain Chromium-specific because browser engines format native `URIError` and `SyntaxError` text differently; dynamic exports outside the captured live state remain open. CI installs all three browsers and runs these bounded web-only tests.
 
-**Live Firefox multi-group save export (2026-11-08):** a dedicated Firefox
-browser test imports the pinned `varied-settings-and-all-upgrades` capture
-through Settings in both Remix and Beyond, then compares the complete decoded
-save object and exact encoded bytes. It passed 1/1 against the built web app;
-CI now runs it from the static preview after `pnpm check` builds the app.
-WebKit and other dynamic runtime exports remain open.
+**Live Firefox/WebKit multi-group save export (2026-11-08):** a dedicated
+cross-browser test imports the pinned `varied-settings-and-all-upgrades`
+capture through Settings in both Remix and Beyond, then compares the complete
+decoded save object and exact encoded bytes. It passed 1/1 in Firefox and 1/1
+in WebKit against the built web app; CI runs both from the static preview after
+`pnpm check` builds the app. Other dynamic runtime exports remain open.
+
+**WebKit save codec vectors (2026-11-08):** the captured valid-codec browser
+comparison also passes in Playwright WebKit (1/1), covering exact encoded
+strings, decoded JSON, UTF-8/escape boundaries, UTF-16 units, hashes, and
+permissive Base64 variants. CI installs WebKit and runs the dedicated gate.
 
 **Multi-group save export differential (2026-11-07):** the existing pinned
 `varied-settings-and-all-upgrades` save fixture now runs through the live
