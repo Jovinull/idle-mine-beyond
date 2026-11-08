@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-08
 
+**Hard Reset cancellation across engines (2026-11-08):** all three cancel
+positions now compare exact prompt order, unchanged Settings state, and
+unchanged origin storage against live pinned Remix in Firefox and WebKit, in
+addition to the existing Chromium differential. The focused browser checks
+passed in Firefox and WebKit.
+
 **Optional legacy save groups across engines (2026-11-08):** the live Settings
 comparison for absent optional groups, present-empty groups, and varied
 all-upgrade saves now runs against pinned Remix in Firefox and WebKit as well
