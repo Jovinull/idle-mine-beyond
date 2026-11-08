@@ -172,14 +172,15 @@ Remix/Beyond views at 1440x900 in both themes.
 | `craftPick`: candidate damage strictly greater replaces and saves; equal/lower damage is a dud and does not save                                                                                           | `better-craft-replaces-and-saves`, `equal-damage-is-a-dud`, `strictly-weaker-craft-is-a-dud`                                                                     | `tests/parity/pickaxe-crafting.test.ts` asserts candidate damage above/equal/below equipped damage and exact save/pickaxe outcome; `tests/e2e/pickaxe-crafting-visual.spec.ts` compares all three boundaries against Remix      |
 | `craftPick`: bulk loop continues after success and dud, stops at `times`, and saves each successful replacement using that intermediate pickaxe                                                            | `bulk-success-dud-then-insufficient`, `bulk-replacements-save-each-intermediate-state`                                                                           | `tests/parity/pickaxe-crafting.test.ts` compares ordered events, every saved snapshot, final state, and RNG consumption                                                                                                         |
 
-**Visual integration evidence (2026-11-07):**
+**Visual integration evidence (2026-11-08):**
 `tests/e2e/pickaxe-crafting-visual.spec.ts` replays the pinned
 `better-craft-replaces-and-saves`, `equal-damage-is-a-dud`,
 `strictly-weaker-craft-is-a-dud`, and `insufficient-gems-consumes-no-rng`
 sequences in both themes. It checks the displayed pickaxe name, consumes the
 source-recorded RNG draw count in each runtime (zero for the unaffordable
 attempt), and compares the full Mining screen at zero differing pixels at
-1440x900 and 1366x768. All sixteen outcome/theme/viewport comparisons pass.
+1440x900 and 1366x768. The four outcomes also match in both themes at
+1920x1080 (eight additional outcome/theme comparisons passed).
 
 - **Sampled (qualified):** source-forced cases cover the strict Expertise,
   quality-streak, name-type, cap, affordability, replacement, and bulk-stop

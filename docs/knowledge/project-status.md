@@ -1675,3 +1675,10 @@ zero-resource viewport comparison from 1366x768 to include the canonical
 1440x900 screen for Money, Gems, and Planet Coins in light and dark themes.
 The focused Windows Chromium run passed all 12 full-screen pairs across the
 two viewports. Remaining shop visual states stay open.
+
+**Pickaxe craft visual alternate viewport (2026-11-08):** extended source-paired
+full Mining comparisons to 1920x1080. Replacement, equal-damage dud,
+weaker-damage dud, and insufficient-Gem outcome screens passed in both themes;
+Gem Waster interior cost 10 and maximum cost 35 screens also passed in both
+themes (12 added cases total). The focused Playwright file passed 36/36.
+Other craft panel states and viewports remain open.

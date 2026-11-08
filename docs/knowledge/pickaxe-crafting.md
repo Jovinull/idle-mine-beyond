@@ -28,11 +28,10 @@ comparisons. These selected viewport cases do not cover all Mining panel states
 or resolutions.
 
 The Gem Waster selector at its interior cost 10 and maximum cost 35 now
-matches the full source screen in both themes at 1440x900 and 1366x768. The
-focused Playwright comparison passed all eight state/theme/viewport cases,
-including the enabled increase control and arrow image at cost 10, and the
-disabled control with no image at cost 35. Other selector states, craft
-outcomes, and resolutions remain open.
+matches the full source screen in both themes at 1440x900, 1366x768, and
+1920x1080. The selector comparison passed all four 1920x1080 state/theme cases, including the enabled increase control and arrow image at
+cost 10, and the disabled control with no image at cost 35. Other selector
+states and resolutions remain open.
 
 ## Craft flow
 
@@ -66,4 +65,4 @@ Remux's generator sets quality to 1 and calculates power from input gems Ã— 20 Ã
 
 ## Strict craft replacement boundary
 
-The pinned functions.craftPick() result now has a source-captured lower-than-equipped case as well as the equal-damage dud and stronger replacement. With the same ten recorded random draws, the crafted Bad Mud Pick deals 31.185000000000002: it replaces Toy Pickaxe damage 20, is a dud at equal damage, and is a dud against Higher Damage Pickaxe damage 31.5. tests/parity/pickaxe-crafting.test.ts asserts the above/equal/below relation and save/pickaxe outcomes; tests/e2e/pickaxe-crafting-visual.spec.ts compares the weaker-dud Mining screen with pinned Remix in both themes at 1440x900 and 1366x768.
+The pinned functions.craftPick() result now has a source-captured lower-than-equipped case as well as the equal-damage dud and stronger replacement. With the same ten recorded random draws, the crafted Bad Mud Pick deals 31.185000000000002: it replaces Toy Pickaxe damage 20, is a dud at equal damage, and is a dud against Higher Damage Pickaxe damage 31.5. tests/parity/pickaxe-crafting.test.ts asserts the above/equal/below relation and save/pickaxe outcomes; tests/e2e/pickaxe-crafting-visual.spec.ts compares the four craft outcome Mining screens with pinned Remix in both themes at 1440x900 and 1366x768, and all four outcomes also match at 1920x1080.

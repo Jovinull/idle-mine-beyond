@@ -58,6 +58,7 @@ const cases = [
 const viewports = [
   { width: 1440, height: 900 },
   { width: 1366, height: 768 },
+  { width: 1920, height: 1080 },
 ] as const;
 const viewportCases = viewports.flatMap((viewport) =>
   cases.map((caseName) => ({ caseName, viewport })),
