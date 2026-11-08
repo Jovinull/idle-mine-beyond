@@ -246,6 +246,10 @@ export interface CreateRemixWebGameSessionInput {
   readonly clearAllStorage: () => void | Promise<void>;
   readonly readLegacySave: () => string | null | Promise<string | null>;
   readonly decodeBase64?: (encoded: string) => string;
+  readonly formatLegacyLoadError?: (error: {
+    name: string;
+    message: string;
+  }) => { name: string; message: string };
   readonly resolveNumberFormatter: (
     index: number,
   ) => RemixOfflineNumberFormatter;
@@ -377,6 +381,9 @@ export function createRemixWebGameSession(
         ...(input.decodeBase64 === undefined
           ? {}
           : { decodeBase64: input.decodeBase64 }),
+        ...(input.formatLegacyLoadError === undefined
+          ? {}
+          : { formatApplicationError: input.formatLegacyLoadError }),
         catalog: input.catalog,
         clock: input.clock,
         resolveNumberFormatter: input.resolveNumberFormatter,
@@ -636,6 +643,9 @@ export function createRemixWebGameSession(
           ...(input.decodeBase64 === undefined
             ? {}
             : { decodeBase64: input.decodeBase64 }),
+          ...(input.formatLegacyLoadError === undefined
+            ? {}
+            : { formatApplicationError: input.formatLegacyLoadError }),
           catalog: input.catalog,
           clock: input.clock,
           resolveNumberFormatter: input.resolveNumberFormatter,
@@ -680,6 +690,9 @@ export function createRemixWebGameSession(
           ...(input.decodeBase64 === undefined
             ? {}
             : { decodeBase64: input.decodeBase64 }),
+          ...(input.formatLegacyLoadError === undefined
+            ? {}
+            : { formatApplicationError: input.formatLegacyLoadError }),
           catalog: input.catalog,
           clock: input.clock,
           resolveNumberFormatter: input.resolveNumberFormatter,

@@ -32,6 +32,10 @@ export interface LoadRemixLegacySaveInput {
   state: RemixLegacySaveApplicationState;
   saveString: string;
   decodeBase64?: (encoded: string) => string;
+  formatApplicationError?: (error: { name: string; message: string }) => {
+    name: string;
+    message: string;
+  };
   catalog: RemixMineObjectCatalog;
   clock: RemixLegacySaveClock & RemixOfflineClock;
   resolveNumberFormatter: RemixLegacySaveNumberFormatterResolver;
@@ -90,11 +94,12 @@ export function loadRemixLegacySaveIntoState(
     });
   } catch (error) {
     if (!(error instanceof RemixLegacySaveApplicationError)) throw error;
+    const loadError = { name: error.name, message: error.message };
     return {
       status: "applicationFailed",
       partialState: error.partialState,
       effects: error.effects,
-      error: { name: error.name, message: error.message },
+      error: input.formatApplicationError?.(loadError) ?? loadError,
       ...(error.evaluatedLastActiveFallbackMs === undefined
         ? {}
         : {

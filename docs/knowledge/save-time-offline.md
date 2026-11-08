@@ -153,7 +153,11 @@ Base64 failures preserve each browser engine's exception name and message. The
 source-paired `tests/e2e/save-import-error-browser-compat.spec.ts` checks ten
 Base64/URI/JSON failure inputs through live Settings imports in Firefox and
 WebKit, including visible error text and unchanged storage. The default codec
-remains deterministic for non-browser callers. One captured field-application
-TypeError remains Chromium-only because Beyond's minified error string differs
-from the pinned source's unminified identifier; cross-engine parity for that
-message is open.
+remains deterministic for non-browser callers. The same cross-browser test
+compares the missing-Story field-application TypeError and verifies no storage
+writes. A web-session error formatter restores the pinned `loadObj` identifier
+when production minification changes the expression text. The other nineteen
+captured field-application TypeErrors remain an open cross-browser domain: a
+paired `json-null-root` probe still reports `t` in Firefox and `t[e]` in WebKit
+instead of Remix's `loadObj.money`, and eighteen other cases have not been
+compared outside Chromium.

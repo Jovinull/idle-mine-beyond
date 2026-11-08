@@ -610,6 +610,17 @@
       },
       readLegacySave: readBrowserRemixLegacySave,
       decodeBase64: (encoded) => window.atob(encoded),
+      formatLegacyLoadError: (error) => ({
+        ...error,
+        message:
+          error.name === "TypeError"
+            ? // Firefox and WebKit include the source expression's local name.
+              error.message.replace(
+                /\b[A-Za-z_$][\w$]*(?=\.(?:story|settings|upgrades|gemUpgrades|planetCoinUpgrades|powers|pickaxe)\b)/g,
+                "loadObj",
+              )
+            : error.message,
+      }),
       resolveNumberFormatter(index) {
         const formatter = formatters[index];
         if (!formatter) {

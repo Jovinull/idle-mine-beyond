@@ -6,9 +6,15 @@ type ImportErrorCase = {
   name: string;
   encoded: string;
   thrownErrorName: string | null;
+  thrownErrorMessage?: string | null | undefined;
 };
 type ErrorFixture = {
-  data: { saveSemantics: { loadErrors: readonly ImportErrorCase[] } };
+  data: {
+    saveSemantics: {
+      loadErrors: readonly ImportErrorCase[];
+      fieldApplicationErrors: readonly ImportErrorCase[];
+    };
+  };
 };
 type SourceLoadError = { name: string; message: string };
 
@@ -44,6 +50,22 @@ async function selectSettings(
     beyondPage.locator("article.settings [data-settings-save-field]"),
   ).toBeVisible();
   await expect(sourcePage.locator("article.settings textarea")).toBeVisible();
+}
+
+async function resetPairedPages(
+  beyondPage: Page,
+  sourcePage: Page,
+): Promise<void> {
+  await Promise.all([beyondPage.reload(), sourcePage.reload()]);
+  await Promise.all([
+    expect(beyondPage.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    ),
+    readySourcePage(sourcePage),
+  ]);
+  await selectSettings(beyondPage, sourcePage);
+  await instrumentSourceLoadErrors(sourcePage);
 }
 
 async function storageSnapshot(page: Page): Promise<Record<string, string>> {
@@ -148,7 +170,7 @@ async function importCase(
   }
 }
 
-test("matches every pinned malformed-save outcome in this browser", async ({
+test("matches captured codec and missing-Story errors in this browser", async ({
   browser,
   page,
 }, testInfo) => {
@@ -200,6 +222,35 @@ test("matches every pinned malformed-save outcome in this browser", async ({
         ).toEqual(sourceBefore);
       });
     }
+
+    const missingStoryCase = fixture.data.saveSemantics.fieldApplicationErrors
+      .filter(({ name }) => name === "missing-story-after-resources")
+      .map(({ name, encoded, thrownErrorName, thrownErrorMessage }) => ({
+        name,
+        encoded,
+        thrownErrorName,
+        thrownErrorMessage,
+      }))[0];
+    if (!missingStoryCase) {
+      throw new Error("Missing captured story-field application failure.");
+    }
+
+    await resetPairedPages(page, sourcePage);
+    const [beyondBefore, sourceBefore] = await Promise.all([
+      storageSnapshot(page),
+      storageSnapshot(sourcePage),
+    ]);
+    await test.step(missingStoryCase.name, async () => {
+      await importCase(page, sourcePage, missingStoryCase);
+      expect(
+        await storageSnapshot(page),
+        `${missingStoryCase.name} Beyond storage`,
+      ).toEqual(beyondBefore);
+      expect(
+        await storageSnapshot(sourcePage),
+        `${missingStoryCase.name} Remix storage`,
+      ).toEqual(sourceBefore);
+    });
   } finally {
     await sourceContext.close().catch(() => undefined);
   }
