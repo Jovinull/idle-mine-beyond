@@ -126,7 +126,7 @@ test("matches captured Remix save codec vectors in Chromium", async ({
   });
 });
 
-test("matches Chromium's Remix decoder for all two-byte high-byte sequences", async ({
+test("matches Chromium's Remix decoder for all one- and two-byte sequences", async ({
   page,
 }) => {
   test.setTimeout(10 * 60 * 1000);
@@ -136,22 +136,13 @@ test("matches Chromium's Remix decoder for all two-byte high-byte sequences", as
   const percentBytes = new Set<string>();
   const percent = (bytes: number[]) =>
     bytes.map((byte) => `%${byte.toString(16).padStart(2, "0")}`).join("");
-  for (let byte = 0x80; byte <= 0xff; byte += 1) {
+  for (let byte = 0x00; byte <= 0xff; byte += 1) {
     percentBytes.add(percent([byte]));
   }
-  for (let lead = 0x80; lead <= 0xff; lead += 1) {
+  for (let lead = 0x00; lead <= 0xff; lead += 1) {
     for (let tail = 0x00; tail <= 0xff; tail += 1) {
       percentBytes.add(percent([lead, tail]));
     }
-  }
-
-  const leads = [
-    0xc0, 0xc1, 0xc2, 0xdf, 0xe0, 0xe1, 0xed, 0xef, 0xf0, 0xf1, 0xf4, 0xf5,
-    0xff,
-  ];
-  const tails = [0x00, 0x7f, 0x80, 0x8f, 0x90, 0xbf, 0xc0, 0xff];
-  for (const lead of leads) {
-    for (const tail of tails) percentBytes.add(percent([lead, tail]));
   }
 
   for (const bytes of [
@@ -168,7 +159,7 @@ test("matches Chromium's Remix decoder for all two-byte high-byte sequences", as
   const encodedInputs = [...percentBytes].map((value) =>
     Buffer.from(value, "ascii").toString("base64"),
   );
-  expect(encodedInputs).toHaveLength(32_899);
+  expect(encodedInputs).toHaveLength(65_795);
   for (let offset = 0; offset < encodedInputs.length; offset += 1024) {
     const encodedChunk = encodedInputs.slice(offset, offset + 1024);
     const sourceResults = await page.evaluate((encoded) => {

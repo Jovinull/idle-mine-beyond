@@ -14,7 +14,7 @@
   E2E checks all eleven source-captured malformed/error cases against the exact
   Chromium alert and parse messages and verifies failed imports do not write.
   `tests/e2e/save-codec.spec.ts` also differentially checks generated
-  percent-encoded UTF-8 byte boundaries against Chromium's native decoder
+  percent-encoded byte sequences against Chromium's native decoder
   pipeline used by the pinned source.
 - **Cross-browser malformed-import evidence (2026-11-08):**
   `tests/e2e/save-import-error-browser-compat.spec.ts` submits the ten captured
@@ -45,20 +45,19 @@
   format. Synthetic codec vectors cover all three Base64 output padding
   classes. The UTF-8 byte-to-code-unit corruption on canonical import is
   observed legacy behavior and must be preserved.
-- **Additional external-byte evidence (2026-11-08):** 32,899 controlled
-  wrappers cover each single byte from `0x80` through `0xFF`, every ordered
-  two-byte sequence whose first byte is `0x80` through `0xFF`, and three
-  additional three-byte prefixes. Their encoded input is compared with the source's
+- **Additional external-byte evidence (2026-11-08):** 65,795 controlled
+  wrappers cover every one-byte and ordered two-byte sequence across the full
+  byte range, plus three additional three-byte prefixes. Their encoded input is
+  compared with the source's
   `atob` → `decodeURIComponent` → `unescape` → JSON parse expression in
   Chromium; Beyond matches status, decoded JSON where decoding succeeds, and
   exact decode/parse errors. These are manually constructed import probes, not
   canonical exports. Longer byte strings and historical save shapes remain
   open.
-- **Open input domain:** arbitrary external byte strings are not exhaustively
-  enumerated; the generated set covers all one-byte high-byte inputs and all
-  two-byte inputs beginning with a high byte, but not arbitrary lengths or all
-  first-byte domains. This is not a formula/RNG sample claim. Do not infer
-  historical save-schema support from the current serializer.
+- **Open input domain:** external byte strings longer than two bytes are not
+  exhaustively enumerated; only three selected three-byte prefixes are covered.
+  This is not a formula/RNG sample claim. Do not infer historical save-schema
+  support from the current serializer.
 
 ### Save codec function and branch trace
 

@@ -1530,14 +1530,14 @@ storage is present in both runtimes, and exported text matches exactly. Other
 Settings states and save-text contents remain open; Desktop UI and visual
 parity remains In Progress.
 
-**Malformed save byte-boundary differential (2026-11-08):** `save-codec.spec.ts`
-now compares 32,899 deterministically generated percent-encoded byte sequences
-against Chromium's implementation of Remix's decoder expression. The set covers
-all high-byte singletons, all two-byte sequences with a high-byte lead, and
-three longer prefixes; Beyond matches status, decoded JSON where decoding
+**Malformed save byte-sequence differential (2026-11-08):** `save-codec.spec.ts`
+now compares 65,795 deterministically generated percent-encoded byte sequences
+against Chromium's implementation of Remix's decoder expression. The set
+covers every one-byte and ordered two-byte sequence across the full byte range,
+plus three longer prefixes; Beyond matches status, decoded JSON where decoding
 succeeds, and exact decode/parse errors. The focused Chromium E2E passed 1/1
-in 26.7 seconds. Arbitrary lengths and historical save shapes remain open, so
-Save encoding and save shape stays In Progress.
+in 34.2 seconds. Longer byte strings and historical save shapes remain open,
+so Save encoding and save shape stays In Progress.
 
 **Shop Gem exact-price alternate viewport (2026-11-07):** extended the pinned
 Remix/Beyond affordability differential to capture the full Gem exact-price
