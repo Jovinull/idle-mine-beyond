@@ -181,6 +181,16 @@ screenshots and state JSON are attached to the failed test. No source-backed
 CSS difference explains the raster delta, so the strict comparison remains
 open without a tolerance or mask.
 
+**Dark exact-price rerun (2026-11-08):** the separate slow affordability E2E
+reproduced a one-pixel full-viewport delta for the exact-price Planet Coin
+Active Power state at `(697,152)` in pinned Chromium 153.0.8010.12, Windows,
+1440x900. Remix is RGB `(4,4,4)` and Beyond is `(3,3,3)`. The isolated card
+and detail crops matched; the full viewport differed at this one rounded
+corner. All computed card properties, card geometry, and matched `body`/`html`
+styles are equal. The screenshot pair and state diagnostics were retained in
+the Playwright failure output. This reproduces the existing strict visual
+gap but does not identify a source-backed CSS discrepancy.
+
 The web route's `main` container has no source-specific CSS declaration in
 the pinned `main.css`; scrolling is controlled by `body { overflow-y: hidden; }`
 and the source's nested screen scrollers. Beyond previously added

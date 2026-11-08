@@ -84,6 +84,11 @@ passed and dark failed only the Planet Coin exact-price full-screen hash at
 computed styles match. The shop row remains In Progress for this exact visual
 difference and its remaining state coverage.
 
+The focused dark-theme rerun on 2026-11-08 reproduced that exact-price delta
+at the same single pixel. Card and detail crop hashes passed; the full-screen
+pair differed only at the rounded card corner. The strict screenshot check
+remains open.
+
 The repeated dark affordability run immediately after the failure passed. The
 E2E now saves the exact compared Remix/Beyond screenshot buffers as attachments
 when their hashes differ; Playwright's default post-failure screenshots had

@@ -2,6 +2,15 @@
 
 Last updated: 2026-11-08
 
+**Dark Planet Coin exact-price raster rerun (2026-11-08):** the focused
+`matches Remix shop affordability boundaries in dark theme` E2E reproduced one
+viewport pixel delta at `(697,152)` for the exact-price Active Power state at
+1440x900: pinned Remix RGB `(4,4,4)`, Beyond RGB `(3,3,3)`. The card and detail
+crop comparisons passed, and the page screenshots differed at that single
+rounded-corner pixel. Captured card, `body`, and `html` computed styles and
+geometry matched; no source-backed paint difference was identified. The
+strict shop visual gap remains open, without a tolerance or mask.
+
 **Malformed save-import browser compatibility (2026-11-08):** the web session
 now injects the browser's native Base64 decoder into the pure legacy codec.
 Source-paired Settings imports match all ten captured Base64/URI/JSON failure
