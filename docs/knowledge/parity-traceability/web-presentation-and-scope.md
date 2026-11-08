@@ -204,9 +204,13 @@ explicit visual gaps above.
   both themes. A second differential now covers the refreshed full-screen hints
   for the first card in all three resource groups, in both themes at 1440×900
   and 1366×768. These remain selected states and do not cover all shop balances
-  or screens. The
-  Gem Blacksmith Skill equality-at-cap (50) and saved
-  over-cap (51) states now compare card pixels (1px inset) and full hover-detail
+  or screens. The all-cap differential also compares strict full-screen hashes at the
+  first finite cap in each Money, Gem, and Planet Coin group (Blacksmith Bonus
+  10, Blacksmith Skill 50, and Active Power 10), in both themes. These six
+  selected screens match pinned Remix; all-card cap boundaries continue to
+  compare card and hover-detail pixels at cap-1/cap/cap+1. Separately, the
+  Gem Blacksmith Skill equality-at-cap (50) and saved over-cap (51) states now
+  compare card pixels (1px inset) and full hover-detail
   pixels against pinned Remix in both themes, in addition to labels, styles,
   and click/no-op behavior. At exact Gem affordability, three repeated paired
   full-viewport captures per theme matched at zero pixels; the earlier reported
@@ -335,6 +339,7 @@ mismatch remains open.
 | `Scripts/Define/game.js:gemUpgradesUnlocked` plus `index.html` `.upg-tabs` visibility branch at `highestMineObjectLevel >= 61`                         | Pinned source predicate/template and source-shaped saves at high-water 60/61                | `tests/e2e/gem-upgrade-tab-gate-visual.spec.ts` asserts the hidden/visible group and exact full-screen source/Beyond hashes in both themes at 1440×900                               |
 | `index.html`: header Planet Coin amount and shop tab appear at `highestMineObjectLevel >= 90`                                                          | Four pinned source screenshots at levels 89/90 in light/dark                                | `tests/e2e/priority-visual.spec.ts` asserts tab hidden/visible and compares all four full-screen source screenshots at zero pixels on Windows                                        |
 | Card branches: ordinary/capped label, affordable/unaffordable, enabled/disabled, selected/highlighted                                                  | `upgradeSemantics` display/purchase cases and source captures                               | `tests/parity/remix-upgrade-display.test.ts`, `tests/parity/upgrades.test.ts`, and `tests/e2e/remix-app.spec.ts` assert values and live purchase outcomes                            |
+| Every finite Money/Gem/Planet Coin cap boundary: card/detail appearance at cap-1, cap, cap+1; representative group screen at cap                       | Pinned `upgradeSemantics` cap samples and live source rendering                             | `tests/e2e/upgrade-all-caps-differential.spec.ts` compares all capped cards/details and six full-screen cap states (three groups × two themes)                                       |
 | `Components/upgrade.js:canAfford` resource selection and exact/insufficient affordability; card and highlighted-detail appearance                      | Pinned zero-resource, below-exact Money, and exact-price cases for all three shop resources | `tests/e2e/upgrade-affordability-differential.spec.ts` compares source/Beyond state, class/style/layout, click result, and exact card/detail PNG hashes in both themes               |
 | `Themes/dark.css`: generic important button-hover rule versus `.upg-tabs button:hover`; the pinned cascade keeps a hovered resource tab at `#636363`   | Live source computed style after theme CSS load and selecting each group                    | `tests/e2e/upgrade-affordability-differential.spec.ts` compares computed hovered-tab background for Money/Gem/PC in both themes; Beyond now matches `#636363`                        |
 | `Components/upgrade.js` exact `level === maxLevel` dimming versus `Upgrade.buy` strict `level < getMaxLevel()` at Gem cap 50 and saved level 51        | `upgradeSemantics.groups.gems.blacksmithSkill` source displays at 50/51                     | `tests/e2e/upgrade-cap-quirk.spec.ts` compares labels, details, class, opacity, cursor, click no-op, and 1px-inset card/full detail pixel hashes in both themes against pinned Remix |

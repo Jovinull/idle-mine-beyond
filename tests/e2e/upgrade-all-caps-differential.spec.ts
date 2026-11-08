@@ -170,6 +170,14 @@ async function compareFiniteCapBoundaries(
     ),
   ) as CappedUpgradeFixture;
   const fixtureGroups = fixture.data.upgradeSemantics.groups;
+  const representativeCapKeys = Object.fromEntries(
+    groups.map((group) => [
+      group,
+      Object.keys(fixtureGroups[group]).find((key) =>
+        Number.isFinite(fixtureGroups[group][key]!.maxLevel),
+      ),
+    ]),
+  ) as Record<ShopGroup, string | undefined>;
   const input = JSON.parse(
     fixture.data.saveApplicationSemantics.inputJson,
   ) as LegacySave;
@@ -366,6 +374,36 @@ async function compareFiniteCapBoundaries(
             beyondDetailsVisual.hash,
             `${theme} ${group}.${key} level ${level} detail pixels`,
           ).toBe(sourceDetailsVisual.hash);
+
+          if (level === cap && representativeCapKeys[group] === key) {
+            const fullScreenClip = { x: 0, y: 0, width: 1440, height: 900 };
+            const [beyondFullScreen, sourceFullScreen] = await Promise.all([
+              stableClipScreenshotHash(page, fullScreenClip),
+              stableClipScreenshotHash(sourcePage, fullScreenClip),
+            ]);
+            if (beyondFullScreen.hash !== sourceFullScreen.hash) {
+              await Promise.all([
+                testInfo.attach(
+                  `${theme}-${group}-cap-beyond-full-screen.png`,
+                  {
+                    body: beyondFullScreen.png,
+                    contentType: "image/png",
+                  },
+                ),
+                testInfo.attach(
+                  `${theme}-${group}-cap-source-full-screen.png`,
+                  {
+                    body: sourceFullScreen.png,
+                    contentType: "image/png",
+                  },
+                ),
+              ]);
+            }
+            expect(
+              beyondFullScreen.hash,
+              `${theme} ${group}.${key} full-screen at cap`,
+            ).toBe(sourceFullScreen.hash);
+          }
 
           const [beyondStyle, sourceStyle] = await Promise.all([
             beyondCard.evaluate((element) => {
