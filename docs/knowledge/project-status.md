@@ -9,6 +9,14 @@ alerts and parse errors in Firefox and WebKit, with no storage writes. The
 all twenty captured field-application TypeErrors now also match pinned Remix
 in Firefox and WebKit, with storage unchanged after each failed import.
 
+**Dark shop catalog pixel recheck (2026-11-08):** the controlled level-one
+catalog comparison passed every card/detail assertion, then reproduced a
+single full-screen pixel delta in dark Planet Coins at `(810,152)` (Beyond RGB
+4, Remix RGB 3). The source and Beyond cards have identical bounds and
+computed styles; no
+source-backed CSS difference has been identified. The strict comparison stays
+open without a mask or tolerance.
+
 **Browser save-storage failure coverage (2026-11-08):** injected primary and
 backup write failures, primary and backup read failures, and native localStorage
 quota failures pass in both Firefox and WebKit (4 injected-failure and 2

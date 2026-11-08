@@ -322,6 +322,17 @@ and full screens against Remix at level 1 in <light|dark> theme" --workers=1
 shop affordability boundaries in" --workers=1 --retries=0` for both affordability
 themes.
 
+**Dark level-one catalog recheck (2026-11-08):**
+`pnpm exec playwright test -c playwright.slow.config.ts
+tests/e2e/upgrade-affordability-differential.spec.ts --grep "level 1 in dark
+theme"` passed all 22 card and detail pixel checks, then failed the Planet Coin
+full-screen hash with exactly one different pixel `(810,152)`, Beyond RGB
+`(4,4,4)` and Remix RGB `(3,3,3)`. The attached full-screen pair has no other
+pixel differences; the card boxes and all computed card/ancestor styles match.
+The pinned `main.css` and Beyond `UpgradePanel.svelte` both specify the same
+2px black border and 3px radius. No source-backed rendering difference has
+been established, so the exact assertion remains open without a mask/tolerance.
+
 **Affordability mismatch attachment follow-up (2026-11-07):** a fresh dark
 affordability run reproduced the Planet Coin exact-price mismatch, then an
 immediate rerun passed. The default Playwright failure screenshots were taken
