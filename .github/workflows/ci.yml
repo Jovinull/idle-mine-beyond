@@ -85,6 +85,9 @@ jobs:
       - name: Verify save codec outputs in Firefox
         run: pnpm test:e2e:save-codec:firefox
 
+      - name: Verify live save export in Firefox
+        run: pnpm test:e2e:save-export:firefox
+
       - name: Upload Playwright diagnostic evidence
         if: always() && !cancelled()
         uses: actions/upload-artifact@v7
