@@ -140,9 +140,11 @@ test("matches Remix after changing and saving Settings preferences", async ({
   };
 
   const compareScreen = async (name: string) => {
+    const beyondViewportWidth = page.viewportSize()?.width ?? 1440;
+    const remixViewportWidth = sourcePage.viewportSize()?.width ?? 1440;
     await Promise.all([
-      page.mouse.move(1439, 0),
-      sourcePage.mouse.move(1439, 0),
+      page.mouse.move(beyondViewportWidth - 1, 0),
+      sourcePage.mouse.move(remixViewportWidth - 1, 0),
       page.evaluate(() => document.fonts.ready),
       sourcePage.evaluate(() => document.fonts.ready),
     ]);
@@ -337,6 +339,12 @@ test("matches Remix after changing and saving Settings preferences", async ({
       remixExportLight,
     );
     await compareScreen("settings-export-light");
+
+    await Promise.all([
+      page.setViewportSize({ width: 1366, height: 768 }),
+      sourcePage.setViewportSize({ width: 1366, height: 768 }),
+    ]);
+    await compareScreen("settings-export-light-1366x768");
   } finally {
     await sourceContext.close().catch(() => undefined);
   }

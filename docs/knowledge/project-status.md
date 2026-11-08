@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-08
 
+**Settings Export alternate viewport (2026-11-08):** extended the live
+pinned-Remix/Beyond Settings comparison to 1366x768 after changing preferences,
+saving, and exporting in light theme. The final full-screen comparison matched
+at zero pixels in Chromium; all three focused Settings visual tests passed.
+Other Settings states at alternate viewports remain open.
+
 **Natural Chapter 3-6 dark route-end screens (2026-11-08):** extended the live
 pinned-Remix/Beyond full-screen differential to dark theme at 1440x900. All four
 natural route-end states matched at zero pixels in Chromium; the existing light
