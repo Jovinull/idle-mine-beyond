@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-08
 
+**Wisdom modifier purchases across engines (2026-11-08):** the pinned Remix /
+Beyond differential now runs all seven Wisdom upgrades through single, Shift,
+Control, and combined Shift+Control purchase inputs in Firefox and WebKit, in
+addition to Chromium. All 28 actions per engine matched levels, Wisdom balance,
+and card labels. The broader Wisdom/Powers row stays In Progress for its
+remaining state and visual evidence.
+
 **Failed save-import partial-state exports (2026-11-08):** added a source-paired
 post-error export check for all twenty captured field-application failures.
 Remix and Beyond exports match byte-for-byte in Chromium, Firefox, and WebKit,
