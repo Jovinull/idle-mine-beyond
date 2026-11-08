@@ -6184,6 +6184,22 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 operation: { method: "buy10" },
               },
               {
+                name: "buy10-gem-multiplier-from-zero-aligns-through-level-ten",
+                group: "gems",
+                key: "gemMultiply",
+                level: 0,
+                balance: "100000",
+                operation: { method: "buy10" },
+              },
+              {
+                name: "buy10-planet-coin-gem-multiplier-from-zero-aligns-through-level-ten",
+                group: "planetCoins",
+                key: "gemMultiply",
+                level: 0,
+                balance: "30000000000",
+                operation: { method: "buy10" },
+              },
+              {
                 name: "buy10-aligns-current-level",
                 group: "money",
                 key: "activePower",

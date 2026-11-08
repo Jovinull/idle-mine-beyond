@@ -328,6 +328,8 @@ for (const purchaseName of [
   "buy-uses-planet-coin-resource",
   "buy-uses-wisdom-resource",
   "buy10-from-zero-aligns-through-level-ten",
+  "buy10-gem-multiplier-from-zero-aligns-through-level-ten",
+  "buy10-planet-coin-gem-multiplier-from-zero-aligns-through-level-ten",
   "buy100-from-zero-aligns-through-level-one-hundred",
 ]) {
   test(`exports the live save after ${purchaseName}`, async ({
