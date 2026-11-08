@@ -225,7 +225,13 @@ explicit visual gaps above.
   Remix RGB `(4,4,4)`, Beyond RGB `(3,3,3)`. Card and detail crop hashes
   passed, and the full-screen images differed at only that rounded-corner
   pixel. The card and matched root computed styles were equal; the raster cause
-  remains unidentified. These remain strict visual gaps, as do the Money
+  remains unidentified. A controlled Windows Chromium run reproduced the
+  level-two dark Planet Coins screen mismatch at that same `(810,152)` pixel;
+  the 22 card/detail crops and all 477 computed styles for the affected card
+  matched. Applying `border-radius: 0` only to the second card on both pages
+  made the full-screen hashes equal. This test-only diagnostic identifies the
+  rounded corner raster as the differing region, not a player-facing CSS fix.
+  These remain strict visual gaps, as do the Money
   below-price boundary and exact-price boundary for all three tabs in both
   themes (eight paired viewports at 1440x900). Zero-resource screens now match
   for each tab at 1440x900 and 1366x768 in both themes (12 paired screens). Other
