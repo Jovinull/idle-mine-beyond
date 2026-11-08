@@ -607,3 +607,5 @@ Desktop UI visual scope remains open.
 | ---------------------------------------------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | Web SPA/PWA build and browser route are the only release target in parity-v1 | current SvelteKit static-adapter build and browser smoke run     | `tests/e2e/remix-app.spec.ts` plus `pnpm build` validate the web target                       |
 | Tauri packaging, native filesystem, mobile SDKs, and WebView runtime parity  | no Remix-native source exists; native implementation is deferred | **Out of web-v1 scope.** No native parity or packaging completion is inferred from web checks |
+
+The Mining craft visual slice also covers index.html hiding selector arrows when Money Gem Waster level is 0 despite secondary Gem Waster level 2. The gem-waster-not-owned fixture records displayed cost 1 and no buttons; paired full screens at 1366x768, 1440x900, and 1920x1080 in both themes passed (6/6).

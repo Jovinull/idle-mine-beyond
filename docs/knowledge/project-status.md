@@ -1835,3 +1835,5 @@ balances are `33422.1074644512` Gems and `18152641816.016598` Planet Coins.
 Both Remix/Beyond Settings exports match in full decoded fields and encoded
 bytes (2/2 Chromium E2E cases); the focused purchase and composition assertions
 also pass (9/9). Other levels and bulk methods remain open.
+
+**Gem Waster unowned selector state (2026-11-08):** captured the source branch where Money Gem Waster level 0 hides both selector arrows despite secondary Gem Waster level 2; the displayed cost is 1. Paired full-screen Chromium comparisons passed in both themes at 1366x768, 1440x900, and 1920x1080 (6/6). Other selector states and resolutions remain open.

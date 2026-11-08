@@ -28,7 +28,21 @@ type CraftAttempt = {
 type CraftVisualFixture = {
   data: {
     saveApplicationSemantics: { inputJson: string };
-    pickaxeCraftingSemantics: { attempts: CraftAttempt[] };
+    pickaxeCraftingSemantics: {
+      attempts: CraftAttempt[];
+      craftControls: {
+        controls: {
+          name: string;
+          input: {
+            usedGemsLevel: number;
+            moneyGemWasterLevel: number;
+            gemUpgradeWasterLevel: number;
+          };
+          displayedGemCost: string;
+          buttons: { disabled: boolean; image: string | null }[];
+        }[];
+      };
+    };
   };
 };
 
@@ -36,6 +50,7 @@ type LegacySave = {
   gems: string;
   mineObjectLevel: number;
   highestMineObjectLevel: number;
+  usedGemsLevel: number;
   lastActive: number;
   settings: Record<string, unknown>;
   upgrades: Record<string, { level: number }>;
@@ -492,5 +507,145 @@ for (const selectorState of gemWasterVisualStates) {
         }
       });
     }
+  }
+}
+
+for (const theme of ["light", "dark"] as const) {
+  for (const viewport of viewports) {
+    test(`matches Remix when Gem Waster is not owned in ${theme} theme at ${viewport.width}x${viewport.height}`, async ({
+      browser,
+      page,
+    }) => {
+      const fixture = JSON.parse(
+        await readFile(
+          new URL(
+            "../fixtures/parity/remix-reference-corpus.json",
+            import.meta.url,
+          ),
+          "utf8",
+        ),
+      ) as CraftVisualFixture;
+      const sourceControl =
+        fixture.data.pickaxeCraftingSemantics.craftControls.controls.find(
+          ({ name }) => name === "gem-waster-not-owned",
+        );
+      if (!sourceControl) {
+        throw new Error(
+          "Pinned Gem Waster not-owned control state is missing.",
+        );
+      }
+      expect(sourceControl.input).toEqual({
+        usedGemsLevel: 0,
+        moneyGemWasterLevel: 0,
+        gemUpgradeWasterLevel: 2,
+      });
+      expect(sourceControl.displayedGemCost).toBe("1");
+      expect(sourceControl.buttons).toEqual([]);
+
+      const save = JSON.parse(
+        fixture.data.saveApplicationSemantics.inputJson,
+      ) as LegacySave;
+      save.gems = "1000";
+      save.mineObjectLevel = 0;
+      save.highestMineObjectLevel = 0;
+      save.usedGemsLevel = sourceControl.input.usedGemsLevel;
+      save.lastActive = fixedClock;
+      save.settings["tab"] = "main";
+      save.settings["theme"] = theme;
+      save.upgrades = {
+        gemWaster: { level: sourceControl.input.moneyGemWasterLevel },
+      };
+      save.gemUpgrades = {
+        gemWaster: { level: sourceControl.input.gemUpgradeWasterLevel },
+      };
+      save.planetCoinUpgrades = {};
+      save.powers.data.values = ["1", "1", "1", "1", "1"];
+      save.powers.upgrades = {};
+      const encoded = encodeRemixLegacySave(save);
+      const sourceContext = await browser.newContext({
+        colorScheme: theme,
+        deviceScaleFactor: 1,
+        locale: "en-US",
+        timezoneId: "UTC",
+        viewport,
+      });
+      const sourcePage = await sourceContext.newPage();
+
+      try {
+        const sourceUrl = await routePinnedRemixOracle(sourceContext);
+        await page.setViewportSize(viewport);
+        await Promise.all([
+          page.addInitScript(seedLegacySave, { encoded, now: fixedClock }),
+          sourcePage.addInitScript(seedLegacySave, {
+            encoded,
+            now: fixedClock,
+          }),
+        ]);
+        await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+        await Promise.all([
+          expect(page.locator("#app")).toHaveAttribute(
+            "data-app-state",
+            "ready",
+            { timeout: 30_000 },
+          ),
+          sourcePage.waitForFunction(() =>
+            Boolean(
+              (window as Window & { game?: unknown }).game &&
+              document.querySelector("#app > footer"),
+            ),
+          ),
+        ]);
+        await Promise.all([
+          expect(page.locator("body")).toHaveAttribute("data-theme", theme),
+          sourcePage.waitForFunction(
+            (selectedTheme) =>
+              document.querySelector<HTMLLinkElement>("#css_theme")?.sheet !==
+                null &&
+              document
+                .querySelector<HTMLLinkElement>("#css_theme")
+                ?.getAttribute("href") === `Themes/${selectedTheme}.css`,
+            theme,
+          ),
+        ]);
+
+        await Promise.all([
+          expect(page.locator("[data-craft-gem-level]")).toHaveCount(0),
+          expect(
+            sourcePage.locator(".craft-pickaxe button.level-change"),
+          ).toHaveCount(0),
+          expect(page.locator("[data-craft-gem-cost]")).toContainText(
+            sourceControl.displayedGemCost,
+          ),
+          expect(
+            sourcePage.locator(".craft-pickaxe button:not(.level-change)"),
+          ).toContainText(sourceControl.displayedGemCost),
+        ]);
+
+        const [beyondPng, remixPng] = await Promise.all([
+          waitForStableScreen(page, viewport),
+          waitForStableScreen(sourcePage, viewport),
+        ]);
+        const beyondHash = createHash("sha256").update(beyondPng).digest("hex");
+        const remixHash = createHash("sha256").update(remixPng).digest("hex");
+        if (beyondHash !== remixHash) {
+          await Promise.all([
+            test.info().attach(`gem-waster-not-owned-${theme}-beyond.png`, {
+              body: beyondPng,
+              contentType: "image/png",
+            }),
+            test.info().attach(`gem-waster-not-owned-${theme}-remix.png`, {
+              body: remixPng,
+              contentType: "image/png",
+            }),
+          ]);
+        }
+        expect(
+          beyondHash,
+          `Gem Waster not-owned screen in ${theme} at ${viewport.width}x${viewport.height}`,
+        ).toBe(remixHash);
+      } finally {
+        await sourceContext.close().catch(() => undefined);
+      }
+    });
   }
 }
