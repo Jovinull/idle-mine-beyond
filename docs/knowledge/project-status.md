@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-08
 
+**Source-paired Shift bulk crafting (2026-11-08):** added a live Remix/Beyond
+differential for the captured success, dud, then insufficient-Gem sequence.
+Both apps consume 20 identical RNG values, match all four visible messages,
+persist the first replacement's one-Gem snapshot, and export identical final
+legacy bytes/objects after the remaining attempts. The case passed in Chromium,
+Firefox, and WebKit; other bulk sequences and viewports remain open.
+
 **Stale-tab periodic autosave overwrite (2026-11-08):** added the missing
 source-paired periodic-write interleaving. A fresh tab saves Blacksmith 1 / 970
 Money; after a 60,001 ms controlled frame, the stale tab overwrites it with

@@ -5,19 +5,32 @@ import {
   decodeRemixLegacySave,
   encodeRemixLegacySave,
 } from "../../packages/persistence/src/remix-save-codec.js";
+import { decodeRemixBeyondSave } from "../../packages/persistence/src/remix-beyond-save.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
 type CraftAttempt = {
   name: string;
   randomCalls: number;
+  saveCalls: number;
   input: {
     name: string;
     gems: string;
+    usedGemsLevel: number;
     highestMineObjectLevel: number;
+    shiftHeld: boolean;
+    upgradeLevels: { planetCoins: { bulkCraft: number } };
     equippedPickaxe: { name: string; power: string; quality: string };
     randomValues: number[];
   };
-  messageLog: { message: string }[];
+  messageLog: { message: string; color: string }[];
+  saveSnapshots: {
+    gems: { decimal: string };
+    pickaxe: {
+      name: string;
+      power: { decimal: string };
+      quality: { decimal: string };
+    };
+  }[];
   result: {
     gems: { decimal: string };
     pickaxe: {
@@ -122,6 +135,226 @@ async function installCraftRandomSequence(
     Math.random = () => sequence[index++] ?? 0.5;
   }, values);
 }
+
+test("source-pairs Shift bulk craft feedback, save, and final export", async ({
+  browser,
+  page,
+}) => {
+  test.setTimeout(90_000);
+  const fixture = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as CraftVisualFixture;
+  const attempt = fixture.data.pickaxeCraftingSemantics.attempts.find(
+    ({ input }) => input.name === "bulk-success-dud-then-insufficient",
+  );
+  if (!attempt) throw new Error("The captured Shift craft case is missing.");
+  expect(attempt.input.shiftHeld).toBe(true);
+  expect(attempt.input.usedGemsLevel).toBe(0);
+  expect(attempt.saveCalls).toBe(1);
+  expect(attempt.saveSnapshots).toHaveLength(1);
+
+  const save = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  save.gems = attempt.input.gems;
+  save.mineObjectLevel = attempt.input.highestMineObjectLevel;
+  save.highestMineObjectLevel = attempt.input.highestMineObjectLevel;
+  save.usedGemsLevel = attempt.input.usedGemsLevel;
+  save.lastActive = fixedClock;
+  save.settings["tab"] = "main";
+  save.settings["theme"] = "light";
+  save.upgrades = {};
+  save.gemUpgrades = {};
+  save.planetCoinUpgrades = {
+    bulkCraft: { level: attempt.input.upgradeLevels.planetCoins.bulkCraft },
+  };
+  save.powers.data.values = ["1", "1", "1", "1", "1"];
+  save.powers.upgrades = {};
+  save.pickaxe = {
+    name: attempt.input.equippedPickaxe.name,
+    pow: attempt.input.equippedPickaxe.power,
+    quality: attempt.input.equippedPickaxe.quality,
+  };
+  const encodedInitialSave = encodeRemixLegacySave(save);
+  const sourceContext = await browser.newContext({
+    colorScheme: "light",
+    deviceScaleFactor: 1,
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all([
+      page.setViewportSize({ width: 1440, height: 900 }),
+      page.addInitScript(seedLegacySave, {
+        encoded: encodedInitialSave,
+        now: fixedClock,
+      }),
+      sourcePage.addInitScript(seedLegacySave, {
+        encoded: encodedInitialSave,
+        now: fixedClock,
+      }),
+    ]);
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await Promise.all([
+      expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready"),
+      sourcePage.waitForFunction(() =>
+        Boolean(
+          (window as Window & { game?: unknown }).game &&
+          document.querySelector("#app > footer"),
+        ),
+      ),
+    ]);
+    const [sourceStoredBefore, beyondStoredBefore] = await Promise.all([
+      sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+      page.evaluate(() => ({
+        primary: localStorage.getItem("IdleMineBeyond"),
+        backup: localStorage.getItem("IdleMineBeyondBackup"),
+      })),
+    ]);
+    expect(sourceStoredBefore).toBe(encodedInitialSave);
+    expect(beyondStoredBefore.primary).not.toBeNull();
+
+    await Promise.all([
+      installCraftRandomSequence(page, attempt.input.randomValues),
+      installCraftRandomSequence(sourcePage, attempt.input.randomValues),
+      page.keyboard.down("Shift"),
+      sourcePage.keyboard.down("Shift"),
+    ]);
+    await Promise.all([
+      expect(page.locator("[data-craft-pickaxe]")).toContainText("x 3"),
+    ]);
+    try {
+      await Promise.all([
+        page.locator("[data-craft-pickaxe]").click(),
+        sourcePage.locator(".craft-pickaxe button:not(.level-change)").click(),
+      ]);
+    } finally {
+      await Promise.all([
+        page.keyboard.up("Shift"),
+        sourcePage.keyboard.up("Shift"),
+      ]);
+    }
+
+    const expectedMessages = [
+      attempt.messageLog[0]!.message,
+      attempt.messageLog[1]!.message,
+      "Game Saved!",
+      attempt.messageLog[2]!.message,
+    ];
+    await Promise.all([
+      expect(page.locator(".messagelog p")).toHaveText(expectedMessages),
+      expect(sourcePage.locator(".messagelog p")).toHaveText(expectedMessages),
+      expect(page.locator("header .inline-resource")).toHaveText("0"),
+      expect(sourcePage.locator("header .inline-resource")).toHaveText("0"),
+      expect(
+        page.locator(".stats > div").first().locator("p").first(),
+      ).toHaveText(attempt.result.pickaxe.name),
+      expect(
+        sourcePage.locator(".stats > div").first().locator("p").first(),
+      ).toHaveText(attempt.result.pickaxe.name),
+    ]);
+    const [beyondCalls, remixCalls] = await Promise.all([
+      page.evaluate(() =>
+        (
+          window as Window & {
+            __idleMineCraftRandomCalls?: () => number;
+          }
+        ).__idleMineCraftRandomCalls?.(),
+      ),
+      sourcePage.evaluate(() =>
+        (
+          window as Window & {
+            __idleMineCraftRandomCalls?: () => number;
+          }
+        ).__idleMineCraftRandomCalls?.(),
+      ),
+    ]);
+    expect(beyondCalls).toBe(attempt.randomCalls);
+    expect(remixCalls).toBe(attempt.randomCalls);
+
+    const [remixPersisted, beyondPersisted] = await Promise.all([
+      sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+      page.evaluate(() => localStorage.getItem("IdleMineBeyond")),
+    ]);
+    expect(remixPersisted).not.toBe(sourceStoredBefore);
+    expect(beyondPersisted).not.toBe(beyondStoredBefore.primary);
+    if (!remixPersisted || !beyondPersisted) {
+      throw new Error("The Shift craft replacement was not persisted.");
+    }
+    const remixPersistedSave = decodeRemixLegacySave(remixPersisted);
+    const beyondPersistedSave = decodeRemixBeyondSave(beyondPersisted);
+    expect(remixPersistedSave.status).toBe("success");
+    expect(beyondPersistedSave.status).toBe("valid");
+    if (
+      remixPersistedSave.status !== "success" ||
+      beyondPersistedSave.status !== "valid"
+    ) {
+      throw new Error("Could not decode the persisted bulk craft snapshots.");
+    }
+    const firstSnapshot = attempt.saveSnapshots[0]!;
+    expect(remixPersistedSave.value).toMatchObject({
+      gems: firstSnapshot.gems.decimal,
+      pickaxe: {
+        name: firstSnapshot.pickaxe.name,
+        pow: firstSnapshot.pickaxe.power.decimal,
+        quality: firstSnapshot.pickaxe.quality.decimal,
+      },
+    });
+    expect(beyondPersistedSave.save.state.simulation).toMatchObject({
+      resources: { gems: firstSnapshot.gems.decimal },
+      pickaxe: {
+        name: firstSnapshot.pickaxe.name,
+        power: firstSnapshot.pickaxe.power.decimal,
+        quality: firstSnapshot.pickaxe.quality.decimal,
+      },
+    });
+
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      page.locator("[data-settings-export]").click(),
+      sourcePage
+        .locator("article.settings button")
+        .filter({ hasText: "Export" })
+        .click(),
+    ]);
+    const [beyondExport, remixExport] = await Promise.all([
+      page.locator("[data-settings-save-field]").inputValue(),
+      sourcePage.locator("article.settings textarea").inputValue(),
+    ]);
+    expect(beyondExport).toBe(remixExport);
+    const [beyondDecoded, remixDecoded] = [
+      decodeRemixLegacySave(beyondExport),
+      decodeRemixLegacySave(remixExport),
+    ];
+    expect(beyondDecoded.status).toBe("success");
+    expect(remixDecoded.status).toBe("success");
+    if (
+      beyondDecoded.status !== "success" ||
+      remixDecoded.status !== "success"
+    ) {
+      throw new Error("Could not decode the final Shift craft exports.");
+    }
+    expect(beyondDecoded.value).toEqual(remixDecoded.value);
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
 
 for (const theme of ["light", "dark"] as const) {
   for (const { caseName, viewport } of viewportCases) {
