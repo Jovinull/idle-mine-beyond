@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-08
 
+**Gem Waster lower-interior selector visual (2026-11-08):** added the
+source-paired cost-3 selection state, with both decrement and increment arrows
+enabled and visible. The full Mining screen matched at zero pixels in both
+themes at 1366x768, 1440x900, and 1920x1080 (6/6 focused Chromium cases).
+Other selector states and resolutions remain open.
+
 **Settings dark Export alternate viewport (2026-11-08):** extended the live
 pinned-Remix/Beyond comparison to the changed-preference, saved, and exported
 dark Settings state at 1366x768. The full-screen pixels matched exactly in

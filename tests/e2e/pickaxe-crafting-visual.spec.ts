@@ -330,6 +330,7 @@ for (const theme of ["light", "dark"] as const) {
 }
 
 const gemWasterVisualStates = [
+  { name: "lower-interior", gemUpgradeLevel: 2, costs: ["3"] },
   { name: "interior", gemUpgradeLevel: 2, costs: ["3", "10"] },
   { name: "maximum", gemUpgradeLevel: 2, costs: ["3", "10", "35"] },
 ] as const;
@@ -440,11 +441,21 @@ for (const selectorState of gemWasterVisualStates) {
               expect(sourceIncrease.locator("img")).toHaveCount(0),
             ]);
           } else {
+            const beyondDecrease = page.locator(
+              '[data-craft-gem-level="decrease"]',
+            );
+            const sourceDecrease = sourcePage
+              .locator(".craft-pickaxe button.level-change")
+              .first();
             await Promise.all([
               expect(beyondIncrease).toBeEnabled(),
               expect(beyondIncrease.locator("img")).toHaveCount(1),
               expect(sourceIncrease).toBeEnabled(),
               expect(sourceIncrease.locator("img")).toHaveCount(1),
+              expect(beyondDecrease).toBeEnabled(),
+              expect(beyondDecrease.locator("img")).toHaveCount(1),
+              expect(sourceDecrease).toBeEnabled(),
+              expect(sourceDecrease.locator("img")).toHaveCount(1),
             ]);
           }
 

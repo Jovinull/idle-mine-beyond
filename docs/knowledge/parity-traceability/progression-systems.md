@@ -180,7 +180,10 @@ sequences in both themes. It checks the displayed pickaxe name, consumes the
 source-recorded RNG draw count in each runtime (zero for the unaffordable
 attempt), and compares the full Mining screen at zero differing pixels at
 1440x900 and 1366x768. The four outcomes also match in both themes at
-1920x1080 (eight additional outcome/theme comparisons passed).
+1920x1080 (eight additional outcome/theme comparisons passed). The same test
+compares the Gem Waster cost-3 lower-interior selector, whose source fixture
+records both arrows enabled with images, against pinned Remix at 1366x768,
+1440x900, and 1920x1080 in both themes (six exact full-screen pairs passed).
 
 - **Sampled (qualified):** source-forced cases cover the strict Expertise,
   quality-streak, name-type, cap, affordability, replacement, and bulk-stop

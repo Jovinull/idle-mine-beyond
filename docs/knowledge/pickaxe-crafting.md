@@ -27,11 +27,12 @@ comparisons at 1366x768 in light and dark, alongside the existing 1440x900
 comparisons. These selected viewport cases do not cover all Mining panel states
 or resolutions.
 
-The Gem Waster selector at its interior cost 10 and maximum cost 35 now
-matches the full source screen in both themes at 1440x900, 1366x768, and
-1920x1080. The selector comparison passed all four 1920x1080 state/theme cases, including the enabled increase control and arrow image at
-cost 10, and the disabled control with no image at cost 35. Other selector
-states and resolutions remain open.
+The Gem Waster selector at its lower-interior cost 3, interior cost 10, and
+maximum cost 35 now matches the full source screen in both themes at 1440x900,
+1366x768, and 1920x1080. Cost 3 and cost 10 both show enabled arrows and their
+images; cost 35 disables the increase control and omits its image. The six
+lower-interior cost-3 captures matched in both themes across the three
+viewports. Other selector states and resolutions remain open.
 
 ## Craft flow
 
