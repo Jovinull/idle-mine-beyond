@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-08
 
+**Offline reward on manual legacy import (2026-11-08):** a source-paired
+Settings text-field import of the pinned 3,601-second save now checks Remix's
+reward message, resource snapshot at the storage write, and byte-identical
+post-import exports in Chromium, Firefox, and WebKit. Both apps match in each engine; Chromium matches the captured Money value, while WebKit source and Beyond both end one last decimal digit lower. The source save has the welcome-back log
+but not the later `Game Saved!` log because confirmation is appended after the
+write. This adds manual-import integration evidence; real hidden-tab/OS
+background scheduling remains open.
+
 **Wisdom modifier purchases across engines (2026-11-08):** the pinned Remix /
 Beyond differential now runs all seven Wisdom upgrades through single, Shift,
 Control, and combined Shift+Control purchase inputs in Firefox and WebKit, in

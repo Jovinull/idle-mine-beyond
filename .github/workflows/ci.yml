@@ -97,6 +97,9 @@ jobs:
       - name: Verify malformed save imports in Firefox and WebKit
         run: pnpm test:e2e:save-import-errors:browsers
 
+      - name: Verify manual offline save imports in Firefox and WebKit
+        run: pnpm test:e2e:offline-import:browsers
+
       - name: Verify save storage failures in Firefox and WebKit
         run: pnpm test:e2e:save-storage:browsers
 

@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import {
+  decodeRemixBeyondSave,
   decodeRemixLegacySave,
   encodeRemixLegacySave,
 } from "../../packages/persistence/src/index.js";
@@ -565,6 +566,221 @@ test("matches Remix when the wall clock advances between offline-load reads", as
     expect(sourceValue["lastActive"]).toBe(fixedNowMs + 303_000);
   } finally {
     await Promise.all([sourcePage.close(), beyondPage.close()]);
+  }
+});
+
+test("applies offline rewards when a legacy save is imported from Settings", async ({
+  browser,
+  page,
+}, testInfo) => {
+  test.setTimeout(120_000);
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as {
+    data: {
+      saveOfflineApplicationSemantics: {
+        inputJson: string;
+        elapsedSeconds: number;
+        stateAfterLoad: {
+          money: { decimal: string };
+          gems: { decimal: string };
+          planetCoins: { decimal: string };
+        };
+        events: { type: string; message?: string; color?: string }[];
+      };
+    };
+  };
+  const capture = reference.data.saveOfflineApplicationSemantics;
+  const sourceContext = await browser.newContext({
+    baseURL: testInfo.project.use.baseURL as string,
+    colorScheme: "light",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+  const nowMs = 1_704_067_200_000;
+
+  try {
+    const oracleUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all(
+      [sourcePage, page].map((target) =>
+        target.addInitScript((fixedNow) => {
+          localStorage.clear();
+          Date.now = () => fixedNow;
+        }, nowMs),
+      ),
+    );
+    await Promise.all([
+      sourcePage.setViewportSize({ width: 1440, height: 900 }),
+      page.setViewportSize({ width: 1440, height: 900 }),
+      sourcePage.goto(oracleUrl),
+      page.goto("/"),
+    ]);
+    await Promise.all([
+      expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready"),
+      sourcePage.waitForFunction(() =>
+        Boolean(
+          (window as Window & { game?: unknown }).game &&
+          document.querySelector("#app > footer"),
+        ),
+      ),
+    ]);
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+
+    const encodedSave = await sourcePage.evaluate((inputJson) => {
+      return btoa(escape(encodeURIComponent(inputJson)));
+    }, capture.inputJson);
+    const sourceField = sourcePage.locator("article.settings textarea");
+    const beyondField = page.locator(
+      "article.settings [data-settings-save-field]",
+    );
+    await Promise.all([
+      sourceField.fill(encodedSave),
+      beyondField.fill(encodedSave),
+    ]);
+    await Promise.all([
+      sourcePage
+        .locator("article.settings")
+        .getByRole("button", { name: "Import (from Text Field)" })
+        .click(),
+      page
+        .locator("article.settings")
+        .getByRole("button", { name: "Import (from Text Field)" })
+        .click(),
+    ]);
+    await Promise.all([
+      sourcePage.locator("footer button").filter({ hasText: "Mining" }).click(),
+      page.locator("[data-game-tab='mining']").click(),
+    ]);
+
+    const welcomeEvent = capture.events.find(
+      (event) =>
+        event.type === "logMessage" &&
+        event.message?.startsWith("Welcome back!"),
+    );
+    if (!welcomeEvent?.message) {
+      throw new Error("Pinned offline import message is missing.");
+    }
+    const expectedMessages = ["Game Saved!", welcomeEvent.message];
+    const readMessages = (target: Page) =>
+      target
+        .locator(".messagelog p")
+        .evaluateAll((paragraphs) =>
+          paragraphs.map((paragraph) => paragraph.textContent?.trim() ?? ""),
+        );
+    const [sourceMessages, beyondMessages] = await Promise.all([
+      readMessages(sourcePage),
+      readMessages(page),
+    ]);
+    expect(sourceMessages).toEqual(expectedMessages);
+    expect(beyondMessages).toEqual(sourceMessages);
+
+    await Promise.all([
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+      page.locator("[data-game-tab='settings']").click(),
+    ]);
+    await Promise.all([
+      sourcePage
+        .locator("article.settings")
+        .getByRole("button", { name: "Export" })
+        .click(),
+      page.locator("[data-settings-export]").click(),
+    ]);
+    const [sourceExport, beyondExport, sourceStorage, beyondPrimary] =
+      await Promise.all([
+        sourceField.inputValue(),
+        beyondField.inputValue(),
+        sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+        page.evaluate(() => localStorage.getItem("IdleMineBeyond")),
+      ]);
+    expect(beyondExport).toBe(sourceExport);
+
+    const [sourceDecoded, beyondDecoded, sourceStoredDecoded] = [
+      decodeRemixLegacySave(sourceExport),
+      decodeRemixLegacySave(beyondExport),
+      sourceStorage === null
+        ? { status: "invalid" as const }
+        : decodeRemixLegacySave(sourceStorage),
+    ];
+    expect(sourceDecoded.status).toBe("success");
+    expect(beyondDecoded.status).toBe("success");
+    expect(sourceStoredDecoded.status).toBe("success");
+    if (
+      sourceDecoded.status !== "success" ||
+      beyondDecoded.status !== "success" ||
+      sourceStoredDecoded.status !== "success"
+    ) {
+      throw new Error("The offline Settings import export did not decode.");
+    }
+    const sourceLegacySave = sourceDecoded.value as {
+      money: string;
+      highestMoney: string;
+      gems: string;
+      planetCoins: string;
+      maxPlanetCoins: string;
+    };
+    expect(sourceDecoded.value).toEqual(beyondDecoded.value);
+    expect(sourceDecoded.value).toMatchObject({
+      gems: capture.stateAfterLoad.gems.decimal,
+      planetCoins: capture.stateAfterLoad.planetCoins.decimal,
+      maxPlanetCoins: capture.stateAfterLoad.planetCoins.decimal,
+      lastActive: nowMs,
+      settings: { tab: "settings" },
+    });
+    if (testInfo.project.name === "chromium") {
+      expect(sourceDecoded.value).toMatchObject({
+        money: capture.stateAfterLoad.money.decimal,
+        highestMoney: capture.stateAfterLoad.money.decimal,
+      });
+    }
+    expect(sourceStoredDecoded.value).toMatchObject({
+      money: sourceLegacySave.money,
+      highestMoney: sourceLegacySave.highestMoney,
+      gems: sourceLegacySave.gems,
+      planetCoins: sourceLegacySave.planetCoins,
+      maxPlanetCoins: sourceLegacySave.maxPlanetCoins,
+      lastActive: nowMs,
+      messageLog: [
+        {
+          message: welcomeEvent.message,
+          color: welcomeEvent.color,
+        },
+      ],
+    });
+    if (!beyondPrimary) throw new Error("Beyond primary save is missing.");
+    const beyondStoredDecoded = decodeRemixBeyondSave(beyondPrimary);
+    expect(beyondStoredDecoded.status).toBe("valid");
+    if (beyondStoredDecoded.status !== "valid") {
+      throw new Error("The persisted Beyond offline import did not decode.");
+    }
+    expect(beyondStoredDecoded.save.state.simulation).toMatchObject({
+      resources: {
+        money: sourceLegacySave.money,
+        highestMoney: sourceLegacySave.highestMoney,
+        gems: sourceLegacySave.gems,
+        planetCoins: sourceLegacySave.planetCoins,
+        maxPlanetCoins: sourceLegacySave.maxPlanetCoins,
+      },
+      lastActiveMs: nowMs,
+    });
+  } finally {
+    await sourceContext.close().catch(() => undefined);
   }
 });
 
