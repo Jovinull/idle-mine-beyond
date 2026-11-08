@@ -62,11 +62,7 @@ exactly in each theme at all four viewports. Ubuntu CI run 42484538684 passed
 both themes at 1440x900. Runs 42489378984 and 42490501482 both reproduce a
 two-pixel difference on the first “W” in the Chapter 3 light objective at
 1366x768 (`(15,632)` and `(15,633)`); the source and Beyond Work Sans files have
-identical hashes. Run 42492337106 also reproduces the same coordinates on the Chapter 4 dark objective. The first failure-only JSON attachment was missing from the
-uploaded artifact; the E2E now writes font state, style, and geometry into its
-output directory before attaching them, pending confirmation from the next
-Linux run. The strict comparison remains open without masking or tolerance,
-and later Linux viewports have not run.
+identical hashes. Run 42492337106 also reproduces the same coordinates on the Chapter 4 dark objective. Run 42494765267 uploaded the failure JSON: Remix had one loaded Work Sans face at weight 400 and its `document.fonts.check` returned true; Beyond had duplicate `@font-face` entries (one unloaded weight 400 and one loaded `normal`), and the check returned false. Geometry and computed text styles matched. Beyond now declares each font once at the route level with the source's normal/400 descriptors, and the Story differential asserts Work Sans loads in both runtimes; Linux confirmation remains pending. The strict comparison remains open without masking or tolerance, and later Linux viewports have not run.
 Tracked source PNG baselines remain Windows-only.
 
 | Story page | Light baseline                                                                  | Dark baseline                                                                  |

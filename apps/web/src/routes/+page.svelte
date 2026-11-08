@@ -1106,11 +1106,15 @@
 <style>
   @font-face {
     font-family: "Work Sans";
+    font-style: normal;
+    font-weight: 400;
     src: url("/fonts/worksans/WorkSans-Regular.woff2") format("woff2");
   }
 
   @font-face {
     font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 400;
     src: url("/fonts/montserrat/Montserrat-Regular.woff2") format("woff2");
   }
 

@@ -232,6 +232,7 @@ for (const theme of ["light", "dark"] as const) {
         await page.getByRole("button", { name: /Story/ }).click();
         await prepareStoryScreen(page, chapter.heading);
         const sourceDiagnostics = await captureStoryRenderDiagnostics(page);
+        expect(sourceDiagnostics.fonts.workSansLoaded).toBe(true);
         const sourceScreenshot = await page.screenshot({
           animations: "disabled",
         });
@@ -245,6 +246,7 @@ for (const theme of ["light", "dark"] as const) {
         await page.locator("[data-game-tab='story']").click();
         await prepareStoryScreen(page, chapter.heading);
         const beyondDiagnostics = await captureStoryRenderDiagnostics(page);
+        expect(beyondDiagnostics.fonts.workSansLoaded).toBe(true);
         const beyondScreenshot = await page.screenshot({
           animations: "disabled",
         });

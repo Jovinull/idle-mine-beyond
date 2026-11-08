@@ -21,12 +21,16 @@ zero pixels across all four viewports and both themes on Windows Chromium
 Runs 42489378984 and 42490501482 fail on the Chapter 3 light screen at 1366x768;
 run 42492337106 reproduces those two pixels and also fails on the Chapter 4 dark
 screen. Both differ at `(15,632)` and `(15,633)` on the initial W of the objective.
-The Work Sans files hash identically in Remix and Beyond. The first failure-only
-JSON attachment was missing from the uploaded artifact; the E2E now writes
-diagnostics into its output directory before attaching them, pending
-confirmation from the next Linux run. No mask or tolerance was added. Later
-Linux viewports have not run because the test stops at these mismatches. Source
-PNG baselines remain Windows-only.
+The Work Sans files hash identically in Remix and Beyond. Run 42494765267
+uploaded the failure JSON: Remix has one loaded Work Sans face at weight 400
+and `document.fonts.check('18px "Work Sans"')` returns true; Beyond had
+duplicate font-face rules (an unloaded 400 face and a loaded `normal` face),
+and the same check returned false. Element geometry and computed text styles
+matched. Beyond now uses one route-level font-face rule per family with the
+source's explicit normal/400 descriptors, and the Story differential asserts
+that Work Sans is loaded in both runtimes. Linux confirmation is pending. No
+mask or tolerance was added. Later Linux viewports have not run because the
+test stops at these mismatches. Source PNG baselines remain Windows-only.
 
 **Natural Chapter 3-6 dark Linux differential (2026-11-08):** the full Chromium
 E2E suite passed in Ubuntu CI run 42484538684 (255 passed). The natural route-end

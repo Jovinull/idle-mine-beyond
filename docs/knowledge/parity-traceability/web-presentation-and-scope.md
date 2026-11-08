@@ -21,6 +21,12 @@ This matrix row is a roll-up, not an additional source function. The function
 branches are listed in the state-specific maps below; its status is the union
 of those maps.
 
+The pinned `main.css` Work Sans `@font-face` branch declares normal style and
+weight 400. The Beyond route uses that single rule for the Story renderer and
+the source-paired natural Story E2E asserts `document.fonts.check` after
+`document.fonts.ready` in both runtimes. CI run 42494765267 captured the
+previous duplicate-face state; the corrected Linux pixel result remains open.
+
 ## Settings and input controls
 
 - **Remix source branches:** `Scripts/main.js:onkeydown` records keys and handles
