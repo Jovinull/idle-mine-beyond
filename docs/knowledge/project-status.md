@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-08
 
+**Recovery-bundle selection across engines (2026-11-08):** a selected bundle
+with a damaged primary and valid backup now exercises acknowledgement gating,
+backup selection, Beyond v1 persistence, and legacy-key retention in Firefox
+and WebKit as well as the existing Chromium run. Both focused browser runs
+passed.
+
 **Hard Reset cancellation across engines (2026-11-08):** all three cancel
 positions now compare exact prompt order, unchanged Settings state, and
 unchanged origin storage against live pinned Remix in Firefox and WebKit, in

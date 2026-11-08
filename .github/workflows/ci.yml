@@ -109,6 +109,9 @@ jobs:
       - name: Verify confirmed Hard Reset in Firefox and WebKit
         run: pnpm test:e2e:hard-reset-confirmed:browsers
 
+      - name: Verify recovery bundle selection in Firefox and WebKit
+        run: pnpm test:e2e:recovery-file:browsers
+
       - name: Verify save storage failures in Firefox and WebKit
         run: pnpm test:e2e:save-storage:browsers
 

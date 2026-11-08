@@ -312,6 +312,10 @@ coverage; the current version-rejection branch is covered.
 - A separate Chromium E2E fills origin storage until the browser itself throws
   `QuotaExceededError`, then exercises manual Save and asserts the actual
   exception reaches the UI with no confirmation or newly created save slots.
+- The selected recovery-bundle UI E2E runs in Chromium, Firefox, and WebKit. It
+  checks acknowledgement gating, valid-backup selection after invalid primary,
+  persisted Beyond v1 state, and retention of the legacy key; Firefox and WebKit
+  run through `test:e2e:recovery-file:browsers`.
 - **Environment coverage still sampled:** the real quota E2E now establishes
   the localStorage exhaustion and backup-retention paths in Chromium, Firefox,
   and WebKit. This does not establish quota policy across every browser profile
@@ -337,6 +341,8 @@ coverage; the current version-rejection branch is covered.
 | Same-origin tabs explicitly save snapshots in different orders; each write replaces the shared value without merging or reconciling the other tab                                             | Four pinned/implementation tabs load one controlled seed; the updated tab saves Blacksmith 1, the stale peer saves level 0, the updated tab saves 1 again, then the stale peer buys Active Power and saves its local snapshot | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares Remix legacy output with Beyond v1 state in Chromium, Firefox, and WebKit after all four writes: Blacksmith 1, 0, 1, then 0; the final stale snapshot also has Active Power 1 and Money 0; the updated tab still displays Blacksmith 1                     |
 | Stale same-upgrade and cross-resource actions save whole snapshots without merging newer resource families                                                                                    | Captured level-zero save; exact-price `buy-uses-gem-resource` fixture; two same-origin tabs per implementation; both Blacksmith/Money then Offline Gems/Gems and the reverse purchase/save order                              | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares both live Remix and Beyond after same-upgrade stale writes and both cross-resource orders in Chromium, Firefox, and WebKit; asserts final resource/upgrade state, the stale tab's displayed state, and Beyond backup equals the immediately prior snapshot |
 | A stale tab's periodic frame overwrites a newer same-origin save with its local whole-game snapshot after the strict autosave threshold                                                       | Pinned `Scripts/main.js:update` advances stale `timer.save` past 60 seconds and calls `functions.saveGame()`; two same-origin tabs begin from one captured save, then only the stale tab advances 60,001 ms                   | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares Remix and Beyond in Chromium, Firefox, and WebKit: stale level-zero / 1,000 Money replaces the newer Blacksmith 1 / 970 Money snapshot; the stale tab's Beyond backup retains the newer snapshot and each tab keeps its own displayed level                |
+
+The selected recovery-bundle E2E also covers the `Import requires acknowledgement` branch above in Chromium, Firefox, and WebKit: before acknowledgement the import button is disabled; afterward, an invalid primary selects the valid backup, which is persisted as Beyond v1 while the legacy key remains unchanged.
 
 Other cross-tab action/write interleavings, profile-specific quota policies,
 and process termination remain open environment domains; the multi-engine

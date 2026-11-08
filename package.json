@@ -79,6 +79,7 @@
     "test:e2e:legacy-import:browsers": "playwright test -c playwright.save-export.cross-browser.config.ts tests/e2e/legacy-save-optional-groups.spec.ts --workers=1",
     "test:e2e:hard-reset:browsers": "playwright test -c playwright.save-export.cross-browser.config.ts tests/e2e/remix-app.spec.ts --grep \"matches pinned Remix Hard Reset cancellation at each confirmation\" --workers=1",
     "test:e2e:hard-reset-confirmed:browsers": "playwright test -c playwright.save-export.cross-browser.config.ts tests/e2e/remix-app.spec.ts --grep \"matches pinned Remix after confirming Hard Reset\" --workers=1",
+    "test:e2e:recovery-file:browsers": "playwright test -c playwright.save-export.cross-browser.config.ts tests/e2e/remix-app.spec.ts --grep \"recovers a Beyond save from a selected recovery bundle after acknowledgement\" --workers=1",
     "test:e2e:save-storage:browsers": "playwright test -c playwright.save-export.cross-browser.config.ts tests/e2e/browser-storage-failure.spec.ts tests/e2e/browser-storage-read-failure.spec.ts tests/e2e/browser-storage-real-quota.spec.ts",
     "test:e2e:save-codec:webkit": "playwright test -c playwright.save-codec.webkit.config.ts tests/e2e/save-codec-browser-compat.spec.ts"
   },
