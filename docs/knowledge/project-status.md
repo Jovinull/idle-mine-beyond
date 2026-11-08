@@ -2,6 +2,15 @@
 
 Last updated: 2026-11-08
 
+**Offline multi-resource live-rate cold start (2026-11-08):** added a
+source-paired controlled level-90 Asteroid legacy save built from the pinned
+live-rate composition capture. At 3,601 elapsed seconds, Remix and Beyond
+produce the captured return message with Money, Gems, and Planet Coins and
+export identical complete legacy save bytes/objects. The focused cold-start
+test passed in Chromium. This is controlled integration evidence, not a
+naturally accumulated long-play save; additional state combinations and real
+OS/browser background scheduling remain open.
+
 **Prestige full-save differential (2026-11-08):** the live Powers comparison
 now enters Settings after each of the four enabled Prestige actions and compares
 the complete exported legacy bytes and decoded objects between Remix and

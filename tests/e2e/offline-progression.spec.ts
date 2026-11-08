@@ -100,6 +100,42 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
     data: {
       saveApplicationSemantics: { inputJson: string };
       notationSemantics: { formatterRegistry: { name: string }[] };
+      offlineLoadRateCompositionSemantics: {
+        scenarios: {
+          name: string;
+          input: {
+            objectId: number;
+            pickaxe: { power: string; quality: string };
+            miningPower: string;
+            exquisityPower: string;
+            miningUpgrades: Record<string, Record<string, number>>;
+            offlineUpgrades: {
+              offlineTime: number;
+              offlineGems: number;
+              offlinePC: number;
+            };
+            initialResources: {
+              money: string;
+              highestMoney: string;
+              gems: string;
+              planetCoins: string;
+              maxPlanetCoins: string;
+            };
+            elapsedSeconds: number;
+          };
+          rates: {
+            moneyPerSecond: { decimal: string };
+            gemsPerSecond: { decimal: string };
+            planetCoinsPerSecond: { decimal: string };
+          };
+          stateAfterLoad: {
+            money: { decimal: string };
+            gems: { decimal: string };
+            planetCoins: { decimal: string };
+          };
+          events: { message: string }[];
+        }[];
+      };
     };
   };
   const fixedNowMs = 1_700_000_100_000;
@@ -133,11 +169,37 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
       elapsedSeconds: -60,
       expectsOfflineReward: false,
     },
+    {
+      name: "source-captured upgraded Asteroid live rates",
+      theme: "light",
+      compareMessagePixels: false,
+      elapsedSeconds: 3601,
+      expectsOfflineReward: true,
+      liveRateScenario:
+        reference.data.offlineLoadRateCompositionSemantics.scenarios.find(
+          (candidate) =>
+            candidate.name === "upgraded-asteroid-live-planet-coin-rate",
+        ),
+    },
   ]) {
     const sourceSave = JSON.parse(
       reference.data.saveApplicationSemantics.inputJson,
     ) as {
       lastActive: number;
+      mineObjectLevel: number;
+      highestMineObjectLevel: number;
+      money: string;
+      highestMoney: string;
+      gems: string;
+      planetCoins: string;
+      maxPlanetCoins: string;
+      pickaxe: { name: string; pow: string; quality: string };
+      powers: {
+        data: { values: string[] };
+        upgrades: Record<string, { level: number }>;
+      };
+      upgrades: Record<string, { level: number }>;
+      gemUpgrades: Record<string, { level: number }>;
       settings: {
         tab: string;
         numberFormatterIndex: number;
@@ -154,6 +216,47 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
     sourceSave.settings.theme = scenario.theme;
     sourceSave.planetCoinUpgrades ??= {};
     sourceSave.planetCoinUpgrades["offlineTime"] = { level: 1 };
+    if (scenario.liveRateScenario) {
+      const { input } = scenario.liveRateScenario;
+      sourceSave.settings.numberFormatterIndex = 0;
+      sourceSave.mineObjectLevel = input.objectId;
+      sourceSave.highestMineObjectLevel = input.objectId;
+      sourceSave.lastActive = fixedNowMs - input.elapsedSeconds * 1000;
+      sourceSave.pickaxe = {
+        ...sourceSave.pickaxe,
+        pow: input.pickaxe.power,
+        quality: input.pickaxe.quality,
+      };
+      sourceSave.money = input.initialResources.money;
+      sourceSave.highestMoney = input.initialResources.highestMoney;
+      sourceSave.gems = input.initialResources.gems;
+      sourceSave.planetCoins = input.initialResources.planetCoins;
+      sourceSave.maxPlanetCoins = input.initialResources.maxPlanetCoins;
+      sourceSave.powers.data.values[0] = input.miningPower;
+      sourceSave.powers.data.values[4] = input.exquisityPower;
+      for (const [group, levels] of Object.entries(input.miningUpgrades)) {
+        const target =
+          group === "money"
+            ? sourceSave.upgrades
+            : group === "gems"
+              ? sourceSave.gemUpgrades
+              : group === "planetCoins"
+                ? sourceSave.planetCoinUpgrades
+                : sourceSave.powers.upgrades;
+        for (const [upgrade, level] of Object.entries(levels)) {
+          target[upgrade] = { level };
+        }
+      }
+      sourceSave.planetCoinUpgrades["offlineTime"] = {
+        level: input.offlineUpgrades.offlineTime,
+      };
+      sourceSave.gemUpgrades["offlineGems"] = {
+        level: input.offlineUpgrades.offlineGems,
+      };
+      sourceSave.planetCoinUpgrades["offlinePC"] = {
+        level: input.offlineUpgrades.offlinePC,
+      };
+    }
     const encodedLegacySave = encodeRemixLegacySave(sourceSave);
 
     const sourcePage = await page.context().newPage();
@@ -191,6 +294,15 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
         );
         await expect(sourceMessageLog).toContainText("Game Saved!");
         await expect(beyondMessageLog).toContainText("Game Saved!");
+        if (scenario.liveRateScenario) {
+          const { rates, events } = scenario.liveRateScenario;
+          expect(rates.moneyPerSecond.decimal).not.toBe("0");
+          expect(rates.gemsPerSecond.decimal).not.toBe("0");
+          expect(rates.planetCoinsPerSecond.decimal).not.toBe("0");
+          expect(events[0]?.message).toContain("Planet Coins.");
+          await expect(sourceMessageLog).toContainText(events[0]!.message);
+          await expect(beyondMessageLog).toContainText(events[0]!.message);
+        }
       } else {
         await expect(sourceMessageLog).not.toContainText("Welcome back!");
         await expect(beyondMessageLog).not.toContainText("Welcome back!");
@@ -278,6 +390,15 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
         throw new Error(`Beyond did not export a valid ${scenario.name} save.`);
       }
       expect(beyondDecoded.value, scenario.name).toEqual(sourceDecoded.value);
+      if (scenario.liveRateScenario) {
+        const { stateAfterLoad } = scenario.liveRateScenario;
+        expect(sourceDecoded.value).toMatchObject({
+          money: stateAfterLoad.money.decimal,
+          gems: stateAfterLoad.gems.decimal,
+          planetCoins: stateAfterLoad.planetCoins.decimal,
+        });
+        expect(beyondExport).toBe(sourceExport);
+      }
     } finally {
       await Promise.all([sourcePage.close(), beyondPage.close()]);
     }

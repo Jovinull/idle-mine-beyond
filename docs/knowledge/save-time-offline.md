@@ -118,6 +118,18 @@ controlled Chromium freeze/resume differential is described below. The cold-
 start tests do not simulate the actual OS background scheduler; native WebView
 behavior remains outside web-v1.
 
+**Captured multi-resource live-rate cold start (2026-11-08):**
+`tests/e2e/offline-progression.spec.ts` also builds a controlled full legacy
+save from the captured `upgraded-asteroid-live-planet-coin-rate` inputs in
+`offlineLoadRateCompositionSemantics`. The pinned Remix and Beyond both load
+the level-90 Asteroid state with nonzero Money, Gem, and Planet Coin rates,
+apply the 3,601-second elapsed interval, emit the captured three-resource
+return message, and export identical complete legacy save bytes and decoded
+objects. The source rate-composition capture supplies the controlled state;
+the live `loadGame()` execution supplies the differential oracle. This is not a
+naturally accumulated long-play save. Broader save-state combinations and real
+OS/browser background scheduling remain open.
+
 **Controlled Chromium lifecycle freeze/resume differential (2026-10-04):**
 `tests/e2e/offline-progression.spec.ts` freezes the pinned Remix and Beyond
 pages with CDP `Page.setWebLifecycleState`, advances each injected wall clock
