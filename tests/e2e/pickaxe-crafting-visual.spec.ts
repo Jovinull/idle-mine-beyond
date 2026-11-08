@@ -1,7 +1,10 @@
 import { createHash } from "node:crypto";
 import { expect, test, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
-import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
+import {
+  decodeRemixLegacySave,
+  encodeRemixLegacySave,
+} from "../../packages/persistence/src/remix-save-codec.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
 type CraftAttempt = {
@@ -337,6 +340,61 @@ for (const theme of ["light", "dark"] as const) {
           beyondHash,
           `${caseName} full-screen pixels at ${viewport.width}x${viewport.height} in ${theme}`,
         ).toBe(remixHash);
+
+        if (
+          caseName === "better-craft-replaces-and-saves" &&
+          viewport.width === 1440 &&
+          theme === "light"
+        ) {
+          await expect(
+            page.locator(".messagelog p").allTextContents(),
+          ).resolves.toEqual(
+            await sourcePage.locator(".messagelog p").allTextContents(),
+          );
+          await Promise.all([
+            page.locator("[data-game-tab='settings']").click(),
+            sourcePage
+              .locator("footer button")
+              .filter({ hasText: "Settings" })
+              .click(),
+          ]);
+          await Promise.all([
+            expect(page.locator("[data-settings-save-field]")).toBeVisible(),
+            expect(
+              sourcePage.locator("article.settings textarea"),
+            ).toBeVisible(),
+          ]);
+          await Promise.all([
+            page.locator("[data-settings-export]").click(),
+            sourcePage
+              .locator("article.settings button")
+              .filter({ hasText: "Export" })
+              .click(),
+          ]);
+          const [beyondExport, remixExport] = await Promise.all([
+            page.locator("[data-settings-save-field]").inputValue(),
+            sourcePage.locator("article.settings textarea").inputValue(),
+          ]);
+          expect(beyondExport, "craft replacement export bytes").toBe(
+            remixExport,
+          );
+          const [beyondDecoded, remixDecoded] = [
+            decodeRemixLegacySave(beyondExport),
+            decodeRemixLegacySave(remixExport),
+          ];
+          expect(beyondDecoded.status).toBe("success");
+          expect(remixDecoded.status).toBe("success");
+          if (
+            beyondDecoded.status !== "success" ||
+            remixDecoded.status !== "success"
+          ) {
+            throw new Error("Could not decode the craft replacement exports.");
+          }
+          expect(
+            beyondDecoded.value,
+            "craft replacement export object",
+          ).toEqual(remixDecoded.value);
+        }
       } finally {
         await sourceContext.close().catch(() => undefined);
       }

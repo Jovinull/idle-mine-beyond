@@ -44,6 +44,8 @@ Scripts/Define/functions.js computes Gems used through Gem Waster, supports a bu
 
 The pinned `pickaxeCraftingSemantics.craftControls` capture records no controls before buying Money Gem Waster, costs `1`, `3`, `10`, and `35` at levels 0 through 3 for Money level 1 plus Gem-upgrade level 2, both boundary button states, and the observed increase/decrease sequence. Beyond mirrors it with `getRemixCraftGemSelectionControls()` and the platform-independent `changeCraftGemLevel` action. Clicking a selector arrow has no immediate save effect; the normal source save timer serializes the game state later. Beyond keeps this selection in its versioned save and legacy export.
 
+The source-paired `better-craft-replaces-and-saves` browser case now continues from the matched replacement screen into Settings and compares the complete source and Beyond legacy export bytes and decoded objects. It also compares the ordered live message logs. This verifies one successfully equipped replacement through both the save effect and the Settings exporter; bulk intermediate writes remain covered by the dedicated parity/session tests.
+
 **Known legacy quirk:** `functions.getSaveString()` serializes `usedGemsLevel`, but `functions.loadGame()` does not assign that field from `loadObj`. Loading a legacy save into a fresh game therefore leaves the default selection at zero; loading into an existing game leaves its current selection unchanged. Beyond's legacy application must preserve this source behavior instead of restoring the serialized legacy field during import.
 
 ## RNG

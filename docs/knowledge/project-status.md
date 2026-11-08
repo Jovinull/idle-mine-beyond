@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-08
 
+**Live crafted-save export comparison (2026-11-08):** the source-paired
+successful pickaxe replacement case now enters Settings in both apps and
+compares the complete exported legacy bytes and decoded objects. The ordered
+craft/save message logs also match. The focused Chromium E2E passed 1/1; the
+result covers this recorded replacement fixture, while bulk intermediate
+save snapshots remain in the existing craft transaction tests.
+
 **Long-frame autosave after browser resume (2026-11-08):** extended the
 source-paired Chromium freeze/resume case from two seconds to 120 seconds. On
 resume both runtimes perform one auto-pickaxe hit, cross the strict 60-second
