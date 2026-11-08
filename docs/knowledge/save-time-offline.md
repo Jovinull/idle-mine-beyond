@@ -12,8 +12,13 @@ When both tabs save in sequence, `functions.saveGame()` serializes the local
 `game` object and overwrites the shared `IdleMine` slot; it does not merge the
 two purchases into level 2 / 940 Money. The new source-paired case in
 `tests/e2e/save-cross-tab-overwrite.spec.ts` confirms the same last-writer
-result and backup snapshot in Beyond. Other cross-tab action/write
-interleavings remain open.
+result and backup snapshot in Beyond. A second source-paired interleaving starts
+with exact affordability for the level-zero Offline Gems purchase: one tab
+saves Blacksmith level 1 first, then the stale tab buys Offline Gems and saves
+its entire snapshot. The final save retains Money 1000, Gems 0, Blacksmith 0,
+and Offline Gems 1, overwriting the newer Money purchase; Beyond's backup
+retains that newer snapshot. Other cross-tab action/write interleavings remain
+open.
 
 **Live purchase export differential (2026-11-08):** the pinned purchase corpus now includes Shift `buy10` from level 0 to 10 for Gem and Planet Coin Gem Multiplication. `tests/e2e/save-export-purchase-differential.spec.ts` makes each purchase in both Remix and Beyond, then compares the complete exported object and encoded bytes. Both cases pass in Chromium, Firefox, and WebKit. The captured remaining balances are 33422.1074644512 Gems and 18152641816.016598 Planet Coins.
 

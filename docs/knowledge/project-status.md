@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-08
 
+**Cross-resource stale-tab overwrite (2026-11-08):** the source-paired E2E
+starts two Remix and Beyond tabs with the same Money/Gem snapshot. One tab buys
+Blacksmith and saves; the stale tab then buys level-zero Offline Gems at its
+source-captured exact price (4,444 Gems) and saves. Both runtimes end with the
+stale snapshot (`Money 1000`, `Gems 0`, `Blacksmith 0`, `Offline Gems 1`), and
+Beyond's backup preserves the preceding Blacksmith snapshot. All three
+cross-tab E2E cases passed in Chromium.
+
 **Natural Story endpoints across desktop viewports (2026-11-08):** extended the
 live pinned-Remix/Beyond comparison for Chapters 3-6 to 1366x768, 1920x1080, and
 2560x1440 in both themes, retaining 1440x900. All four endpoints matched at
