@@ -326,6 +326,7 @@ coverage; the current version-rejection branch is covered.
 | Browser adapter stores Beyond primary/backup in separate keys and exports each slot without mutation                                                                                          | key separation and slot export cases                                                                                                                                                                                          | `tests/parity/remix-beyond-save-storage.test.ts` compares exact keys and all returned slots                                                                                                                                                                                                                      |
 | Same-origin tabs explicitly save snapshots in different orders; each write replaces the shared value without merging or reconciling the other tab                                             | Four pinned/implementation tabs load one controlled seed; the updated tab saves Blacksmith 1, the stale peer saves level 0, the updated tab saves 1 again, then the stale peer buys Active Power and saves its local snapshot | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares Remix legacy output with Beyond v1 state in Chromium, Firefox, and WebKit after all four writes: Blacksmith 1, 0, 1, then 0; the final stale snapshot also has Active Power 1 and Money 0; the updated tab still displays Blacksmith 1                     |
 | Stale same-upgrade and cross-resource actions save whole snapshots without merging newer resource families                                                                                    | Captured level-zero save; exact-price `buy-uses-gem-resource` fixture; two same-origin tabs per implementation; both Blacksmith/Money then Offline Gems/Gems and the reverse purchase/save order                              | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares both live Remix and Beyond after same-upgrade stale writes and both cross-resource orders in Chromium, Firefox, and WebKit; asserts final resource/upgrade state, the stale tab's displayed state, and Beyond backup equals the immediately prior snapshot |
+| A stale tab's periodic frame overwrites a newer same-origin save with its local whole-game snapshot after the strict autosave threshold                                                       | Pinned `Scripts/main.js:update` advances stale `timer.save` past 60 seconds and calls `functions.saveGame()`; two same-origin tabs begin from one captured save, then only the stale tab advances 60,001 ms                   | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares Remix and Beyond in Chromium, Firefox, and WebKit: stale level-zero / 1,000 Money replaces the newer Blacksmith 1 / 970 Money snapshot; the stale tab's Beyond backup retains the newer snapshot and each tab keeps its own displayed level                |
 
 Other cross-tab action/write interleavings, profile-specific quota policies,
 and process termination remain open environment domains; the multi-engine
@@ -378,6 +379,15 @@ Beyond retain only level 1 / 970 Money after the second write rather than
 merging to level 2 / 940 Money. The Beyond backup decodes to the first write.
 The focused Chromium case passed 1/1. Other stale-action and concurrent
 storage interleavings remain open.
+
+**Periodic stale-tab autosave interleaving (2026-11-08):** after the fresh tab
+saves Blacksmith 1 / 970 Money, the stale tab crosses the strict autosave
+threshold with a 60,001 ms frame and overwrites that shared snapshot with
+Blacksmith 0 / 1,000 Money. Remix and Beyond match; the Beyond backup retains
+the newer snapshot, and both tabs continue displaying their local state. The
+focused case passed in Chromium, Firefox, and WebKit and is included in
+`pnpm test:e2e:cross-tab:browsers`. Other same-origin actions and write orders
+remain open.
 
 **Browser E2E validation (2026-10-05):**
 `pnpm.cmd exec playwright test tests/e2e/browser-storage-failure.spec.ts

@@ -33,6 +33,7 @@ type LegacySave = {
   settings: { theme: string; tab: string; upgradeTab?: string };
   upgrades: Record<string, { level: number }>;
   gemUpgrades: Record<string, { level: number }>;
+  pickaxe: { name: string; pow: string; quality: string };
 };
 
 type ObservableLegacySave = {
@@ -63,6 +64,27 @@ const initializeSharedStorage = ({
     localStorage.setItem("IdleMine", encoded);
   }
   Date.now = () => now;
+};
+
+const initializeSharedAutosaveClock = ({
+  encoded,
+  now,
+}: {
+  encoded: string;
+  now: number;
+}) => {
+  if (localStorage.getItem("IdleMine") === null) {
+    localStorage.setItem("IdleMine", encoded);
+  }
+  let currentTime = now;
+  Object.defineProperty(window, "__crossTabAutosaveNow", {
+    configurable: false,
+    get: () => currentTime,
+    set: (next: number) => {
+      currentTime = next;
+    },
+  });
+  Date.now = () => currentTime;
 };
 
 function readSaveState(encoded: string): ObservableLegacySave {
@@ -375,6 +397,177 @@ test("a stale second tab purchase overwrites the newer save like pinned Remix", 
     expect(await page.evaluate(() => localStorage.getItem("IdleMine"))).toBe(
       encodedInitialSave,
     );
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
+test("a stale tab periodic autosave overwrites the newer save like pinned Remix", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(180_000);
+  const fixture = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as SaveFixture;
+  const save = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  save.money = "1000";
+  save.highestMoney = "1000";
+  save.settings.theme = "light";
+  save.settings.tab = "main";
+  save.settings.upgradeTab = "money";
+  save.upgrades["blacksmith"] = { level: 0 };
+  save.pickaxe = { ...save.pickaxe, pow: "0", quality: "0" };
+  save.lastActive = fixedTime;
+  const encodedInitialSave = encodeRemixLegacySave(save);
+
+  const beyondStalePage = await page.context().newPage();
+  const sourceContext = await browser.newContext({
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+  const sourceStalePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all(
+      [page, beyondStalePage, sourcePage, sourceStalePage].map((target) =>
+        target.addInitScript(initializeSharedAutosaveClock, {
+          encoded: encodedInitialSave,
+          now: fixedTime,
+        }),
+      ),
+    );
+    await Promise.all([
+      page.goto("/"),
+      beyondStalePage.goto("/"),
+      sourcePage.goto(sourceUrl),
+      sourceStalePage.goto(sourceUrl),
+    ]);
+    await Promise.all([
+      expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready"),
+      expect(beyondStalePage.locator("#app")).toHaveAttribute(
+        "data-app-state",
+        "ready",
+      ),
+      sourcePage.waitForFunction(() =>
+        Boolean(
+          (window as Window & { game?: unknown }).game &&
+          document.querySelector("#app > footer"),
+        ),
+      ),
+      sourceStalePage.waitForFunction(() =>
+        Boolean(
+          (window as Window & { game?: unknown }).game &&
+          document.querySelector("#app > footer"),
+        ),
+      ),
+    ]);
+
+    const beyondCard = page.locator(
+      '[data-upgrade-group="money"][data-upgrade-key="blacksmith"]',
+    );
+    const beyondStaleCard = beyondStalePage.locator(
+      '[data-upgrade-group="money"][data-upgrade-key="blacksmith"]',
+    );
+    const remixCard = sourceBlacksmithCard(sourcePage);
+    const remixStaleCard = sourceBlacksmithCard(sourceStalePage);
+    await Promise.all(
+      [beyondCard, beyondStaleCard, remixCard, remixStaleCard].map((card) =>
+        expect(card).toBeVisible(),
+      ),
+    );
+    const [beyondInitial, remixInitial] = await Promise.all([
+      readBeyondState(page),
+      sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+    ]);
+    expect(beyondInitial.upgrades.money["blacksmith"]).toBe(0);
+    expect(remixInitial).toBe(encodedInitialSave);
+
+    await Promise.all([beyondCard.click(), remixCard.click()]);
+    await Promise.all([
+      expect(beyondCard).toHaveAttribute("data-upgrade-level", "1"),
+      expect(remixCard.locator(".lvl")).toHaveText("1"),
+    ]);
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      page.getByRole("button", { name: "Save" }).click(),
+      sourcePage.getByRole("button", { name: "Save" }).click(),
+    ]);
+
+    const [beyondNewerState, remixNewerSave] = await Promise.all([
+      readBeyondState(page),
+      readLegacySlot(sourcePage),
+    ]);
+    expect(beyondNewerState.upgrades.money["blacksmith"]).toBe(1);
+    expect(beyondNewerState.resources.money).toBe("970");
+    expect(readSaveState(remixNewerSave).upgrades["blacksmith"]?.level).toBe(1);
+    expect(readSaveState(remixNewerSave).money).toBe("970");
+    expect(await readBeyondState(page, "IdleMineBeyondBackup")).toEqual(
+      beyondInitial,
+    );
+
+    await Promise.all(
+      [beyondStalePage, sourceStalePage].map((target) =>
+        target.evaluate((elapsed) => {
+          const testWindow = window as Window & {
+            __crossTabAutosaveNow?: number;
+          };
+          if (testWindow.__crossTabAutosaveNow === undefined) {
+            throw new Error("The stale-tab autosave clock is unavailable.");
+          }
+          testWindow.__crossTabAutosaveNow += elapsed;
+        }, 60_001),
+      ),
+    );
+    await Promise.all([
+      expect(beyondStalePage.locator(".messagelog")).toContainText(
+        "Game Saved!",
+      ),
+      expect(sourceStalePage.locator(".messagelog")).toContainText(
+        "Game Saved!",
+      ),
+    ]);
+
+    const [beyondStaleState, remixStaleSave] = await Promise.all([
+      readBeyondState(beyondStalePage),
+      readLegacySlot(sourceStalePage),
+    ]);
+    expect(beyondStaleState.upgrades.money["blacksmith"]).toBe(0);
+    expect(beyondStaleState.resources.money).toBe("1000");
+    expect(readSaveState(remixStaleSave).upgrades["blacksmith"]?.level).toBe(0);
+    expect(readSaveState(remixStaleSave).money).toBe("1000");
+    expect(await readBeyondState(page)).toEqual(beyondStaleState);
+    expect(await readBeyondState(page, "IdleMineBeyondBackup")).toEqual(
+      beyondNewerState,
+    );
+
+    await Promise.all([
+      page.locator("footer button").filter({ hasText: "Mining" }).click(),
+      sourcePage.locator("footer button").filter({ hasText: "Mining" }).click(),
+    ]);
+    await Promise.all([
+      expect(beyondCard).toHaveAttribute("data-upgrade-level", "1"),
+      expect(remixCard.locator(".lvl")).toHaveText("1"),
+      expect(beyondStaleCard).toHaveAttribute("data-upgrade-level", "0"),
+      expect(remixStaleCard.locator(".lvl")).toHaveText("0"),
+    ]);
   } finally {
     await sourceContext.close().catch(() => undefined);
   }

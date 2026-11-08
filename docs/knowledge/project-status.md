@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-08
 
+**Stale-tab periodic autosave overwrite (2026-11-08):** added the missing
+source-paired periodic-write interleaving. A fresh tab saves Blacksmith 1 / 970
+Money; after a 60,001 ms controlled frame, the stale tab overwrites it with
+Blacksmith 0 / 1,000 Money. Remix and Beyond match in Chromium, Firefox, and
+WebKit; Beyond's backup retains the newer snapshot, and each tab keeps its
+local display. The case is in `test:e2e:cross-tab:browsers`; other interleavings
+remain open.
+
 **Upgrade persistence across periodic autosave (2026-11-08):** completed the
 positive branch complementary to the existing pre-autosave loss case. After
 buying Blacksmith without an immediate write, a controlled 60,001 ms clock
