@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-08
 
+**Live post-mining save export (2026-11-08):** the source-paired Settings E2E
+breaks pinned object 90 with the captured Planet Coin drop RNG in Remix and
+Beyond, then compares every exported field and exact encoded bytes in light
+and dark Chromium. Both cases passed (2/2). The source displays the next object
+as `#91` while exporting `mineObjectLevel: 90` and `highestMineObjectLevel: 91`;
+other live mining states and dynamic Firefox/WebKit exports remain open.
+
 **Finite upgrade-cap full-screen differential (2026-11-08):** the all-cap
 source-paired E2E now additionally compares the full 1440x900 screen at the
 first finite cap in each Money, Gem, and Planet Coin group, in light and dark

@@ -141,3 +141,7 @@ The current persistence package implements the legacy codec, current-save field 
 The synthetic community-derived fixture now also passes through the live Settings text import in tests/e2e/legacy-save-historical-shape.spec.ts. The test checks the persisted Beyond state and zero defaults for omitted Planet Coin/Wisdom resources. This is one integration case; historical save migration and general format support remain open.
 
 The historical-shape Settings E2E also performs a live pinned-Remix comparison: both runtimes import the same synthetic save through the text field and their subsequent Settings exports match exactly. This covers one specimen through import and export; it does not establish other historical formats.
+
+### Live mining-drop export differential (2026-11-08)
+
+`tests/e2e/save-export-mining-drop-differential.spec.ts` starts from the pinned `planet-coin-drop-roll-follows-gem-roll` case at object 90, applies the same captured RNG sequence to Remix and Beyond, breaks the object, and compares the complete Settings export object and exact encoded bytes in light and dark Chromium. Both runs match. The source UI advances to `#91`, while its serialized `mineObjectLevel` remains 90 and `highestMineObjectLevel` becomes 91; retain this observed distinction. This adds one live post-mining export state; other arbitrary runtime exports and cross-browser dynamic exports remain open.
