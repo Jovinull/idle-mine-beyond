@@ -101,12 +101,12 @@ remain open, and native WebView lifecycle is outside web-v1.
 **Live purchase export differential (2026-11-08):**
 `tests/e2e/save-export-purchase-differential.spec.ts` starts pinned Remix and
 Beyond from the captured `buy-exact-affordability`, `buy-uses-gem-resource`,
-and `buy-uses-planet-coin-resource` saves, selects each matching shop group,
-makes the successful purchase, and exports through Settings. The complete
-decoded legacy objects and encoded bytes match for Money Active Power at 1000
-Money, Gem Offline Gems at 4444 Gems, and Planet Coin Active Power at 100 Planet
-Coins. Wisdom purchases, other levels/actions, and wider runtime states remain
-open.
+`buy-uses-planet-coin-resource`, and `buy-uses-wisdom-resource` saves, opens the
+corresponding upgrades view, makes the successful purchase, and exports through
+Settings. The complete decoded legacy objects and encoded bytes match for Money
+Active Power at 1000 Money, Gem Offline Gems at 4444 Gems, Planet Coin Active
+Power at 100 Planet Coins, and Wisdom Simple Gem Boost at 10 billion Wisdom.
+Other levels/actions and wider runtime states remain open.
 
 ## Main simulation time and autosave timer
 

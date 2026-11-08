@@ -6,6 +6,7 @@ import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
 const fixedTime = 1_700_000_000_000;
 type ShopGroup = "money" | "gems" | "planetCoins";
+type PurchaseGroup = ShopGroup | "wisdom";
 
 const groupLabels: Record<ShopGroup, string> = {
   money: "Money Upgrades",
@@ -17,7 +18,7 @@ type DecimalCapture = { decimal: string };
 
 type PurchaseCapture = {
   name: string;
-  group: ShopGroup;
+  group: PurchaseGroup;
   key: string;
   startingLevel: number;
   startingResources: {
@@ -32,7 +33,10 @@ type ReferenceCorpus = {
   data: {
     saveApplicationSemantics: { inputJson: string };
     upgradeSemantics: {
-      groups: Record<string, Record<string, { image: string }>>;
+      groups: Record<
+        PurchaseGroup,
+        Record<string, { image: string; name: string }>
+      >;
       purchaseSemantics: PurchaseCapture[];
     };
   };
@@ -44,6 +48,7 @@ type LegacySave = {
   gems: string;
   planetCoins: string;
   maxWisdom: string;
+  wisdom: string;
   mineObjectLevel: number;
   highestMineObjectLevel: number;
   settings: {
@@ -54,6 +59,10 @@ type LegacySave = {
   upgrades: Record<string, { level: number }>;
   gemUpgrades: Record<string, { level: number }>;
   planetCoinUpgrades: Record<string, { level: number }>;
+  powers: {
+    data: { values: string[] };
+    upgrades: Record<string, { level: number }>;
+  };
   pickaxe: { name: string; pow: string; quality: string };
 };
 
@@ -121,12 +130,11 @@ async function comparePurchaseExport(
     ({ name }) => name === purchaseName,
   );
   if (!purchase) throw new Error(`Pinned purchase ${purchaseName} is missing.`);
-  const imageName = corpus.data.upgradeSemantics.groups[purchase.group]?.[
-    purchase.key
-  ]?.image
-    .split("/")
-    .at(-1);
-  if (!imageName) throw new Error("Pinned purchase upgrade image is missing.");
+  const upgrade =
+    corpus.data.upgradeSemantics.groups[purchase.group]?.[purchase.key];
+  if (!upgrade)
+    throw new Error(`Pinned purchase upgrade is missing: ${purchase.key}`);
+  const imageName = upgrade.image.split("/").at(-1);
 
   const sourceSave = JSON.parse(
     corpus.data.saveApplicationSemantics.inputJson,
@@ -136,8 +144,10 @@ async function comparePurchaseExport(
   sourceSave.gems = purchase.startingResources.gems.decimal;
   sourceSave.planetCoins = purchase.startingResources.planetCoins.decimal;
   sourceSave.maxWisdom = purchase.startingResources.wisdom.decimal;
-  sourceSave.mineObjectLevel = 1;
-  sourceSave.highestMineObjectLevel = 90;
+  sourceSave.wisdom = purchase.startingResources.wisdom.decimal;
+  const isWisdomPurchase = purchase.group === "wisdom";
+  sourceSave.mineObjectLevel = isWisdomPurchase ? 170 : 1;
+  sourceSave.highestMineObjectLevel = isWisdomPurchase ? 170 : 90;
   sourceSave.settings.tab = "main";
   sourceSave.settings.theme = "light";
   sourceSave.settings.upgradeTab = "money";
@@ -146,12 +156,26 @@ async function comparePurchaseExport(
     gems: { offlineGems: { level: 0 } },
     planetCoins: { activePower: { level: 0 } },
   };
-  upgradeLevels[purchase.group][purchase.key] = {
-    level: purchase.startingLevel,
-  };
+  if (purchase.group !== "wisdom") {
+    upgradeLevels[purchase.group][purchase.key] = {
+      level: purchase.startingLevel,
+    };
+  }
   sourceSave.upgrades = upgradeLevels.money;
   sourceSave.gemUpgrades = upgradeLevels.gems;
   sourceSave.planetCoinUpgrades = upgradeLevels.planetCoins;
+  sourceSave.powers.data.values = ["1", "1", "1", "1", "1"];
+  sourceSave.powers.upgrades = Object.fromEntries(
+    Object.keys(corpus.data.upgradeSemantics.groups.wisdom).map((key) => [
+      key,
+      { level: 0 },
+    ]),
+  );
+  if (isWisdomPurchase) {
+    sourceSave.powers.upgrades[purchase.key] = {
+      level: purchase.startingLevel,
+    };
+  }
   sourceSave.pickaxe = { name: "Probe Pickaxe", pow: "0", quality: "0" };
   const encodedSourceSave = encodeRemixLegacySave(sourceSave);
   const encodedBeyondSave = await createBeyondVisualSaveFromRemixSave({
@@ -189,7 +213,15 @@ async function comparePurchaseExport(
       Boolean((window as Window & { game?: unknown }).game),
     );
 
-    if (purchase.group !== "money") {
+    if (purchase.group === "wisdom") {
+      await Promise.all([
+        page.locator("[data-game-tab='powers']").click(),
+        sourcePage
+          .locator("footer button")
+          .filter({ hasText: "Powers" })
+          .click(),
+      ]);
+    } else if (purchase.group !== "money") {
       await Promise.all([
         page.locator(`[data-upgrade-tab="${purchase.group}"]`).click(),
         sourcePage
@@ -198,21 +230,32 @@ async function comparePurchaseExport(
           .click(),
       ]);
     }
-    const beyondCard = page.locator(
-      `[data-upgrade-group="${purchase.group}"][data-upgrade-key="${purchase.key}"]`,
-    );
-    const sourceCard = sourcePage
-      .locator(".upgradelist .upgrade")
-      .filter({ has: sourcePage.locator(`img[src$="${imageName}"]`) })
-      .first();
+    const beyondCard = isWisdomPurchase
+      ? page.locator(`[data-wisdom-upgrade="${purchase.key}"]`)
+      : page.locator(
+          `[data-upgrade-group="${purchase.group}"][data-upgrade-key="${purchase.key}"]`,
+        );
+    const sourceCard = isWisdomPurchase
+      ? sourcePage
+          .locator("article.powers .powers-upgrades button")
+          .filter({ hasText: upgrade.name })
+          .first()
+      : sourcePage
+          .locator(".upgradelist .upgrade")
+          .filter({ has: sourcePage.locator(`img[src$="${imageName}"]`) })
+          .first();
     await Promise.all([beyondCard.click(), sourceCard.click()]);
     await expect(beyondCard).toHaveAttribute(
       "data-upgrade-level",
       String(purchase.startingLevel + 1),
     );
-    await expect(sourceCard.locator(".lvl")).toHaveText(
-      await beyondCard.locator(".lvl").innerText(),
-    );
+    if (isWisdomPurchase) {
+      expect(await sourceCard.innerText()).toBe(await beyondCard.innerText());
+    } else {
+      await expect(sourceCard.locator(".lvl")).toHaveText(
+        await beyondCard.locator(".lvl").innerText(),
+      );
+    }
 
     await Promise.all([
       page.locator("[data-game-tab='settings']").click(),
@@ -260,6 +303,7 @@ for (const purchaseName of [
   "buy-exact-affordability",
   "buy-uses-gem-resource",
   "buy-uses-planet-coin-resource",
+  "buy-uses-wisdom-resource",
 ]) {
   test(`exports the live save after ${purchaseName}`, async ({
     browser,
