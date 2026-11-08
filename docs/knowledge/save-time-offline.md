@@ -98,6 +98,13 @@ saves; the focused Playwright case passes 1/1. This covers one controlled
 Chromium lifecycle transition. Actual OS background scheduling and throttling
 remain open, and native WebView lifecycle is outside web-v1.
 
+**Live purchase export differential (2026-11-08):**
+`tests/e2e/save-export-purchase-differential.spec.ts` starts pinned Remix and
+Beyond from the source `buy-exact-affordability` save, buys Money Active Power
+for exactly 1000 Money in both, and exports through Settings. The complete
+decoded legacy objects and encoded bytes match. This covers one live dynamic
+state; other purchase/export combinations remain open.
+
 ## Main simulation time and autosave timer
 
 **Verified source and controlled frame behavior:** `Scripts/main.js` reads `Date.now()` to compute a delta at the start of each `requestAnimationFrame` update, then reads it again to set the next baseline. It increments the auto-pickaxe and save timers by the same delta. The auto timer performs at most one hit and resets to zero when strictly over its interval. The save timer saves once and resets to zero only when strictly over 60 seconds; exact equality does not save, and long-frame excess is discarded. Every update requests story-notification refresh after the save check. The ten hit plus four frame cases in `miningHitSemantics` cover these timer boundaries and event order.
