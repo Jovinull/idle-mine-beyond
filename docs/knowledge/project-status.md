@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-08
 
+**Settings alternate-viewport screens (2026-11-08):** the initial light
+Settings screen and changed-preference dark screen now have live pinned-
+Remix/Beyond full-screen comparisons at 1366x768. This extends the existing
+1440x900 preference flow and 1366x768 light/dark Export comparisons. The full
+`settings-visual.spec.ts` suite passed 3/3 in Chromium; both new screenshots
+matched at zero pixels.
+
 **Money aligned-purchase visual (2026-11-08):** the existing pinned
 `buy100-aligns-current-level` capture starts Active Power at level 99 with
 exactly enough Money for one purchase. Holding Control raises it to level 100

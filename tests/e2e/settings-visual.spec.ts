@@ -237,6 +237,15 @@ test("matches Remix after changing and saving Settings preferences", async ({
       expect(remixSettings).toBeVisible(),
     ]);
     await compareScreen("settings-initial-light");
+    await Promise.all([
+      page.setViewportSize({ width: 1366, height: 768 }),
+      sourcePage.setViewportSize({ width: 1366, height: 768 }),
+    ]);
+    await compareScreen("settings-initial-light-1366x768");
+    await Promise.all([
+      page.setViewportSize({ width: 1440, height: 900 }),
+      sourcePage.setViewportSize({ width: 1440, height: 900 }),
+    ]);
 
     await Promise.all([
       setVisiblePreferences(beyondSettings, "3"),
@@ -269,6 +278,15 @@ test("matches Remix after changing and saving Settings preferences", async ({
       ),
     ]);
     await compareScreen("settings-preferences-dark");
+    await Promise.all([
+      page.setViewportSize({ width: 1366, height: 768 }),
+      sourcePage.setViewportSize({ width: 1366, height: 768 }),
+    ]);
+    await compareScreen("settings-preferences-dark-1366x768");
+    await Promise.all([
+      page.setViewportSize({ width: 1440, height: 900 }),
+      sourcePage.setViewportSize({ width: 1440, height: 900 }),
+    ]);
 
     await Promise.all([
       beyondSettings.getByRole("button", { name: "Save" }).click(),

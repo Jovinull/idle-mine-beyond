@@ -63,8 +63,9 @@ unchanged.
   enabling both preferences, switching to dark, saving, and exporting, then
   returning to light and comparing manual Save and Export again. The full-screen
   changed-preference/save/export state is compared in both themes at 1440x900.
-  Light and dark Export states also match at 1366x768 in the live paired
-  comparison.
+  The initial light Settings screen and changed-preference dark Settings screen
+  also match at 1366x768; light and dark Export states match at that viewport in
+  the live paired comparison.
   The
   `tests/e2e/mining-preferences-visual.spec.ts` toggles both Mining display
   preferences through Settings and compares the label-present and label-absent
