@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-08
 
+**Upgrade persistence across periodic autosave (2026-11-08):** completed the
+positive branch complementary to the existing pre-autosave loss case. After
+buying Blacksmith without an immediate write, a controlled 60,001 ms clock
+advance lets the real source/Beyond frame loop autosave; both exports match
+byte-for-byte at Blacksmith 1 and Money 970. The full focused Chromium E2E file
+passed 2/2. Evidence is limited to this captured Money purchase and interval.
+
 **Offline multi-resource live-rate cold start (2026-11-08):** added a
 source-paired controlled level-90 Asteroid legacy save built from the pinned
 live-rate composition capture. At 3,601 elapsed seconds, Remix and Beyond
