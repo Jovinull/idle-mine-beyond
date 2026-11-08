@@ -1622,7 +1622,7 @@ strict full-screen gap.
 source/Beyond full-screen pixel comparison for the captured natural Chapter 3,
 4, 5, and 6 route-end saves at 1440x900 in light theme. The focused Windows
 Chromium run passed 4/4 with no pixel differences. The same test is part of the
-Linux browser suite; its CI result is pending. This strengthens selected Story
+Linux browser suite; Ubuntu CI run 42449122130 passed (229 E2E passed; one test skipped). This strengthens selected Story
 visual evidence without changing the approved Story certification scope.
 
 **Zero-resource shop full screens (2026-11-08):** extended the source/Beyond

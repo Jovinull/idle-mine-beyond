@@ -58,8 +58,7 @@ The pinned Chromium runtime records native `1px 6px` padding on the chapter arro
 Natural Story route-end captures for Chapters 3-6 now have a live pinned-source
 versus Beyond pixel comparison at 1440x900 in light theme. The Windows
 Chromium comparison passed all four routes exactly. Linux uses the same
-runtime differential rather than a Windows screenshot baseline; its CI result
-is pending.
+runtime differential rather than a Windows screenshot baseline; Ubuntu CI run 42449122130 passed the browser suite (229 passed, one skip).
 
 | Story page | Light baseline                                                                  | Dark baseline                                                                  |
 | ---------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
