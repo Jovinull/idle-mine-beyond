@@ -36,10 +36,13 @@ properties, objective text geometry, and regular/bold Work Sans checks now
 match across source and Beyond; the two raster pixels still differ. CI run
 42500838165 confirms exact objective text/markup and Chromium reports
 `Work Sans` / `WorkSans-Regular` for the bold node in both pages, with 16 glyphs
-each. The diagnostic now records the full ancestor chain's computed CSS and
-geometry for the next differential. No mask or tolerance was added. Later
-Linux viewports have not run because the test stops at the first mismatch.
-Source PNG baselines remain Windows-only.
+each. CI run 42503025927 shows the source article is directly under `main`,
+while Beyond inserts `.story-panel-host` between `main` and `article.story`.
+Matched nodes have equal computed CSS and geometry; the Beyond wrapper has the
+same bounds as `main` and adds `overflow:hidden`. This is a structural
+difference to investigate, not a confirmed pixel cause. No mask or tolerance
+was added. Later Linux viewports have not run because the test stops at the
+first mismatch. Source PNG baselines remain Windows-only.
 
 **Natural Chapter 3-6 dark Linux differential (2026-11-08):** the full Chromium
 E2E suite passed in Ubuntu CI run 42484538684 (255 passed). The natural route-end
