@@ -193,7 +193,7 @@ paths have source-backed assertions.
   Chromium, Firefox, and WebKit.
 - **Sampled:** the route-end set is four saves, and the additional all-group
   state is one controlled fixture, not every valid Remix runtime state.
-  Valid codec outputs match pinned Remix in Chromium, Firefox, and WebKit for five codec vectors, seventeen UTF-8/escape boundaries, and five Base64 variants. The varied all-group live export matches in all three browsers; four resource-family purchases and four captured bulk-purchase exports (Money buy10/buy100 plus Gem and Planet Coin buy10) match in Chromium. Other levels, alignments, and runtime exports remain unverified.
+  Valid codec outputs match pinned Remix in Chromium, Firefox, and WebKit for five codec vectors, seventeen UTF-8/escape boundaries, and five Base64 variants. The varied all-group live export matches in all three browsers; four resource-family purchases and four captured bulk-purchase exports (Money buy10/buy100 plus Gem and Planet Coin buy10) match in Chromium, Firefox, and WebKit. Other levels, alignments, and runtime exports remain unverified.
 
 ### Export/persist function and branch trace
 

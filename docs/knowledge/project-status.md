@@ -57,9 +57,7 @@ now purchases the captured Money Active Power, Gem Offline Gems, Planet Coin
 Active Power, and Wisdom Simple Gem Boost cases in both apps, then compares
 complete Settings export objects and encoded bytes. It also compares exports
 after the captured Shift buy10 and Control buy100 Money purchases, plus Shift
-buy10 Gem and Planet Coin Gem Multiplication purchases. The focused suite
-passed 8/8, with all complete export objects and encoded bytes matching;
-other purchase levels/actions and dynamic runtime exports remain open.
+buy10 Gem and Planet Coin Gem Multiplication purchases. The suite passed 8/8 in Chromium and 16/16 in Firefox/WebKit; all eight complete export objects and encoded bytes matched in each engine. CI runs the cross-browser cases; other purchase levels/actions and dynamic runtime exports remain open.
 
 **WebKit save codec vectors (2026-11-08):** the captured valid-codec browser
 comparison also passes in Playwright WebKit (1/1), covering exact encoded

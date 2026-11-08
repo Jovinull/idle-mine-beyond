@@ -335,5 +335,8 @@ for (const purchaseName of [
   test(`exports the live save after ${purchaseName}`, async ({
     browser,
     page,
-  }) => comparePurchaseExport(browser, page, purchaseName));
+  }) => {
+    test.setTimeout(60_000);
+    await comparePurchaseExport(browser, page, purchaseName);
+  });
 }
