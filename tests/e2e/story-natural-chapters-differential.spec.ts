@@ -327,6 +327,53 @@ for (const theme of ["light", "dark"] as const) {
               contentType: "image/png",
             }),
           ]);
+          const paintVariants = [];
+          for (const variant of [
+            {
+              name: "host-overflow-visible",
+              css: ".story-panel-host { overflow: visible !important; }",
+            },
+            {
+              name: "host-background-transparent",
+              css: ".story-panel-host { background-color: transparent !important; }",
+            },
+            {
+              name: "host-overflow-and-background",
+              css: ".story-panel-host { overflow: visible !important; background-color: transparent !important; }",
+            },
+            {
+              name: "host-display-contents",
+              css: ".story-panel-host { display: contents !important; }",
+            },
+          ]) {
+            const styleTag = await page.addStyleTag({ content: variant.css });
+            try {
+              const screenshot = await page.screenshot({
+                animations: "disabled",
+              });
+              const path = test
+                .info()
+                .outputPath(
+                  `${chapter.id}-${viewport.name}-${variant.name}.png`,
+                );
+              await writeFile(path, screenshot);
+              await test
+                .info()
+                .attach(`${chapter.id}-${viewport.name}-${variant.name}.png`, {
+                  path,
+                  contentType: "image/png",
+                });
+              paintVariants.push({
+                name: variant.name,
+                css: variant.css,
+                hash: renderedPixelHash(screenshot),
+              });
+            } finally {
+              await styleTag.evaluate((element) =>
+                element.parentNode?.removeChild(element),
+              );
+            }
+          }
           const diagnosticsPath = test
             .info()
             .outputPath(
@@ -340,6 +387,7 @@ for (const theme of ["light", "dark"] as const) {
                 viewport,
                 sourceHash,
                 beyondHash,
+                paintVariants,
                 source: sourceDiagnostics,
                 beyond: beyondDiagnostics,
               },

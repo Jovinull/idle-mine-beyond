@@ -32,7 +32,10 @@ and bold font checks, Chromium's platform font for the objective's bold text
 node, and its ancestor chain's computed CSS and geometry. Run 42503025927
 shows Beyond's `.story-panel-host` between `main` and `article.story`; its
 same-sized `overflow:hidden` box remains a structural difference, with no
-confirmed causal link to the two-pixel raster delta.
+confirmed causal link to the two-pixel raster delta. On mismatch, the E2E also
+captures diagnostic-only overflow-visible, transparent-background, combined,
+and `display:contents` host variants; the production page and exact assertion
+are unchanged.
 
 ## Settings and input controls
 

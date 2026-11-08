@@ -40,9 +40,13 @@ each. CI run 42503025927 shows the source article is directly under `main`,
 while Beyond inserts `.story-panel-host` between `main` and `article.story`.
 Matched nodes have equal computed CSS and geometry; the Beyond wrapper has the
 same bounds as `main` and adds `overflow:hidden`. This is a structural
-difference to investigate, not a confirmed pixel cause. No mask or tolerance
-was added. Later Linux viewports have not run because the test stops at the
-first mismatch. Source PNG baselines remain Windows-only.
+difference to investigate, not a confirmed pixel cause. The next failure-only
+capture compares the strict screenshot with temporary `overflow:visible`,
+transparent-background, combined, and `display:contents` host variants. These
+are diagnostic captures only; the production page and exact comparison stay
+unchanged. No mask or tolerance was added. Later Linux viewports have not run
+because the test stops at the first mismatch. Source PNG baselines remain
+Windows-only.
 
 **Natural Chapter 3-6 dark Linux differential (2026-11-08):** the full Chromium
 E2E suite passed in Ubuntu CI run 42484538684 (255 passed). The natural route-end
