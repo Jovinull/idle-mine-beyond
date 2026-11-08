@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-08
 
+**Money aligned-purchase visual (2026-11-08):** the existing pinned
+`buy100-aligns-current-level` capture starts Active Power at level 99 with
+exactly enough Money for one purchase. Holding Control raises it to level 100
+and leaves zero Money in Remix and Beyond. The paired full-screen Money views
+match at zero pixels in light and dark at 1440x900 (2/2 focused Chromium
+cases). Other purchase states and resource balances remain open.
+
 **Gem Waster lower-interior selector visual (2026-11-08):** added the
 source-paired cost-3 selection state, with both decrement and increment arrows
 enabled and visible. The full Mining screen matched at zero pixels in both

@@ -40,8 +40,27 @@ type LegacySave = {
   planetCoinUpgrades: Record<string, { level: number }>;
 };
 
+type SourceGame = {
+  money: { toString(): string };
+  upgrades: Record<string, { level: number }>;
+};
+
 type Fixture = {
-  data: { saveApplicationSemantics: { inputJson: string } };
+  data: {
+    saveApplicationSemantics: { inputJson: string };
+    upgradeSemantics: {
+      purchaseSemantics: Array<{
+        name: string;
+        group: "money" | "gems" | "planetCoins";
+        key: string;
+        startingLevel: number;
+        endingLevel: number;
+        purchases: number;
+        startingResources: Record<string, { decimal: string }>;
+        endingResources: Record<string, { decimal: string }>;
+      }>;
+    };
+  };
 };
 
 function seedPage({ encoded, time }: { encoded: string; time: number }): void {
@@ -245,4 +264,143 @@ for (const theme of ["light", "dark"] as const) {
       });
     }
   }
+}
+
+for (const theme of ["light", "dark"] as const) {
+  test(`matches full-screen Money after the source-aligned Control purchase in ${theme} theme`, async ({
+    browser,
+    page,
+  }) => {
+    test.setTimeout(90_000);
+    const fixture = JSON.parse(
+      await readFile(
+        new URL(
+          "../fixtures/parity/remix-reference-corpus.json",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    ) as Fixture;
+    const purchase = fixture.data.upgradeSemantics.purchaseSemantics.find(
+      ({ name }) => name === "buy100-aligns-current-level",
+    );
+    if (
+      !purchase ||
+      purchase.group !== "money" ||
+      purchase.key !== "activePower" ||
+      purchase.startingLevel !== 99 ||
+      purchase.endingLevel !== 100 ||
+      purchase.purchases !== 1 ||
+      purchase.endingResources["money"]?.decimal !== "0"
+    ) {
+      throw new Error("The source-aligned Money Control capture is missing.");
+    }
+    const save = JSON.parse(
+      fixture.data.saveApplicationSemantics.inputJson,
+    ) as LegacySave;
+    save.money = purchase.startingResources["money"]!.decimal;
+    save.gems = purchase.startingResources["gems"]!.decimal;
+    save.planetCoins = purchase.startingResources["planetCoins"]!.decimal;
+    save.highestMineObjectLevel = 90;
+    save.mineObjectLevel = 1;
+    save.lastActive = fixedTime;
+    save.settings["tab"] = "main";
+    save.settings["theme"] = theme;
+    save.settings["upgradeTab"] = "money";
+    save.settings["numberFormatterIndex"] = 0;
+    save.upgrades = { activePower: { level: purchase.startingLevel } };
+    save.gemUpgrades = { offlineGems: { level: 0 } };
+    save.planetCoinUpgrades = { activePower: { level: 0 } };
+    const encoded = encodeRemixLegacySave(save);
+    const { sourceContext, sourcePage } = await startPages(
+      browser,
+      page,
+      encoded,
+      theme,
+      { width: 1440, height: 900 },
+    );
+
+    try {
+      const beyondCard = page.locator(
+        '[data-upgrade-group="money"][data-upgrade-key="activePower"]',
+      );
+      const sourceCard = sourcePage
+        .locator(".upgradelist .upgrade")
+        .filter({
+          has: sourcePage.locator('img[src$="activepower.png"]'),
+        })
+        .first();
+      await expect(beyondCard).toHaveAttribute(
+        "data-upgrade-level",
+        String(purchase.startingLevel),
+      );
+      await expect(sourceCard.locator(".lvl")).toHaveText("99");
+
+      await Promise.all([
+        page.keyboard.down("Control"),
+        sourcePage.keyboard.down("Control"),
+      ]);
+      try {
+        await Promise.all([beyondCard.click(), sourceCard.click()]);
+      } finally {
+        await Promise.all([
+          page.keyboard.up("Control"),
+          sourcePage.keyboard.up("Control"),
+        ]);
+      }
+
+      await expect(beyondCard).toHaveAttribute(
+        "data-upgrade-level",
+        String(purchase.endingLevel),
+      );
+      await expect(sourceCard.locator(".lvl")).toHaveText("100");
+      await expect(beyondCard.locator(".lvl")).toHaveText("100");
+      const sourceOutcome = await sourcePage.evaluate(() => {
+        const game = (window as Window & { game?: SourceGame }).game;
+        if (!game) throw new Error("Pinned Remix game state is unavailable.");
+        return {
+          level: game.upgrades["activePower"]!.level,
+          money: game.money.toString(),
+        };
+      });
+      expect(sourceOutcome).toEqual({
+        level: purchase.endingLevel,
+        money: purchase.endingResources["money"]!.decimal,
+      });
+      const [beyondHeader, sourceHeader] = await Promise.all([
+        page.locator("header").innerText(),
+        sourcePage.locator("header").innerText(),
+      ]);
+      expect(beyondHeader).toBe(sourceHeader);
+      await Promise.all([
+        page.mouse.move(1439, 899),
+        sourcePage.mouse.move(1439, 899),
+      ]);
+
+      const [beyondPng, remixPng] = await Promise.all([
+        waitForStableScreen(page),
+        waitForStableScreen(sourcePage),
+      ]);
+      const beyondHash = createHash("sha256").update(beyondPng).digest("hex");
+      const remixHash = createHash("sha256").update(remixPng).digest("hex");
+      if (beyondHash !== remixHash) {
+        await Promise.all([
+          test.info().attach(`money-control-purchase-${theme}-beyond.png`, {
+            body: beyondPng,
+            contentType: "image/png",
+          }),
+          test.info().attach(`money-control-purchase-${theme}-remix.png`, {
+            body: remixPng,
+            contentType: "image/png",
+          }),
+        ]);
+      }
+      expect(
+        beyondHash,
+        `Money Control purchase ${theme} full-screen PNG`,
+      ).toBe(remixHash);
+    } finally {
+      await sourceContext.close().catch(() => undefined);
+    }
+  });
 }
