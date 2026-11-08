@@ -126,9 +126,10 @@ test("matches captured Remix save codec vectors in Chromium", async ({
   });
 });
 
-test("matches Chromium's Remix decoder for percent-encoded UTF-8 byte boundaries", async ({
+test("matches Chromium's Remix decoder for all two-byte high-byte sequences", async ({
   page,
 }) => {
+  test.setTimeout(10 * 60 * 1000);
   await page.goto("/__test__/save-codec");
   await expect(page.locator("#result")).toHaveAttribute("data-ready", "true");
 
@@ -137,6 +138,11 @@ test("matches Chromium's Remix decoder for percent-encoded UTF-8 byte boundaries
     bytes.map((byte) => `%${byte.toString(16).padStart(2, "0")}`).join("");
   for (let byte = 0x80; byte <= 0xff; byte += 1) {
     percentBytes.add(percent([byte]));
+  }
+  for (let lead = 0x80; lead <= 0xff; lead += 1) {
+    for (let tail = 0x00; tail <= 0xff; tail += 1) {
+      percentBytes.add(percent([lead, tail]));
+    }
   }
 
   const leads = [
@@ -162,68 +168,72 @@ test("matches Chromium's Remix decoder for percent-encoded UTF-8 byte boundaries
   const encodedInputs = [...percentBytes].map((value) =>
     Buffer.from(value, "ascii").toString("base64"),
   );
-  expect(encodedInputs).toHaveLength(237);
-  const sourceResults = await page.evaluate((encoded) => {
-    const errorShape = (error: unknown) =>
-      error instanceof Error
-        ? { name: error.name, message: error.message }
-        : { name: "Error", message: String(error) };
+  expect(encodedInputs).toHaveLength(32_899);
+  for (let offset = 0; offset < encodedInputs.length; offset += 1024) {
+    const encodedChunk = encodedInputs.slice(offset, offset + 1024);
+    const sourceResults = await page.evaluate((encoded) => {
+      const errorShape = (error: unknown) =>
+        error instanceof Error
+          ? { name: error.name, message: error.message }
+          : { name: "Error", message: String(error) };
 
-    return encoded.map((input) => {
-      let decoded: string | undefined;
-      let decodeError: ReturnType<typeof errorShape> | null = null;
-      try {
-        decoded = unescape(decodeURIComponent(atob(input)));
-      } catch (error) {
-        decodeError = errorShape(error);
-      }
+      return encoded.map((input) => {
+        let decoded: string | undefined;
+        let decodeError: ReturnType<typeof errorShape> | null = null;
+        try {
+          decoded = unescape(decodeURIComponent(atob(input)));
+        } catch (error) {
+          decodeError = errorShape(error);
+        }
 
-      try {
-        return {
-          status: "success" as const,
-          json: decoded,
-          value: JSON.parse(decoded as string) as unknown,
-        };
-      } catch (error) {
-        return {
-          status: decodeError
-            ? ("invalidEncoding" as const)
-            : ("invalidJson" as const),
-          decodeError,
-          parseError: errorShape(error),
-        };
+        try {
+          return {
+            status: "success" as const,
+            json: decoded,
+            value: JSON.parse(decoded as string) as unknown,
+          };
+        } catch (error) {
+          const parseError = errorShape(error);
+          return decodeError
+            ? { status: "invalidEncoding" as const, decodeError, parseError }
+            : {
+                status: "invalidJson" as const,
+                json: decoded,
+                decodeError: null,
+                parseError,
+              };
+        }
+      });
+    }, encodedChunk);
+
+    expect(sourceResults).toHaveLength(encodedChunk.length);
+    const beyondResults = encodedChunk.map((encoded) => {
+      const result = decodeRemixLegacySave(encoded);
+      switch (result.status) {
+        case "invalidEncoding":
+          return {
+            status: result.status,
+            decodeError: result.decodeError,
+            parseError: result.parseError,
+          };
+        case "invalidJson":
+          return {
+            status: result.status,
+            json: result.json,
+            decodeError: null,
+            parseError: result.parseError,
+          };
+        case "success":
+          return {
+            status: result.status,
+            json: result.json,
+            value: result.value,
+          };
       }
     });
-  }, encodedInputs);
-
-  expect(sourceResults).toHaveLength(encodedInputs.length);
-  for (const [index, encoded] of encodedInputs.entries()) {
-    const beyondResult = decodeRemixLegacySave(encoded);
-    const sourceResult = sourceResults[index];
-    expect(sourceResult, `source byte-sequence case ${index}`).toBeDefined();
-    expect(beyondResult.status, `byte-sequence status ${index}`).toBe(
-      sourceResult?.status,
-    );
-
-    if (beyondResult.status === "invalidEncoding") {
-      expect(beyondResult.decodeError, `decode error ${index}`).toEqual(
-        sourceResult?.decodeError,
-      );
-      expect(
-        beyondResult.parseError,
-        `post-decode parse error ${index}`,
-      ).toEqual(sourceResult?.parseError);
-    } else if (beyondResult.status === "invalidJson") {
-      expect(beyondResult.parseError, `JSON parse error ${index}`).toEqual(
-        sourceResult?.parseError,
-      );
-    } else {
-      expect(beyondResult.json, `decoded JSON ${index}`).toBe(
-        sourceResult?.json,
-      );
-      expect(beyondResult.value, `parsed value ${index}`).toEqual(
-        sourceResult?.value,
-      );
-    }
+    expect(
+      beyondResults,
+      `byte-sequence cases ${offset}–${offset + encodedChunk.length - 1}`,
+    ).toEqual(sourceResults);
   }
 });
