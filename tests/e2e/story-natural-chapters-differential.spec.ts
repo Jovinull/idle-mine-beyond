@@ -272,23 +272,30 @@ for (const theme of ["light", "dark"] as const) {
               contentType: "image/png",
             }),
           ]);
+          const diagnosticsPath = test
+            .info()
+            .outputPath(
+              `${chapter.id}-${viewport.name}-render-diagnostics.json`,
+            );
+          await writeFile(
+            diagnosticsPath,
+            JSON.stringify(
+              {
+                theme,
+                viewport,
+                sourceHash,
+                beyondHash,
+                source: sourceDiagnostics,
+                beyond: beyondDiagnostics,
+              },
+              null,
+              2,
+            ),
+          );
           await test
             .info()
             .attach(`${chapter.id}-${viewport.name}-render-diagnostics.json`, {
-              body: Buffer.from(
-                JSON.stringify(
-                  {
-                    theme,
-                    viewport,
-                    sourceHash,
-                    beyondHash,
-                    source: sourceDiagnostics,
-                    beyond: beyondDiagnostics,
-                  },
-                  null,
-                  2,
-                ),
-              ),
+              path: diagnosticsPath,
               contentType: "application/json",
             });
         }
