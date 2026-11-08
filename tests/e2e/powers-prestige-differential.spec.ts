@@ -1,7 +1,10 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
-import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
+import {
+  decodeRemixLegacySave,
+  encodeRemixLegacySave,
+} from "../../packages/persistence/src/remix-save-codec.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
 type PrestigeSample = {
@@ -320,6 +323,52 @@ for (const sample of prestigeSamples) {
       expect(await readSourcePowerValues(sourcePage)).toEqual(
         sample.after.map(({ decimal }) => decimal),
       );
+
+      if (sample.changed) {
+        await Promise.all([
+          page.locator("[data-game-tab='settings']").click(),
+          sourcePage
+            .locator("footer button")
+            .filter({ hasText: "Settings" })
+            .click(),
+        ]);
+        await Promise.all([
+          page.locator("[data-settings-export]").click(),
+          sourcePage
+            .locator("article.settings button")
+            .filter({ hasText: "Export" })
+            .click(),
+        ]);
+        const [beyondExport, remixExport] = await Promise.all([
+          page.locator("[data-settings-save-field]").inputValue(),
+          sourcePage.locator("article.settings textarea").inputValue(),
+        ]);
+        expect(beyondExport, `${sample.name} Prestige export bytes`).toBe(
+          remixExport,
+        );
+        const [beyondDecoded, remixDecoded] = [
+          decodeRemixLegacySave(beyondExport),
+          decodeRemixLegacySave(remixExport),
+        ];
+        expect(beyondDecoded.status, `${sample.name} Beyond export`).toBe(
+          "success",
+        );
+        expect(remixDecoded.status, `${sample.name} Remix export`).toBe(
+          "success",
+        );
+        if (
+          beyondDecoded.status !== "success" ||
+          remixDecoded.status !== "success"
+        ) {
+          throw new Error(
+            `${sample.name} Prestige export could not be decoded.`,
+          );
+        }
+        expect(
+          beyondDecoded.value,
+          `${sample.name} Prestige save object`,
+        ).toEqual(remixDecoded.value);
+      }
     } finally {
       await sourceContext.close().catch(() => undefined);
     }

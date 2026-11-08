@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-08
 
+**Prestige full-save differential (2026-11-08):** the live Powers comparison
+now enters Settings after each of the four enabled Prestige actions and compares
+the complete exported legacy bytes and decoded objects between Remix and
+Beyond. All four source-paired cases passed in Chromium; the no-op Prestige
+cases remain unchanged. Other save-state combinations remain open.
+
 **Reverse cross-resource stale-tab save (2026-11-08):** added the complementary
 purchase order: the updated tab saves Offline Gems first, then a stale tab
 buys Blacksmith with Money and overwrites the whole snapshot. Remix and Beyond

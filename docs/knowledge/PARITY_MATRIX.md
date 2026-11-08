@@ -1,5 +1,10 @@
 # Parity matrix
 
+**Prestige full-save differential (2026-11-08):** after each of the four
+enabled Power Prestige actions, the source-paired E2E compares the complete
+Settings export bytes and decoded object. All four cases passed in Chromium;
+other save-state combinations remain open.
+
 **Reverse cross-resource stale-tab overwrite (2026-11-08):** the paired E2E
 also saves Offline Gems from the updated tab, then overwrites it with a stale
 Money Blacksmith purchase. Remix and Beyond finish at Money 970 / Gems 4,444 /
