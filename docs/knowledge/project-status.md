@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-09
 
+**Craft no-save outcomes across engines (2026-11-09):** the source-paired live
+test compares equal-damage dud, weaker-damage dud, and insufficient-Gem craft
+attempts in Chromium, Firefox, and WebKit. Each engine matches Remix's message,
+equipped pickaxe, live Gem balance, RNG draw count, and unchanged persisted
+source save / Beyond primary and backup. All six Firefox/WebKit cases passed;
+the dedicated pair is now part of CI. Other craft outcomes and save states
+remain open.
+
 **Complete all-upgrade purchase export (2026-11-09):** the source-paired live
 save test starts all 29 Money, Gem, Planet Coin, and Wisdom upgrades at level
 zero, purchases each once, and compares every level plus the complete decoded

@@ -1,5 +1,11 @@
 # Parity matrix
 
+**Craft no-save outcomes across engines (2026-11-09):** the source-paired live
+test compares equal-damage dud, weaker-damage dud, and insufficient-Gem craft
+attempts in Chromium, Firefox, and WebKit. Messages, equipped pickaxe, RNG draw
+counts, live Gem balance, and persisted save slots match Remix; all six
+Firefox/WebKit cases passed and are now in CI. Other craft states remain open.
+
 **Complete all-upgrade purchase export (2026-11-09):** the source-paired E2E
 starts all 29 Money, Gem, Planet Coin, and Wisdom upgrades at level zero,
 purchases each once in both live apps, and compares every level plus the
