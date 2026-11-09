@@ -133,6 +133,11 @@ Remix/Beyond values are `(250,250,250)` / `(250,250,242)` and
 `(250,250,250)` / `(250,250,226)`; Chapter 4 dark values are
 `(54,54,54)` / `(54,54,58)` and `(54,54,54)` / `(54,54,67)`. This narrows the
 observed raster delta without establishing its cause.
+CI run 42605210266 also failed the strict Chapter 3 dark comparison at
+1920x1080 (Remix hash `e845522567de2541b0bfa60ea9fb35fac8e9279f191e44da20dbbc7c67d15278`,
+Beyond hash `f3ba7e233d6790692228545c3c8bf9792963957b5fe0f996ba4f9db5f43d51a5`).
+The run passed 306 tests with one failure; this adds an open Linux viewport,
+without identifying its pixel-level cause.
 
 **Offline threshold live differential (2026-11-09):** the cold-start browser
 comparison now covers the strict boundary at exactly 300 seconds and 301
@@ -238,6 +243,8 @@ Same-upgrade cross-tab overwrite (2026-11-08): `tests/e2e/save-cross-tab-overwri
 Cross-resource stale-tab overwrite (2026-11-08): the source-paired test buys Blacksmith with Money in the updated tab, then Offline Gems with exactly 4,444 Gems in the stale tab. Remix and Beyond both finish at Money 1,000 / Gems 0 / Blacksmith 0 / Offline Gems 1; Beyond's backup retains the preceding Blacksmith snapshot. This exact case passes in Chromium, Firefox, and WebKit and now runs in the cross-browser CI save gate. The four-write Active Power stale-save case also passes in Firefox and WebKit with a 180-second test deadline; both stale-save cases run in the cross-browser save gate. Other cross-tab interleavings remain open.
 
 Successful craft stale-tab overwrite (2026-11-09): after a fresh tab saves Blacksmith 1 / 970 Money, a stale tab crafts a stronger pickaxe. The successful Remix `craftPick` path writes its stale full-game snapshot, replacing the newer purchase; Beyond does the same and retains the newer snapshot in its backup. The paired E2E compares the resulting Gems, Money, Blacksmith level, pickaxe, and RNG draw count; the fresh tabs continue to display their local Blacksmith 1. Chromium passes, and the selected cross-tab save gate passed 5 cases each in Firefox and WebKit (10/10). Other action/write interleavings remain open.
+
+Stale dud-craft cross-tab save boundary (2026-11-09): after a fresh tab saves Blacksmith 1 / 970 Money / 1 Gem, the stale tab performs the captured equal-damage dud. Remix spends the Gem and consumes ten draws but does not save; the shared save remains byte-identical to the fresh purchase. Beyond matches the live dud message, Gem balance, and unchanged pickaxe, while primary and backup storage remain unchanged. Chromium, Firefox, and WebKit pass. Other no-save actions and cross-tab write interleavings remain open.
 
 Shift purchase affordability stops (2026-11-09): the pinned Remix cases start Active Power at level 2 with 28,000 or 12,000 Money, Gem Multiplication at level 0 with 7,000 Gems, Planet Coin Gem Multiplication at level 0 with 7,000 Planet Coins, and Simple Gem Boost at level 0 with 1e20 Wisdom. The actions buy three or two Money levels, three Gem levels, three Planet Coin levels, and one Wisdom level before stopping short of aligned level 10; all balances end at zero except 247.5 Gems, 85.71 Planet Coins, and 99999999990000000000 Wisdom. The complete Settings exports match pinned Remix in Chromium, Firefox, and WebKit. Other partial-bulk starting levels remain open.
 

@@ -21,6 +21,8 @@ type SaveFixture = {
           randomValues: number[];
         };
         randomCalls: number;
+        saveCalls: number;
+        messageLog: { message: string }[];
         result: {
           gems: { decimal: string };
           pickaxe: {
@@ -1380,7 +1382,7 @@ test("a stale Money purchase overwrites a newer Gem purchase like pinned Remix",
   page,
   browser,
 }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(180_000);
   const fixture = JSON.parse(
     await readFile(
       new URL(
@@ -1772,6 +1774,223 @@ test("a stale successful craft overwrites a newer purchase like pinned Remix", a
         ),
       ).toHaveAttribute("data-upgrade-level", "1"),
       expect(sourceBlacksmithCard(sourcePage).locator(".lvl")).toHaveText("1"),
+    ]);
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
+test("a stale dud craft leaves a newer purchase save untouched like pinned Remix", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(180_000);
+  const fixture = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as SaveFixture;
+  const attempt = fixture.data.pickaxeCraftingSemantics.attempts.find(
+    ({ input }) => input.name === "equal-damage-is-a-dud",
+  );
+  if (!attempt) throw new Error("The equal-damage dud capture is missing.");
+  expect(attempt.saveCalls).toBe(0);
+  expect(attempt.randomCalls).toBe(10);
+
+  const save = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  save.money = "1000";
+  save.highestMoney = "1000";
+  save.gems = attempt.input.gems;
+  save.highestMineObjectLevel = attempt.input.highestMineObjectLevel;
+  save.mineObjectLevel = attempt.input.highestMineObjectLevel;
+  save.usedGemsLevel = attempt.input.usedGemsLevel;
+  save.pickaxe = {
+    name: attempt.input.equippedPickaxe.name,
+    pow: attempt.input.equippedPickaxe.power,
+    quality: attempt.input.equippedPickaxe.quality,
+  };
+  save.upgrades = { blacksmith: { level: 0 } };
+  save.gemUpgrades = {};
+  save.planetCoinUpgrades = {};
+  save.powers.data.values = ["1", "1", "1", "1", "1"];
+  save.powers.upgrades = {};
+  save.settings.theme = "light";
+  save.settings.tab = "main";
+  save.settings.upgradeTab = "money";
+  save.lastActive = fixedTime;
+  const encodedInitialSave = encodeRemixLegacySave(save);
+  const beyondStalePage = await page.context().newPage();
+  const sourceContext = await browser.newContext({
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+  const sourceStalePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all(
+      [page, beyondStalePage, sourcePage, sourceStalePage].map((target) =>
+        target.addInitScript(initializeSharedStorage, {
+          encoded: encodedInitialSave,
+          now: fixedTime,
+        }),
+      ),
+    );
+    await Promise.all([
+      page.goto("/"),
+      beyondStalePage.goto("/"),
+      sourcePage.goto(sourceUrl),
+      sourceStalePage.goto(sourceUrl),
+    ]);
+    await Promise.all([
+      expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready"),
+      expect(beyondStalePage.locator("#app")).toHaveAttribute(
+        "data-app-state",
+        "ready",
+      ),
+      ...[sourcePage, sourceStalePage].map((target) =>
+        target.waitForFunction(() =>
+          Boolean((window as Window & { game?: unknown }).game),
+        ),
+      ),
+    ]);
+
+    const freshBeyondBlacksmith = page.locator(
+      '[data-upgrade-group="money"][data-upgrade-key="blacksmith"]',
+    );
+    const freshSourceBlacksmith = sourceBlacksmithCard(sourcePage);
+    await Promise.all([
+      expect(freshBeyondBlacksmith).toHaveAttribute("data-upgrade-level", "0"),
+      expect(freshSourceBlacksmith.locator(".lvl")).toHaveText("0"),
+    ]);
+    await Promise.all([
+      freshBeyondBlacksmith.click(),
+      freshSourceBlacksmith.click(),
+    ]);
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      page.getByRole("button", { name: "Save" }).click(),
+      sourcePage.getByRole("button", { name: "Save" }).click(),
+    ]);
+
+    const [newerBeyondState, newerSourceSave, newerBeyondSlots] =
+      await Promise.all([
+        readBeyondState(page),
+        readLegacySlot(sourcePage),
+        page.evaluate(() => ({
+          primary: localStorage.getItem("IdleMineBeyond"),
+          backup: localStorage.getItem("IdleMineBeyondBackup"),
+        })),
+      ]);
+    const newerSourceState = readSaveState(newerSourceSave);
+    expect(newerBeyondState.upgrades.money["blacksmith"]).toBe(1);
+    expect(newerBeyondState.resources.money).toBe("970");
+    expect(newerBeyondState.resources.gems).toBe("1");
+    expect(newerSourceState.upgrades["blacksmith"]?.level).toBe(1);
+    expect(newerSourceState.money).toBe("970");
+    expect(newerSourceState.gems).toBe("1");
+
+    await Promise.all([
+      installCraftRandomSequence(beyondStalePage, attempt.input.randomValues),
+      installCraftRandomSequence(
+        sourceStalePage,
+        attempt.input.randomValues,
+        ".craft-pickaxe button:not(.level-change)",
+      ),
+    ]);
+    await Promise.all([
+      beyondStalePage.locator("[data-craft-pickaxe]").click(),
+      sourceStalePage
+        .locator(".craft-pickaxe button:not(.level-change)")
+        .click(),
+    ]);
+    const dudMessage = attempt.messageLog[0]?.message;
+    if (!dudMessage) throw new Error("The dud message capture is missing.");
+    await Promise.all([
+      expect(beyondStalePage.locator(".messagelog")).toContainText(dudMessage),
+      expect(sourceStalePage.locator(".messagelog")).toContainText(dudMessage),
+      expect(
+        beyondStalePage.locator(".stats > div").first().locator("p").first(),
+      ).toHaveText(attempt.input.equippedPickaxe.name),
+      expect(
+        sourceStalePage.locator(".stats > div").first().locator("p").first(),
+      ).toHaveText(attempt.input.equippedPickaxe.name),
+    ]);
+
+    const [
+      staleSourceGems,
+      staleBeyondGems,
+      liveSourceGemDecimal,
+      freshSourceGems,
+      freshBeyondGems,
+      sourceRandomCalls,
+      beyondRandomCalls,
+    ] = await Promise.all([
+      sourceStalePage.locator("header > span").nth(1).textContent(),
+      beyondStalePage.locator("header > span").nth(1).textContent(),
+      sourceStalePage.evaluate(() =>
+        (
+          window as Window & {
+            game?: { gems: { toString(): string } };
+          }
+        ).game?.gems.toString(),
+      ),
+      sourcePage.locator("header > span").nth(1).textContent(),
+      page.locator("header > span").nth(1).textContent(),
+      sourceStalePage.evaluate(() =>
+        (
+          window as Window & { __idleMineCraftRandomCalls?: () => number }
+        ).__idleMineCraftRandomCalls?.(),
+      ),
+      beyondStalePage.evaluate(() =>
+        (
+          window as Window & { __idleMineCraftRandomCalls?: () => number }
+        ).__idleMineCraftRandomCalls?.(),
+      ),
+    ]);
+    expect(staleBeyondGems).toBe(staleSourceGems);
+    expect(staleSourceGems?.trim()).toBe("0");
+    expect(liveSourceGemDecimal).toBe(attempt.result.gems.decimal);
+    expect(freshBeyondGems).toBe(freshSourceGems);
+    expect(freshSourceGems?.trim()).toBe("1");
+    expect(sourceRandomCalls).toBe(attempt.randomCalls);
+    expect(beyondRandomCalls).toBe(attempt.randomCalls);
+    expect(await readLegacySlot(sourceStalePage)).toBe(newerSourceSave);
+    expect(
+      await page.evaluate(() => ({
+        primary: localStorage.getItem("IdleMineBeyond"),
+        backup: localStorage.getItem("IdleMineBeyondBackup"),
+      })),
+    ).toEqual(newerBeyondSlots);
+    expect(await readBeyondState(page)).toEqual(newerBeyondState);
+    expect(await readSaveState(await readLegacySlot(sourcePage))).toMatchObject(
+      {
+        money: "970",
+        gems: "1",
+        upgrades: { blacksmith: { level: 1 } },
+      },
+    );
+    await Promise.all([
+      page.locator("footer button").filter({ hasText: "Mining" }).click(),
+      sourcePage.locator("footer button").filter({ hasText: "Mining" }).click(),
+    ]);
+    await Promise.all([
+      expect(freshBeyondBlacksmith).toHaveAttribute("data-upgrade-level", "1"),
+      expect(freshSourceBlacksmith.locator(".lvl")).toHaveText("1"),
     ]);
   } finally {
     await sourceContext.close().catch(() => undefined);

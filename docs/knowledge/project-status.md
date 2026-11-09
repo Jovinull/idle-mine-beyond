@@ -2,6 +2,16 @@
 
 Last updated: 2026-11-09
 
+**Stale dud-craft save boundary (2026-11-09):** after a fresh tab saves
+Blacksmith 1 / 970 Money / 1 Gem, the stale tab performs the captured
+equal-damage dud craft. Remix spends its Gem and consumes ten RNG draws but
+does not call `saveGame()`, leaving the shared save untouched. Beyond matches
+the live stale Gem balance, dud message, unchanged pickaxe, primary and backup
+bytes, and the fresh-tab state in Chromium, Firefox, and WebKit. The selected
+cross-tab gate covers six cases per engine; its reverse Money/Gem case now has
+a 180-second deadline after the trace showed WebKit cleanup exceeded 90 seconds.
+Other no-save actions and cross-tab interleavings remain open.
+
 **Bulk affordability stops across resource families (2026-11-09):** pinned
 Remix `buy10` starts Active Power at level 2 with 28,000 or 12,000 Money, Gem
 Multiplication at level 0 with 7,000 Gems, or Planet Coin Gem Multiplication
@@ -54,7 +64,9 @@ through WSL. The source and Beyond text, loaded Work Sans fonts, computed styles
 and objective-character geometry match; only blue-channel values at pixels
 (15,632) and (15,633) differ. Four host CSS overrides and an app visibility
 hide/show across two animation frames leave the Beyond screenshot hash
-unchanged. The cause remains unknown; exact visual comparison stays open.
+unchanged. CI run 42605210266 also failed the Chapter 3 dark full-screen
+comparison at 1920x1080; the run passed 306 tests with one failure. Its
+pixel-level cause remains unknown, and strict visual comparison stays open.
 
 **Offline zero-rate live path across engines (2026-11-09):** a 3,601-second
 cold start on the captured zero-damage Universe object has zero Money, Gem, and

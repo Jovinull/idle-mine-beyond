@@ -37,6 +37,16 @@ tabs retain their own displayed levels. The case passes in Chromium, Firefox,
 and WebKit and is included in the cross-browser gate. Other cross-tab
 action/write interleavings remain open.
 
+**Stale dud-craft interleaving (2026-11-09):** after the fresh tab saves
+Blacksmith 1 / 970 Money / 1 Gem, the stale tab performs the captured
+equal-damage dud craft. Pinned Remix spends the stale tab's Gem and consumes
+the captured ten random draws, but `craftPick()` does not call `saveGame()` on
+the dud branch. The shared legacy save therefore remains byte-identical to the
+fresh purchase; Beyond keeps the same primary and backup bytes while its stale
+tab shows the spent Gem and unchanged equipped pickaxe. The source-paired E2E
+passes in Chromium, Firefox, and WebKit. Other no-save actions and write
+interleavings remain open.
+
 **Stale Settings-save interleaving (2026-11-09):** after a fresh tab saves
 Blacksmith 1 / 970 Money, its stale peer selects Number Format index 3. That
 selection updates the tab's local settings but leaves the shared save unchanged.
