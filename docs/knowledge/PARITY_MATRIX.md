@@ -1,5 +1,11 @@
 # Parity matrix
 
+**Special-anchor pickaxe export across engines (2026-11-09):** the live craft
+for procedural mine-object ID 210 now checks its exact generated name, ten RNG
+draws, and complete encoded/decoded Settings export against pinned Remix in
+Chromium, Firefox, and WebKit. The Firefox/WebKit cases are in CI; other
+procedural name inputs remain open.
+
 **Craft no-save outcomes across engines (2026-11-09):** the source-paired live
 test compares equal-damage dud, weaker-damage dud, and insufficient-Gem craft
 attempts in Chromium, Firefox, and WebKit. Messages, equipped pickaxe, RNG draw

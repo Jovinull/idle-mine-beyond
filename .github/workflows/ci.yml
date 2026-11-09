@@ -142,6 +142,9 @@ jobs:
       - name: Verify pickaxe craft no-save branches in Firefox and WebKit
         run: pnpm test:e2e:craft-no-save:browsers
 
+      - name: Verify special-anchor pickaxe export in Firefox and WebKit
+        run: pnpm test:e2e:craft-anchor-export:browsers
+
       - name: Verify save storage failures in Firefox and WebKit
         run: pnpm test:e2e:save-storage:browsers
 

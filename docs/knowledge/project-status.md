@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-09
 
+**Special-anchor pickaxe export across engines (2026-11-09):** the live craft
+that resolves procedural mine-object ID 210 now compares the exact generated
+name, ten RNG draws, and complete Settings export with pinned Remix. The
+encoded exports and decoded pickaxe fields match in Chromium, Firefox, and
+WebKit; the Firefox/WebKit cases are in CI. Other craft and object-name states
+remain open.
+
 **Craft no-save outcomes across engines (2026-11-09):** the source-paired live
 test compares equal-damage dud, weaker-damage dud, and insufficient-Gem craft
 attempts in Chromium, Firefox, and WebKit. Each engine matches Remix's message,
