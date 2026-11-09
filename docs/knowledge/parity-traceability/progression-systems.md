@@ -141,6 +141,13 @@ Remix/Beyond views at 1440x900 in both themes.
   divergence. The non-exhaustive levels alone do not block certification; the
   matrix row remains open for its other evidence layers.
 
+**Finite-cap purchase differential across engines (2026-11-08):** the live
+source-paired cap test also runs in Firefox and WebKit through
+`test:e2e:upgrade-caps:browsers`. For one finite-capped Money, Gem, and Planet
+Coin upgrade each, it compares Shift from cap minus one to cap and the Control
+no-op at cap, including level labels, affordability state, and resource header.
+Both focused browser runs passed.
+
 ### Upgrade-tab state and export trace
 
 - **Remix source branches:** each resource tab writes `game.settings.upgradeTab`;

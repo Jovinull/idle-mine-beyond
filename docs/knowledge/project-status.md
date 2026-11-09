@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-08
 
+**Finite-cap shop purchases across engines (2026-11-08):** source-paired Shift
+purchases from cap minus one and Control no-ops at cap for one Money, Gem, and
+Planet Coin upgrade now pass in Firefox and WebKit, in addition to Chromium.
+The comparisons include rendered levels, affordability state, and resource
+headers.
+
 **Recovery-bundle selection across engines (2026-11-08):** a selected bundle
 with a damaged primary and valid backup now exercises acknowledgement gating,
 backup selection, Beyond v1 persistence, and legacy-key retention in Firefox

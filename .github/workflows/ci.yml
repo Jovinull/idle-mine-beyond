@@ -112,6 +112,9 @@ jobs:
       - name: Verify recovery bundle selection in Firefox and WebKit
         run: pnpm test:e2e:recovery-file:browsers
 
+      - name: Verify finite upgrade cap purchases in Firefox and WebKit
+        run: pnpm test:e2e:upgrade-caps:browsers
+
       - name: Verify save storage failures in Firefox and WebKit
         run: pnpm test:e2e:save-storage:browsers
 
