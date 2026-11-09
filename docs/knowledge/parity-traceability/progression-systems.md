@@ -106,6 +106,13 @@ Remix/Beyond views at 1440x900 in both themes.
   exact-Wisdom `buy-uses-wisdom-resource` case compares the full Powers screen
   after the first Simple Gem Boost purchase in both themes.
 
+**Nonzero aligned-purchase export differential (2026-11-08):** pinned
+`Scripts/upgrade.js:buyN`, `buy10`, and `buy100` captures for Money Active Power
+start at level 9 and 99, align to 10 and 100, and spend the exact remaining
+balance. `tests/e2e/save-export-purchase-differential.spec.ts` now compares the
+complete decoded Settings export and encoded bytes with live Remix in
+Chromium, Firefox, and WebKit for both captured actions.
+
 ### Upgrade function and branch trace
 
 | Pinned Remix function/path and branch                                                                                                                                                    | Source evidence                                                                                                                                    | Beyond assertion                                                                                                                                                                                                                                                                                                                                                                                                                                                         |

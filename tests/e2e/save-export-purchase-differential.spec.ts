@@ -184,6 +184,30 @@ async function comparePurchaseExport(
     expect(purchase.startingResources.wisdom.decimal).toBe("10000000000");
     expect(purchase.endingResources.wisdom.decimal).toBe("0");
   }
+  if (purchaseName === "buy10-aligns-current-level") {
+    expect(purchase).toMatchObject({
+      group: "money",
+      key: "activePower",
+      startingLevel: 9,
+      endingLevel: 10,
+      operation: { method: "buy10" },
+      startingResources: { money: { decimal: "512000" } },
+      endingResources: { money: { decimal: "0" } },
+    });
+  }
+  if (purchaseName === "buy100-aligns-current-level") {
+    expect(purchase).toMatchObject({
+      group: "money",
+      key: "activePower",
+      startingLevel: 99,
+      endingLevel: 100,
+      operation: { method: "buy100" },
+      startingResources: {
+        money: { decimal: "6.3382530011411475e+32" },
+      },
+      endingResources: { money: { decimal: "0" } },
+    });
+  }
   const upgrade =
     corpus.data.upgradeSemantics.groups[purchase.group]?.[purchase.key];
   if (!upgrade)
@@ -442,6 +466,8 @@ for (const purchaseName of [
   "buy10-gem-multiplier-from-zero-aligns-through-level-ten",
   "buy10-planet-coin-gem-multiplier-from-zero-aligns-through-level-ten",
   "buy100-from-zero-aligns-through-level-one-hundred",
+  "buy10-aligns-current-level",
+  "buy100-aligns-current-level",
 ]) {
   test(`exports the live save after ${purchaseName}`, async ({
     browser,

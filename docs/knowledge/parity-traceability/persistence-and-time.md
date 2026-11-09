@@ -230,6 +230,14 @@ export extends runtime evidence to one post-mining state in Chromium, Firefox,
 and WebKit in both themes. Arbitrary valid runtime states and other post-mining
 states remain outside the finite fixture domain.
 
+**Nonzero aligned-purchase exports (2026-11-08):**
+`tests/e2e/save-export-purchase-differential.spec.ts` also imports the pinned
+`buy10-aligns-current-level` and `buy100-aligns-current-level` saves, performs
+the exact-price Money purchases from levels 9 and 99, and compares complete
+decoded Settings exports and encoded bytes against live Remix in Chromium,
+Firefox, and WebKit. These extend the existing zero-level purchase exports to
+two captured nonzero alignments; other runtime purchase states remain open.
+
 ### Current-object serialization branch trace
 
 The pinned MineObject constructor assigns cfg as supplied and defaults

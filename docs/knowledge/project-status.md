@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-08
 
+**Aligned purchase save exports across engines (2026-11-08):** source-captured
+Money `buy10` from level 9 to 10 and `buy100` from 99 to 100 now compare the
+complete decoded Settings export and encoded bytes against pinned Remix in
+Chromium, Firefox, and WebKit. Both purchases begin at exact affordability and
+finish with zero Money. Other nonzero starting balances and purchase states
+remain open.
+
 **Offline cold-start comparison across engines (2026-11-08):** the existing
 four-scenario cold-start differential and separate advancing-startup-clock
 case now run in Firefox and WebKit as well as Chromium. They compare visible

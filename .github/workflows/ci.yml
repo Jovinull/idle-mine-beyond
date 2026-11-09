@@ -82,6 +82,9 @@ jobs:
       - name: Verify offline cold-start restores in Firefox and WebKit
         run: pnpm test:e2e:offline-cold-start:browsers
 
+      - name: Verify aligned purchase exports in Firefox and WebKit
+        run: pnpm test:e2e:upgrade-aligned-export:browsers
+
       - name: Run browser smoke test
         run: pnpm test:e2e
 
