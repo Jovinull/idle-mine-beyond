@@ -324,7 +324,7 @@ it("preserves Blacksmith Expertise RNG draw order and outcomes", () => {
 
 it("matches captured Remix single and bulk purchase transitions", () => {
   const scenarios = corpus.data.upgradeSemantics.purchaseSemantics;
-  expect(scenarios).toHaveLength(24);
+  expect(scenarios).toHaveLength(25);
 
   for (const scenario of scenarios) {
     const group = scenario.group as RemixUpgradeGroup;

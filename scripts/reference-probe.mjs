@@ -6240,6 +6240,14 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 operation: { method: "buy10" },
               },
               {
+                name: "buy10-stops-after-two-purchases-on-affordability",
+                group: "money",
+                key: "activePower",
+                level: 2,
+                balance: "12000",
+                operation: { method: "buy10" },
+              },
+              {
                 name: "buy10-gem-multiplier-stops-before-alignment-on-affordability",
                 group: "gems",
                 key: "gemMultiply",

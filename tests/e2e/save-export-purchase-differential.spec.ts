@@ -269,6 +269,19 @@ async function comparePurchaseExport(
       endingResources: { money: { decimal: "0" } },
     });
   }
+  if (purchaseName === "buy10-stops-after-two-purchases-on-affordability") {
+    expect(purchase).toMatchObject({
+      group: "money",
+      key: "activePower",
+      startingLevel: 2,
+      endingLevel: 4,
+      purchases: 2,
+      operation: { method: "buy10" },
+      startingResources: { money: { decimal: "12000" } },
+      currentPrice: { decimal: "4000" },
+      endingResources: { money: { decimal: "0" } },
+    });
+  }
   if (
     purchaseName ===
     "buy10-gem-multiplier-stops-before-alignment-on-affordability"
@@ -639,6 +652,7 @@ for (const purchaseName of [
   "buy10-aligns-current-level",
   "buy100-aligns-current-level",
   "buy10-stops-before-alignment-on-affordability",
+  "buy10-stops-after-two-purchases-on-affordability",
   "buy10-gem-multiplier-stops-before-alignment-on-affordability",
   "buy10-planet-coin-gem-multiplier-stops-before-alignment-on-affordability",
   "buy10-wisdom-simple-gem-boost-stops-before-alignment-on-affordability",
