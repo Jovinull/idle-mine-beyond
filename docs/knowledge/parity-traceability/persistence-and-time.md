@@ -381,6 +381,7 @@ coverage; the current version-rejection branch is covered.
 | A stale tab's periodic frame overwrites a newer same-origin save with its local whole-game snapshot after the strict autosave threshold                                                       | Pinned `Scripts/main.js:update` advances stale `timer.save` past 60 seconds and calls `functions.saveGame()`; two same-origin tabs begin from one captured save, then only the stale tab advances 60,001 ms                                                                                          | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares Remix and Beyond in Chromium, Firefox, and WebKit: stale level-zero / 1,000 Money replaces the newer Blacksmith 1 / 970 Money snapshot; the stale tab's Beyond backup retains the newer snapshot and each tab keeps its own displayed level                                                           |
 | A stale tab's manual Settings save writes its whole local snapshot after a peer's newer purchase; changing Number Format alone does not write the shared save slot                            | Pinned `index.html` Number Format `@input` updates `game.numberFormatter` and `settings.numberFormatterIndex`; the Settings Save button calls `saveGame()`. Four same-origin tabs load one controlled seed; fresh tabs save Blacksmith 1, then stale tabs select formatter index 3 and manually save | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares pinned Remix legacy state and Beyond v1 in Chromium, Firefox, and WebKit: selected formatter alone preserves the newer stored snapshot; manual Save replaces it with Blacksmith 0 / 1,000 Money and formatter 3; Beyond backup retains Blacksmith 1 / 970 Money; fresh tabs keep their local purchase |
 | A stale tab's Settings theme selection immediately saves its local whole-game snapshot after a peer's newer purchase                                                                          | Pinned `index.html` Light/Dark handlers call `setTheme()` then `saveGame()`; Beyond `changeTheme()` updates settings and calls `saveCurrentState()`. Four same-origin tabs load one controlled seed; fresh tabs save Blacksmith 1, then stale tabs select Dark                                       | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares pinned Remix and Beyond in Chromium, Firefox, and WebKit: theme action stores Dark with stale Blacksmith 0 / 1,000 Money, backup retains the newer Light / Blacksmith 1 / 970 Money snapshot, and fresh tabs keep local purchase and Light theme                                                      |
+| Successful `functions.craftPick` replacement calls `saveGame()` after spending Gems, replacing the shared snapshot with the calling tab's full stale game state                              | `better-craft-replaces-and-saves` capture; four same-origin tabs load one controlled save; fresh tabs buy and save Blacksmith 1 before stale tabs perform the captured successful craft                                                       | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares Remix legacy state and Beyond v1 after the stale craft: the older Blacksmith 0 / 1,000 Money state and replacement pickaxe overwrite the primary, both spend the captured Gems and consume ten draws, while Beyond backup retains the newer purchase snapshot; Chromium passes and Firefox/WebKit gate passes 10/10 |
 
 The selected recovery-bundle E2E also covers the `Import requires acknowledgement` branch above in Chromium, Firefox, and WebKit: before acknowledgement the import button is disabled; afterward, an invalid primary selects the valid backup, which is persisted as Beyond v1 while the legacy key remains unchanged.
 
@@ -465,6 +466,18 @@ dark theme. Both implementations match, and Beyond's backup retains the fresh
 purchase snapshot. Both cases pass in Chromium, Firefox, and WebKit and are
 included in `pnpm test:e2e:cross-tab-settings:browsers`. Other same-origin
 action/write orders remain open.
+
+**Stale successful-craft interleaving (2026-11-09):** after the fresh tabs
+save Blacksmith 1 / 970 Money, the stale tabs perform the captured
+`better-craft-replaces-and-saves` action. The pinned source `craftPick` spends
+the one Gem, replaces the equipped pickaxe, and immediately calls `saveGame()`;
+that full stale snapshot overwrites Blacksmith 1 with Blacksmith 0 / 1,000
+Money. Beyond matches the source resources, upgrade level, and stored pickaxe,
+and its backup remains the fresh purchase snapshot; both fresh tabs retain
+their local Blacksmith 1. Both craft actions consume the captured ten RNG
+draws. The focused Chromium test passes; the selected
+cross-browser save gate passed 5 cases each in Firefox and WebKit (10/10).
+Other action/write interleavings remain open.
 
 **Browser E2E validation (2026-10-05):**
 `pnpm.cmd exec playwright test tests/e2e/browser-storage-failure.spec.ts

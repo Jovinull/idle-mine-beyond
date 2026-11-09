@@ -2,6 +2,15 @@
 
 Last updated: 2026-11-09
 
+**Stale successful craft save (2026-11-09):** after fresh tabs save Blacksmith
+1 / 970 Money, a stale tab performs a stronger one-Gem craft. The pinned Remix
+`craftPick` saves the stale whole-game state after replacing the pickaxe, so it
+overwrites the newer purchase. Beyond matches the persisted resources,
+Blacksmith level, pickaxe, and ten RNG draws; its backup keeps the newer
+purchase. Chromium passed; the cross-browser save gate passed 5 selected cases
+each in Firefox and WebKit (10/10), including this craft. Other cross-tab
+action/write interleavings remain open.
+
 **Gem and Planet Coin aligned bulk-purchase exports (2026-11-09):** the pinned
 corpus now captures Gem and Planet Coin Gem Multiplication `buy10` at level 9
 and `buy100` at level 99, each at exact current price and with one purchase to

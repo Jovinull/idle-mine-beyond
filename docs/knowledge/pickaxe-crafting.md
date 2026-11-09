@@ -27,6 +27,16 @@ comparisons at 1366x768 in light and dark, alongside the existing 1440x900
 comparisons. These selected viewport cases do not cover all Mining panel states
 or resolutions.
 
+The save integration also covers a successful craft in a stale same-origin tab:
+after another tab saves Blacksmith 1, the craft spends one Gem, replaces the
+pickaxe, and writes its full stale snapshot, restoring Blacksmith 0 in shared
+storage. The live Remix and Beyond exports match on resources, upgrade level,
+and pickaxe; Beyond's backup retains the newer purchase. This selected
+cross-tab write order is covered by `tests/e2e/save-cross-tab-overwrite.spec.ts`;
+the selected Firefox/WebKit cross-tab gate passed 10/10 cases, including this
+craft. Other action/write interleavings remain part of the broader save-storage
+evidence gap.
+
 The Gem Waster selector at its lower-interior cost 3, interior cost 10, and
 maximum cost 35 now matches the full source screen in both themes at 1440x900,
 1366x768, and 1920x1080. Cost 3 and cost 10 both show enabled arrows and their

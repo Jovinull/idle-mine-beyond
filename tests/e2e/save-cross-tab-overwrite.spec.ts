@@ -10,6 +10,27 @@ import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 type SaveFixture = {
   data: {
     saveApplicationSemantics: { inputJson: string };
+    pickaxeCraftingSemantics: {
+      attempts: {
+        input: {
+          name: string;
+          gems: string;
+          usedGemsLevel: number;
+          highestMineObjectLevel: number;
+          equippedPickaxe: { name: string; power: string; quality: string };
+          randomValues: number[];
+        };
+        randomCalls: number;
+        result: {
+          gems: { decimal: string };
+          pickaxe: {
+            name: string;
+            power: { decimal: string };
+            quality: { decimal: string };
+          };
+        };
+      }[];
+    };
     upgradeSemantics: {
       purchaseSemantics: Array<{
         name: string;
@@ -30,6 +51,7 @@ type LegacySave = {
   highestMineObjectLevel: number;
   mineObjectLevel: number;
   lastActive: number;
+  usedGemsLevel: number;
   settings: {
     theme: string;
     tab: string;
@@ -38,6 +60,11 @@ type LegacySave = {
   };
   upgrades: Record<string, { level: number }>;
   gemUpgrades: Record<string, { level: number }>;
+  planetCoinUpgrades: Record<string, { level: number }>;
+  powers: {
+    data: { values: string[] };
+    upgrades: Record<string, { level: number }>;
+  };
   pickaxe: { name: string; pow: string; quality: string };
 };
 
@@ -47,6 +74,7 @@ type ObservableLegacySave = {
   settings: { theme?: string; numberFormatterIndex?: number };
   upgrades: Record<string, { level: number }>;
   gemUpgrades: Record<string, { level: number }>;
+  pickaxe: { name: string; pow: string; quality: string };
 };
 
 type ObservableBeyondState = {
@@ -173,6 +201,55 @@ function sourceOfflineGemsCard(page: Page) {
     .locator(".upgradelist .upgrade")
     .filter({ has: page.locator('img[src$="gemoffline.png"]') })
     .first();
+}
+
+async function installCraftRandomSequence(
+  page: Page,
+  values: number[],
+  buttonSelector = "[data-craft-pickaxe]",
+) {
+  await page.evaluate(
+    ({ sequence, craftButtonSelector }) => {
+      let index = 0;
+      const browserWindow = window as Window & {
+        __idleMineCraftRandomCalls?: () => number;
+      };
+      browserWindow.__idleMineCraftRandomCalls = () => index;
+      Math.random = () => sequence[index++] ?? 0.5;
+      document.addEventListener(
+        "click",
+        (event) => {
+          if (
+            (event.target as Element | null)?.closest(craftButtonSelector) !==
+            null
+          ) {
+            index = 0;
+          }
+        },
+        true,
+      );
+    },
+    { sequence: values, craftButtonSelector: buttonSelector },
+  );
+}
+
+async function readBeyondStoredPickaxe(page: Page, key = "IdleMineBeyond") {
+  const serialized = await page.evaluate(
+    (storageKey) => localStorage.getItem(storageKey),
+    key,
+  );
+  if (serialized === null)
+    throw new Error(`The Beyond save slot ${key} is empty.`);
+  const decoded = decodeRemixBeyondSave(serialized);
+  if (decoded.status !== "valid") {
+    throw new Error(`Expected a valid Beyond v1 save, got ${decoded.status}.`);
+  }
+  const pickaxe = decoded.save.state.simulation.pickaxe;
+  return {
+    name: pickaxe.name,
+    power: pickaxe.power.toString(),
+    quality: pickaxe.quality.toString(),
+  };
 }
 
 test("a stale second tab purchase overwrites the newer save like pinned Remix", async ({
@@ -1492,6 +1569,209 @@ test("a stale Money purchase overwrites a newer Gem purchase like pinned Remix",
     await Promise.all([
       expect(beyondGemCard).toHaveAttribute("data-upgrade-level", "1"),
       expect(remixGemCard.locator(".lvl")).toHaveText("1/15"),
+    ]);
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
+test("a stale successful craft overwrites a newer purchase like pinned Remix", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(180_000);
+  const fixture = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as SaveFixture;
+  const attempt = fixture.data.pickaxeCraftingSemantics.attempts.find(
+    ({ input }) => input.name === "better-craft-replaces-and-saves",
+  );
+  if (!attempt) throw new Error("The successful craft capture is missing.");
+  const save = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  save.money = "1000";
+  save.highestMoney = "1000";
+  save.gems = attempt.input.gems;
+  save.highestMineObjectLevel = attempt.input.highestMineObjectLevel;
+  save.mineObjectLevel = attempt.input.highestMineObjectLevel;
+  save.usedGemsLevel = attempt.input.usedGemsLevel;
+  save.pickaxe = {
+    name: attempt.input.equippedPickaxe.name,
+    pow: attempt.input.equippedPickaxe.power,
+    quality: attempt.input.equippedPickaxe.quality,
+  };
+  save.upgrades = { blacksmith: { level: 0 } };
+  save.gemUpgrades = {};
+  save.planetCoinUpgrades = {};
+  save.powers.data.values = ["1", "1", "1", "1", "1"];
+  save.powers.upgrades = {};
+  save.settings.theme = "light";
+  save.settings.tab = "main";
+  save.settings.upgradeTab = "money";
+  save.upgrades["blacksmith"] = { level: 0 };
+  save.lastActive = fixedTime;
+  const encodedInitialSave = encodeRemixLegacySave(save);
+  const beyondStalePage = await page.context().newPage();
+  const sourceContext = await browser.newContext({
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+  const sourceStalePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all(
+      [page, beyondStalePage, sourcePage, sourceStalePage].map((target) =>
+        target.addInitScript(initializeSharedStorage, {
+          encoded: encodedInitialSave,
+          now: fixedTime,
+        }),
+      ),
+    );
+    await Promise.all([
+      page.goto("/"),
+      beyondStalePage.goto("/"),
+      sourcePage.goto(sourceUrl),
+      sourceStalePage.goto(sourceUrl),
+    ]);
+    await Promise.all([
+      expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready"),
+      expect(beyondStalePage.locator("#app")).toHaveAttribute(
+        "data-app-state",
+        "ready",
+      ),
+      sourcePage.waitForFunction(() =>
+        Boolean((window as Window & { game?: unknown }).game),
+      ),
+      sourceStalePage.waitForFunction(() =>
+        Boolean((window as Window & { game?: unknown }).game),
+      ),
+    ]);
+
+    const beyondBlacksmith = page.locator(
+      '[data-upgrade-group="money"][data-upgrade-key="blacksmith"]',
+    );
+    const sourceBlacksmith = sourceBlacksmithCard(sourcePage);
+    await Promise.all([
+      expect(beyondBlacksmith).toHaveAttribute("data-upgrade-level", "0"),
+      expect(sourceBlacksmith.locator(".lvl")).toHaveText("0"),
+    ]);
+    await Promise.all([beyondBlacksmith.click(), sourceBlacksmith.click()]);
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      page.getByRole("button", { name: "Save" }).click(),
+      sourcePage.getByRole("button", { name: "Save" }).click(),
+    ]);
+
+    const [newerBeyondState, newerSourceSave] = await Promise.all([
+      readBeyondState(page),
+      readLegacySlot(sourcePage),
+    ]);
+    const newerSourceState = readSaveState(newerSourceSave);
+    expect(newerBeyondState.upgrades.money["blacksmith"]).toBe(1);
+    expect(newerBeyondState.resources.money).toBe("970");
+    expect(newerSourceState.upgrades["blacksmith"]?.level).toBe(1);
+    expect(newerSourceState.money).toBe("970");
+
+    await Promise.all([
+      installCraftRandomSequence(beyondStalePage, attempt.input.randomValues),
+      installCraftRandomSequence(
+        sourceStalePage,
+        attempt.input.randomValues,
+        ".craft-pickaxe button:not(.level-change)",
+      ),
+    ]);
+    await Promise.all([
+      beyondStalePage.locator("[data-craft-pickaxe]").click(),
+      sourceStalePage
+        .locator(".craft-pickaxe button:not(.level-change)")
+        .click(),
+    ]);
+    await Promise.all([
+      expect(beyondStalePage.locator(".messagelog")).toContainText(
+        "Got a new Pickaxe!",
+      ),
+      expect(sourceStalePage.locator(".messagelog")).toContainText(
+        "Got a new Pickaxe!",
+      ),
+    ]);
+    const [
+      staleBeyond,
+      staleSourceSave,
+      beyondPickaxe,
+      sourceRandomCalls,
+      beyondRandomCalls,
+    ] = await Promise.all([
+      readBeyondState(beyondStalePage),
+      readLegacySlot(sourceStalePage),
+      readBeyondStoredPickaxe(beyondStalePage),
+      sourceStalePage.evaluate(() =>
+        (
+          window as Window & { __idleMineCraftRandomCalls?: () => number }
+        ).__idleMineCraftRandomCalls?.(),
+      ),
+      beyondStalePage.evaluate(() =>
+        (
+          window as Window & { __idleMineCraftRandomCalls?: () => number }
+        ).__idleMineCraftRandomCalls?.(),
+      ),
+    ]);
+    const staleSource = readSaveState(staleSourceSave);
+    expect(beyondRandomCalls).toBe(attempt.randomCalls);
+    expect(sourceRandomCalls).toBe(attempt.randomCalls);
+    expect(staleBeyond.upgrades.money["blacksmith"]).toBe(0);
+    expect(staleBeyond.resources.money).toBe("1000");
+    expect(staleBeyond.resources.gems).toBe(attempt.result.gems.decimal);
+    expect(staleSource.upgrades["blacksmith"]?.level).toBe(0);
+    expect(staleSource.money).toBe("1000");
+    expect(staleSource.gems).toBe(attempt.result.gems.decimal);
+    expect(staleSource.pickaxe.name).not.toBe(
+      attempt.input.equippedPickaxe.name,
+    );
+    expect(staleSource.pickaxe).toEqual({
+      name: attempt.result.pickaxe.name,
+      pow: attempt.result.pickaxe.power.decimal,
+      quality: attempt.result.pickaxe.quality.decimal,
+    });
+    expect(
+      Number(staleSource.pickaxe.pow) * Number(staleSource.pickaxe.quality),
+    ).toBeGreaterThan(20);
+    expect(beyondPickaxe).toEqual({
+      name: staleSource.pickaxe.name,
+      power: staleSource.pickaxe.pow,
+      quality: staleSource.pickaxe.quality,
+    });
+    expect(await readBeyondState(page)).toMatchObject(staleBeyond);
+    expect(await readLegacySlot(sourcePage)).toBe(staleSourceSave);
+    expect(
+      await readBeyondState(beyondStalePage, "IdleMineBeyondBackup"),
+    ).toEqual(newerBeyondState);
+    await Promise.all([
+      page.locator("footer button").filter({ hasText: "Mining" }).click(),
+      sourcePage.locator("footer button").filter({ hasText: "Mining" }).click(),
+    ]);
+    await Promise.all([
+      expect(
+        page.locator(
+          '[data-upgrade-group="money"][data-upgrade-key="blacksmith"]',
+        ),
+      ).toHaveAttribute("data-upgrade-level", "1"),
+      expect(sourceBlacksmithCard(sourcePage).locator(".lvl")).toHaveText("1"),
     ]);
   } finally {
     await sourceContext.close().catch(() => undefined);
