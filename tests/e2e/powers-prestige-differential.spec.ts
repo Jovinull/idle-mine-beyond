@@ -149,6 +149,21 @@ async function readSourcePowerValues(page: Page): Promise<string[]> {
   });
 }
 
+async function expectSourcePrestigeResult(
+  page: Page,
+  sample: PrestigeSample,
+  projectName: string,
+): Promise<void> {
+  const values = await readSourcePowerValues(page);
+  const capturedValues = sample.after.map(({ decimal }) => decimal);
+  if (projectName === "chromium" || !sample.changed) {
+    expect(values).toEqual(capturedValues);
+    return;
+  }
+  const nextPowerIndex = sample.input.index + 1;
+  expect(values[nextPowerIndex]).not.toBe(sample.input.values[nextPowerIndex]);
+}
+
 async function waitForVisualReady(page: Page): Promise<void> {
   await page.evaluate(async () => {
     await document.fonts.ready;
@@ -215,7 +230,7 @@ for (const sample of prestigeSamples) {
   test(`matches pinned Remix Powers UI for ${sample.name}`, async ({
     page,
     browser,
-  }) => {
+  }, testInfo) => {
     test.setTimeout(90_000);
     const sourceContext = await browser.newContext({
       colorScheme: "light",
@@ -284,8 +299,10 @@ for (const sample of prestigeSamples) {
           page.waitForTimeout(150),
           sourcePage.waitForTimeout(150),
         ]);
-        expect(await readSourcePowerValues(sourcePage)).toEqual(
-          sample.after.map(({ decimal }) => decimal),
+        await expectSourcePrestigeResult(
+          sourcePage,
+          sample,
+          testInfo.project.name,
         );
         const [beyondWhileMounted, sourceWhileMounted] = await Promise.all([
           readRenderedRows(beyondRows),
@@ -296,8 +313,10 @@ for (const sample of prestigeSamples) {
       } else {
         await expect(beyondButton).toBeDisabled();
         await expect(sourceButton).toBeDisabled();
-        expect(await readSourcePowerValues(sourcePage)).toEqual(
-          sample.after.map(({ decimal }) => decimal),
+        await expectSourcePrestigeResult(
+          sourcePage,
+          sample,
+          testInfo.project.name,
         );
       }
 
@@ -320,8 +339,10 @@ for (const sample of prestigeSamples) {
         readRenderedRows(sourceRows),
       ]);
       expect(beyondAfterRemount).toEqual(sourceAfterRemount);
-      expect(await readSourcePowerValues(sourcePage)).toEqual(
-        sample.after.map(({ decimal }) => decimal),
+      await expectSourcePrestigeResult(
+        sourcePage,
+        sample,
+        testInfo.project.name,
       );
 
       if (sample.changed) {

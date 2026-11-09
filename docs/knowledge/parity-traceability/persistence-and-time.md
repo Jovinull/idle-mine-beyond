@@ -238,6 +238,11 @@ decoded Settings exports and encoded bytes against live Remix in Chromium,
 Firefox, and WebKit. These extend the existing zero-level purchase exports to
 two captured nonzero alignments; other runtime purchase states remain open.
 
+The four source-paired positive Prestige exports also match full encoded bytes
+and decoded objects in Chromium, Firefox, and WebKit. Chromium checks the
+captured Decimal strings; Firefox and WebKit compare same-engine Remix/Beyond
+outputs because Remix's runtime Decimal strings vary by engine.
+
 ### Current-object serialization branch trace
 
 The pinned MineObject constructor assigns cfg as supplied and defaults

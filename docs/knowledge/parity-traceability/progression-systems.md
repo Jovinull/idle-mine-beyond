@@ -57,6 +57,15 @@
 | `prestigePower` mutates indexed entries of the same `pow.values` array; Vue 2 leaves the mounted table stale until an observed update or tab remount                                                                                                                   | `powersTableSemantics.prestiges` plus paired pinned Chromium observations of prestige, idle `Vue.set`, and remount                                           | `tests/e2e/powers-prestige-differential.spec.ts` compares all four stale displays, a controlled idle-hit refresh, remounted values, and the disabled no-op with Remix                                                                            |
 | `Scripts/Components/upgrade-standalone.js:getBuyAmount/buy`: Control selects 100 before Shift selects 10; `buyN(..., true)` stops at the next aligned level, cap, or unaffordable purchase; each card's modifier label refreshes only when its displayed values change | Pinned `upgrade-standalone.js`, `upgrade.js:buyN`, and paired actions across all seven Wisdom cards with single, Shift, Control, and both modifiers          | `tests/e2e/wisdom-upgrade-buy-amount-differential.spec.ts` compares all resulting levels, Wisdom balance, and seven card labels after key release in Chromium, Firefox, and WebKit; it covers finite caps and cross-upgrade display dependencies |
 
+**Prestige full-save differential across engines (2026-11-08):**
+`tests/e2e/powers-prestige-differential.spec.ts` runs the four captured positive
+`Scripts/Components/powers-table.js:prestigePower` branches against the live
+pinned app in Firefox and WebKit as well as Chromium. Each action compares the
+stale and remounted rows, then the complete decoded Settings export and encoded
+bytes. Captured Decimal outputs remain exact assertions in Chromium; the
+Firefox/WebKit comparisons use their same-engine source result because Remix's
+Decimal strings differ between browser engines.
+
 The map covers the source branch conditions above. Other value combinations and
 full-screen Power states are still sampled; no exhaustive value-space or visual
 claim is made.

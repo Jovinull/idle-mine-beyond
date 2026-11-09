@@ -2,8 +2,10 @@
 
 **Prestige full-save differential (2026-11-08):** after each of the four
 enabled Power Prestige actions, the source-paired E2E compares the complete
-Settings export bytes and decoded object. All four cases passed in Chromium;
-other save-state combinations remain open.
+Settings export bytes and decoded object. All four passed in Chromium,
+Firefox, and WebKit. Chromium asserts the captured Decimal strings; Firefox and
+WebKit compare each engine's live source result with Beyond because those
+Decimal strings vary by engine. Other save-state combinations remain open.
 
 **Reverse cross-resource stale-tab overwrite (2026-11-08):** the paired E2E
 also saves Offline Gems from the updated tab, then overwrites it with a stale

@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-08
 
+**Prestige save exports across engines (2026-11-08):** the four positive live
+Prestige actions now compare complete Settings export bytes and decoded objects
+with pinned Remix in Chromium, Firefox, and WebKit. Chromium retains the exact
+captured Decimal outputs; Firefox and WebKit compare the engine-local Remix
+result with Beyond, since the pinned source's Decimal strings differ by engine.
+All eight focused Firefox/WebKit cases passed.
+
 **Aligned purchase save exports across engines (2026-11-08):** source-captured
 Money `buy10` from level 9 to 10 and `buy100` from 99 to 100 now compare the
 complete decoded Settings export and encoded bytes against pinned Remix in
