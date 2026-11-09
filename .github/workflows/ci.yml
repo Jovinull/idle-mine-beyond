@@ -136,6 +136,9 @@ jobs:
       - name: Verify finite upgrade cap purchases in Firefox and WebKit
         run: pnpm test:e2e:upgrade-caps:browsers
 
+      - name: Verify upgrade autosave window in Firefox and WebKit
+        run: pnpm test:e2e:upgrade-persistence:browsers
+
       - name: Verify successful pickaxe craft persistence in Firefox and WebKit
         run: pnpm test:e2e:craft-replacement:browsers
 

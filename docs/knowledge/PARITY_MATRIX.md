@@ -1,5 +1,10 @@
 # Parity matrix
 
+**Upgrade autosave boundary across engines (2026-11-09):** the live Blacksmith
+purchase now checks no write or confirmation at exactly 60,000 ms, then the
+write at 60,001 ms. The reloaded unsaved-purchase case and full saved export
+match pinned Remix in Chromium, Firefox, and WebKit; Firefox/WebKit run in CI.
+
 **Special-anchor pickaxe export across engines (2026-11-09):** the live craft
 for procedural mine-object ID 210 now checks its exact generated name, ten RNG
 draws, and complete encoded/decoded Settings export against pinned Remix in

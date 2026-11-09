@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-09
 
+**Upgrade autosave boundary across engines (2026-11-09):** a live Blacksmith
+purchase now checks that 60,000 ms does not write or show `Game Saved!`, then
+that the next 1 ms frame does. The Settings exports and persisted Blacksmith 1
+/ 970 Money state match pinned Remix in Chromium, Firefox, and WebKit; reloading
+before autosave restores level 0 in all three. The Firefox/WebKit gate is in CI.
+
 **Special-anchor pickaxe export across engines (2026-11-09):** the live craft
 that resolves procedural mine-object ID 210 now compares the exact generated
 name, ten RNG draws, and complete Settings export with pinned Remix. The

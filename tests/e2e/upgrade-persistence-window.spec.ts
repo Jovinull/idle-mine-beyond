@@ -250,19 +250,37 @@ test("an upgrade purchase persists after the source autosave threshold", async (
       await sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
     ).toBe(initialSourceStorage);
 
-    await Promise.all(
-      [page, sourcePage].map((target) =>
-        target.evaluate((elapsed) => {
-          const testWindow = window as Window & {
-            __upgradeAutosaveNow?: number;
-          };
-          if (testWindow.__upgradeAutosaveNow === undefined) {
-            throw new Error("The controlled autosave clock is missing.");
-          }
-          testWindow.__upgradeAutosaveNow += elapsed;
-        }, 60_001),
+    const advanceAutosaveClock = (elapsed: number) =>
+      Promise.all(
+        [page, sourcePage].map((target) =>
+          target.evaluate((duration) => {
+            const testWindow = window as Window & {
+              __upgradeAutosaveNow?: number;
+            };
+            if (testWindow.__upgradeAutosaveNow === undefined) {
+              throw new Error("The controlled autosave clock is missing.");
+            }
+            testWindow.__upgradeAutosaveNow += duration;
+          }, elapsed),
+        ),
+      );
+    await advanceAutosaveClock(60_000);
+    await Promise.all([
+      page.waitForTimeout(150),
+      sourcePage.waitForTimeout(150),
+    ]);
+    await Promise.all([
+      expect(page.locator(".messagelog")).not.toContainText("Game Saved!"),
+      expect(sourcePage.locator(".messagelog")).not.toContainText(
+        "Game Saved!",
       ),
-    );
+    ]);
+    expect(await readBeyondStorage()).toEqual(initialBeyondStorage);
+    expect(
+      await sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+    ).toBe(initialSourceStorage);
+
+    await advanceAutosaveClock(1);
     await Promise.all([
       expect(sourcePage.locator(".messagelog")).toContainText("Game Saved!"),
       expect(page.locator(".messagelog")).toContainText("Game Saved!"),
