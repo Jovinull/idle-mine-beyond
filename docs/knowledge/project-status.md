@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-09
 
+**Story Linux raster mismatch recheck (2026-11-09):** reproduced the Chapter 3
+light full-screen hash mismatch at 1366x768 in local Ubuntu 24.04 / Chromium
+through WSL. The source and Beyond text, loaded Work Sans fonts, computed styles,
+and objective-character geometry match; only blue-channel values at pixels
+(15,632) and (15,633) differ. Four host CSS overrides and an app visibility
+hide/show across two animation frames leave the Beyond screenshot hash
+unchanged. The cause remains unknown; exact visual comparison stays open.
+
 **Offline zero-rate live path across engines (2026-11-09):** a 3,601-second
 cold start on the captured zero-damage Universe object has zero Money, Gem, and
 Planet Coin rates. Remix still logs `earned you 0 $.`, writes a save, and
