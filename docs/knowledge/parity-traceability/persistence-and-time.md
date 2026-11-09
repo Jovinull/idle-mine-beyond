@@ -489,6 +489,16 @@ does not expand coverage to other browser quota policies.
   timer resets, save confirmation and log order, the saved `lastActive`, and
   complete exported legacy equality; it passes 1/1. This exercises the live
   `saveTimer > 60` path after a long frame as well as the one-hit-per-frame rule.
+  The selected four-scenario cold-start and separate advancing-startup-clock
+  tests also run in Firefox and WebKit; these runs compare message text/color,
+  clock-read prefixes, and complete decoded saved state, while the exact
+  message-pixel assertion remains Chromium-only. The controlled clock case
+  compares the source's persisted legacy snapshot with the complete
+  legacy-shaped Beyond state restored from its primary; this case does not
+  assert raw encoded-string equality. The captured level-90
+  Asteroid fixture's Money output differs by one final decimal digit in WebKit,
+  but source and Beyond exports match byte-for-byte there; this engine-specific
+  captured-value distinction does not count as a Beyond/source divergence.
 - **Sampled (qualified):** sixteen elapsed values generated with xorshift32 seed
   `0x4f46464c` cover the open interval from the reward threshold through values
   above the seven-hour upgraded cap. The pinned `loadGame()` fixture records

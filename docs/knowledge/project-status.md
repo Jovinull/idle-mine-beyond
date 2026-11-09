@@ -2,6 +2,18 @@
 
 Last updated: 2026-11-08
 
+**Offline cold-start comparison across engines (2026-11-08):** the existing
+four-scenario cold-start differential and separate advancing-startup-clock
+case now run in Firefox and WebKit as well as Chromium. They compare visible
+return-message text/color, clock-read prefixes, and complete decoded save
+objects. The controlled sequence aligns the source and Beyond elapsed-time
+read at +303 seconds despite their different bootstrap-read counts. The exact
+message-pixel assertion remains Chromium-only; this clock case compares decoded
+persisted objects. In the WebKit
+level-90 live-rate scenario, pinned Remix and Beyond exports match byte-for-byte
+and both differ by one final Money decimal digit from the Chromium capture.
+Actual OS/browser background scheduling remains open.
+
 **Finite-cap shop purchases across engines (2026-11-08):** source-paired Shift
 purchases from cap minus one and Control no-ops at cap for one Money, Gem, and
 Planet Coin upgrade now pass in Firefox and WebKit, in addition to Chromium.

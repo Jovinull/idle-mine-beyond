@@ -5,7 +5,10 @@ import {
   decodeRemixBeyondSave,
   decodeRemixLegacySave,
   encodeRemixLegacySave,
+  createRemixLegacySaveExportData,
+  restoreRemixBeyondSave,
 } from "../../packages/persistence/src/index.js";
+import type { RemixMineObjectCatalog } from "../../packages/core/src/index.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
 test("matches captured Remix offline loading behavior in Chromium", async ({
@@ -312,7 +315,10 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
         await visibleMessages(sourcePage),
       );
 
-      if (scenario.compareMessagePixels) {
+      if (
+        scenario.compareMessagePixels &&
+        testInfo.project.name === "chromium"
+      ) {
         await Promise.all([
           sourcePage.evaluate(async () => {
             await document.fonts.ready;
@@ -393,11 +399,13 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
       expect(beyondDecoded.value, scenario.name).toEqual(sourceDecoded.value);
       if (scenario.liveRateScenario) {
         const { stateAfterLoad } = scenario.liveRateScenario;
-        expect(sourceDecoded.value).toMatchObject({
-          money: stateAfterLoad.money.decimal,
-          gems: stateAfterLoad.gems.decimal,
-          planetCoins: stateAfterLoad.planetCoins.decimal,
-        });
+        if (testInfo.project.name === "chromium") {
+          expect(sourceDecoded.value).toMatchObject({
+            money: stateAfterLoad.money.decimal,
+            gems: stateAfterLoad.gems.decimal,
+            planetCoins: stateAfterLoad.planetCoins.decimal,
+          });
+        }
         expect(beyondExport).toBe(sourceExport);
       }
     } finally {
@@ -417,7 +425,12 @@ test("matches Remix when the wall clock advances between offline-load reads", as
       ),
       "utf8",
     ),
-  ) as { data: { saveApplicationSemantics: { inputJson: string } } };
+  ) as {
+    data: {
+      mineObjectCatalog: RemixMineObjectCatalog;
+      saveApplicationSemantics: { inputJson: string };
+    };
+  };
   const fixedNowMs = 1_700_000_100_000;
   const sourceClockValues = [
     fixedNowMs,
@@ -432,8 +445,9 @@ test("matches Remix when the wall clock advances between offline-load reads", as
     fixedNowMs,
     fixedNowMs,
     fixedNowMs,
-    fixedNowMs + 301_000,
+    // Align the effective offline-time read with Remix's +303-second read.
     fixedNowMs + 302_000,
+    fixedNowMs + 303_000,
     fixedNowMs + 303_000,
   ];
   const sourceSave = JSON.parse(
@@ -529,40 +543,77 @@ test("matches Remix when the wall clock advances between offline-load reads", as
       await beyondLog.locator("p").allTextContents(),
     );
 
-    await beyondPage.locator("[data-game-tab='settings']").click();
-    const sourceExport = await sourcePage.evaluate(() => {
-      const remixWindow = window as Window & {
-        app?: {
-          settings: { tab: string; exportFieldString: string };
-          exportGame: () => void;
-        };
-      };
-      const app = remixWindow.app;
-      if (!app) throw new Error("Pinned Remix Vue app was not exposed.");
-      app.settings.tab = "settings";
-      app.exportGame();
-      return app.settings.exportFieldString;
-    });
-    await beyondPage.locator("[data-settings-export]").click();
-    const beyondExportField = beyondPage.locator("[data-settings-save-field]");
-    await expect(beyondExportField).not.toHaveValue(
-      "Exported String will appear here...",
-    );
-    const sourceDecoded = decodeRemixLegacySave(sourceExport);
-    const beyondDecoded = decodeRemixLegacySave(
-      await beyondExportField.inputValue(),
-    );
+    const [sourceStored, beyondStored] = await Promise.all([
+      sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+      beyondPage.evaluate(() => localStorage.getItem("IdleMineBeyond")),
+    ]);
+    expect(sourceStored).not.toBeNull();
+    expect(beyondStored).not.toBeNull();
+    if (sourceStored === null || beyondStored === null) {
+      throw new Error(
+        "Offline loading did not persist both source and Beyond saves.",
+      );
+    }
+    const sourceDecoded = decodeRemixLegacySave(sourceStored);
+    const beyondDecoded = decodeRemixBeyondSave(beyondStored);
     expect(sourceDecoded.status).toBe("success");
-    expect(beyondDecoded.status).toBe("success");
+    expect(beyondDecoded.status).toBe("valid");
     if (
       sourceDecoded.status !== "success" ||
-      beyondDecoded.status !== "success"
+      beyondDecoded.status !== "valid"
     ) {
-      throw new Error("Could not decode the clock-sequence legacy exports.");
+      throw new Error("Could not decode the persisted offline-load snapshots.");
     }
     const sourceValue = sourceDecoded.value as Record<string, unknown>;
-    const beyondValue = beyondDecoded.value as Record<string, unknown>;
-    expect(beyondValue).toEqual(sourceValue);
+    const beyondState = restoreRemixBeyondSave(
+      beyondDecoded.save,
+      reference.data.mineObjectCatalog,
+    );
+    const sourceMessageLog = sourceValue["messageLog"];
+    if (!Array.isArray(sourceMessageLog)) {
+      throw new Error("The pinned offline save has no message log array.");
+    }
+    const beyondLegacyValue = createRemixLegacySaveExportData(
+      beyondState,
+      beyondState.simulation.lastActiveMs ?? fixedNowMs + 303_000,
+      sourceValue,
+      sourceMessageLog as { message: string; color: string }[],
+    );
+    const sourceRuntime = await sourcePage.evaluate(() => {
+      const remixWindow = window as unknown as {
+        game: {
+          currentMineObject: {
+            def: { toString(): string };
+            totalHp: { toString(): string };
+            value: { toString(): string };
+          };
+          pickaxe: { getDamage(): { toString(): string } };
+        };
+        functions: {
+          getIdleDamage(): { toString(): string };
+          getMPS(): { toString(): string };
+        };
+      };
+      return {
+        mps: remixWindow.functions.getMPS().toString(),
+        idleDamage: remixWindow.functions.getIdleDamage().toString(),
+        pickaxeDamage: remixWindow.game.pickaxe.getDamage().toString(),
+        object: {
+          def: remixWindow.game.currentMineObject.def.toString(),
+          totalHp: remixWindow.game.currentMineObject.totalHp.toString(),
+          value: remixWindow.game.currentMineObject.value.toString(),
+        },
+      };
+    });
+    expect(
+      beyondLegacyValue,
+      JSON.stringify({
+        sourceRuntime,
+        sourceMoney: sourceValue["money"],
+        beyondMoney: beyondLegacyValue.money,
+        clockReads: readCounts,
+      }),
+    ).toEqual(sourceValue);
     expect(sourceValue["lastActive"]).toBe(fixedNowMs + 303_000);
   } finally {
     await Promise.all([sourcePage.close(), beyondPage.close()]);

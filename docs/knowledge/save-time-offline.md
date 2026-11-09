@@ -114,19 +114,25 @@ Ten named boundary cases plus sixteen elapsed-time samples generated with xorshi
 
 **Pinned browser cold-start differential (2026-10-04):**
 `tests/e2e/offline-progression.spec.ts` opens the pinned Remix and Beyond apps
-in Chromium from the same source-encoded legacy saves. Frozen-clock cases cover
-an upgraded seven-hour capped restore and a timestamp 60 seconds in the future;
-both produce matching visible message text/computed color and complete legacy
-save exports. The positive capped state also has an exact `.messagelog` pixel
-match at 1440x900 in light and dark themes. A third case advances the controlled
-clock between the source and Beyond startup/load reads at corresponding event
-positions, checks each clock-read prefix and full message/export equality, then
-holds later runtime reads at the final timestamp. This isolates the load path
-from the main loop. The focused Playwright file now passes 4/4. Three cases
-cover cold-start restores and the advancing startup clock; a separate
-controlled Chromium freeze/resume differential is described below. The cold-
-start tests do not simulate the actual OS background scheduler; native WebView
-behavior remains outside web-v1.
+in Chromium from the same source-encoded legacy saves. The Chromium run compares
+an upgraded seven-hour capped restore, the 60-second backward wall-clock jump,
+and a controlled advancing startup clock; complete exports match, and the
+positive capped state has exact `.messagelog` pixels at 1440x900 in both themes.
+The selected four-scenario cold-start test and the separate advancing-startup-
+clock test now also run in Firefox and WebKit. Those engines compare visible
+message text/color, clock-read prefixes, and complete decoded Remix/Beyond save
+state. The controlled clock case compares the source's persisted legacy
+snapshot with the complete legacy-shaped Beyond state restored from its
+primary as decoded objects. The cap-state pixel assertion remains
+Chromium-only.
+The additional level-90 Asteroid live-rate case has a captured Chromium output;
+WebKit source and Beyond both produce Money one final decimal digit lower than
+that capture, while their complete exports match each other byte-for-byte. The
+controlled advancing-clock case checks corresponding clock-read prefixes and
+full exports, then holds later runtime reads at the final timestamp. The
+cold-start tests still do not simulate the actual OS background scheduler; the
+controlled Chromium freeze/resume differential is described below, and native
+WebView behavior remains outside web-v1.
 
 **Captured multi-resource live-rate cold start (2026-11-08):**
 `tests/e2e/offline-progression.spec.ts` also builds a controlled full legacy

@@ -100,6 +100,9 @@ jobs:
       - name: Verify manual offline save imports in Firefox and WebKit
         run: pnpm test:e2e:offline-import:browsers
 
+      - name: Verify offline cold-start restores in Firefox and WebKit
+        run: pnpm test:e2e:offline-cold-start:browsers
+
       - name: Verify optional-group save imports in Firefox and WebKit
         run: pnpm test:e2e:legacy-import:browsers
 
