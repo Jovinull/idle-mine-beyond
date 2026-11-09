@@ -6256,6 +6256,14 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 operation: { method: "buy10" },
               },
               {
+                name: "buy10-wisdom-simple-gem-boost-stops-before-alignment-on-affordability",
+                group: "wisdom",
+                key: "gemBoostSimple",
+                level: 0,
+                balance: "1e20",
+                operation: { method: "buy10" },
+              },
+              {
                 name: "buy10-aligns-current-level",
                 group: "money",
                 key: "activePower",

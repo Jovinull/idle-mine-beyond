@@ -121507,6 +121507,69 @@
           }
         },
         {
+          "name": "buy10-wisdom-simple-gem-boost-stops-before-alignment-on-affordability",
+          "group": "wisdom",
+          "key": "gemBoostSimple",
+          "resourceId": 3,
+          "startingLevel": 0,
+          "startingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "100000000000000000000",
+              "mantissa": 1,
+              "exponent": 20
+            }
+          },
+          "currentPrice": {
+            "decimal": "10000000000",
+            "mantissa": 1,
+            "exponent": 10
+          },
+          "maxLevel": 10,
+          "operation": {
+            "method": "buy10"
+          },
+          "operationResult": null,
+          "endingLevel": 1,
+          "purchases": 1,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "99999999990000000000",
+              "mantissa": 9.999999999,
+              "exponent": 19
+            }
+          }
+        },
+        {
           "name": "buy10-aligns-current-level",
           "group": "money",
           "key": "activePower",

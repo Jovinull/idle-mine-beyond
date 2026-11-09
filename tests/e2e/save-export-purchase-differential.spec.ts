@@ -301,6 +301,22 @@ async function comparePurchaseExport(
       endingResources: { planetCoins: { decimal: "85.71" } },
     });
   }
+  if (
+    purchaseName ===
+    "buy10-wisdom-simple-gem-boost-stops-before-alignment-on-affordability"
+  ) {
+    expect(purchase).toMatchObject({
+      group: "wisdom",
+      key: "gemBoostSimple",
+      startingLevel: 0,
+      endingLevel: 1,
+      purchases: 1,
+      operation: { method: "buy10" },
+      startingResources: { wisdom: { decimal: "100000000000000000000" } },
+      currentPrice: { decimal: "10000000000" },
+      endingResources: { wisdom: { decimal: "99999999990000000000" } },
+    });
+  }
   const alignedResourceCases: Record<
     string,
     { group: "gems" | "planetCoins"; level: 9 | 99; method: "buy10" | "buy100" }
@@ -625,12 +641,13 @@ for (const purchaseName of [
   "buy10-stops-before-alignment-on-affordability",
   "buy10-gem-multiplier-stops-before-alignment-on-affordability",
   "buy10-planet-coin-gem-multiplier-stops-before-alignment-on-affordability",
+  "buy10-wisdom-simple-gem-boost-stops-before-alignment-on-affordability",
 ]) {
   test(`exports the live save after ${purchaseName}`, async ({
     browser,
     page,
   }) => {
-    test.setTimeout(60_000);
+    test.setTimeout(90_000);
     await comparePurchaseExport(browser, page, purchaseName);
   });
 }
