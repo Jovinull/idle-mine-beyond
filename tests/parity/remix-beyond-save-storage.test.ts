@@ -463,3 +463,32 @@ it("migrates non-offline imports silently and retains legacy data on write failu
     false,
   );
 });
+
+it("can import a no-save legacy load without modifying existing Beyond slots", async () => {
+  const storage = new MemorySaveStorage();
+  storage.primary = "existing-primary";
+  storage.backup = "existing-backup";
+
+  const result = await importRemixLegacySaveToBeyond({
+    load: createLegacyLoadInput(true),
+    storage,
+    persistWhenSourceDoesNotSave: false,
+    dispatchEffect(effect) {
+      storage.trace.push(
+        effect.type === "logMessage"
+          ? `effect:${effect.message}`
+          : `effect:${effect.type}`,
+      );
+    },
+  });
+
+  expect(result.status).toBe("imported");
+  if (result.status !== "imported") {
+    throw new Error(`Legacy import failed: ${result.status}.`);
+  }
+  expect(result.persisted).toEqual([]);
+  expect(result.effects).toEqual([{ type: "setTheme", theme: "dark" }]);
+  expect(storage.trace).toEqual(["effect:setTheme"]);
+  expect(storage.primary).toBe("existing-primary");
+  expect(storage.backup).toBe("existing-backup");
+});

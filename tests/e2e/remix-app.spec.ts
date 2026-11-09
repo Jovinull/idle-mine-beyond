@@ -88,7 +88,15 @@ type SettingsRuntimeFixture = {
         name: string;
         confirmationPrompts: string[];
       }[];
-      confirmed: { confirmationPrompts: string[] };
+      confirmed: {
+        confirmationPrompts: string[];
+        after: { lastActive: number };
+      };
+      confirmedAfterOfflineThreshold: {
+        input: { elapsedSecondsBeforeReset: number };
+        confirmationPrompts: string[];
+        after: { lastActive: number; messageLog: unknown[] };
+      };
     };
     payUSDebtSemantics: {
       scenarios: {
@@ -3228,7 +3236,7 @@ test("matches pinned Remix Hard Reset cancellation at each confirmation", async 
   }
 });
 
-test("matches pinned Remix after confirming Hard Reset", async ({
+test("matches pinned Remix Hard Reset after offline threshold", async ({
   page,
   browser,
 }) => {
@@ -3245,7 +3253,9 @@ test("matches pinned Remix after confirming Hard Reset", async ({
   const save = JSON.parse(
     reference.data.saveApplicationSemantics.inputJson,
   ) as { lastActive: number };
-  save.lastActive = 1_700_000_000_000;
+  const startupTime =
+    reference.data.hardResetSemantics.confirmed.after.lastActive;
+  save.lastActive = startupTime;
   const encodedSave = encodeRemixLegacySave(save);
   const sourceContext = await browser.newContext({
     colorScheme: "dark",
@@ -3254,11 +3264,17 @@ test("matches pinned Remix after confirming Hard Reset", async ({
     viewport: { width: 1440, height: 900 },
   });
   const sourcePage = await sourceContext.newPage();
-  const initializePage = (encoded: string) => {
+  const initializePage = ({
+    encoded,
+    now,
+  }: {
+    encoded: string;
+    now: number;
+  }) => {
     localStorage.clear();
     localStorage.setItem("IdleMine", encoded);
     localStorage.setItem("unrelated-origin-data", "must be removed");
-    Date.now = () => 1_700_000_000_000;
+    Date.now = () => now;
   };
   const collectAcceptedPrompts = (target: typeof page) => {
     const prompts: string[] = [];
@@ -3272,8 +3288,14 @@ test("matches pinned Remix after confirming Hard Reset", async ({
   try {
     const sourceUrl = await routePinnedRemixOracle(sourceContext);
     await Promise.all([
-      page.addInitScript(initializePage, encodedSave),
-      sourcePage.addInitScript(initializePage, encodedSave),
+      page.addInitScript(initializePage, {
+        encoded: encodedSave,
+        now: startupTime,
+      }),
+      sourcePage.addInitScript(initializePage, {
+        encoded: encodedSave,
+        now: startupTime,
+      }),
     ]);
     await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
     await expect(page.locator("#app")).toHaveAttribute(
@@ -3294,6 +3316,18 @@ test("matches pinned Remix after confirming Hard Reset", async ({
       page.locator("[data-settings-save-field]").fill("old export text"),
       sourcePage.locator("article.settings textarea").fill("old export text"),
     ]);
+    const resetAt =
+      startupTime +
+      reference.data.hardResetSemantics.confirmedAfterOfflineThreshold.input
+        .elapsedSecondsBeforeReset *
+        1000;
+    await Promise.all(
+      [page, sourcePage].map((target) =>
+        target.evaluate((now) => {
+          Date.now = () => now;
+        }, resetAt),
+      ),
+    );
     const [beyondPrompts, sourcePrompts] = [
       collectAcceptedPrompts(page),
       collectAcceptedPrompts(sourcePage),
@@ -3309,7 +3343,8 @@ test("matches pinned Remix after confirming Hard Reset", async ({
     await expect.poll(() => beyondPrompts.length).toBe(3);
     await expect.poll(() => sourcePrompts.length).toBe(3);
     expect(beyondPrompts).toEqual(
-      reference.data.hardResetSemantics.confirmed.confirmationPrompts,
+      reference.data.hardResetSemantics.confirmedAfterOfflineThreshold
+        .confirmationPrompts,
     );
     expect(sourcePrompts).toEqual(beyondPrompts);
 
@@ -3349,6 +3384,18 @@ test("matches pinned Remix after confirming Hard Reset", async ({
         return JSON.parse(decoded) as unknown;
       }, sourceExport),
     );
+    const sourceResetExport = await sourcePage.evaluate((value) => {
+      const decoded = unescape(decodeURIComponent(atob(value)));
+      return JSON.parse(decoded) as {
+        lastActive: number;
+        messageLog: unknown[];
+      };
+    }, sourceExport);
+    expect(sourceResetExport.lastActive).toBe(
+      reference.data.hardResetSemantics.confirmedAfterOfflineThreshold.after
+        .lastActive,
+    );
+    expect(sourceResetExport.messageLog).toEqual([]);
     expect(
       await Promise.all(
         [page, sourcePage].map((target) =>

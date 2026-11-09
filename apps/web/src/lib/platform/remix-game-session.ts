@@ -654,6 +654,7 @@ export function createRemixWebGameSession(
           resolveNumberFormatter: input.resolveNumberFormatter,
         },
         storage: input.storage,
+        persistWhenSourceDoesNotSave: false,
         dispatchEffect: input.dispatchEffect,
       });
       if (result.status === "legacyLoadFailed") {

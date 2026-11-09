@@ -6,6 +6,13 @@ Scripts/Define/functions.js stores the save under localStorage key IdleMine. It 
 
 The selected upgrade group is a session setting with a legacy persistence quirk: clicking a group updates live `settings.upgradeTab`, panel navigation retains it, and export includes it; the pinned `loadGame()` does not apply that field on cold start, which returns to the `game.js` default `money`. The source-paired E2E `tests/e2e/upgrade-tab-state-differential.spec.ts` verifies panel retention, exported values, and the cold-load reset. Preserve this asymmetry.
 
+**Wisdom level-100 save/reload (2026-11-09):** the pinned source-paired
+purchase case uses Control to buy Power Power (Active) 100 times from level 0,
+then explicitly saves from Settings and reloads both applications. The
+post-reload Settings exports are byte-identical; both retain level 100 and the
+source Decimal Wisdom value. Chromium, Firefox, and WebKit pass. Other dynamic
+save states remain open.
+
 **Same-origin tab overwrite behavior (2026-11-08):** each Remix tab buys
 Blacksmith from its own level-zero snapshot, reaching level 1 with 970 Money.
 When both tabs save in sequence, `functions.saveGame()` serializes the local
@@ -37,15 +44,39 @@ tabs retain their own displayed levels. The case passes in Chromium, Firefox,
 and WebKit and is included in the cross-browser gate. Other cross-tab
 action/write interleavings remain open.
 
-**Stale dud-craft interleaving (2026-11-09):** after the fresh tab saves
-Blacksmith 1 / 970 Money / 1 Gem, the stale tab performs the captured
-equal-damage dud craft. Pinned Remix spends the stale tab's Gem and consumes
-the captured ten random draws, but `craftPick()` does not call `saveGame()` on
-the dud branch. The shared legacy save therefore remains byte-identical to the
-fresh purchase; Beyond keeps the same primary and backup bytes while its stale
-tab shows the spent Gem and unchanged equipped pickaxe. The source-paired E2E
-passes in Chromium, Firefox, and WebKit. Other no-save actions and write
-interleavings remain open.
+**Stale Shift Wisdom purchase interleaving (2026-11-09):** after a fresh tab
+saves Blacksmith 1 / 970 Money, the stale tab holds Shift and buys Simple Gem
+Boost from the captured 1e20 Wisdom balance. Pinned Remix `buyN(10, true)` buys
+one level for 1e10 Wisdom and stops before aligned level 10; the remaining
+Wisdom is 99999999990000000000. The stale tab's manual save overwrites the
+newer Money purchase in both Remix and Beyond, and Beyond's backup retains the
+fresh snapshot. Chromium, Firefox, and WebKit pass; this case is included in
+`pnpm test:e2e:cross-tab:browsers`.
+
+The same `buyN(10, true)` path is also captured for Power Power (Active): with
+1,001 Wisdom, it buys two successive levels for 1 and 1,000, reaches level 2,
+and stops before the next 1,000,000-Wisdom level. After the fresh Money save,
+the stale manual save overwrites shared storage with level 2 / zero Wisdom;
+Beyond keeps the newer purchase in backup. Complete exports match in
+Chromium, Firefox, and WebKit in the same cross-browser gate.
+
+**Stale craft no-save interleavings (2026-11-09):** after a fresh tab saves
+Blacksmith 1 / 970 Money, the stale tab performs either the captured
+equal-damage dud or the insufficient-Gem craft. Remix spends one Gem and
+consumes ten random draws on the dud; the insufficient-Gem branch consumes
+neither Gems nor RNG. Neither branch calls `saveGame()`. In both cases, the
+shared legacy save and Beyond primary/backup stay byte-identical to the fresh
+purchase, while live messages, Gem balances and pickaxe remain source-matched.
+Both source-paired E2Es pass in Chromium, Firefox, and WebKit and are included
+in the cross-tab browser gate. Other action/write interleavings remain open.
+
+**Stale Shift bulk-craft interleaving (2026-11-09):** after fresh tabs save
+Blacksmith 1 / 970 Money, the stale tab performs the captured two-replacement
+Shift craft. Remix consumes six Gems and 20 random draws, saving after each
+replacement. The shared legacy slot ends at Sturdy Mud Pick / 0 Gems. Beyond
+matches that primary and retains the first Bad Mud Pick / 3 Gems replacement
+in backup; the fresh tab keeps its local purchase. Chromium, Firefox, and
+WebKit pass. Other bulk sequences and cross-tab orders remain open.
 
 **Stale Settings-save interleaving (2026-11-09):** after a fresh tab saves
 Blacksmith 1 / 970 Money, its stale peer selects Number Format index 3. That
@@ -64,6 +95,37 @@ Blacksmith 0 / 1,000 Money state and dark theme. Remix and Beyond agree, and
 Beyond's backup keeps the newer purchase snapshot. Chromium, Firefox, and
 WebKit pass this source-paired case. Other action/write interleavings remain
 open.
+
+**Stale offline Settings import (2026-11-09):** after a fresh tab saves
+Blacksmith 1 / 970 Money, its stale peer imports the pinned 3,601-second
+offline save through Settings. Remix's `loadGame()` applies the saved fields,
+offline rewards, welcome-back message, and `saveGame()` in source order; that
+imported Blacksmith 0 snapshot replaces the newer purchase. Beyond produces
+the same live messages and complete exported bytes, and its backup retains the
+fresh Blacksmith purchase. The four-tab source-paired test passes in
+Chromium, Firefox, and WebKit and is in `pnpm test:e2e:cross-tab:browsers`.
+Other stale import shapes and cross-tab action/write interleavings remain
+open.
+
+**Stale Settings import at the offline threshold (2026-11-09):** when the
+imported save's `lastActive` is exactly 300 seconds old, the pinned
+`loadGame()` applies its fields but skips offline rewards and does not call
+`saveGame()`. A stale same-origin tab therefore leaves the newer shared save
+untouched; after reload, both it and the fresh tab show the newer Blacksmith
+purchase. The source-paired four-tab E2E verifies live exports, primary and
+backup storage, and the reload in Chromium, Firefox, and WebKit. Beyond's live
+Settings importer now also leaves the stored primary and backup untouched when
+the source load emits no save effect. Startup legacy migration and explicit
+recovery continue to persist by default.
+
+**Live Settings import just above the offline threshold (2026-11-09):** a
+source-paired import with `lastActive` 300,001 ms before the controlled clock
+enters Remix's strict `offlineSec > 300` branch. The source emits the
+welcome-back and save messages, advances `lastActive`, and writes the imported
+save; Beyond matches its full exported object and persisted resource state.
+Chromium, Firefox, and WebKit pass. This covers the immediate millisecond
+above the boundary; the source-captured 300.001-second formula case continues
+to document the numeric transition.
 
 **Live purchase export differential (2026-11-08):** the pinned purchase corpus now includes Shift `buy10` from level 0 to 10 for Gem and Planet Coin Gem Multiplication. `tests/e2e/save-export-purchase-differential.spec.ts` makes each purchase in both Remix and Beyond, then compares the complete exported object and encoded bytes. Both cases pass in Chromium, Firefox, and WebKit. The captured remaining balances are 33422.1074644512 Gems and 18152641816.016598 Planet Coins.
 
@@ -108,7 +170,7 @@ characterize every browser profile's quota policy.
 **Community specimen recheck (2026-11-03):** direct retrieval of the Pastebin raw URL returned HTTP 404. The linked Drive artifact was accessible as 49,460 bytes with SHA-256 `c20f939b47d63bd60cfd9f9aba17444c5bf1a2c4f50b977a6a452f99a4c2131e`. The Reddit comment links it as an exported string for an import bug and distinguishes it from the author's unshared localStorage save. It is community evidence, not a first-party specification. Its decoded shape has 20 top-level fields, 26 saved number-formatters, and 72 saved mine objects; it omits Planet Coin/Wisdom resource fields and the Planet Coin upgrade and Powers groups found in the pinned runtime. Pinned `functions.loadGame(saveString, undefined, true)` loaded it in Chromium 153.0.8010.12 with no dialog or page error. The complete loaded-game JSON hash was `524f9d44ad4f915f18e05806626077fce2da133e7005dc396a31eefa5bfb68aa`; the pinned re-export hash was `5f91eff45326837a81283235a4c9a42fe17898b9c6ea9a86cccb07355541755d`. A disposable Beyond differential using only the source-read fields matched the complete source export and re-export. The original player save remains only in ignored `.research/`; it is not checked in. The durable [historical-shape fixture](../../tests/fixtures/parity/remix-historical-save-shape.json) replaces player values with synthetic values, records the original hash/provenance, and compares the complete pinned source export hashes in `tests/parity/legacy-save-historical-shape.test.ts`. This verifies one specimen and a minimized source-read shape; it does not prove support for every old save or an older deployed loader.
 
 The canonical checkout was independently rechecked on 2026-10-04: its complete local Git history has five commits; the loader and game definitions still occur only in `719cf126678a56c53c0ad8e68cebd059b3101201`. This confirms the repository-history search but does not rule out older deployed builds or identify which build produced the community specimen tested below.
-The separate `saveApplicationSemantics` capture loads a complete distinct save with offline processing disabled. It verifies all seven resource fields, progress and regenerated current object, Story fields and scroll position, `lastActive`, number formatter, theme/toggles, all four upgrade families, five named Powers values, and pickaxe fields. `settings.tab` is serialized but not read by `loadGame()`; the existing tab remains active. The load reads the clock for the `lastActive` fallback even when the save supplies that timestamp. `timer`, `usedGemsLevel`, and other serialized runtime/presentation fields are not assigned by this loader. Although `getSaveString()` serializes the whole game object and therefore includes `usedGemsLevel`, `Scripts/Define/game.js` initializes it to zero and the manual `loadGame()` field list omits it; the Craft selector in `index.html` changes it directly. Reloading a save therefore resets the selected Gem craft cost. The Chapter 5 route trace records the value carried across its same-session Chapter 4/5 boundary.
+The separate `saveApplicationSemantics` capture loads a complete distinct save with offline processing disabled. It verifies all seven resource fields, progress and regenerated current object, Story fields and scroll position, `lastActive`, number formatter, theme/toggles, all four upgrade families, five named Powers values, and pickaxe fields. `settings.tab` is serialized but not read by `loadGame()`; the existing tab remains active. The load reads the clock for the `lastActive` fallback even when the save supplies that timestamp. `timer`, `usedGemsLevel`, and other serialized runtime/presentation fields are not assigned by this loader. A three-browser live Settings import now supplies large conflicting `timer.autoPickaxe` and `timer.save` values and verifies that source and Beyond exports retain their pre-import live timer values and remain byte-identical. Although `getSaveString()` serializes the whole game object and therefore includes `usedGemsLevel`, `Scripts/Define/game.js` initializes it to zero and the manual `loadGame()` field list omits it; the Craft selector in `index.html` changes it directly. Reloading a save therefore resets the selected Gem craft cost. The Chapter 5 route trace records the value carried across its same-session Chapter 4/5 boundary.
 
 `saveOfflineApplicationSemantics` captures one controlled wrapped save loaded through the pinned `loadGame()` with offline processing enabled. The save selects a generated object, pickaxe, Powers, upgrade levels, notation, and 3,601 seconds away; the probe records live Money/Gem/Planet Coin rates, final resources and maxima, Story/settings/pickaxe state, clock values, and the post-reward storage snapshot. The exact event order is theme application → offline reward message → storage write → `Game Saved!`. Four clock reads are observed: eager `lastActive` fallback, elapsed-time calculation, updated `lastActive`, and `saveGame()` timestamp.
 
@@ -241,6 +303,10 @@ Beyond's `advanceRemixSaveTimer` reproduces the strict threshold/reset, and `per
 
 The pinned `hardReset()` asks for confirmation three times. After three acceptances it calls `localStorage.clear()` for every origin key, passes the startup `initialGame` JSON to `loadGame(..., false, true)`, then clears the message log and used-Gem level. It does not call `saveGame()`. The loader resets `lastActive` to the timestamp already stored in `initialGame` at application startup and does not touch `game.timer.autoPickaxe` or `game.timer.save`. Therefore the reset state remains unsaved until a later autosave, and the retained timer can make that save occur sooner; after a reload, the old startup timestamp can also contribute to offline elapsed time. `hardResetSemantics` captures these results. Beyond clears origin storage only after all confirmations, uses an injected startup timestamp, preserves both loop timers, and performs no write during reset.
 
+The source capture also advances `Date.now()` by 301 seconds after the startup timestamp and confirms Hard Reset. This verifies the `nooffline` argument suppresses offline rewards at a time when an ordinary load would pass the strict 300-second threshold. `tests/e2e/remix-app.spec.ts` applies the same clock advance to pinned Remix and Beyond, then compares the full exported legacy save and verifies origin storage remains empty. This reset edge is covered in Chromium, Firefox, and WebKit; other elapsed intervals and later reload behavior remain open.
+
+`tests/e2e/hard-reset-autosave-timer.spec.ts` also advances both runtimes' loop clock to 59.999 seconds without saving, confirms Hard Reset preserves that timer, checks that equality at 60 seconds still does not save, then advances to 60.001 seconds and compares the complete exported saves after the automatic write. The source timer is asserted before and after reset and at both threshold points. Chromium, Firefox, and WebKit cover this integration; other retained timer values remain open.
+
 ## Beyond architecture decision
 
 - Save schema is versioned and validated; migrations, integrity checks beyond strict schema/Decimal validation, backups, safe recovery, import/export, and a legacy Remix importer remain required.
@@ -278,4 +344,12 @@ minification changes expression text and recreates native assignment and
 `Object.keys` errors for branches where the Beyond implementation uses a
 different expression.
 
-The 2026-11-08 external-byte differential also compares nine quote-wrapped three-byte UTF-8 sequences with the live pinned Remix decoder in Chromium: six scalar boundaries from U+0800 through U+FFFF and three overlong/surrogate invalid sequences. All nine classifications and decoder outputs matched. Arbitrary longer byte inputs remain open.
+The 2026-11-08 external-byte differential compares nine quote-wrapped three-byte UTF-8 sequences with the pinned Remix decoder in Chromium: six scalar boundaries from U+0800 through U+FFFF and three overlong/surrogate invalid sequences. On 2026-11-09, the four-byte boundary case expanded to twelve inputs by adding two valid multi-scalar strings and two malformed longer sequences with a valid prefix. The expected UTF-16 units, status, and exact browser-local errors match the pinned decoder in Chromium, Firefox, and WebKit (36 comparisons). Arbitrary longer byte inputs remain open.
+**Cross-resource stale purchase interleavings (2026-11-09):** after a fresh
+same-origin tab saves Blacksmith 1 / 970 Money, a stale tab buys either Simple
+Gem Boost for exactly 10 billion Wisdom or Planet Coin Active Power for 100
+Planet Coins, then manually saves. Pinned Remix and Beyond replace the shared
+slot with the stale Blacksmith 0 / 1,000 Money snapshot, matching upgrade at
+level 1, and zero of the purchased resource; Beyond's backup retains the fresh
+purchase. The complete Settings exports are byte-identical in Chromium,
+Firefox, and WebKit. Both cases are in the Firefox/WebKit stale-save gate.

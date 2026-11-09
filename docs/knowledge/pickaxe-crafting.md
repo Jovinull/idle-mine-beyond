@@ -37,6 +37,21 @@ the selected Firefox/WebKit cross-tab gate passed 10/10 cases, including this
 craft. Other action/write interleavings remain part of the broader save-storage
 evidence gap.
 
+The same cross-tab E2E now covers both no-save source branches after a fresh
+Blacksmith purchase: an equal-damage dud spends one Gem and consumes ten draws,
+while an insufficient-Gem attempt consumes neither. Both leave the shared
+source save and Beyond primary/backup byte-identical to the newer purchase;
+Chromium, Firefox, and WebKit compare messages, live balances, and pickaxe
+state. These selected no-save interleavings do not close other craft or
+save-order combinations.
+
+A second stale-tab case runs the captured two-replacement Shift craft after a
+fresh Blacksmith purchase. Remix saves after each replacement; Beyond's final
+primary matches the Sturdy Mud Pick / zero-Gem result and its backup contains
+the first Bad Mud Pick / three-Gem snapshot. Both tabs' live screens and RNG
+counts match in Chromium, Firefox, and WebKit. Other bulk/save interleavings
+remain open.
+
 The Gem Waster selector at its lower-interior cost 3, interior cost 10, and
 maximum cost 35 now matches the full source screen in both themes at 1440x900,
 1366x768, and 1920x1080. Cost 3 and cost 10 both show enabled arrows and their
@@ -58,9 +73,11 @@ The source-paired `better-craft-replaces-and-saves` browser case continues from 
 
 The successful single-craft path has a functional, non-raster differential in Chromium, Firefox, and WebKit. The baseline case compares the visible success feedback and equipped pickaxe, consumes the captured RNG count, then compares the complete Settings export bytes and decoded save against pinned Remix and the captured replacement snapshot. A second case starts with Money Gem Waster level 1, confirms the loaded legacy selection resets to 0, raises it to 1 through both UIs, checks the captured cost of 3 Gems, and compares the successful craft, RNG count, and complete Settings exports against the `selected-gem-level-controls-craft-cost` capture. The dedicated browser command covers both cases. The separate strict screenshot test remains Chromium-only; its WebKit run stopped at a full-screen pixel hash mismatch before reaching the export assertions, so no cross-engine visual parity is claimed here.
 
+The maximum selector state now has a separate functional source differential. The pinned capture combines Money Gem Waster level 1 with the Gem-upgrade Gem Waster level 2, selects level 3, spends 35 Gems, and replaces the Toy Pickaxe with the recorded Normal Mud Pick after ten RNG draws. The live test advances both imported sessions from the default selection to level 3, checks the cost and disabled increase arrow, then compares feedback and full Settings export bytes/objects in Chromium, Firefox, and WebKit. Other maximum-level craft inputs remain open.
+
 The source-paired visual cases also snapshot persistence immediately before and after each attempt. In all three viewports and both themes, equal- and lower-damage duds leave Remix's `IdleMine` string and Beyond's primary and backup strings unchanged; the insufficient-Gem branch also leaves all three unchanged. The focused Chromium comparison passed 18/18. The dud branches still spend Gems in live state, as covered by the transition assertions; this check specifically verifies that the source's no-save behavior is preserved.
 
-**Known legacy quirk:** `functions.getSaveString()` serializes `usedGemsLevel`, but `functions.loadGame()` does not assign that field from `loadObj`. Loading a legacy save into a fresh game therefore leaves the default selection at zero; loading into an existing game leaves its current selection unchanged. Beyond's legacy application must preserve this source behavior instead of restoring the serialized legacy field during import.
+**Known legacy quirk:** `functions.getSaveString()` serializes `usedGemsLevel`, but `functions.loadGame()` does not assign that field from `loadObj`. Loading a legacy save into a fresh game therefore leaves the default selection at zero; loading into an existing game leaves its current selection unchanged. `tests/e2e/legacy-save-optional-groups.spec.ts` now imports a save with a conflicting serialized value and compares the live selector, displayed cost, and complete export against Remix in Chromium, Firefox, and WebKit. Beyond's legacy application must preserve this source behavior instead of restoring the serialized legacy field during import.
 
 ## RNG
 
@@ -85,3 +102,10 @@ Remux's generator sets quality to 1 and calculates power from input gems Ã— 20 Ã
 The pinned functions.craftPick() result now has a source-captured lower-than-equipped case as well as the equal-damage dud and stronger replacement. With the same ten recorded random draws, the crafted Bad Mud Pick deals 31.185000000000002: it replaces Toy Pickaxe damage 20, is a dud at equal damage, and is a dud against Higher Damage Pickaxe damage 31.5. tests/parity/pickaxe-crafting.test.ts asserts the above/equal/below relation and save/pickaxe outcomes; tests/e2e/pickaxe-crafting-visual.spec.ts compares the four craft outcome Mining screens with pinned Remix in both themes at 1440x900 and 1366x768, and all four outcomes also match at 1920x1080.
 
 **Unowned selector branch (2026-11-08):** When the Money Gem Waster is unowned (level 0), the pinned source hides both selector arrows even if the Gem-upgrade Gem Waster is level 2. The captured displayed cost is 1. ests/e2e/pickaxe-crafting-visual.spec.ts compares this state against Remix at 1366x768, 1440x900, and 1920x1080 in both themes; all six full-screen pairs passed. Other selector states and resolutions remain open.
+
+**Mixed-outcome stale bulk craft (2026-11-09):** a captured Shift sequence
+succeeds once, then produces a dud and an insufficient-Gem result. Only the
+successful replacement saves, leaving Bad Mud Pick / 1 Gem persisted while
+the live state ends at 0 Gems. The source-paired cross-tab test checks that
+Beyond's primary preserves this intermediate save, its backup retains the
+newer purchase, and both match Remix in Chromium, Firefox, and WebKit.

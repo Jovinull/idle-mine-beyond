@@ -6272,6 +6272,22 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 operation: { method: "buy10" },
               },
               {
+                name: "buy10-wisdom-power-power-active-buys-two-stops-on-affordability",
+                group: "wisdom",
+                key: "powerPowerActive",
+                level: 0,
+                balance: "1001",
+                operation: { method: "buy10" },
+              },
+              {
+                name: "buy100-wisdom-power-power-active-from-zero",
+                group: "wisdom",
+                key: "powerPowerActive",
+                level: 0,
+                balance: "1e100000000",
+                operation: { method: "buy100" },
+              },
+              {
                 name: "buy10-aligns-current-level",
                 group: "money",
                 key: "activePower",
@@ -6982,6 +6998,24 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 randomValues: [...baselineRandomValues],
               },
               {
+                name: "maximum-selected-gem-level-controls-craft-cost",
+                gems: "35",
+                usedGemsLevel: 3,
+                equippedPickaxe: {
+                  name: "Toy Pickaxe",
+                  power: "20",
+                  quality: "1",
+                },
+                highestMineObjectLevel: 0,
+                powers: ["1", "1", "1", "1", "1"],
+                upgradeLevels: {
+                  money: { gemWaster: 1 },
+                  gems: { gemWaster: 2 },
+                },
+                shiftHeld: false,
+                randomValues: [...baselineRandomValues],
+              },
+              {
                 name: "bulk-replacements-save-each-intermediate-state",
                 gems: "6",
                 usedGemsLevel: 1,
@@ -7477,7 +7511,11 @@ async function capture(reference, dependencies, dependencySnapshots) {
             lastActive: game.lastActive,
             timer: { ...game.timer },
           });
-          const runScenario = (name, confirmationAnswers) => {
+          const runScenario = (
+            name,
+            confirmationAnswers,
+            elapsedSecondsBeforeReset = 0,
+          ) => {
             functions.loadGame(JSON.stringify(controlledSave), false, true);
             game.settings.tab = "settings";
             game.settings.upgradeTab = "planetcoins";
@@ -7499,10 +7537,16 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 confirmationAnswers[confirmationPrompts.length - 1] ?? false
               );
             };
-            functions.hardReset();
+            const previousNow = Date.now;
+            Date.now = () => fixedClock + elapsedSecondsBeforeReset * 1000;
+            try {
+              functions.hardReset();
+            } finally {
+              Date.now = previousNow;
+            }
             return {
               name,
-              input: { confirmationAnswers },
+              input: { confirmationAnswers, elapsedSecondsBeforeReset },
               confirmationPrompts,
               before,
               after: stateSnapshot(),
@@ -7521,6 +7565,11 @@ async function capture(reference, dependencies, dependencySnapshots) {
             true,
             true,
           ]);
+          const confirmedAfterOfflineThreshold = runScenario(
+            "confirm-all-prompts-after-offline-threshold",
+            [true, true, true],
+            301,
+          );
           window.confirm = previousConfirm;
           localStorage.clear();
           for (const [key, value] of previousStorage) {
@@ -7555,6 +7604,7 @@ async function capture(reference, dependencies, dependencySnapshots) {
             },
             cancelled,
             confirmed,
+            confirmedAfterOfflineThreshold,
           };
         })();
         const keyboardInputSemantics = (() => {

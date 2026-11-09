@@ -2,15 +2,130 @@
 
 Last updated: 2026-11-09
 
-**Stale dud-craft save boundary (2026-11-09):** after a fresh tab saves
-Blacksmith 1 / 970 Money / 1 Gem, the stale tab performs the captured
-equal-damage dud craft. Remix spends its Gem and consumes ten RNG draws but
-does not call `saveGame()`, leaving the shared save untouched. Beyond matches
-the live stale Gem balance, dud message, unchanged pickaxe, primary and backup
-bytes, and the fresh-tab state in Chromium, Firefox, and WebKit. The selected
-cross-tab gate covers six cases per engine; its reverse Money/Gem case now has
-a 180-second deadline after the trace showed WebKit cleanup exceeded 90 seconds.
-Other no-save actions and cross-tab interleavings remain open.
+**Planet Coin shop unlock boundary (2026-11-09):** the source-paired live test
+now checks the high-water gate at 89 and 90. At 89, both apps hide the Planet
+Coin tab; at 90, both reveal it, and selecting it shows the same seven cards.
+The case passes in Chromium, Firefox, and WebKit and is gated in CI. Other
+Planet Coin UI states remain open.
+
+**Composed external UTF-8 save inputs (2026-11-09):** expanded the source
+decoder differential with two multi-scalar valid byte strings and two longer
+invalid strings whose valid prefix is followed by malformed UTF-8. Exact
+UTF-16 units and browser-local decode results matched in Chromium, Firefox, and
+WebKit: 12 inputs in each engine, 36 comparisons total. Arbitrary longer byte
+strings and historical save shapes remain open.
+
+**Maximum Gem Waster craft persists like Remix (2026-11-09):** the pinned
+runtime corpus captures level-3 selection at the 35-Gem maximum with Money
+Gem Waster level 1 and Gem-upgrade Gem Waster level 2. A live Settings export
+differential compares the max selector state, disabled increase arrow, craft
+message, ten RNG draws, equipped replacement, and full saved export in
+Chromium, Firefox, and WebKit. All three engines pass; pickaxe crafting and
+naming remains In Progress for other craft/UI states.
+
+**Settings import keeps the exact-300-second shared save (2026-11-09):** the
+pinned `loadGame()` saves only when `offlineSec > 300`; at exactly 300 it
+updates live state without rewards or a write. A source-paired four-tab test
+found Beyond overwrote the fresh purchase during the stale import. Manual
+Settings imports now skip persistence when Remix emits no save effect, while
+startup migration and explicit recovery retain their save behavior. Chromium,
+Firefox, and WebKit pass live export, storage, backup, and reload comparisons.
+Legacy import and recovery remains In Progress.
+
+**Settings import saves just above 300 seconds (2026-11-09):** a pinned-source
+and Beyond Settings import at 300,001 ms produces the welcome-back and save
+messages, updates `lastActive`, and persists matching full exports/resources.
+Chromium, Firefox, and WebKit pass. The offline threshold remains strictly
+greater than 300 seconds; Offline progression and time remains In Progress.
+
+**Legacy import retains live timers (2026-11-09):** pinned `loadGame()`
+serializes timer fields but does not assign them during import. A Settings E2E
+now sends conflicting large auto-pickaxe and save timer values, then compares
+the before/after live timers and complete Remix/Beyond exports. It passed in
+Chromium, Firefox, and WebKit. Legacy import and recovery remains In Progress.
+
+**Wisdom single-purchase affordability (2026-11-09):** added source-paired
+below-price and exact-price cases for all seven Wisdom upgrades at starting
+levels 0 and 1. The pinned browser runtime provides and asserts all fourteen
+prices; Chromium, Firefox, and WebKit compare every card, resulting
+balances/levels, and exact-price full Settings exports. The seven cards run as
+separate tests to avoid a cumulative WebKit reload stall. The full gate passed
+7/7 in Chromium and 14/14 in Firefox/WebKit. The Wisdom and Powers matrix area
+remains In Progress.
+
+**Keep functional browser evidence running after raster failures (2026-11-09):**
+the current CI run stopped after the strict Story screenshot mismatch and
+skipped every later Firefox/WebKit check. The workflow now gates those later
+checks on successful project validation, browser installation, and pinned
+oracle setup instead of prior smoke success. A raster mismatch still fails the
+overall job; the change only allows independent cross-browser evidence to run.
+The all-browser Wisdom affordability gate is also included. These workflow
+changes have not run in GitHub yet.
+
+**Legacy import preserves live Gem Waster selector (2026-11-09):** Remix
+serializes `usedGemsLevel`, but `loadGame()` ignores it. A source-encoded
+Settings import with serialized level 0 leaves the active level 1 and
+displayed cost 3 unchanged; source and Beyond full exports match byte-for-byte
+in Chromium, Firefox, and WebKit. The case is in
+`legacy-save-optional-groups.spec.ts`.
+
+**Stale Wisdom purchase overwrites newer Money save (2026-11-09):** after
+fresh tabs save Blacksmith 1 / 970 Money, a stale tab buys Simple Gem Boost
+for exactly 10 billion Wisdom and manually saves. The shared Remix and Beyond
+primary snapshots become Blacksmith 0 / 1,000 Money / Simple Gem Boost 1 / 0
+Wisdom; Beyond's backup retains the newer Blacksmith purchase. The complete
+Settings exports match byte-for-byte, and the fresh tab keeps its local
+Blacksmith 1 state. Chromium, Firefox, and WebKit pass; the case is included
+in the cross-browser stale-save gate.
+
+**Stale Shift Wisdom bulk purchase overwrites newer Money save (2026-11-09):**
+the stale tab starts Simple Gem Boost at level 0 with 1e20 Wisdom and buys with
+Shift. Pinned Remix buys one level for 1e10 Wisdom, stops before aligned level
+10, and leaves 99999999990000000000 Wisdom. Its manual Save replaces the newer
+Blacksmith purchase in both apps; Beyond's backup retains that fresh save.
+Chromium, Firefox, and WebKit pass; the case is included in the cross-browser
+stale-save gate.
+
+**Stale Planet Coin purchase overwrites newer Money save (2026-11-09):** a
+stale tab buys level-zero Active Power for exactly 100 Planet Coins after a
+fresh tab saves Blacksmith 1 / 970 Money. Remix and Beyond replace the shared
+save with the stale Blacksmith 0 / 1,000 Money / Active Power 1 / zero Planet
+Coins state; Beyond's backup retains the newer purchase. Complete Settings
+exports match byte-for-byte, and the fresh tab keeps its local state. The case
+passes in Chromium, Firefox, and WebKit and is in the cross-browser gate.
+
+**Stale offline import overwrites newer purchase (2026-11-09):** after a fresh
+tab saves Blacksmith 1 / 970 Money, its stale peer imports the pinned
+3,601-second offline save through Settings. Remix applies the offline reward
+and saves the imported Blacksmith 0 state, replacing the purchase. Beyond
+matches the live messages and complete export; its backup retains the newer
+purchase. The four-tab source-paired test passes in Chromium, Firefox, and
+WebKit and is included in the cross-browser stale-save gate.
+
+**Stale craft no-save boundaries (2026-11-09):** a stale equal-damage dud
+spends one Gem and consumes ten RNG draws; an insufficient-Gem attempt spends
+none and consumes zero draws. Neither branch calls `saveGame()`. After the
+fresh tab saves Blacksmith 1 / 970 Money, both cases leave the shared Remix
+save and Beyond primary/backup byte-identical to that newer purchase. Both
+source-paired cases pass in Chromium, Firefox, and WebKit, including message,
+live balance, pickaxe, and fresh-tab assertions. Other action/write
+interleavings remain open.
+
+**Stale Shift bulk-craft persistence (2026-11-09):** a stale tab performs the
+captured two-replacement Shift craft after another tab saves Blacksmith 1 /
+970 Money. Remix consumes 20 RNG draws and saves after both replacements; the
+shared slot ends at Sturdy Mud Pick / 0 Gems. Beyond's primary matches that
+final state and its backup contains the first Bad Mud Pick / 3 Gems snapshot.
+The fresh tab keeps its local purchase. This source-paired case passes in
+Chromium, Firefox, and WebKit; other bulk and cross-tab orders remain open.
+
+**Stale mixed-outcome Shift craft persistence (2026-11-09):** after a fresh
+tab saves Blacksmith 1 / 970 Money, a stale Shift craft succeeds once, then
+produces a dud and an insufficient-Gem result. Remix consumes 20 RNG draws but
+saves only the first replacement (Bad Mud Pick / 1 Gem); the later live state
+is Bad Mud Pick / 0 Gems. Beyond's primary matches that intermediate save and
+its backup retains the newer purchase. The source-paired E2E passes in
+Chromium, Firefox, and WebKit. Other craft/write sequences remain open.
 
 **Bulk affordability stops across resource families (2026-11-09):** pinned
 Remix `buy10` starts Active Power at level 2 with 28,000 or 12,000 Money, Gem
@@ -65,8 +180,13 @@ and objective-character geometry match; only blue-channel values at pixels
 (15,632) and (15,633) differ. Four host CSS overrides and an app visibility
 hide/show across two animation frames leave the Beyond screenshot hash
 unchanged. CI run 42605210266 also failed the Chapter 3 dark full-screen
-comparison at 1920x1080; the run passed 306 tests with one failure. Its
-pixel-level cause remains unknown, and strict visual comparison stays open.
+comparison at 1920x1080; the run passed 306 tests with one failure. Run
+42610582068 again failed Chapter 3 light at 1366x768 (Remix hash
+`f1cb71d72b56dd0bae5969c7dc49bd263cc2e3e086f85df3d31fc4986b972857`, Beyond
+`a38466e030c7755cdfc5021df89bce542b1f5c540e93a19c223a2c568a178c75`) and
+reported Chapter 4 dark at 1366x768 as flaky. That CI browser job recorded 307
+passes, one failure, one flaky test, and one skipped test. These results do not
+identify a raster cause; strict visual comparisons stay open.
 
 **Offline zero-rate live path across engines (2026-11-09):** a 3,601-second
 cold start on the captured zero-damage Universe object has zero Money, Gem, and
@@ -339,7 +459,9 @@ in Chromium, Firefox, and WebKit and is now included in CI's cross-browser save
 checks. The longer four-write Active Power stale-save sequence now passes in
 Firefox and WebKit as well as Chromium. The WebKit run completes in about 1.7
 minutes; the test deadline is 180 seconds to accommodate the measured per-click
-latency.
+latency. The reverse stale Money/Gem purchase and stale Gem purchase also use
+180-second deadlines: WebKit traces show their final assertions finish before
+context teardown exceeds the prior 90-second limit.
 
 **Natural Story endpoints across desktop viewports (2026-11-08):** extended the
 live pinned-Remix/Beyond comparison for Chapters 3-6 to 1366x768, 1920x1080, and
@@ -2135,3 +2257,52 @@ also pass (9/9). Other levels and bulk methods remain open.
 **Successful single-craft persistence (2026-11-08):** a functional source-paired case compares the successful pickaxe replacement in Firefox and WebKit through visible feedback, equipped result, captured RNG consumption, and byte-identical complete Settings exports whose decoded pickaxe and Gem balance match the pinned replacement snapshot. The existing strict screenshot test remains Chromium-only: the attempted WebKit run hit a full-screen raster hash mismatch before export assertions, so visual parity is not claimed for WebKit. Crafting remains In Progress.
 
 **Selected Gem Waster craft persistence (2026-11-09):** added a live source-paired craft using the pinned `selected-gem-level-controls-craft-cost` capture. Both apps begin from a legacy save with Money Gem Waster level 1 and selection 0; the test increments the selector, verifies the displayed cost of 3 Gems, runs the same captured RNG sequence, and compares success feedback, equipped pickaxe, and complete Settings exports. The focused Chromium run passed 2/2 successful craft cases; Firefox and WebKit passed both baseline and selected-level cases (4/4). Crafting remains In Progress.
+
+**Repeated stale Shift Wisdom purchase (2026-11-09):** added a source-generated
+`upgradeSemantics` capture for Power Power (Active) `buy10` with 1,001 Wisdom.
+The pinned Remix buys level 0 for 1 and level 1 for 1,000, reaches level 2
+with zero Wisdom, and stops before the next 1,000,000 price. The stale-tab
+source/Beyond comparison verifies the fresh Blacksmith 1 / 970 Money save is
+overwritten by the stale whole-game snapshot, Beyond retains the fresh save in
+backup, and complete exports match. Chromium, Firefox, and WebKit passed (3/3).
+The case is included in `pnpm test:e2e:cross-tab:browsers`; Wisdom / Powers and
+persistence remain In Progress.
+
+**Wisdom Control `buy100` save/reload (2026-11-09):** extended the pinned Power Power
+(Active) Control `buy100` case to explicitly Save from Settings and reload in
+both apps before comparing exports. Remix and Beyond retain level 100 and the
+source Decimal Wisdom balance; complete exports match in Chromium, Firefox,
+and WebKit (3/3). The case runs in
+`pnpm test:e2e:upgrade-purchase-export:browsers`; save/export and Wisdom/Powers
+remain In Progress for their other mapped states.
+
+**Wisdom Control `buy100` source capture (2026-11-09):** the source-generated
+`upgradeSemantics` capture starts Power Power (Active) at level 0 with
+`1e100000000` Wisdom. Remix reaches level 100 after 100 successful purchases;
+the Decimal balance serializes unchanged at `1e+100000000`. The source-paired
+E2E compares the resulting complete Settings export byte-for-byte. Chromium,
+Firefox, and WebKit passed (3/3), and the case is included in
+`pnpm test:e2e:upgrade-purchase-export:browsers`. Upgrade / Wisdom areas remain
+In Progress for other balances and states. The full parity suite passed (36
+files / 159 tests); lint, TypeScript, formatting, docs, and traceability checks
+passed as well.
+
+**Hard Reset after the offline threshold (2026-11-09):** extended the pinned
+`hardResetSemantics` source capture to advance the clock 301 seconds after
+startup before confirming reset. The `loadGame(initialGame, false, true)` path
+matches the immediate reset state and leaves origin storage empty, confirming
+that the `nooffline` argument suppresses rewards when an ordinary load would
+pass the strict threshold. Updated the live source-paired Settings reset case
+to apply the same elapsed time and compare complete exported saves in
+Chromium, Firefox, and WebKit. Reset/time behavior remains In Progress for
+other timestamps and post-reset reload outcomes.
+
+**Hard Reset preserves the near-threshold autosave timer (2026-11-09):** a
+source-paired browser case advances both runtimes to 59.999 seconds without a
+save, confirms reset preserves the timer, then verifies no write at exactly 60
+seconds and a write at 60.001 seconds. The resulting complete Settings exports
+match; the Beyond primary and Remix legacy slot are written after the
+threshold. Chromium passed (1/1), and the Firefox/WebKit gate passed (2/2).
+Added `pnpm test:e2e:hard-reset-timer:browsers` to the CI workflow; this
+workflow change has not run in GitHub yet. Other retained timer values remain
+open.

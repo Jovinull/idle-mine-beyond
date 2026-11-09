@@ -47,6 +47,7 @@ async function startPages(browser: Browser, beyondPage: Page, encoded: string) {
   await expect(beyondPage.locator("#app")).toHaveAttribute(
     "data-app-state",
     "ready",
+    { timeout: 30_000 },
   );
   await sourcePage.waitForFunction(() =>
     Boolean(
@@ -193,6 +194,97 @@ test("preserves the selected upgrade group across tabs and legacy export", async
         ),
       )
       .toBe("money");
+  } finally {
+    await sourceContext.close();
+  }
+});
+
+test("source-pairs the Planet Coin shop unlock at the 89/90 high-water boundary", async ({
+  browser,
+  page,
+}) => {
+  test.setTimeout(90_000);
+  const fixture = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as { data: { saveApplicationSemantics: { inputJson: string } } };
+  const save = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  save.highestMineObjectLevel = 89;
+  save.mineObjectLevel = 89;
+  save.lastActive = fixedTime;
+  save.settings.tab = "main";
+  save.settings.upgradeTab = "money";
+
+  const { sourceContext, sourcePage, beyondPage } = await startPages(
+    browser,
+    page,
+    encodeRemixLegacySave(save),
+  );
+
+  try {
+    const sourcePlanetCoinTab = () =>
+      sourcePage.locator(".upg-tabs button").filter({ hasText: "PC Upgrades" });
+    const beyondPlanetCoinTab = () =>
+      beyondPage.locator('[data-upgrade-tab="planetCoins"]');
+
+    await expect(sourcePlanetCoinTab()).toHaveCount(0);
+    await expect(beyondPlanetCoinTab()).toHaveCount(0);
+
+    save.highestMineObjectLevel = 90;
+    save.mineObjectLevel = 90;
+    const unlockedSave = encodeRemixLegacySave(save);
+    await Promise.all(
+      [sourcePage, beyondPage].map((target) =>
+        target.evaluate((encoded) => {
+          localStorage.clear();
+          localStorage.setItem("IdleMine", encoded);
+        }, unlockedSave),
+      ),
+    );
+    await Promise.all([sourcePage.reload(), beyondPage.reload()]);
+    await expect(beyondPage.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean(
+        (window as Window & { game?: unknown }).game &&
+        document.querySelector("#app > footer"),
+      ),
+    );
+    await expect(sourcePlanetCoinTab()).toBeVisible();
+    await expect(beyondPlanetCoinTab()).toBeVisible();
+
+    await Promise.all([
+      sourcePlanetCoinTab().click(),
+      beyondPlanetCoinTab().click(),
+    ]);
+    await expect(beyondPlanetCoinTab()).toHaveAttribute("aria-pressed", "true");
+    await expect
+      .poll(() =>
+        sourcePage.evaluate(
+          () =>
+            (
+              window as Window & {
+                game?: { settings?: { upgradeTab?: string } };
+              }
+            ).game?.settings?.upgradeTab,
+        ),
+      )
+      .toBe("planetcoins");
+    const [sourceCardCount, beyondCardCount] = await Promise.all([
+      sourcePage.locator(".upgradelist .upgrade").count(),
+      beyondPage.locator('[data-upgrade-group="planetCoins"]').count(),
+    ]);
+    expect(sourceCardCount).toBe(7);
+    expect(beyondCardCount).toBe(sourceCardCount);
   } finally {
     await sourceContext.close();
   }

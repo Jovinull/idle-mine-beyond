@@ -114,14 +114,20 @@ function findDifferences(
 }
 
 function seedSource({ encoded, now }: { encoded: string; now: number }) {
-  localStorage.clear();
-  localStorage.setItem("IdleMine", encoded);
+  if (sessionStorage.getItem("save-export-source-seeded") !== "true") {
+    localStorage.clear();
+    localStorage.setItem("IdleMine", encoded);
+    sessionStorage.setItem("save-export-source-seeded", "true");
+  }
   Date.now = () => now;
 }
 
 function seedBeyond({ encoded, now }: { encoded: string; now: number }) {
-  localStorage.clear();
-  localStorage.setItem("IdleMineBeyond", encoded);
+  if (sessionStorage.getItem("save-export-beyond-seeded") !== "true") {
+    localStorage.clear();
+    localStorage.setItem("IdleMineBeyond", encoded);
+    sessionStorage.setItem("save-export-beyond-seeded", "true");
+  }
   Date.now = () => now;
 }
 
@@ -328,6 +334,18 @@ async function comparePurchaseExport(
       startingResources: { wisdom: { decimal: "100000000000000000000" } },
       currentPrice: { decimal: "10000000000" },
       endingResources: { wisdom: { decimal: "99999999990000000000" } },
+    });
+  }
+  if (purchaseName === "buy100-wisdom-power-power-active-from-zero") {
+    expect(purchase).toMatchObject({
+      group: "wisdom",
+      key: "powerPowerActive",
+      startingLevel: 0,
+      endingLevel: 100,
+      purchases: 100,
+      operation: { method: "buy100" },
+      startingResources: { wisdom: { decimal: "1e+100000000" } },
+      endingResources: { wisdom: { decimal: "1e+100000000" } },
     });
   }
   const alignedResourceCases: Record<
@@ -601,6 +619,27 @@ async function comparePurchaseExport(
         .filter({ hasText: "Settings" })
         .click(),
     ]);
+    if (purchaseName === "buy100-wisdom-power-power-active-from-zero") {
+      await Promise.all([
+        page.getByRole("button", { name: "Save" }).click(),
+        sourcePage.getByRole("button", { name: "Save" }).click(),
+      ]);
+      await Promise.all([page.reload(), sourcePage.reload()]);
+      await expect(page.locator("#app")).toHaveAttribute(
+        "data-app-state",
+        "ready",
+      );
+      await sourcePage.waitForFunction(() =>
+        Boolean((window as Window & { game?: unknown }).game),
+      );
+      await Promise.all([
+        page.locator("[data-game-tab='settings']").click(),
+        sourcePage
+          .locator("footer button")
+          .filter({ hasText: "Settings" })
+          .click(),
+      ]);
+    }
     const beyondSettings = page.locator("article.settings");
     const sourceSettings = sourcePage.locator("article.settings");
     await Promise.all([
@@ -631,6 +670,13 @@ async function comparePurchaseExport(
     expect(beyondExport, "complete encoded live save after purchase").toBe(
       sourceExport,
     );
+    if (purchaseName === "buy100-wisdom-power-power-active-from-zero") {
+      for (const exportedSave of [beyondValue, sourceValue]) {
+        const wisdomSave = exportedSave as LegacySave;
+        expect(wisdomSave.powers.upgrades["powerPowerActive"]?.level).toBe(100);
+        expect(wisdomSave.wisdom).toBe("1e+100000000");
+      }
+    }
   } finally {
     await sourceContext.close().catch(() => undefined);
   }
@@ -656,6 +702,7 @@ for (const purchaseName of [
   "buy10-gem-multiplier-stops-before-alignment-on-affordability",
   "buy10-planet-coin-gem-multiplier-stops-before-alignment-on-affordability",
   "buy10-wisdom-simple-gem-boost-stops-before-alignment-on-affordability",
+  "buy100-wisdom-power-power-active-from-zero",
 ]) {
   test(`exports the live save after ${purchaseName}`, async ({
     browser,

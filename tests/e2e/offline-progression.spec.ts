@@ -1142,6 +1142,159 @@ test("applies offline rewards when a legacy save is imported from Settings", asy
   }
 });
 
+test("imports from Settings just above 300 seconds and saves like pinned Remix", async ({
+  browser,
+  page,
+}, testInfo) => {
+  test.setTimeout(120_000);
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as {
+    data: {
+      saveOfflineApplicationSemantics: { inputJson: string };
+    };
+  };
+  const nowMs = 1_704_067_200_000;
+  const importedSave = JSON.parse(
+    reference.data.saveOfflineApplicationSemantics.inputJson,
+  ) as {
+    lastActive: number;
+    settings: { tab: string };
+  };
+  importedSave.lastActive = nowMs - 300_001;
+  importedSave.settings.tab = "settings";
+
+  const sourceContext = await browser.newContext({
+    baseURL: testInfo.project.use.baseURL as string,
+    colorScheme: "light",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+
+  try {
+    const oracleUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all(
+      [sourcePage, page].map((target) =>
+        target.addInitScript((fixedNow) => {
+          localStorage.clear();
+          Date.now = () => fixedNow;
+        }, nowMs),
+      ),
+    );
+    await Promise.all([sourcePage.goto(oracleUrl), page.goto("/")]);
+    await Promise.all([
+      expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready"),
+      sourcePage.waitForFunction(() =>
+        Boolean(
+          (window as Window & { game?: unknown }).game &&
+          document.querySelector("#app > footer"),
+        ),
+      ),
+    ]);
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+
+    const encodedImport = await sourcePage.evaluate(
+      (save) => btoa(escape(encodeURIComponent(JSON.stringify(save)))),
+      importedSave,
+    );
+    const sourceField = sourcePage.locator("article.settings textarea");
+    const beyondField = page.locator("[data-settings-save-field]");
+    await Promise.all([
+      sourceField.fill(encodedImport),
+      beyondField.fill(encodedImport),
+    ]);
+    await Promise.all([
+      sourcePage
+        .locator("article.settings")
+        .getByRole("button", { name: "Import (from Text Field)" })
+        .click(),
+      page.getByRole("button", { name: "Import (from Text Field)" }).click(),
+    ]);
+    await Promise.all([
+      sourcePage.locator("footer button").filter({ hasText: "Mining" }).click(),
+      page.locator("[data-game-tab='mining']").click(),
+    ]);
+    const [sourceMessages, beyondMessages] = await Promise.all([
+      sourcePage.locator(".messagelog p").allTextContents(),
+      page.locator(".messagelog p").allTextContents(),
+    ]);
+    expect(sourceMessages).toHaveLength(2);
+    expect(sourceMessages[0]).toBe("Game Saved!");
+    expect(sourceMessages[1]).toContain("Welcome back!");
+    expect(beyondMessages).toEqual(sourceMessages);
+    await Promise.all([
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+      page.locator("[data-game-tab='settings']").click(),
+    ]);
+    await Promise.all([
+      sourcePage
+        .locator("article.settings")
+        .getByRole("button", { name: "Export" })
+        .click(),
+      page.locator("[data-settings-export]").click(),
+    ]);
+    const [sourceExport, beyondExport, sourceStored, beyondPrimary] =
+      await Promise.all([
+        sourceField.inputValue(),
+        beyondField.inputValue(),
+        sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+        page.evaluate(() => localStorage.getItem("IdleMineBeyond")),
+      ]);
+    expect(beyondExport).toBe(sourceExport);
+    expect(sourceStored).not.toBeNull();
+    expect(beyondPrimary).not.toBeNull();
+
+    const sourceDecoded = decodeRemixLegacySave(sourceExport);
+    const sourceStoredDecoded = decodeRemixLegacySave(sourceStored ?? "");
+    const beyondStoredDecoded = decodeRemixBeyondSave(beyondPrimary ?? "");
+    expect(sourceDecoded.status).toBe("success");
+    expect(sourceStoredDecoded.status).toBe("success");
+    expect(beyondStoredDecoded.status).toBe("valid");
+    if (
+      sourceDecoded.status !== "success" ||
+      sourceStoredDecoded.status !== "success" ||
+      beyondStoredDecoded.status !== "valid"
+    ) {
+      throw new Error("The 300.001-second import save did not decode.");
+    }
+    expect(sourceDecoded.value).toMatchObject({ lastActive: nowMs });
+    expect(sourceStoredDecoded.value).toMatchObject({
+      lastActive: nowMs,
+      messageLog: [
+        {
+          message: expect.stringContaining("Welcome back!"),
+        },
+      ],
+    });
+    expect(beyondStoredDecoded.save.state.simulation.lastActiveMs).toBe(nowMs);
+    expect(beyondStoredDecoded.save.state.simulation.resources).toMatchObject({
+      money: (sourceStoredDecoded.value as { money: string }).money,
+      gems: (sourceStoredDecoded.value as { gems: string }).gems,
+      planetCoins: (sourceStoredDecoded.value as { planetCoins: string })
+        .planetCoins,
+    });
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
 async function verifyLongFrame(page: Page, freezePages: boolean) {
   const reference = JSON.parse(
     await readFile(

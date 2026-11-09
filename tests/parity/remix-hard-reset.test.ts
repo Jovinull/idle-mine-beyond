@@ -61,6 +61,7 @@ type ResetSnapshot = {
   timer: { autoPickaxe: number; save: number };
 };
 type ResetScenario = {
+  input: { confirmationAnswers: boolean[]; elapsedSecondsBeforeReset: number };
   confirmationPrompts: string[];
   before: ResetSnapshot;
   after: ResetSnapshot;
@@ -73,6 +74,7 @@ type HardResetCorpus = {
       sourcePaths: string[];
       cancelled: ResetScenario[];
       confirmed: ResetScenario;
+      confirmedAfterOfflineThreshold: ResetScenario;
       controlledSave: {
         money: string;
         gems: string;
@@ -191,6 +193,14 @@ it("matches the confirmed reset and its preserved legacy state", () => {
   expect(confirmed.after.pickStatus).toBe("old pick status");
   expect(confirmed.after.timer).toEqual({ autoPickaxe: 0.25, save: 41 });
   expect(confirmed.after.lastActive).toBe(confirmed.before.lastActive + 10_000);
+});
+
+it("suppresses offline rewards when Hard Reset follows the offline threshold", () => {
+  const { confirmed, confirmedAfterOfflineThreshold: delayed } = hardReset;
+  expect(delayed.input.elapsedSecondsBeforeReset).toBe(301);
+  expect(delayed.confirmationPrompts).toEqual(confirmed.confirmationPrompts);
+  expect(delayed.after).toEqual(confirmed.after);
+  expect(delayed.storageAfter).toEqual([]);
 });
 
 it("matches the core hard-reset state while retaining source loop timers", () => {

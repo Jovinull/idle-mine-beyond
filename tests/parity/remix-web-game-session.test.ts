@@ -582,7 +582,7 @@ it("exports the complete source save without persisting it", async () => {
   expect(decodedSave["specialMineObjects"]).toHaveLength(78);
 });
 
-it("imports a text-field save, applies its theme, and persists Beyond state", async () => {
+it("imports a text-field save without persisting when Remix emits no save effect", async () => {
   const sourceSave = JSON.parse(
     corpus.data.saveApplicationSemantics.inputJson,
   ) as object;
@@ -603,15 +603,9 @@ it("imports a text-field save, applies its theme, and persists Beyond state", as
   expect(result.state.simulation.resources.money.toString()).toBe(
     corpus.data.saveApplicationSemantics.resources.money.decimal,
   );
-  expect(storage.calls).toEqual(["readPrimary", "writePrimary"]);
+  expect(storage.calls).toEqual([]);
   expect(test.effects).toEqual(["theme:dark"]);
-  const saved = decodeRemixBeyondSave(storage.primary ?? "");
-  expect(saved.status).toBe("valid");
-  if (saved.status !== "valid")
-    throw new Error("Imported state was not saved.");
-  expect(saved.save.state.simulation.resources.money).toBe(
-    corpus.data.saveApplicationSemantics.resources.money.decimal,
-  );
+  expect(storage.primary).toBeNull();
 });
 
 it("leaves current state and storage untouched when text-field decoding fails", async () => {

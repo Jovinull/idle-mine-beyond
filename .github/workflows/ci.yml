@@ -71,12 +71,15 @@ jobs:
           pnpm skills:check
 
       - name: Run formatting, lint, type, unit, parity, and build checks
+        id: project_checks
         run: pnpm check
 
       - name: Install Playwright browser
+        id: playwright_install
         run: pnpm exec playwright install --with-deps chromium firefox webkit
 
       - name: Verify pinned Remix oracle corpus
+        id: reference_corpus
         run: pnpm test:reference
 
       - name: Verify offline cold-start restores in Firefox and WebKit
@@ -107,51 +110,79 @@ jobs:
         run: pnpm test:e2e
 
       - name: Verify save codec outputs in Firefox
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:save-codec:firefox
 
       - name: Verify save codec outputs in WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:save-codec:webkit
 
       - name: Verify live save exports in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:save-export:browsers
 
+      - name: Verify Wisdom affordability in all browsers
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
+        run: pnpm test:e2e:wisdom-affordability:browsers
+
       - name: Verify stale cross-tab saves in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:cross-tab:browsers
 
       - name: Verify malformed save imports in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:save-import-errors:browsers
 
       - name: Verify manual offline save imports in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:offline-import:browsers
 
       - name: Verify optional-group save imports in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:legacy-import:browsers
 
       - name: Verify Hard Reset cancellation in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:hard-reset:browsers
 
       - name: Verify confirmed Hard Reset in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:hard-reset-confirmed:browsers
 
+      - name: Verify retained Hard Reset autosave timer in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
+        run: pnpm test:e2e:hard-reset-timer:browsers
+
       - name: Verify recovery bundle selection in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:recovery-file:browsers
 
       - name: Verify finite upgrade cap purchases in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:upgrade-caps:browsers
 
+      - name: Verify Planet Coin shop unlock in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
+        run: pnpm test:e2e:planet-coin-gate:browsers
+
       - name: Verify upgrade autosave window in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:upgrade-persistence:browsers
 
-      - name: Verify baseline and selected-Gem pickaxe craft persistence in Firefox and WebKit
+      - name: Verify baseline, selected, and maximum-Gem craft persistence in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:craft-replacement:browsers
 
       - name: Verify pickaxe craft no-save branches in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:craft-no-save:browsers
 
       - name: Verify special-anchor pickaxe export in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:craft-anchor-export:browsers
 
       - name: Verify save storage failures in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:save-storage:browsers
 
       - name: Upload Playwright diagnostic evidence
@@ -164,4 +195,5 @@ jobs:
           retention-days: 7
 
       - name: Run project site browser tests
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:site

@@ -54,11 +54,15 @@ export type ImportRemixLegacySaveToBeyondResult =
  * Applies the pinned legacy loader, dispatches its non-save effects in source
  * order, and writes the resulting state to the separate Beyond save keys.
  * The `IdleMine` legacy key is never read or removed by this migration path.
+ * A live Settings import can opt out of a write when the pinned loader emits
+ * no source save effect; startup migration and explicit recovery persist by
+ * default because they need to establish a Beyond save.
  */
 export async function importRemixLegacySaveToBeyond(input: {
   load: LoadRemixLegacySaveInput;
   storage: RemixBeyondSaveStorageAdapter;
   dispatchEffect(effect: RemixLegacySaveImportEffect): void | Promise<void>;
+  persistWhenSourceDoesNotSave?: boolean;
 }): Promise<ImportRemixLegacySaveToBeyondResult> {
   const loaded = loadRemixLegacySaveIntoState(input.load);
   if (loaded.status !== "loaded") {
@@ -107,7 +111,7 @@ export async function importRemixLegacySaveToBeyond(input: {
     if (result.confirmation !== null) await dispatch(result.confirmation);
   }
 
-  if (!sourceSaveEffectSeen) {
+  if (!sourceSaveEffectSeen && input.persistWhenSourceDoesNotSave !== false) {
     const result = await persistRemixBeyondSave({
       state: loaded.state,
       saveTimestampMs: loaded.state.simulation.lastActiveMs ?? Number.NaN,

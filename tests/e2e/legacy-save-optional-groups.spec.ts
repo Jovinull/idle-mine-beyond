@@ -8,6 +8,7 @@ const seedKey = "legacy-save-optional-groups-seeded";
 
 type LegacySave = {
   lastActive: number;
+  usedGemsLevel: number;
   money: string;
   gems: string;
   planetCoins: string;
@@ -20,6 +21,7 @@ type LegacySave = {
     upgrades: Record<string, { level: number }>;
   };
   pickaxe: { name: string; pow: string; quality: string };
+  timer: { autoPickaxe: number; save: number };
   settings: { tab: string; theme: string };
 };
 
@@ -39,6 +41,7 @@ type OptionalGroupFixture = {
 type ExportedSave = {
   money: string;
   gems: string;
+  usedGemsLevel: number;
   planetCoins: string;
   wisdom: string;
   lastActive: number;
@@ -51,6 +54,7 @@ type ExportedSave = {
     upgrades: Record<string, { level: number }>;
   };
   pickaxe: { name: string; pow: string; quality: string };
+  timer: { autoPickaxe: number; save: number };
 };
 
 const fixture = JSON.parse(
@@ -308,6 +312,222 @@ test("matches Remix imports with optional groups and varied all-upgrade state", 
         }
       });
     }
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
+test("preserves the current Gem Waster selection when importing a legacy save", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90_000);
+  const seedSave = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  seedSave.lastActive = fixedTime;
+  seedSave.usedGemsLevel = 1;
+  seedSave.upgrades = {
+    ...seedSave.upgrades,
+    gemWaster: { level: 1 },
+  };
+  seedSave.settings.tab = "main";
+
+  const importedSave = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  importedSave.lastActive = fixedTime;
+  importedSave.usedGemsLevel = 0;
+  importedSave.upgrades = {
+    ...importedSave.upgrades,
+    gemWaster: { level: 1 },
+  };
+  importedSave.settings.tab = "main";
+
+  const sourceContext = await browser.newContext({
+    colorScheme: "dark",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    const encodeWithPinnedRuntime = (save: LegacySave) =>
+      sourcePage.evaluate((value) => {
+        return btoa(escape(encodeURIComponent(JSON.stringify(value))));
+      }, save);
+    const [encodedSeed, encodedImport] = await Promise.all([
+      encodeWithPinnedRuntime(seedSave),
+      encodeWithPinnedRuntime(importedSave),
+    ]);
+    await Promise.all([
+      page.addInitScript(seedPage, {
+        encoded: encodedSeed,
+        key: "legacy-save-gem-waster-import-seeded",
+        time: fixedTime,
+      }),
+      sourcePage.addInitScript(seedPage, {
+        encoded: encodedSeed,
+        key: "legacy-save-gem-waster-import-seeded",
+        time: fixedTime,
+      }),
+    ]);
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean((window as Window & { game?: unknown }).game),
+    );
+
+    await Promise.all([
+      expect(page.locator("[data-craft-gem-cost]")).toHaveText("1"),
+      expect(
+        sourcePage.locator(".craft-pickaxe button:not(.level-change)"),
+      ).toContainText("1"),
+    ]);
+    await Promise.all([
+      page.locator('[data-craft-gem-level="increase"]').click(),
+      sourcePage.locator(".craft-pickaxe button.level-change").last().click(),
+    ]);
+    await Promise.all([
+      expect(page.locator("[data-craft-gem-cost]")).toHaveText("3"),
+      expect(
+        sourcePage.locator(".craft-pickaxe button:not(.level-change)"),
+      ).toContainText("3"),
+    ]);
+
+    await selectSettings(page, sourcePage);
+    const [beyondExport, sourceExport] = await importAndExport(
+      page,
+      sourcePage,
+      encodedImport,
+    );
+    expect(beyondExport, "complete imported legacy export bytes").toBe(
+      sourceExport,
+    );
+    const [beyondResult, sourceResult] = await Promise.all([
+      decodeExport(page, beyondExport),
+      decodeExport(sourcePage, sourceExport),
+    ]);
+    expect(beyondResult.usedGemsLevel).toBe(1);
+    expect(sourceResult.usedGemsLevel).toBe(1);
+
+    await Promise.all([
+      page.locator("[data-game-tab='mining']").click(),
+      sourcePage.locator("footer button").filter({ hasText: "Mining" }).click(),
+    ]);
+    await Promise.all([
+      expect(page.locator("[data-craft-gem-cost]")).toHaveText("3"),
+      expect(
+        sourcePage.locator(".craft-pickaxe button:not(.level-change)"),
+      ).toContainText("3"),
+    ]);
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
+test("preserves live timers when importing serialized timer values", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90_000);
+  const seedSave = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  seedSave.lastActive = fixedTime;
+  seedSave.settings.tab = "main";
+
+  const importedSave = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  importedSave.lastActive = fixedTime;
+  importedSave.settings.tab = "main";
+  importedSave.timer = { autoPickaxe: 987_654, save: 876_543 };
+
+  const sourceContext = await browser.newContext({
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    const encodeWithPinnedRuntime = (save: LegacySave) =>
+      sourcePage.evaluate(
+        (value) => btoa(escape(encodeURIComponent(JSON.stringify(value)))),
+        save,
+      );
+    const [encodedSeed, encodedImport] = await Promise.all([
+      encodeWithPinnedRuntime(seedSave),
+      encodeWithPinnedRuntime(importedSave),
+    ]);
+    await Promise.all([
+      page.addInitScript(seedPage, {
+        encoded: encodedSeed,
+        key: "legacy-save-timers-seeded",
+        time: fixedTime,
+      }),
+      sourcePage.addInitScript(seedPage, {
+        encoded: encodedSeed,
+        key: "legacy-save-timers-seeded",
+        time: fixedTime,
+      }),
+    ]);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean((window as Window & { game?: unknown }).game),
+    );
+    await selectSettings(page, sourcePage);
+
+    const exportCurrent = async () => {
+      const beyondField = page.locator("[data-settings-save-field]");
+      const sourceField = sourcePage.locator("article.settings textarea");
+      await Promise.all([
+        page.getByRole("button", { name: "Export" }).click(),
+        sourcePage
+          .locator("article.settings")
+          .getByRole("button", { name: "Export" })
+          .click(),
+      ]);
+      const [beyondEncoded, sourceEncoded] = await Promise.all([
+        beyondField.inputValue(),
+        sourceField.inputValue(),
+      ]);
+      return Promise.all([
+        decodeExport(page, beyondEncoded),
+        decodeExport(sourcePage, sourceEncoded),
+      ]);
+    };
+    const beforeImport = await exportCurrent();
+    const [beyondEncoded, sourceEncoded] = await importAndExport(
+      page,
+      sourcePage,
+      encodedImport,
+    );
+    expect(beyondEncoded, "complete imported legacy export bytes").toBe(
+      sourceEncoded,
+    );
+    const [beyondAfterImport, sourceAfterImport] = await Promise.all([
+      decodeExport(page, beyondEncoded),
+      decodeExport(sourcePage, sourceEncoded),
+    ]);
+    expect(beyondAfterImport.timer).toEqual(beforeImport[0].timer);
+    expect(sourceAfterImport.timer).toEqual(beforeImport[1].timer);
+    expect(beyondAfterImport.timer).not.toEqual(importedSave.timer);
+    expect(sourceAfterImport.timer).not.toEqual(importedSave.timer);
   } finally {
     await sourceContext.close().catch(() => undefined);
   }

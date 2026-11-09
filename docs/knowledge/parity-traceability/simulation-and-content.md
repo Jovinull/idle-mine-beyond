@@ -442,8 +442,12 @@ rendering remain separate parity areas.
 - **Visual coverage:** the selected Space Planet Coin shop at 1440x900 has
   pinned Windows/Linux source/Beyond full-screen pairs in both themes. The source `index.html`
   high-water gate has controlled 89/90 full-screen screenshots in both themes;
-  the Beyond browser asserts the tab is hidden at 89 and visible at 90, and all
-  four Windows pairs match at zero pixels. The paired Chromium catalog test
+  the source-paired live differential in
+  `tests/e2e/upgrade-tab-state-differential.spec.ts` now asserts the tab is
+  hidden at 89 and visible at 90 in both apps, then opens the tab and compares
+  all seven cards in Chromium, Firefox, and WebKit. The original Beyond-only
+  boundary check remains. All four Windows screenshot pairs match at zero
+  pixels. The paired Chromium catalog test
   compares all 7 Planet Coin cards and hovered details at levels zero and one
   with abundant resources, in both themes at 1440x900, including exact
   resting-card and detail-panel pixels. It also compares complete viewport

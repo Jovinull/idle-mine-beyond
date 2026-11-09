@@ -325,7 +325,9 @@ test("matches Remix's three-byte UTF-8 scalar and invalid-sequence boundaries", 
   );
 });
 
-test("matches Remix's four-byte UTF-8 scalar boundaries", async ({ page }) => {
+test("matches Remix's four-byte UTF-8 boundaries and longer byte strings", async ({
+  page,
+}) => {
   await page.goto("/__test__/save-codec");
   await expect(page.locator("#result")).toHaveAttribute("data-ready", "true");
 
@@ -368,6 +370,26 @@ test("matches Remix's four-byte UTF-8 scalar boundaries", async ({ page }) => {
     {
       name: "invalid-fourth-byte-continuation",
       bytes: [0xf0, 0x90, 0x80, 0x7f],
+      expectedCodeUnits: null,
+    },
+    {
+      name: "multiple-valid-scalars-over-four-bytes",
+      bytes: [0x41, 0xc3, 0xa9, 0xe2, 0x82, 0xac, 0xf0, 0x9f, 0x98, 0x80, 0x5a],
+      expectedCodeUnits: [0x41, 0x00e9, 0x20ac, 0xd83d, 0xde00, 0x5a],
+    },
+    {
+      name: "multiple-supplementary-scalars-over-four-bytes",
+      bytes: [0xf0, 0x9f, 0x98, 0x80, 0xf0, 0x9f, 0x8c, 0x8b, 0xe2, 0x9c, 0xa8],
+      expectedCodeUnits: [0xd83d, 0xde00, 0xd83c, 0xdf0b, 0x2728],
+    },
+    {
+      name: "valid-prefix-followed-by-truncated-scalar",
+      bytes: [0x41, 0xc3, 0xa9, 0xf0, 0x90],
+      expectedCodeUnits: null,
+    },
+    {
+      name: "valid-prefix-followed-by-overlong-sequence",
+      bytes: [0x41, 0xe0, 0x80, 0x80, 0x42],
       expectedCodeUnits: null,
     },
   ];
