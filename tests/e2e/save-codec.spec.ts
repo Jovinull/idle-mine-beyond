@@ -324,3 +324,161 @@ test("matches Remix's three-byte UTF-8 scalar and invalid-sequence boundaries", 
     Array(3).fill("invalidEncoding"),
   );
 });
+
+test("matches Remix's four-byte UTF-8 scalar boundaries", async ({ page }) => {
+  await page.goto("/__test__/save-codec");
+  await expect(page.locator("#result")).toHaveAttribute("data-ready", "true");
+
+  const cases = [
+    {
+      name: "minimum-four-byte-scalar",
+      bytes: [0xf0, 0x90, 0x80, 0x80],
+      expectedCodeUnits: [0xd800, 0xdc00],
+    },
+    {
+      name: "second-four-byte-scalar",
+      bytes: [0xf0, 0x90, 0x80, 0x81],
+      expectedCodeUnits: [0xd800, 0xdc01],
+    },
+    {
+      name: "maximum-four-byte-scalar",
+      bytes: [0xf4, 0x8f, 0xbf, 0xbf],
+      expectedCodeUnits: [0xdbff, 0xdfff],
+    },
+    {
+      name: "overlong-four-byte-sequence",
+      bytes: [0xf0, 0x8f, 0xbf, 0xbf],
+      expectedCodeUnits: null,
+    },
+    {
+      name: "above-maximum-Unicode-scalar",
+      bytes: [0xf4, 0x90, 0x80, 0x80],
+      expectedCodeUnits: null,
+    },
+    {
+      name: "out-of-range-four-byte-lead",
+      bytes: [0xf5, 0x80, 0x80, 0x80],
+      expectedCodeUnits: null,
+    },
+    {
+      name: "truncated-four-byte-sequence",
+      bytes: [0xf0, 0x90, 0x80],
+      expectedCodeUnits: null,
+    },
+    {
+      name: "invalid-fourth-byte-continuation",
+      bytes: [0xf0, 0x90, 0x80, 0x7f],
+      expectedCodeUnits: null,
+    },
+  ];
+  const externalByteInputs = cases.map(
+    ({ name, bytes, expectedCodeUnits }) => ({
+      name,
+      encoded: Buffer.from(
+        [0x22, ...bytes, 0x22]
+          .map((byte) => `%${byte.toString(16).padStart(2, "0")}`)
+          .join(""),
+        "ascii",
+      ).toString("base64"),
+      expectedCodeUnits,
+    }),
+  );
+
+  const corpus = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as {
+    data: {
+      saveSemantics: {
+        codecVectors: {
+          name: string;
+          json: string;
+          encoded: string;
+          decodedJson: string;
+        }[];
+        codecBoundaryVectors: {
+          name: string;
+          wrapper: "canonical" | "single-uri-encoded";
+          sourceSaveSha256: string;
+          sourceDecodedSha256: string;
+          sourceNameCodeUnits: number[];
+          decodedNameCodeUnits: number[];
+          importedNameCodeUnits: number[];
+          base64InputRemainder: number;
+        }[];
+        base64Variants: {
+          name: string;
+          encoded: string;
+          expectedJson: string;
+        }[];
+        loadErrors: {
+          name: string;
+          encoded: string;
+          decodeErrorName: string | null;
+          decodeErrorMessage: string | null;
+          alertMessages: string[];
+          alertHasDecodeErrorPrefix: boolean;
+          thrownErrorName: string | null;
+          thrownErrorMessage: string | null;
+        }[];
+      };
+      saveExportSemantics: { fresh: { object: { [key: string]: unknown } } };
+    };
+  };
+  const result = await page.evaluate(
+    (input) => {
+      const probe = (
+        window as Window & {
+          __idleMineSaveCodecProbe?: (value: typeof input) => {
+            externalByteResults: {
+              name: string;
+              source: {
+                status: string;
+                json: string | null;
+                valueCodeUnits: number[] | null;
+                decodeError: { name: string; message: string } | null;
+                parseError: { name: string; message: string } | null;
+              };
+              beyond: {
+                status: string;
+                json: string | null;
+                valueCodeUnits: number[] | null;
+                decodeError: { name: string; message: string } | null;
+                parseError: { name: string; message: string } | null;
+              };
+              expectedCodeUnits: number[] | null;
+            }[];
+          };
+        }
+      ).__idleMineSaveCodecProbe;
+      if (!probe) throw new Error("Save codec probe did not initialize.");
+      return probe(input);
+    },
+    {
+      ...corpus.data.saveSemantics,
+      codecBoundarySourceSave: corpus.data.saveExportSemantics.fresh.object,
+      externalByteInputs,
+    },
+  );
+
+  expect(result.externalByteResults).toHaveLength(cases.length);
+  for (const sample of result.externalByteResults) {
+    expect(sample.beyond, `${sample.name}: Beyond decoder`).toEqual(
+      sample.source,
+    );
+    if (sample.expectedCodeUnits) {
+      expect(sample.source.status, sample.name).toBe("success");
+      expect(sample.source.valueCodeUnits, sample.name).toEqual(
+        sample.expectedCodeUnits,
+      );
+    } else {
+      expect(sample.source.status, sample.name).toBe("invalidEncoding");
+      expect(sample.source.decodeError?.name, sample.name).toBe("URIError");
+    }
+  }
+});

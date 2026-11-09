@@ -88,6 +88,9 @@ jobs:
       - name: Verify Prestige exports in Firefox and WebKit
         run: pnpm test:e2e:powers-prestige:browsers
 
+      - name: Verify four-byte save inputs in all browsers
+        run: pnpm test:e2e:save-codec:four-byte:browsers
+
       - name: Run browser smoke test
         run: pnpm test:e2e
 

@@ -59,6 +59,15 @@
   overlong/surrogate sequences in JSON string quotes, compares the complete
   Remix decoder result with Beyond in live Chromium, and asserts successful
   versus invalid-encoding classifications (9/9).
+- **Four-byte UTF-8 boundary evidence (2026-11-08):**
+  `tests/e2e/save-codec.spec.ts` wraps eight external byte sequences in JSON
+  string quotes and compares the pinned `loadGame` decoder expression
+  (`atob` -> `decodeURIComponent` -> `unescape` -> JSON parse) with the Beyond
+  codec in Chromium, Firefox, and WebKit. Three valid scalar boundaries assert
+  exact UTF-16 code units, including U+10000 and U+10FFFF. Five invalid cases
+  assert exact engine-local decode and parse errors for overlong, above-maximum,
+  invalid-lead, truncated, and bad-continuation sequences. All 24 browser cases
+  passed. Arbitrary longer byte strings and historical save shapes remain open.
 - **Open input domain:** external byte strings longer than these selected
   boundaries are not exhaustively enumerated. This is not a formula/RNG sample
   claim. Do not infer historical save-schema support from the current

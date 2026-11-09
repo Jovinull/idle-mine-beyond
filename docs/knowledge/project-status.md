@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-08
 
+**Four-byte external save inputs (2026-11-08):** eight source-paired vectors now
+compare Remix's `atob` / `decodeURIComponent` / `unescape` / JSON parse
+pipeline with Beyond in Chromium, Firefox, and WebKit. The cases assert exact
+UTF-16 output for valid boundary scalars and each engine's exact decode/parse
+errors for five invalid sequences. All 24 focused browser cases passed. This
+extends selected input evidence; arbitrary byte strings and historical schemas
+remain open.
+
 **Prestige save exports across engines (2026-11-08):** the four positive live
 Prestige actions now compare complete Settings export bytes and decoded objects
 with pinned Remix in Chromium, Firefox, and WebKit. Chromium retains the exact

@@ -31,6 +31,11 @@ type Base64Variant = {
   encoded: string;
   expectedJson: string;
 };
+type ExternalByteInput = {
+  name: string;
+  encoded: string;
+  expectedCodeUnits: number[] | null;
+};
 
 type ProbeInput = {
   codecVectors: CodecVector[];
@@ -38,6 +43,7 @@ type ProbeInput = {
   codecBoundarySourceSave: CodecBoundarySourceSave;
   base64Variants: Base64Variant[];
   loadErrors: LoadErrorInput[];
+  externalByteInputs?: ExternalByteInput[];
 };
 
 function codeUnits(value: string): number[] {
@@ -132,6 +138,66 @@ async function evaluate(input: ProbeInput) {
                   `Error loading Game: ${result.decodeError.name}: ${result.decodeError.message}`,
               )
             : [],
+      };
+    }),
+    externalByteResults: (input.externalByteInputs ?? []).map((vector) => {
+      const errorShape = (error: unknown) =>
+        error instanceof Error
+          ? { name: error.name, message: error.message }
+          : { name: "Error", message: String(error) };
+      let sourceJson: string | undefined;
+      let sourceDecodeError: ReturnType<typeof errorShape> | null = null;
+      try {
+        sourceJson = unescape(decodeURIComponent(atob(vector.encoded)));
+      } catch (error) {
+        sourceDecodeError = errorShape(error);
+      }
+
+      let sourceParseError: ReturnType<typeof errorShape> | null = null;
+      let sourceValue: unknown;
+      try {
+        sourceValue = JSON.parse(sourceJson as string) as unknown;
+      } catch (error) {
+        sourceParseError = errorShape(error);
+      }
+
+      const beyond = decodeRemixLegacySave(vector.encoded);
+      const codeUnits = (value: string) =>
+        Array.from({ length: value.length }, (_, index) =>
+          value.charCodeAt(index),
+        );
+      return {
+        name: vector.name,
+        source: {
+          status: sourceDecodeError
+            ? "invalidEncoding"
+            : sourceParseError
+              ? "invalidJson"
+              : "success",
+          json: sourceJson ?? null,
+          value: sourceValue ?? null,
+          valueCodeUnits:
+            typeof sourceValue === "string" ? codeUnits(sourceValue) : null,
+          decodeError: sourceDecodeError,
+          parseError: sourceParseError,
+        },
+        beyond: {
+          status: beyond.status,
+          json: beyond.status === "invalidEncoding" ? null : beyond.json,
+          value: beyond.status === "success" ? beyond.value : null,
+          valueCodeUnits:
+            beyond.status === "success" && typeof beyond.value === "string"
+              ? codeUnits(beyond.value)
+              : null,
+          decodeError:
+            beyond.status === "invalidEncoding" ? beyond.decodeError : null,
+          parseError:
+            beyond.status === "invalidEncoding" ||
+            beyond.status === "invalidJson"
+              ? beyond.parseError
+              : null,
+        },
+        expectedCodeUnits: vector.expectedCodeUnits,
       };
     }),
   };
