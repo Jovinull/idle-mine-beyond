@@ -6248,6 +6248,14 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 operation: { method: "buy10" },
               },
               {
+                name: "buy10-planet-coin-gem-multiplier-stops-before-alignment-on-affordability",
+                group: "planetCoins",
+                key: "gemMultiply",
+                level: 0,
+                balance: "7000",
+                operation: { method: "buy10" },
+              },
+              {
                 name: "buy10-aligns-current-level",
                 group: "money",
                 key: "activePower",

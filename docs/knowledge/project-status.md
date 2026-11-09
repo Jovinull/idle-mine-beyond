@@ -2,13 +2,14 @@
 
 Last updated: 2026-11-09
 
-**Gem buy10 affordability stop (2026-11-09):** pinned Remix starts Gem
-Multiplication at level 0 with 7,000 Gems. Shift buys three levels, stops
-before aligned level 10, and leaves 247.5 Gems at level 3. The live
-Remix/Beyond action and complete Settings export match in Chromium, Firefox,
-and WebKit; the focused cross-browser gate passed 8/8 aligned and partial-bulk
-purchase cases. Other partial-bulk starting levels and resource balances
-remain open.
+**Bulk affordability stops across resource families (2026-11-09):** pinned
+Remix `buy10` starts Active Power at level 2 with 28,000 Money, Gem
+Multiplication at level 0 with 7,000 Gems, or Planet Coin Gem Multiplication
+at level 0 with 7,000 Planet Coins. Shift buys three levels in each case and
+stops before aligned level 10; ending balances are 0 Money, 247.5 Gems, and
+85.71 Planet Coins. The live Remix/Beyond action and complete Settings export
+match in Chromium, Firefox, and WebKit. The focused purchase gate passed 10/10
+Firefox/WebKit cases; other partial-bulk starting levels remain open.
 
 **Long-frame main-loop differential (2026-11-09):** extended the live
 120-second frame-gap comparison to Chromium, Firefox, and WebKit. Each pinned

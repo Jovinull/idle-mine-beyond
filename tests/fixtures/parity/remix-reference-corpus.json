@@ -121444,6 +121444,69 @@
           }
         },
         {
+          "name": "buy10-planet-coin-gem-multiplier-stops-before-alignment-on-affordability",
+          "group": "planetCoins",
+          "key": "gemMultiply",
+          "resourceId": 2,
+          "startingLevel": 0,
+          "startingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "7000",
+              "mantissa": 7,
+              "exponent": 3
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "100",
+            "mantissa": 1,
+            "exponent": 2
+          },
+          "maxLevel": "Infinity",
+          "operation": {
+            "method": "buy10"
+          },
+          "operationResult": null,
+          "endingLevel": 3,
+          "purchases": 3,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "85.71",
+              "mantissa": 8.571,
+              "exponent": 1
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
           "name": "buy10-aligns-current-level",
           "group": "money",
           "key": "activePower",
