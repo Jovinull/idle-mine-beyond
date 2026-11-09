@@ -525,7 +525,10 @@ does not expand coverage to other browser quota policies.
   save at exactly 300 seconds and 301 seconds: the exact boundary preserves
   Money/Gems/Planet Coins without a welcome-back message; at 301 seconds both
   Remix and Beyond grant positive Money and Gem rewards and produce the same
-  complete decoded and encoded save.
+  complete decoded and encoded save. A separate live cold-start also exercises
+  captured object 214 after 3,601 seconds with zero rates for
+  all three resources: Remix still logs `0 $`, updates `lastActive`, and saves
+  without changing resource/high-water fields; Beyond matches the full save.
 - **Pinned browser evidence (2026-10-04):**
   `tests/e2e/offline-progression.spec.ts` cold-starts the pinned Remix and Beyond
   apps in Chromium from the same encoded legacy saves. Frozen-clock cases compare

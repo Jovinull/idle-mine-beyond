@@ -324,14 +324,24 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
         await expect(beyondMessageLog).toContainText("Game Saved!");
         if (scenario.liveRateScenario) {
           const { rates, events } = scenario.liveRateScenario;
-          expect(rates.moneyPerSecond.decimal).not.toBe("0");
-          expect(rates.gemsPerSecond.decimal).not.toBe("0");
-          expect(rates.planetCoinsPerSecond.decimal).not.toBe("0");
+          const rateValues = [
+            rates.moneyPerSecond.decimal,
+            rates.gemsPerSecond.decimal,
+            rates.planetCoinsPerSecond.decimal,
+          ];
+          const ratesAreZero = rateValues.every((rate) => rate === "0");
+          if (ratesAreZero) {
+            expect(rateValues).toEqual(["0", "0", "0"]);
+          } else {
+            expect(rateValues.every((rate) => rate !== "0")).toBe(true);
+          }
           if (
             scenario.elapsedSeconds ===
             scenario.liveRateScenario.input.elapsedSeconds
           ) {
-            expect(events[0]?.message).toContain("Planet Coins.");
+            expect(events[0]?.message).toBe(
+              scenario.liveRateScenario.events[0]?.message,
+            );
             await expect(sourceMessageLog).toContainText(events[0]!.message);
             await expect(beyondMessageLog).toContainText(events[0]!.message);
           }
@@ -461,6 +471,253 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
     } finally {
       await Promise.all([sourcePage.close(), beyondPage.close()]);
     }
+  }
+});
+
+test("matches Remix zero-rate offline cold start and save", async ({
+  page,
+}) => {
+  test.setTimeout(120_000);
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as {
+    data: {
+      saveApplicationSemantics: { inputJson: string };
+      offlineLoadRateCompositionSemantics: {
+        scenarios: {
+          name: string;
+          input: {
+            objectId: number;
+            pickaxe: { power: string; quality: string };
+            miningPower: string;
+            exquisityPower: string;
+            miningUpgrades: Record<string, Record<string, number>>;
+            offlineUpgrades: {
+              offlineTime: number;
+              offlineGems: number;
+              offlinePC: number;
+            };
+            initialResources: {
+              money: string;
+              highestMoney: string;
+              gems: string;
+              planetCoins: string;
+              maxPlanetCoins: string;
+            };
+            elapsedSeconds: number;
+          };
+          rates: {
+            moneyPerSecond: { decimal: string };
+            gemsPerSecond: { decimal: string };
+            planetCoinsPerSecond: { decimal: string };
+          };
+          events: { message: string }[];
+        }[];
+      };
+    };
+  };
+  const scenario =
+    reference.data.offlineLoadRateCompositionSemantics.scenarios.find(
+      (candidate) => candidate.name === "zero-damage-universe-live-rates",
+    );
+  if (!scenario) throw new Error("Zero-rate source capture is missing.");
+  expect(scenario.rates).toMatchObject({
+    moneyPerSecond: { decimal: "0" },
+    gemsPerSecond: { decimal: "0" },
+    planetCoinsPerSecond: { decimal: "0" },
+  });
+
+  const fixedNowMs = 1_700_000_100_000;
+  const { input } = scenario;
+  const sourceSave = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as {
+    lastActive: number;
+    mineObjectLevel: number;
+    highestMineObjectLevel: number;
+    money: string;
+    highestMoney: string;
+    gems: string;
+    planetCoins: string;
+    maxPlanetCoins: string;
+    pickaxe: { name: string; pow: string; quality: string };
+    powers: {
+      data: { values: string[] };
+      upgrades: Record<string, { level: number }>;
+    };
+    upgrades: Record<string, { level: number }>;
+    gemUpgrades: Record<string, { level: number }>;
+    planetCoinUpgrades: Record<string, { level: number }>;
+    settings: { tab: string; numberFormatterIndex: number; theme: string };
+  };
+  sourceSave.lastActive = fixedNowMs - input.elapsedSeconds * 1000;
+  sourceSave.mineObjectLevel = input.objectId;
+  sourceSave.highestMineObjectLevel = input.objectId;
+  sourceSave.money = input.initialResources.money;
+  sourceSave.highestMoney = input.initialResources.highestMoney;
+  sourceSave.gems = input.initialResources.gems;
+  sourceSave.planetCoins = input.initialResources.planetCoins;
+  sourceSave.maxPlanetCoins = input.initialResources.maxPlanetCoins;
+  sourceSave.pickaxe = {
+    ...sourceSave.pickaxe,
+    pow: input.pickaxe.power,
+    quality: input.pickaxe.quality,
+  };
+  sourceSave.powers.data.values[0] = input.miningPower;
+  sourceSave.powers.data.values[4] = input.exquisityPower;
+  for (const [group, levels] of Object.entries(input.miningUpgrades)) {
+    const target =
+      group === "money"
+        ? sourceSave.upgrades
+        : group === "gems"
+          ? sourceSave.gemUpgrades
+          : group === "planetCoins"
+            ? sourceSave.planetCoinUpgrades
+            : sourceSave.powers.upgrades;
+    for (const [upgrade, level] of Object.entries(levels)) {
+      target[upgrade] = { level };
+    }
+  }
+  sourceSave.planetCoinUpgrades["offlineTime"] = {
+    level: input.offlineUpgrades.offlineTime,
+  };
+  sourceSave.gemUpgrades["offlineGems"] = {
+    level: input.offlineUpgrades.offlineGems,
+  };
+  sourceSave.planetCoinUpgrades["offlinePC"] = {
+    level: input.offlineUpgrades.offlinePC,
+  };
+  sourceSave.settings.tab = "main";
+  sourceSave.settings.numberFormatterIndex = 0;
+  sourceSave.settings.theme = "light";
+  const encodedLegacySave = encodeRemixLegacySave(sourceSave);
+  const sourcePage = await page.context().newPage();
+  const beyondPage = await page.context().newPage();
+  const visibleMessages = async (target: Page) =>
+    target.locator(".messagelog p").evaluateAll((paragraphs) =>
+      paragraphs.map((paragraph) => ({
+        text: paragraph.textContent?.trim() ?? "",
+        color: getComputedStyle(paragraph).color,
+      })),
+    );
+
+  try {
+    await Promise.all([
+      sourcePage.setViewportSize({ width: 1440, height: 900 }),
+      beyondPage.setViewportSize({ width: 1440, height: 900 }),
+    ]);
+    const oracleUrl = await routePinnedRemixOracle(sourcePage);
+    for (const target of [sourcePage, beyondPage]) {
+      await target.addInitScript(
+        ({ save, nowMs }) => {
+          localStorage.clear();
+          localStorage.setItem("IdleMine", save);
+          Date.now = () => nowMs;
+        },
+        { save: encodedLegacySave, nowMs: fixedNowMs },
+      );
+    }
+    await Promise.all([sourcePage.goto(oracleUrl), beyondPage.goto("/")]);
+    await expect(beyondPage.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+
+    const expectedRewardMessage = scenario.events[0]?.message;
+    if (!expectedRewardMessage) {
+      throw new Error("Zero-rate source capture has no offline log message.");
+    }
+    for (const target of [sourcePage, beyondPage]) {
+      await expect(target.locator(".messagelog")).toContainText(
+        expectedRewardMessage,
+      );
+      await expect(target.locator(".messagelog")).toContainText("Game Saved!");
+    }
+    expect(await visibleMessages(beyondPage)).toEqual(
+      await visibleMessages(sourcePage),
+    );
+
+    const [sourceStored, beyondStored] = await Promise.all([
+      sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+      beyondPage.evaluate(() => localStorage.getItem("IdleMineBeyond")),
+    ]);
+    expect(sourceStored).not.toBeNull();
+    expect(beyondStored).not.toBeNull();
+    if (sourceStored === null || beyondStored === null) {
+      throw new Error("Zero-rate offline load did not persist both saves.");
+    }
+    const sourcePersisted = decodeRemixLegacySave(sourceStored);
+    const beyondPersisted = decodeRemixBeyondSave(beyondStored);
+    if (sourcePersisted.status !== "success") {
+      throw new Error("Pinned Remix persisted an invalid zero-rate save.");
+    }
+    if (beyondPersisted.status !== "valid") {
+      throw new Error("Beyond persisted an invalid zero-rate save.");
+    }
+    expect(sourcePersisted.value).toMatchObject({
+      money: input.initialResources.money,
+      highestMoney: input.initialResources.highestMoney,
+      gems: input.initialResources.gems,
+      planetCoins: input.initialResources.planetCoins,
+      maxPlanetCoins: input.initialResources.maxPlanetCoins,
+      lastActive: fixedNowMs,
+    });
+    expect(beyondPersisted.save.state.simulation).toMatchObject({
+      resources: {
+        money: input.initialResources.money,
+        highestMoney: input.initialResources.highestMoney,
+        gems: input.initialResources.gems,
+        planetCoins: input.initialResources.planetCoins,
+        maxPlanetCoins: input.initialResources.maxPlanetCoins,
+      },
+      lastActiveMs: fixedNowMs,
+    });
+
+    const sourceExport = await sourcePage.evaluate(() => {
+      const app = (
+        window as Window & {
+          app?: {
+            settings: { tab: string; exportFieldString: string };
+            exportGame: () => void;
+          };
+        }
+      ).app;
+      if (!app) throw new Error("Pinned Remix Vue app was not exposed.");
+      app.settings.tab = "settings";
+      app.exportGame();
+      return app.settings.exportFieldString;
+    });
+    await beyondPage.locator("[data-game-tab='settings']").click();
+    await beyondPage.locator("[data-settings-export]").click();
+    const beyondExportField = beyondPage.locator("[data-settings-save-field]");
+    await expect(beyondExportField).toHaveValue(/.+/);
+    const beyondExport = await beyondExportField.inputValue();
+    const sourceDecoded = decodeRemixLegacySave(sourceExport);
+    const beyondDecoded = decodeRemixLegacySave(beyondExport);
+    if (sourceDecoded.status !== "success") {
+      throw new Error("Pinned Remix did not export a valid zero-rate save.");
+    }
+    if (beyondDecoded.status !== "success") {
+      throw new Error("Beyond did not export a valid zero-rate save.");
+    }
+    expect(beyondDecoded.value).toEqual(sourceDecoded.value);
+    expect(beyondExport).toBe(sourceExport);
+    expect(sourceDecoded.value).toMatchObject({
+      money: input.initialResources.money,
+      highestMoney: input.initialResources.highestMoney,
+      gems: input.initialResources.gems,
+      planetCoins: input.initialResources.planetCoins,
+      maxPlanetCoins: input.initialResources.maxPlanetCoins,
+      lastActive: fixedNowMs,
+    });
+  } finally {
+    await Promise.all([sourcePage.close(), beyondPage.close()]);
   }
 });
 

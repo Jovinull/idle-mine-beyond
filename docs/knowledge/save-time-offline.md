@@ -112,6 +112,15 @@ the two apps' complete decoded saves and encoded exports match for both cases.
 This verifies the live strict-threshold branch for this controlled state; OS
 background scheduling remains open.
 
+**Live zero-rate cold start (2026-11-09):** a separate source-paired E2E
+loads the captured Universe object 214 state after 3,601 seconds with Money,
+Gem, and Planet Coin rates all zero. Remix and Beyond still display the
+`earned you 0 $.` offline message and `Game Saved!`, leave all five resource
+balances and high-water fields unchanged, update `lastActive`, and produce
+identical full decoded saves and encoded exports in Chromium, Firefox, and
+WebKit. This covers the live `offlineSec > 300` path when every reward is zero;
+actual background scheduling remains open.
+
 **Settings text-field offline-import differential (2026-11-08):** a source-paired E2E imports this captured 3,601-second save through the live Settings button in both Remix and Beyond in Chromium, Firefox, and WebKit. It compares the exact welcome-back message, restored Money/Gem/Planet Coin resources, and final exported legacy bytes after returning to Mining. The source localStorage snapshot contains the offline reward message but not the later `Game Saved!` message: `saveGame()` serializes and writes before appending that confirmation. Beyond’s versioned primary contains the same persisted resource state, and both live exports match in each engine. Chromium matches the captured Money value; in WebKit the pinned source and Beyond both produce a value one final decimal digit lower than the Chromium capture, so WebKit compares against its live source. This proves the manual-import integration for this capture; it does not close other offline durations or real background scheduling.
 
 Absent and empty groups have distinct source behavior. Missing `upgrades` preserves existing Money upgrade levels; missing `gemUpgrades` and `planetCoinUpgrades` reset their families to zero; missing `powers` preserves power values and Wisdom upgrades. A present `powers` group with no `upgrades` resets Wisdom upgrade levels, while an empty `powers.data.values` leaves existing values unchanged. A missing `pickaxe` preserves it, while `{}` sets its name to `Toy Pickaxe` and its Decimal power and quality to zero because `new Decimal(undefined)` runs before the apparent fallback. A present empty `settings` group defaults the formatter index to zero, theme to light, and both toggles to false. These behaviors are captured in `saveSemantics.missingOptionalGroups`, `saveSemantics.emptyPresentGroups`, and `saveApplicationSemantics`.

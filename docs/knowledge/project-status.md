@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-09
 
+**Offline zero-rate live path across engines (2026-11-09):** a 3,601-second
+cold start on the captured zero-damage Universe object has zero Money, Gem, and
+Planet Coin rates. Remix still logs `earned you 0 $.`, writes a save, and
+updates `lastActive` while resource balances and high-water fields stay
+unchanged. The complete exports match Beyond in Chromium, Firefox, and WebKit.
+The broader offline row remains In Progress for actual browser/OS background
+scheduling.
+
 **Live offline threshold across engines (2026-11-09):** cold-starting the same
 positive-rate source save at exactly 300 seconds preserves Money, Gems, and
 Planet Coins without a welcome-back message; at 301 seconds Remix and Beyond
