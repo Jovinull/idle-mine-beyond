@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-09
 
+**Stale Hard Reset clears a newer shared save (2026-11-09):** after a fresh
+same-origin tab saves Blacksmith 1 / 970 Money, a stale tab confirms Hard Reset.
+Pinned Remix clears localStorage in both tabs while the fresh tab retains its
+in-memory purchase; a manual save from that tab restores the state. Beyond
+matches the three confirmation prompts, empty storage, restored state, and full
+Settings export in Chromium, Firefox, and WebKit. The case is in the
+cross-browser stale-save gate; other storage-clear interleavings remain open.
+
 **Planet Coin shop unlock boundary (2026-11-09):** the source-paired live test
 now checks the high-water gate at 89 and 90. At 89, both apps hide the Planet
 Coin tab; at 90, both reveal it, and selecting it shows the same seven cards.

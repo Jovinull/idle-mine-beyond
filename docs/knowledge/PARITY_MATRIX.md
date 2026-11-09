@@ -2,6 +2,14 @@
 
 **Planet Coin shop high-water unlock (2026-11-09):** the 89/90 `highestMineObjectLevel` gate is now a live source-paired interaction test. The tab is absent at 89; at 90 it appears in both apps, opens the Planet Coin shop, and shows the same seven cards. Chromium, Firefox, and WebKit passed; other Planet Coin UI states remain open.
 
+**Stale Hard Reset cross-tab clear (2026-11-09):** after the fresh tab saves
+Blacksmith 1 / 970 Money, the stale tab's three confirmed Hard Reset prompts
+clear shared storage in pinned Remix and Beyond. The fresh tab retains its
+in-memory purchase and explicitly saves it again; the resulting complete
+Settings exports match. The source-paired test passes in Chromium, Firefox, and
+WebKit and is included in the cross-browser stale-save gate. Other
+storage-clear interleavings remain open.
+
 **Composed external UTF-8 save inputs (2026-11-09):** the pinned save decoder
 comparison now includes two valid multi-scalar strings and two longer malformed
 strings after a valid prefix, in addition to the individual four-byte

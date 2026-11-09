@@ -10,6 +10,9 @@ import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 type SaveFixture = {
   data: {
     saveApplicationSemantics: { inputJson: string };
+    hardResetSemantics: {
+      confirmed: { confirmationPrompts: string[] };
+    };
     saveOfflineApplicationSemantics: {
       inputJson: string;
       elapsedSeconds: number;
@@ -2957,3 +2960,181 @@ for (const { attemptName, label, expectedRandomCalls, expectedSaveCalls } of [
     }
   });
 }
+
+test("a stale Hard Reset clears a newer save until the fresh tab saves again like pinned Remix", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90_000);
+  const fixture = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as SaveFixture;
+  const save = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  save.money = "1000";
+  save.highestMoney = "1000";
+  save.settings.theme = "light";
+  save.settings.tab = "main";
+  save.settings.upgradeTab = "money";
+  save.settings.numberFormatterIndex = 0;
+  save.upgrades["blacksmith"] = { level: 0 };
+  save.lastActive = fixedTime;
+  const encodedInitialSave = encodeRemixLegacySave(save);
+
+  const beyondStalePage = await page.context().newPage();
+  const sourceContext = await browser.newContext({
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+  const sourceStalePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all(
+      [page, beyondStalePage, sourcePage, sourceStalePage].map((target) =>
+        target.addInitScript(initializeSharedStorage, {
+          encoded: encodedInitialSave,
+          now: fixedTime,
+        }),
+      ),
+    );
+    await Promise.all([
+      page.goto("/"),
+      beyondStalePage.goto("/"),
+      sourcePage.goto(sourceUrl),
+      sourceStalePage.goto(sourceUrl),
+    ]);
+    await Promise.all([
+      expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready"),
+      expect(beyondStalePage.locator("#app")).toHaveAttribute(
+        "data-app-state",
+        "ready",
+      ),
+      ...[sourcePage, sourceStalePage].map((target) =>
+        target.waitForFunction(() =>
+          Boolean(
+            (window as Window & { game?: unknown }).game &&
+            document.querySelector("#app > footer"),
+          ),
+        ),
+      ),
+    ]);
+
+    const beyondBlacksmith = page.locator(
+      '[data-upgrade-group="money"][data-upgrade-key="blacksmith"]',
+    );
+    const sourceBlacksmith = sourceBlacksmithCard(sourcePage);
+    await Promise.all([beyondBlacksmith.click(), sourceBlacksmith.click()]);
+    await Promise.all([
+      expect(beyondBlacksmith).toHaveAttribute("data-upgrade-level", "1"),
+      expect(sourceBlacksmith.locator(".lvl")).toHaveText("1"),
+    ]);
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      page.getByRole("button", { name: "Save" }).click(),
+      sourcePage.getByRole("button", { name: "Save" }).click(),
+    ]);
+
+    const [newerBeyond, newerSource] = await Promise.all([
+      readBeyondSave(page),
+      readLegacySlot(sourcePage),
+    ]);
+    expect(newerBeyond.simulation).toMatchObject({
+      resources: { money: "970" },
+      upgrades: { money: { blacksmith: 1 } },
+    });
+    expect(readSaveState(newerSource)).toMatchObject({
+      money: "970",
+      upgrades: { blacksmith: { level: 1 } },
+    });
+
+    await Promise.all([
+      beyondStalePage.locator("[data-game-tab='settings']").click(),
+      sourceStalePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    const beyondPrompts: string[] = [];
+    const sourcePrompts: string[] = [];
+    beyondStalePage.on("dialog", async (dialog) => {
+      beyondPrompts.push(dialog.message());
+      await dialog.accept();
+    });
+    sourceStalePage.on("dialog", async (dialog) => {
+      sourcePrompts.push(dialog.message());
+      await dialog.accept();
+    });
+    await Promise.all([
+      beyondStalePage.locator("[data-settings-hard-reset]").click(),
+      sourceStalePage
+        .locator("article.settings button")
+        .filter({ hasText: "Hard Reset" })
+        .click(),
+    ]);
+    await Promise.all([
+      expect.poll(() => beyondPrompts.length).toBe(3),
+      expect.poll(() => sourcePrompts.length).toBe(3),
+    ]);
+    expect(beyondPrompts).toEqual(
+      fixture.data.hardResetSemantics.confirmed.confirmationPrompts,
+    );
+    expect(sourcePrompts).toEqual(beyondPrompts);
+
+    const storageAfterReset = await Promise.all(
+      [page, beyondStalePage, sourcePage, sourceStalePage].map((target) =>
+        target.evaluate(() => Object.keys(localStorage)),
+      ),
+    );
+    expect(storageAfterReset).toEqual([[], [], [], []]);
+
+    // A fresh tab still owns the newer whole-game state and its explicit save
+    // restores that state after the stale tab's broad storage clear.
+    await Promise.all([
+      page.getByRole("button", { name: "Save" }).click(),
+      sourcePage.getByRole("button", { name: "Save" }).click(),
+    ]);
+    const [restoredBeyond, restoredSource] = await Promise.all([
+      readBeyondSave(page),
+      readLegacySlot(sourcePage),
+    ]);
+    expect(restoredBeyond.simulation).toMatchObject({
+      resources: { money: "970" },
+      upgrades: { money: { blacksmith: 1 } },
+    });
+    expect(readSaveState(restoredSource)).toMatchObject({
+      money: "970",
+      upgrades: { blacksmith: { level: 1 } },
+    });
+
+    await Promise.all([
+      page.getByRole("button", { name: "Export" }).click(),
+      sourcePage
+        .locator("article.settings")
+        .getByRole("button", { name: "Export" })
+        .click(),
+    ]);
+    const [beyondExport, sourceExport] = await Promise.all([
+      page.locator("[data-settings-save-field]").inputValue(),
+      sourcePage.locator("article.settings textarea").inputValue(),
+    ]);
+    expect(beyondExport).toBe(sourceExport);
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});

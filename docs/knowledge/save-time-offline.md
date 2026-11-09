@@ -44,6 +44,15 @@ tabs retain their own displayed levels. The case passes in Chromium, Firefox,
 and WebKit and is included in the cross-browser gate. Other cross-tab
 action/write interleavings remain open.
 
+**Stale Hard Reset clears a newer save (2026-11-09):** after one tab saves
+Blacksmith 1 / 970 Money, a stale peer confirms Hard Reset three times. Pinned
+Remix clears shared localStorage while the fresh tab keeps its in-memory
+purchase. The fresh tab can explicitly Save again to restore that state; its
+complete Settings export matches Beyond byte-for-byte. This source-paired case
+passes in Chromium, Firefox, and WebKit and is included in
+`pnpm test:e2e:cross-tab:browsers`. Other storage-clear interleavings remain
+open.
+
 **Stale Shift Wisdom purchase interleaving (2026-11-09):** after a fresh tab
 saves Blacksmith 1 / 970 Money, the stale tab holds Shift and buys Simple Gem
 Boost from the captured 1e20 Wisdom balance. Pinned Remix `buyN(10, true)` buys
