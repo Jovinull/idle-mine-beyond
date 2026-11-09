@@ -246,6 +246,15 @@ export extends runtime evidence to one post-mining state in Chromium, Firefox,
 and WebKit in both themes. Arbitrary valid runtime states and other post-mining
 states remain outside the finite fixture domain.
 
+**Cross-resource aligned-purchase exports (2026-11-09):** the live purchase
+export E2E now covers Gem and Planet Coin Gem Multiplication `buy10` from level
+9 to 10 and `buy100` from 99 to 100. It obtains exact `currentPrice()` from the
+pinned Remix runtime in each browser, seeds that balance into both apps, and
+compares complete decoded Settings exports and encoded bytes. All four cases
+passed in Chromium, Firefox, and WebKit. In WebKit, the Planet Coin level-99
+price differs from the Chromium fixture value, so the E2E uses the engine-local
+source result for the exact-price integration case.
+
 **Nonzero aligned-purchase exports (2026-11-08):**
 `tests/e2e/save-export-purchase-differential.spec.ts` also imports the pinned
 `buy10-aligns-current-level` and `buy100-aligns-current-level` saves, performs

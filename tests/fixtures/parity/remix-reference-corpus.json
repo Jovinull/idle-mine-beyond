@@ -121066,6 +121066,258 @@
           }
         },
         {
+          "name": "buy10-gem-multiplier-aligns-current-level",
+          "group": "gems",
+          "key": "gemMultiply",
+          "resourceId": 1,
+          "startingLevel": 9,
+          "startingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "12351.328215978501",
+              "mantissa": 1.23513282159785,
+              "exponent": 4
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "12351.328215978501",
+            "mantissa": 1.23513282159785,
+            "exponent": 4
+          },
+          "maxLevel": "Infinity",
+          "operation": {
+            "method": "buy10"
+          },
+          "operationResult": null,
+          "endingLevel": 10,
+          "purchases": 1,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buy100-gem-multiplier-aligns-current-level",
+          "group": "gems",
+          "key": "gemMultiply",
+          "resourceId": 1,
+          "startingLevel": 99,
+          "startingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "244039.293186956",
+              "mantissa": 2.44039293186956,
+              "exponent": 5
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "244039.293186956",
+            "mantissa": 2.44039293186956,
+            "exponent": 5
+          },
+          "maxLevel": "Infinity",
+          "operation": {
+            "method": "buy100"
+          },
+          "operationResult": null,
+          "endingLevel": 100,
+          "purchases": 1,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buy10-planet-coin-gem-multiplier-aligns-current-level",
+          "group": "planetCoins",
+          "key": "gemMultiply",
+          "resourceId": 2,
+          "startingLevel": 9,
+          "startingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "10322601673.818153",
+              "mantissa": 1.0322601673818153,
+              "exponent": 10
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "10322601673.818153",
+            "mantissa": 1.0322601673818153,
+            "exponent": 10
+          },
+          "maxLevel": "Infinity",
+          "operation": {
+            "method": "buy10"
+          },
+          "operationResult": null,
+          "endingLevel": 10,
+          "purchases": 1,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
+          "name": "buy100-planet-coin-gem-multiplier-aligns-current-level",
+          "group": "planetCoins",
+          "key": "gemMultiply",
+          "resourceId": 2,
+          "startingLevel": 99,
+          "startingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "1.4180151187825454e+90",
+              "mantissa": 1.4180151187825454,
+              "exponent": 90
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "1.4180151187825454e+90",
+            "mantissa": 1.4180151187825454,
+            "exponent": 90
+          },
+          "maxLevel": "Infinity",
+          "operation": {
+            "method": "buy100"
+          },
+          "operationResult": null,
+          "endingLevel": 100,
+          "purchases": 1,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
           "name": "buy10-aligns-current-level",
           "group": "money",
           "key": "activePower",

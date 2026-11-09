@@ -21,6 +21,7 @@ type PurchaseCapture = {
   name: string;
   group: PurchaseGroup;
   key: string;
+  currentPrice: DecimalCapture;
   startingLevel: number;
   endingLevel: number;
   operation: { method: "buy" | "buy10" | "buy100" };
@@ -123,6 +124,50 @@ function seedBeyond({ encoded, now }: { encoded: string; now: number }) {
   Date.now = () => now;
 }
 
+async function capturePinnedUpgradePrice(
+  browser: Browser,
+  encoded: string,
+  group: "gems" | "planetCoins",
+  key: string,
+) {
+  const sourceContext = await browser.newContext({
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  try {
+    const sourcePage = await sourceContext.newPage();
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await sourcePage.addInitScript(seedSource, { encoded, now: fixedTime });
+    await sourcePage.goto(sourceUrl);
+    await sourcePage.waitForFunction(() =>
+      Boolean((window as Window & { game?: unknown }).game),
+    );
+    return await sourcePage.evaluate(
+      ({ group, key }) => {
+        const sourceGroup = {
+          gems: "gemUpgrades",
+          planetCoins: "planetCoinUpgrades",
+        }[group];
+        const gameState = (
+          window as unknown as {
+            game?: Record<
+              string,
+              Record<string, { currentPrice(): { toString(): string } }>
+            >;
+          }
+        ).game;
+        const upgrade = gameState?.[sourceGroup]?.[key];
+        if (!upgrade) throw new Error(`Pinned ${group} upgrade is missing.`);
+        return upgrade.currentPrice().toString();
+      },
+      { group, key },
+    );
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+}
+
 async function comparePurchaseExport(
   browser: Browser,
   page: Page,
@@ -210,6 +255,47 @@ async function comparePurchaseExport(
       endingResources: { money: { decimal: "0" } },
     });
   }
+  const alignedResourceCases: Record<
+    string,
+    { group: "gems" | "planetCoins"; level: 9 | 99; method: "buy10" | "buy100" }
+  > = {
+    "buy10-gem-multiplier-aligns-current-level": {
+      group: "gems",
+      level: 9,
+      method: "buy10",
+    },
+    "buy100-gem-multiplier-aligns-current-level": {
+      group: "gems",
+      level: 99,
+      method: "buy100",
+    },
+    "buy10-planet-coin-gem-multiplier-aligns-current-level": {
+      group: "planetCoins",
+      level: 9,
+      method: "buy10",
+    },
+    "buy100-planet-coin-gem-multiplier-aligns-current-level": {
+      group: "planetCoins",
+      level: 99,
+      method: "buy100",
+    },
+  };
+  const alignedResourceCase = alignedResourceCases[purchaseName];
+  if (alignedResourceCase) {
+    const resource = alignedResourceCase.group;
+    expect(purchase).toMatchObject({
+      group: alignedResourceCase.group,
+      key: "gemMultiply",
+      startingLevel: alignedResourceCase.level,
+      endingLevel: alignedResourceCase.level + 1,
+      purchases: 1,
+      operation: { method: alignedResourceCase.method },
+    });
+    expect(purchase.startingResources[resource].decimal).toBe(
+      purchase.currentPrice.decimal,
+    );
+    expect(purchase.endingResources[resource].decimal).toBe("0");
+  }
   const upgrade =
     corpus.data.upgradeSemantics.groups[purchase.group]?.[purchase.key];
   if (!upgrade)
@@ -257,6 +343,22 @@ async function comparePurchaseExport(
     };
   }
   sourceSave.pickaxe = { name: "Probe Pickaxe", pow: "0", quality: "0" };
+  if (alignedResourceCase) {
+    const balanceKey =
+      alignedResourceCase.group === "gems" ? "gems" : "planetCoins";
+    const probeSave = structuredClone(sourceSave);
+    probeSave[balanceKey] = "0";
+    const exactPinnedPrice = await capturePinnedUpgradePrice(
+      browser,
+      encodeRemixLegacySave(probeSave),
+      alignedResourceCase.group,
+      purchase.key,
+    );
+    if (browser.browserType().name() === "chromium") {
+      expect(exactPinnedPrice).toBe(purchase.currentPrice.decimal);
+    }
+    sourceSave[balanceKey] = exactPinnedPrice;
+  }
   const encodedSourceSave = encodeRemixLegacySave(sourceSave);
   const encodedBeyondSave = await createBeyondVisualSaveFromRemixSave({
     clockMs: fixedTime,
@@ -467,6 +569,10 @@ for (const purchaseName of [
   "buy10-from-zero-aligns-through-level-ten",
   "buy10-gem-multiplier-from-zero-aligns-through-level-ten",
   "buy10-planet-coin-gem-multiplier-from-zero-aligns-through-level-ten",
+  "buy10-gem-multiplier-aligns-current-level",
+  "buy100-gem-multiplier-aligns-current-level",
+  "buy10-planet-coin-gem-multiplier-aligns-current-level",
+  "buy100-planet-coin-gem-multiplier-aligns-current-level",
   "buy100-from-zero-aligns-through-level-one-hundred",
   "buy10-aligns-current-level",
   "buy100-aligns-current-level",

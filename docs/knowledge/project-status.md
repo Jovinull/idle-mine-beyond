@@ -2,6 +2,16 @@
 
 Last updated: 2026-11-09
 
+**Gem and Planet Coin aligned bulk-purchase exports (2026-11-09):** the pinned
+corpus now captures Gem and Planet Coin Gem Multiplication `buy10` at level 9
+and `buy100` at level 99, each at exact current price and with one purchase to
+the next multiple. Complete Settings exports matched Remix byte-for-byte in
+Chromium, Firefox, and WebKit for all four actions. The cross-browser E2E reads
+the exact price from that browser's pinned Remix before seeding both apps;
+WebKit's Planet Coin price at level 99 differs from the Chromium corpus value.
+All 12 browser comparisons passed. Purchase and save areas remain In Progress
+for their separate open states.
+
 **Story Linux raster mismatch recheck (2026-11-09):** reproduced the Chapter 3
 light full-screen hash mismatch at 1366x768 in local Ubuntu 24.04 / Chromium
 through WSL. The source and Beyond text, loaded Work Sans fonts, computed styles,
