@@ -255,6 +255,13 @@ export extends runtime evidence to one post-mining state in Chromium, Firefox,
 and WebKit in both themes. Arbitrary valid runtime states and other post-mining
 states remain outside the finite fixture domain.
 
+**Upgrade purchase autosave integration (2026-11-09):** the
+`Upgrade.buy`/`main.js:update` E2E now covers captured exact-price Money, Gem,
+Planet Coin, and Wisdom purchases in one live session. It asserts no storage
+write after any purchase or at exactly 60,000 ms, then compares complete
+exports after the 60,001 ms frame saves all four purchases. Chromium, Firefox,
+and WebKit pass; other balances and runtime intervals remain open.
+
 **Cross-resource aligned-purchase exports (2026-11-09):** the live purchase
 export E2E now covers Gem and Planet Coin Gem Multiplication `buy10` from level
 9 to 10 and `buy100` from 99 to 100. It obtains exact `currentPrice()` from the
