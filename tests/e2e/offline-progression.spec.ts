@@ -1142,10 +1142,7 @@ test("applies offline rewards when a legacy save is imported from Settings", asy
   }
 });
 
-test("matches one main-loop tick and autosave after a 120-second Chromium freeze", async ({
-  page,
-}) => {
-  test.setTimeout(90_000);
+async function verifyLongFrame(page: Page, freezePages: boolean) {
   const reference = JSON.parse(
     await readFile(
       new URL(
@@ -1238,8 +1235,12 @@ test("matches one main-loop tick and autosave after a 120-second Chromium freeze
       };
     });
 
-  const sourceCdp = await page.context().newCDPSession(sourcePage);
-  const beyondCdp = await page.context().newCDPSession(page);
+  const sourceCdp = freezePages
+    ? await page.context().newCDPSession(sourcePage)
+    : undefined;
+  const beyondCdp = freezePages
+    ? await page.context().newCDPSession(page)
+    : undefined;
   let pagesFrozen = false;
   try {
     const oracleUrl = await routePinnedRemixOracle(sourcePage);
@@ -1277,11 +1278,13 @@ test("matches one main-loop tick and autosave after a 120-second Chromium freeze
       .innerText();
     await expect(page.locator(".mineobject h2")).toHaveText("Clay");
 
-    await Promise.all([
-      sourceCdp.send("Page.setWebLifecycleState", { state: "frozen" }),
-      beyondCdp.send("Page.setWebLifecycleState", { state: "frozen" }),
-    ]);
-    pagesFrozen = true;
+    if (sourceCdp && beyondCdp) {
+      await Promise.all([
+        sourceCdp.send("Page.setWebLifecycleState", { state: "frozen" }),
+        beyondCdp.send("Page.setWebLifecycleState", { state: "frozen" }),
+      ]);
+      pagesFrozen = true;
+    }
     await Promise.all([
       sourcePage.evaluate((milliseconds) => {
         const clock = (
@@ -1306,12 +1309,13 @@ test("matches one main-loop tick and autosave after a 120-second Chromium freeze
         clock.advance(milliseconds);
       }, 120_000),
     ]);
-    await Promise.all([
-      sourceCdp.send("Page.setWebLifecycleState", { state: "active" }),
-      beyondCdp.send("Page.setWebLifecycleState", { state: "active" }),
-    ]);
-    pagesFrozen = false;
-
+    if (sourceCdp && beyondCdp) {
+      await Promise.all([
+        sourceCdp.send("Page.setWebLifecycleState", { state: "active" }),
+        beyondCdp.send("Page.setWebLifecycleState", { state: "active" }),
+      ]);
+      pagesFrozen = false;
+    }
     await expect.poll(async () => (await readRemixFrame()).hp).toBe("1360");
     await expect(page.locator("[data-mine-object-hp]")).not.toHaveText(
       beyondHpBefore,
@@ -1368,13 +1372,36 @@ test("matches one main-loop tick and autosave after a 120-second Chromium freeze
       startNowMs + 120_000,
     );
   } finally {
-    if (pagesFrozen) {
+    if (pagesFrozen && sourceCdp && beyondCdp) {
       await Promise.allSettled([
         sourceCdp.send("Page.setWebLifecycleState", { state: "active" }),
         beyondCdp.send("Page.setWebLifecycleState", { state: "active" }),
       ]);
     }
-    await Promise.allSettled([sourceCdp.detach(), beyondCdp.detach()]);
+    await Promise.allSettled(
+      [sourceCdp?.detach(), beyondCdp?.detach()].filter(
+        (session): session is Promise<void> => session !== undefined,
+      ),
+    );
     await sourcePage.close().catch(() => undefined);
   }
+}
+
+test("matches one main-loop tick and autosave after a 120-second Chromium freeze", async ({
+  page,
+  browserName,
+}) => {
+  test.skip(
+    browserName !== "chromium",
+    "CDP lifecycle freeze is Chromium-only.",
+  );
+  test.setTimeout(90_000);
+  await verifyLongFrame(page, true);
+});
+
+test("matches one main-loop tick and autosave after a 120-second frame gap", async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  await verifyLongFrame(page, false);
 });

@@ -1,5 +1,13 @@
 # Parity matrix
 
+**Long-frame idle and autosave differential (2026-11-09):** the live
+`requestAnimationFrame` integration now compares one 120-second clock delta in
+Remix and Beyond across Chromium, Firefox, and WebKit. Each performs one idle
+hit and one autosave, resets both timers, and produces the same visible state,
+log order, timestamp, and full legacy export. Real browser/OS background
+scheduling remains open; the Chromium CDP freeze/resume check remains a
+separate lifecycle case. Offline progression remains In Progress.
+
 **Selected Gem Waster craft persistence (2026-11-09):** the successful craft
 export differential now also starts with Money Gem Waster level 1, raises the
 selector from its loaded legacy default of 0 to level 1, and checks the 3-Gem

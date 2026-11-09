@@ -2,6 +2,16 @@
 
 Last updated: 2026-11-09
 
+**Long-frame main-loop differential (2026-11-09):** extended the live
+120-second frame-gap comparison to Chromium, Firefox, and WebKit. Each pinned
+Remix/Beyond pair produces exactly one idle hit and one save, resets the main
+timers, and matches the visible game state, log order, `lastActive`, and full
+Settings export. The focused case passed 1/1 in Chromium and 2/2 in Firefox and
+WebKit; a dedicated CI step now covers the latter pair. The original Chromium
+CDP freeze/resume case remains intact as a separate check. These controlled
+frame/lifecycle cases do not establish real browser/OS background scheduling,
+which remains open. Offline progression remains In Progress.
+
 **Shift bulk purchase stops at affordability (2026-11-09):** the pinned Remix
 fixture captures Active Power level 2 with 28,000 Money. Shift buys exactly
 three levels (4,000 + 8,000 + 16,000), ends at level 5 with zero Money, and

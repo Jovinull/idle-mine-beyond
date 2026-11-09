@@ -82,6 +82,9 @@ jobs:
       - name: Verify offline cold-start restores in Firefox and WebKit
         run: pnpm test:e2e:offline-cold-start:browsers
 
+      - name: Verify long-frame idle and autosave behavior in Firefox and WebKit
+        run: pnpm test:e2e:offline-frame:browsers
+
       - name: Verify aligned and affordability-stop purchase exports in Firefox and WebKit
         run: pnpm test:e2e:upgrade-purchase-export:browsers
 
