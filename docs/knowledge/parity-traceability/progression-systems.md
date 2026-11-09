@@ -235,6 +235,15 @@ Both focused browser runs passed.
 | `craftPick`: candidate damage strictly greater replaces and saves; equal/lower damage is a dud and does not save                                                                                           | `better-craft-replaces-and-saves`, `equal-damage-is-a-dud`, `strictly-weaker-craft-is-a-dud`                                                                     | `tests/parity/pickaxe-crafting.test.ts` asserts candidate damage above/equal/below equipped damage and exact save/pickaxe outcome; `tests/e2e/pickaxe-crafting-visual.spec.ts` compares all three boundaries against Remix and checks both runtimes' persisted slots remain unchanged for the equal/lower dud branches; `tests/e2e/pickaxe-craft-no-save-persistence.spec.ts` compares equal/lower duds in Chromium, Firefox, and WebKit and asserts matching messages, live Gem balance, equipped pickaxe, RNG counts, and unchanged persisted slots; `tests/e2e/pickaxe-craft-replacement-persistence.spec.ts` compares successful craft feedback, equipped result, RNG draws, and complete Settings exports for baseline and selected Gem Waster level-1 crafts in Chromium, Firefox, and WebKit                                                 |
 | `craftPick`: bulk loop continues after success and dud, stops at `times`, and saves each successful replacement using that intermediate pickaxe                                                            | `bulk-success-dud-then-insufficient`, `bulk-replacements-save-each-intermediate-state`                                                                           | `tests/parity/pickaxe-crafting.test.ts` compares all intermediate snapshots and RNG; `tests/e2e/pickaxe-crafting-visual.spec.ts` source-pairs the live Shift success/dud/insufficient sequence and `tests/e2e/save-cross-tab-overwrite.spec.ts` repeats it after a newer tab purchase, asserting 20 draws, one save at Bad Mud Pick / 1 Gem, live final 0 Gems, the retained newer backup, and fresh-tab state in Chromium, Firefox, and WebKit                                                                                                                                                                                                                                                                                                                                                                                                     |
 
+**Interior Gem Waster craft differential (2026-11-09):**
+`pickaxeCraftingSemantics.attempts` now includes the pinned
+`interior-selected-gem-level-controls-craft-cost` transaction. It sets
+`usedGemsLevel` to 2 with Money/Gem Gem Waster levels 1/2, verifies the
+10-Gem spend, Sturdy Mud Pick replacement, ten RNG draws, and the log-before-
+save snapshot. `tests/e2e/pickaxe-craft-replacement-persistence.spec.ts`
+compares the selected level, displayed cost, result, and full Settings exports
+against Remix in Chromium, Firefox, and WebKit.
+
 **Maximum Gem Waster craft differential (2026-11-09):**
 `scripts/reference-probe.mjs` now captures
 `maximum-selected-gem-level-controls-craft-cost` from pinned Remix: selector

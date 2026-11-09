@@ -139890,6 +139890,94 @@
           }
         },
         {
+          "name": "interior-selected-gem-level-controls-craft-cost",
+          "input": {
+            "name": "interior-selected-gem-level-controls-craft-cost",
+            "gems": "10",
+            "usedGemsLevel": 2,
+            "equippedPickaxe": {
+              "name": "Toy Pickaxe",
+              "power": "20",
+              "quality": "1"
+            },
+            "highestMineObjectLevel": 0,
+            "powers": ["1", "1", "1", "1", "1"],
+            "upgradeLevels": {
+              "money": {
+                "gemWaster": 1
+              },
+              "gems": {
+                "gemWaster": 2
+              }
+            },
+            "shiftHeld": false,
+            "randomValues": [
+              0.8, 0.9, 0.5, 0.2, 0.75, 0.2, 0.2, 0.5, 0.5, 0.75
+            ],
+            "craftGems": {
+              "decimal": "10",
+              "mantissa": 1,
+              "exponent": 1
+            }
+          },
+          "randomCalls": 10,
+          "saveCalls": 1,
+          "saveSnapshots": [
+            {
+              "gems": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "pickaxe": {
+                "name": "Sturdy Mud Pick",
+                "power": {
+                  "decimal": "88.19999999999999",
+                  "mantissa": 8.819999999999999,
+                  "exponent": 1
+                },
+                "quality": {
+                  "decimal": "1.314",
+                  "mantissa": 1.314,
+                  "exponent": 0
+                }
+              }
+            }
+          ],
+          "eventOrder": ["log:Got a new Pickaxe! \"Sturdy Mud Pick\"", "save"],
+          "messageLog": [
+            {
+              "message": "Got a new Pickaxe! \"Sturdy Mud Pick\"",
+              "color": "#00b400"
+            }
+          ],
+          "result": {
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "pickaxe": {
+              "name": "Sturdy Mud Pick",
+              "power": {
+                "decimal": "88.19999999999999",
+                "mantissa": 8.819999999999999,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "1.314",
+                "mantissa": 1.314,
+                "exponent": 0
+              },
+              "damage": {
+                "decimal": "115.89479999999999",
+                "mantissa": 1.1589479999999999,
+                "exponent": 2
+              }
+            }
+          }
+        },
+        {
           "name": "maximum-selected-gem-level-controls-craft-cost",
           "input": {
             "name": "maximum-selected-gem-level-controls-craft-cost",

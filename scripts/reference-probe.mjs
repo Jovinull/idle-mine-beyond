@@ -6998,6 +6998,24 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 randomValues: [...baselineRandomValues],
               },
               {
+                name: "interior-selected-gem-level-controls-craft-cost",
+                gems: "10",
+                usedGemsLevel: 2,
+                equippedPickaxe: {
+                  name: "Toy Pickaxe",
+                  power: "20",
+                  quality: "1",
+                },
+                highestMineObjectLevel: 0,
+                powers: ["1", "1", "1", "1", "1"],
+                upgradeLevels: {
+                  money: { gemWaster: 1 },
+                  gems: { gemWaster: 2 },
+                },
+                shiftHeld: false,
+                randomValues: [...baselineRandomValues],
+              },
+              {
                 name: "maximum-selected-gem-level-controls-craft-cost",
                 gems: "35",
                 usedGemsLevel: 3,

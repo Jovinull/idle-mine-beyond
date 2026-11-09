@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-09
 
+**Interior Gem Waster craft persistence (2026-11-09):** added a pinned
+`functions.craftPick()` transaction for selected level 2, where Money/Gem Gem
+Waster levels 1/2 produce a 10-Gem cost. The live test selects level 2 in both
+apps, compares the successful `Sturdy Mud Pick` craft, ten RNG draws, and full
+Settings exports, then passes in Chromium, Firefox, and WebKit. Crafting remains
+In Progress for other states and presentation evidence.
+
 **Upgrade autosave across all resource families (2026-11-09):** extended the
 live pinned-Remix persistence differential to exact-price purchases using
 Money, Gems, Planet Coins, and Wisdom. Storage stays unchanged after each
