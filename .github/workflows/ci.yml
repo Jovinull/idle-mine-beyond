@@ -94,6 +94,9 @@ jobs:
       - name: Verify canonical Unicode save import in all browsers
         run: pnpm test:e2e:save-unicode-import:browsers
 
+      - name: Verify full Wisdom purchase export in all browsers
+        run: pnpm test:e2e:wisdom-export:browsers
+
       - name: Verify stale Settings save interleaving in Firefox and WebKit
         run: pnpm test:e2e:cross-tab-settings:browsers
 

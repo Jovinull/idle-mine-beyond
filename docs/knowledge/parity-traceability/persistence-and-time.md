@@ -220,8 +220,15 @@ paths have source-backed assertions.
   complete Settings export after the Planet Coin drop in light and dark in
   Chromium, Firefox, and WebKit.
 - **Sampled:** the route-end set is four saves, and the additional all-group
-  state is one controlled fixture, not every valid Remix runtime state.
-  Valid codec outputs match pinned Remix in Chromium, Firefox, and WebKit for five codec vectors, seventeen UTF-8/escape boundaries, and five Base64 variants. The varied all-group live export matches in all three browsers; four resource-family purchases and four captured bulk-purchase exports (Money buy10/buy100 plus Gem and Planet Coin buy10) match in Chromium, Firefox, and WebKit. Other levels, alignments, and runtime exports remain unverified.
+  state is one controlled fixture, not every valid Remix runtime state. Valid
+  codec outputs match pinned Remix in Chromium, Firefox, and WebKit for five
+  codec vectors, seventeen UTF-8/escape boundaries, and five Base64 variants.
+  The varied all-group live export matches in all three browsers; four
+  resource-family purchases and four captured bulk-purchase exports (Money
+  buy10/buy100 plus Gem and Planet Coin buy10) match in Chromium, Firefox, and
+  WebKit. The complete seven-Wisdom-purchase state also exports identically in
+  all three browsers. Other levels, alignments, and runtime exports remain
+  unverified.
 
 ### Export/persist function and branch trace
 
@@ -637,6 +644,15 @@ native background lifecycle is out of web-v1 scope.
 tests/e2e/legacy-save-historical-shape.spec.ts imports the checked-in synthetic community shape through the live Settings text field. It asserts persisted Money, Gems, progress, and pickaxe data, plus zero defaults for absent Planet Coin/Wisdom resources. This supplements the pinned complete-output hash differential in tests/parity/legacy-save-historical-shape.test.ts. The single specimen does not establish support for other historical formats.
 
 **Source-paired export differential (2026-11-07):** the same E2E routes the synthetic shape through the Settings import in pinned Remix and Beyond, then exports from both Settings panels and asserts exact encoded-string equality. This exercises the live legacy import-to-export path for the one specimen.
+
+**Seven-Wisdom live export differential (2026-11-09):** the E2E starts from a
+controlled source save with Wisdom unlocked, funds it with the captured
+high-magnitude Decimal input, and sets all seven standalone upgrade levels to
+zero. It performs one live purchase for each card in pinned Remix and Beyond,
+checks all seven levels, then exports through both Settings panels and compares
+the complete decoded objects and exact encoded bytes. Chromium, Firefox, and
+WebKit pass. This extends the existing single Simple Gem Boost purchase export
+to the seven-card combined state; other dynamic save combinations remain open.
 
 ### Live canonical Unicode-name import (2026-11-09)
 

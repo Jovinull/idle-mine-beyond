@@ -1,5 +1,12 @@
 # Parity matrix
 
+**Complete Wisdom purchase export (2026-11-09):** after buying each of the
+seven standalone Wisdom upgrades once in both live apps, the source-paired E2E
+compares all resulting levels and the complete decoded Settings exports plus
+encoded bytes. The case passed in Chromium, Firefox, and WebKit. This extends
+live export coverage beyond the single Simple Gem Boost purchase; other dynamic
+save combinations remain open.
+
 **Prestige full-save differential (2026-11-08):** after each of the four
 enabled Power Prestige actions, the source-paired E2E compares the complete
 Settings export bytes and decoded object. All four passed in Chromium,

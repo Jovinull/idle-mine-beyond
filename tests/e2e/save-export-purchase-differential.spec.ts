@@ -519,3 +519,148 @@ test("exports the live save after the Wisdom purchase in dark theme", async ({
     "dark",
   );
 });
+
+test("exports the full live save after purchasing all seven Wisdom upgrades", async ({
+  browser,
+  page,
+}) => {
+  test.setTimeout(90_000);
+  const corpus = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as ReferenceCorpus;
+  const sourceSave = JSON.parse(
+    corpus.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  const wisdomUpgrades = corpus.data.upgradeSemantics.groups.wisdom;
+  sourceSave.highestMineObjectLevel = 170;
+  sourceSave.mineObjectLevel = 170;
+  sourceSave.lastActive = fixedTime;
+  sourceSave.wisdom = "1e100000000";
+  sourceSave.maxWisdom = sourceSave.wisdom;
+  sourceSave.settings.tab = "main";
+  sourceSave.settings.theme = "light";
+  sourceSave.powers.data.values = ["1", "1", "1", "1", "1"];
+  sourceSave.powers.upgrades = Object.fromEntries(
+    Object.keys(wisdomUpgrades).map((key) => [key, { level: 0 }]),
+  );
+  const encodedSourceSave = encodeRemixLegacySave(sourceSave);
+  const encodedBeyondSave = await createBeyondVisualSaveFromRemixSave({
+    clockMs: fixedTime,
+    theme: "light",
+    tab: "main",
+    saveString: encodedSourceSave,
+  });
+  const sourceContext = await browser.newContext({
+    colorScheme: "light",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all([
+      page.addInitScript(seedBeyond, {
+        encoded: encodedBeyondSave,
+        now: fixedTime,
+      }),
+      sourcePage.addInitScript(seedSource, {
+        encoded: encodedSourceSave,
+        now: fixedTime,
+      }),
+    ]);
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean((window as Window & { game?: unknown }).game),
+    );
+    await Promise.all([
+      page.locator("[data-game-tab='powers']").click(),
+      sourcePage.locator("footer button").filter({ hasText: "Powers" }).click(),
+    ]);
+
+    for (const [key, upgrade] of Object.entries(wisdomUpgrades)) {
+      const beyondCard = page.locator(`[data-wisdom-upgrade="${key}"]`);
+      const sourceCard = sourcePage
+        .locator("article.powers .powers-upgrades button.upgrade-standalone")
+        .filter({ hasText: upgrade.name })
+        .first();
+      await Promise.all([beyondCard.click(), sourceCard.click()]);
+      await expect(beyondCard).toHaveAttribute("data-upgrade-level", "1");
+      await expect(sourceCard).toContainText("1");
+    }
+
+    const [beyondLevels, sourceLevels] = await Promise.all([
+      page.evaluate(
+        (keys) =>
+          keys.map((key) =>
+            Number(
+              document
+                .querySelector(`[data-wisdom-upgrade="${key}"]`)
+                ?.getAttribute("data-upgrade-level"),
+            ),
+          ),
+        Object.keys(wisdomUpgrades),
+      ),
+      sourcePage.evaluate((keys) => {
+        const game = (
+          window as Window & {
+            game?: {
+              powers: { upgrades: Record<string, { level: number }> };
+            };
+          }
+        ).game;
+        if (!game) throw new Error("Pinned Remix game state is unavailable.");
+        return keys.map((key) => game.powers.upgrades[key]!.level);
+      }, Object.keys(wisdomUpgrades)),
+    ]);
+    expect(beyondLevels).toEqual([1, 1, 1, 1, 1, 1, 1]);
+    expect(beyondLevels).toEqual(sourceLevels);
+
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    const [beyondSettings, sourceSettings] = await Promise.all([
+      page.locator("article.settings"),
+      sourcePage.locator("article.settings"),
+    ]);
+    await Promise.all([
+      beyondSettings.getByRole("button", { name: "Export" }).click(),
+      sourceSettings.getByRole("button", { name: "Export" }).click(),
+    ]);
+    const [beyondExport, sourceExport] = await Promise.all([
+      beyondSettings.locator("textarea").inputValue(),
+      sourceSettings.locator("textarea").inputValue(),
+    ]);
+    const decode = (target: typeof page, value: string) =>
+      target.evaluate((encoded) => {
+        const json = unescape(decodeURIComponent(atob(encoded)));
+        return JSON.parse(json) as unknown;
+      }, value);
+    const [beyondValue, sourceValue] = await Promise.all([
+      decode(page, beyondExport),
+      decode(sourcePage, sourceExport),
+    ]);
+    expect(
+      findDifferences(beyondValue, sourceValue),
+      "complete decoded saves after all seven Wisdom purchases",
+    ).toEqual([]);
+    expect(beyondExport).toBe(sourceExport);
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});

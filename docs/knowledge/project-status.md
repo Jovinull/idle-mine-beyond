@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-09
 
+**Complete Wisdom purchase export (2026-11-09):** the source-paired live save
+test buys all seven standalone Wisdom upgrades once, then compares levels and
+complete decoded Settings exports and encoded bytes. It passed in Chromium,
+Firefox, and WebKit. This extends dynamic export evidence beyond the single
+Simple Gem Boost purchase; other combinations remain open.
+
 **Stale Settings writes across tabs (2026-11-09):** after a fresh tab saves
 Blacksmith 1 / 970 Money, a stale tab's Number Format selection leaves storage
 unchanged until manual Save overwrites it with Blacksmith 0 / 1,000 Money /

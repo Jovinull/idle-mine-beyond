@@ -26,7 +26,10 @@
   source-captured single purchase of Simple
   Gem Boost also compares the complete Powers screen after spending exact
   Wisdom in both themes through
-  `tests/e2e/save-export-purchase-differential.spec.ts`.
+  `tests/e2e/save-export-purchase-differential.spec.ts`. A separate live
+  source-paired case buys each of the seven Wisdom upgrades once, then compares
+  all seven levels and the complete Settings export; the exact encoded export
+  passes in Chromium, Firefox, and WebKit.
 - **Sampled (qualified):** the unbounded Power values are sampled. A pinned
   runtime fixture captures `getPrestigeEffect` at zero and at 999, 1,000, and
   1,001 for all four indices, covering its floor transition. It also captures
