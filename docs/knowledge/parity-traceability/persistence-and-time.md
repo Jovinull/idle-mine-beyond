@@ -364,6 +364,7 @@ coverage; the current version-rejection branch is covered.
 | Stale same-upgrade and cross-resource actions save whole snapshots without merging newer resource families                                                                                    | Captured level-zero save; exact-price `buy-uses-gem-resource` fixture; two same-origin tabs per implementation; both Blacksmith/Money then Offline Gems/Gems and the reverse purchase/save order                                                                                                     | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares both live Remix and Beyond after same-upgrade stale writes and both cross-resource orders in Chromium, Firefox, and WebKit; asserts final resource/upgrade state, the stale tab's displayed state, and Beyond backup equals the immediately prior snapshot                                            |
 | A stale tab's periodic frame overwrites a newer same-origin save with its local whole-game snapshot after the strict autosave threshold                                                       | Pinned `Scripts/main.js:update` advances stale `timer.save` past 60 seconds and calls `functions.saveGame()`; two same-origin tabs begin from one captured save, then only the stale tab advances 60,001 ms                                                                                          | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares Remix and Beyond in Chromium, Firefox, and WebKit: stale level-zero / 1,000 Money replaces the newer Blacksmith 1 / 970 Money snapshot; the stale tab's Beyond backup retains the newer snapshot and each tab keeps its own displayed level                                                           |
 | A stale tab's manual Settings save writes its whole local snapshot after a peer's newer purchase; changing Number Format alone does not write the shared save slot                            | Pinned `index.html` Number Format `@input` updates `game.numberFormatter` and `settings.numberFormatterIndex`; the Settings Save button calls `saveGame()`. Four same-origin tabs load one controlled seed; fresh tabs save Blacksmith 1, then stale tabs select formatter index 3 and manually save | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares pinned Remix legacy state and Beyond v1 in Chromium, Firefox, and WebKit: selected formatter alone preserves the newer stored snapshot; manual Save replaces it with Blacksmith 0 / 1,000 Money and formatter 3; Beyond backup retains Blacksmith 1 / 970 Money; fresh tabs keep their local purchase |
+| A stale tab's Settings theme selection immediately saves its local whole-game snapshot after a peer's newer purchase                                                                          | Pinned `index.html` Light/Dark handlers call `setTheme()` then `saveGame()`; Beyond `changeTheme()` updates settings and calls `saveCurrentState()`. Four same-origin tabs load one controlled seed; fresh tabs save Blacksmith 1, then stale tabs select Dark                                       | `tests/e2e/save-cross-tab-overwrite.spec.ts` compares pinned Remix and Beyond in Chromium, Firefox, and WebKit: theme action stores Dark with stale Blacksmith 0 / 1,000 Money, backup retains the newer Light / Blacksmith 1 / 970 Money snapshot, and fresh tabs keep local purchase and Light theme                                                      |
 
 The selected recovery-bundle E2E also covers the `Import requires acknowledgement` branch above in Chromium, Firefox, and WebKit: before acknowledgement the import button is disabled; afterward, an invalid primary selects the valid backup, which is persisted as Beyond v1 while the legacy key remains unchanged.
 
@@ -438,6 +439,16 @@ backup equals the preceding fresh snapshot. Remix and Beyond match; the fresh
 tabs retain their local purchase state. The focused test passed in Chromium;
 Firefox and WebKit are included in `pnpm test:e2e:cross-tab-settings:browsers`.
 Other action/write interleavings remain open.
+
+**Stale theme auto-save interleaving (2026-11-09):** pinned `index.html` calls
+`setTheme()` and then `saveGame()` for each Light/Dark selection. Beyond's
+`changeTheme()` updates the live settings and persists the current application
+state. In the paired case the fresh tab first saves Blacksmith 1 / 970 Money;
+selecting Dark in the stale tab immediately writes Blacksmith 0 / 1,000 Money /
+dark theme. Both implementations match, and Beyond's backup retains the fresh
+purchase snapshot. Both cases pass in Chromium, Firefox, and WebKit and are
+included in `pnpm test:e2e:cross-tab-settings:browsers`. Other same-origin
+action/write orders remain open.
 
 **Browser E2E validation (2026-10-05):**
 `pnpm.cmd exec playwright test tests/e2e/browser-storage-failure.spec.ts

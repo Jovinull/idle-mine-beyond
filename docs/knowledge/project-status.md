@@ -2,14 +2,15 @@
 
 Last updated: 2026-11-09
 
-**Stale Settings-save interleaving (2026-11-09):** the source-paired
-cross-tab E2E covers a newer Blacksmith purchase followed by a stale tab
-changing Number Format and manually saving. Selection alone leaves shared
-storage unchanged; manual Save overwrites it with the stale whole-game state.
-Remix and Beyond match at Blacksmith 0 / 1,000 Money / formatter 3, while
-Beyond backup retains the preceding Blacksmith 1 / 970 Money snapshot. The
-focused Chromium case passed; Firefox and WebKit have a dedicated CI gate.
-Other same-origin action/write interleavings remain open.
+**Stale Settings writes across tabs (2026-11-09):** after a fresh tab saves
+Blacksmith 1 / 970 Money, a stale tab's Number Format selection leaves storage
+unchanged until manual Save overwrites it with Blacksmith 0 / 1,000 Money /
+formatter 3. A stale Dark selection also saves immediately, overwriting the
+newer purchase with its own Blacksmith 0 / 1,000 Money state and dark theme.
+Remix and Beyond match in both cases; Beyond backup retains the fresh purchase.
+All four focused Firefox/WebKit cases passed, as did the Chromium cases. The
+dedicated CI gate covers both interleavings. Other same-origin action/write
+interleavings remain open.
 
 **Live four-byte save import (2026-11-09):** pinned Remix generates a canonical
 save with a supplementary-plane pickaxe name. Importing that same string

@@ -46,6 +46,15 @@ Beyond's backup keeps the newer purchase snapshot. The focused test passed in
 Chromium; Firefox and WebKit are in `pnpm test:e2e:cross-tab-settings:browsers`.
 Other cross-tab action/write interleavings remain open.
 
+**Stale theme auto-save interleaving (2026-11-09):** pinned Remix's Light/Dark
+buttons call `setTheme()` and immediately `saveGame()`. Beyond's theme handler
+also saves its complete live state. After a fresh tab saves Blacksmith 1 / 970
+Money, selecting Dark in the stale tab overwrites shared storage with its own
+Blacksmith 0 / 1,000 Money state and dark theme. Remix and Beyond agree, and
+Beyond's backup keeps the newer purchase snapshot. Chromium, Firefox, and
+WebKit pass this source-paired case. Other action/write interleavings remain
+open.
+
 **Live purchase export differential (2026-11-08):** the pinned purchase corpus now includes Shift `buy10` from level 0 to 10 for Gem and Planet Coin Gem Multiplication. `tests/e2e/save-export-purchase-differential.spec.ts` makes each purchase in both Remix and Beyond, then compares the complete exported object and encoded bytes. Both cases pass in Chromium, Firefox, and WebKit. The captured remaining balances are 33422.1074644512 Gems and 18152641816.016598 Planet Coins.
 
 The pinned current save shape and a deliberately minimal partial-save load are captured in `saveSemantics` in the reference corpus. The current serialized object has 27 top-level fields and no version field; `serializableShape` recursively records JSON types, ordered object fields, array lengths, and distinct array-element shapes throughout that runtime object. Seven Decimal resource values serialize as strings, and JSON omits upgrade `getPrice`/`getEffect` functions. This describes the captured current runtime, not every historical save or every dynamic field value.
