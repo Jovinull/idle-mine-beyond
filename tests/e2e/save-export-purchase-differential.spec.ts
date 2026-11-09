@@ -269,6 +269,22 @@ async function comparePurchaseExport(
       endingResources: { money: { decimal: "0" } },
     });
   }
+  if (
+    purchaseName ===
+    "buy10-gem-multiplier-stops-before-alignment-on-affordability"
+  ) {
+    expect(purchase).toMatchObject({
+      group: "gems",
+      key: "gemMultiply",
+      startingLevel: 0,
+      endingLevel: 3,
+      purchases: 3,
+      operation: { method: "buy10" },
+      startingResources: { gems: { decimal: "7000" } },
+      currentPrice: { decimal: "1000" },
+      endingResources: { gems: { decimal: "247.5" } },
+    });
+  }
   const alignedResourceCases: Record<
     string,
     { group: "gems" | "planetCoins"; level: 9 | 99; method: "buy10" | "buy100" }
@@ -591,6 +607,7 @@ for (const purchaseName of [
   "buy10-aligns-current-level",
   "buy100-aligns-current-level",
   "buy10-stops-before-alignment-on-affordability",
+  "buy10-gem-multiplier-stops-before-alignment-on-affordability",
 ]) {
   test(`exports the live save after ${purchaseName}`, async ({
     browser,

@@ -121381,6 +121381,69 @@
           }
         },
         {
+          "name": "buy10-gem-multiplier-stops-before-alignment-on-affordability",
+          "group": "gems",
+          "key": "gemMultiply",
+          "resourceId": 1,
+          "startingLevel": 0,
+          "startingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "7000",
+              "mantissa": 7,
+              "exponent": 3
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          },
+          "currentPrice": {
+            "decimal": "1000",
+            "mantissa": 1,
+            "exponent": 3
+          },
+          "maxLevel": "Infinity",
+          "operation": {
+            "method": "buy10"
+          },
+          "operationResult": null,
+          "endingLevel": 3,
+          "purchases": 3,
+          "endingResources": {
+            "money": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "gems": {
+              "decimal": "247.5",
+              "mantissa": 2.475,
+              "exponent": 2
+            },
+            "planetCoins": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "wisdom": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            }
+          }
+        },
+        {
           "name": "buy10-aligns-current-level",
           "group": "money",
           "key": "activePower",

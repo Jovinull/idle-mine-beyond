@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-09
 
+**Gem buy10 affordability stop (2026-11-09):** pinned Remix starts Gem
+Multiplication at level 0 with 7,000 Gems. Shift buys three levels, stops
+before aligned level 10, and leaves 247.5 Gems at level 3. The live
+Remix/Beyond action and complete Settings export match in Chromium, Firefox,
+and WebKit; the focused cross-browser gate passed 8/8 aligned and partial-bulk
+purchase cases. Other partial-bulk starting levels and resource balances
+remain open.
+
 **Long-frame main-loop differential (2026-11-09):** extended the live
 120-second frame-gap comparison to Chromium, Firefox, and WebKit. Each pinned
 Remix/Beyond pair produces exactly one idle hit and one save, resets the main
@@ -17,7 +25,7 @@ fixture captures Active Power level 2 with 28,000 Money. Shift buys exactly
 three levels (4,000 + 8,000 + 16,000), ends at level 5 with zero Money, and
 stops before the next aligned level 10. The live Remix/Beyond action and full
 Settings exports match in Chromium, Firefox, and WebKit. Other partial-bulk
-resource and starting-level combinations remain open.
+resource balances and starting levels remain open.
 
 **Stale successful craft save (2026-11-09):** after fresh tabs save Blacksmith
 1 / 970 Money, a stale tab performs a stronger one-Gem craft. The pinned Remix

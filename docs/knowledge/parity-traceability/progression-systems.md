@@ -90,7 +90,7 @@ Remix/Beyond views at 1440x900 in both themes.
   function caps. Price/effect displays branch at max level. `game.js` defines
   all 29 formulas/caps and the optional Blacksmith Expertise purchase hook.
 - **Covered:** all 29 source price/effect definitions at captured levels,
-  finite caps/softcaps, 14 purchase cases across resource families and buy
+  finite caps/softcaps, 22 purchase cases across resource families and buy
   modes, and nine cross-upgrade effect scenarios in
   `tests/parity/upgrades.test.ts`; display strings in
   `tests/parity/remix-upgrade-display.test.ts`; browser formula checks in
@@ -156,12 +156,15 @@ between Chromium and WebKit.
 | `Scripts/Define/game.js:getEffectDisplay`: capped current value versus below-cap current-to-next value after the other Gem Waster effect                                                 | `upgradeSemantics.groups.money.gemWaster.samples[*].effectDisplay` captures the levels and resulting text                                          | `tests/parity/remix-upgrade-display.test.ts` compares the captured strings at ordinary and cap samples                                                                                                                                                                                                                                                                                                                                                                   |
 | `Scripts/Define/game.js` per-upgrade price/effect/max-level formulas and cross-upgrade reads                                                                                             | 249 source samples, all 29 definitions, finite caps, and nine interaction states                                                                   | `tests/parity/upgrades.test.ts` compares named formulas/effects/caps and interaction outputs                                                                                                                                                                                                                                                                                                                                                                             |
 
-**Live bulk affordability-stop differential (2026-11-09):** `Upgrade.buy10`
-and `Upgrade.buyN` are source-captured at Active Power level 2 with 28,000
-Money. A real Shift click performs three purchases, stops at level 5 with zero
-Money before aligned level 10, and matches the pinned Remix complete Settings
-export in Chromium, Firefox, and WebKit. The source fixture is
-`buy10-stops-before-alignment-on-affordability`; the asserting test is
+**Live bulk affordability-stop differentials (2026-11-09):** `Upgrade.buy10`
+and `Upgrade.buyN` are source-captured for Money Active Power at level 2 with
+28,000 Money and Gem Multiplication at level 0 with 7,000 Gems. Real Shift
+clicks perform three purchases in both cases, stop before aligned level 10, and
+match pinned Remix levels, remaining balances, and complete Settings exports
+in Chromium, Firefox, and WebKit. The captures are
+`buy10-stops-before-alignment-on-affordability` and
+`buy10-gem-multiplier-stops-before-alignment-on-affordability`; assertions are
+in `tests/parity/upgrades.test.ts` and
 `tests/e2e/save-export-purchase-differential.spec.ts`.
 
 - **Sampled (qualified):** formula/effect values are not captured for every

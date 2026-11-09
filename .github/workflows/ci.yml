@@ -85,7 +85,7 @@ jobs:
       - name: Verify long-frame idle and autosave behavior in Firefox and WebKit
         run: pnpm test:e2e:offline-frame:browsers
 
-      - name: Verify aligned and affordability-stop purchase exports in Firefox and WebKit
+      - name: Verify aligned and partial-affordability purchase exports in Firefox and WebKit
         run: pnpm test:e2e:upgrade-purchase-export:browsers
 
       - name: Verify Prestige exports in Firefox and WebKit
