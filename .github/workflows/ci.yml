@@ -139,7 +139,7 @@ jobs:
       - name: Verify upgrade autosave window in Firefox and WebKit
         run: pnpm test:e2e:upgrade-persistence:browsers
 
-      - name: Verify successful pickaxe craft persistence in Firefox and WebKit
+      - name: Verify baseline and selected-Gem pickaxe craft persistence in Firefox and WebKit
         run: pnpm test:e2e:craft-replacement:browsers
 
       - name: Verify pickaxe craft no-save branches in Firefox and WebKit

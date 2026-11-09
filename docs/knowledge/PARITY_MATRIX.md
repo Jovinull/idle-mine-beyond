@@ -1,5 +1,12 @@
 # Parity matrix
 
+**Selected Gem Waster craft persistence (2026-11-09):** the successful craft
+export differential now also starts with Money Gem Waster level 1, raises the
+selector from its loaded legacy default of 0 to level 1, and checks the 3-Gem
+cost before crafting. Remix and Beyond match craft feedback, RNG consumption,
+equipped pickaxe, and complete Settings exports in Chromium, Firefox, and
+WebKit. Crafting remains In Progress; raster and other craft states stay open.
+
 **Upgrade autosave boundary across engines (2026-11-09):** the live Blacksmith
 purchase now checks no write or confirmation at exactly 60,000 ms, then the
 write at 60,001 ms. The reloaded unsaved-purchase case and full saved export
@@ -431,4 +438,4 @@ Pickaxe strict-replacement boundary (2026-11-07): the reference fixture now capt
 
 **Shop level-two raster diagnostic (2026-11-08):** live Windows Chromium reproduced the dark Planet Coins 1440x900 full-screen mismatch at (810,152) (Remix (4,4,4), Beyond (3,3,3)), while all card/detail captures and all 477 affected-card computed styles matched. Removing border radius from only the second card in both pages made the diagnostic full-screen hashes equal. This isolates the differing pixel to rounded-corner rasterization; the normal strict comparison remains open without masks or tolerances.
 
-**Single successful craft export (2026-11-08):** the captured `better-craft-replaces-and-saves` source case now has a separate functional differential in Firefox and WebKit, comparing success feedback, equipped pickaxe, RNG draw count, and the complete byte-identical Settings export plus decoded saved replacement. The strict WebKit screenshot comparison still has a raster mismatch and remains open; no visual parity is claimed by the functional check.
+**Single successful craft export (2026-11-08):** the captured `better-craft-replaces-and-saves` source case has a separate functional differential in Firefox and WebKit, comparing success feedback, equipped pickaxe, RNG draw count, and the complete byte-identical Settings export plus decoded saved replacement. The selected-level craft case is recorded above and runs in all three engines. The strict WebKit screenshot comparison still has a raster mismatch and remains open; no visual parity is claimed by the functional checks.
