@@ -1,6 +1,13 @@
 # Project status
 
-Last updated: 2026-11-08
+Last updated: 2026-11-09
+
+**Live four-byte save import (2026-11-09):** pinned Remix generates a canonical
+save with a supplementary-plane pickaxe name. Importing that same string
+through Settings in Remix and Beyond preserves the source's UTF-16 code units
+for the four UTF-8 bytes and produces byte-identical full exports in Chromium, Firefox, and
+WebKit. The 3 focused cases passed. This adds one current-save UI integration;
+other save shapes and historical formats remain open.
 
 **Four-byte external save inputs (2026-11-08):** eight source-paired vectors now
 compare Remix's `atob` / `decodeURIComponent` / `unescape` / JSON parse

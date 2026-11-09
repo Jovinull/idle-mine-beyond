@@ -614,3 +614,16 @@ native background lifecycle is out of web-v1 scope.
 tests/e2e/legacy-save-historical-shape.spec.ts imports the checked-in synthetic community shape through the live Settings text field. It asserts persisted Money, Gems, progress, and pickaxe data, plus zero defaults for absent Planet Coin/Wisdom resources. This supplements the pinned complete-output hash differential in tests/parity/legacy-save-historical-shape.test.ts. The single specimen does not establish support for other historical formats.
 
 **Source-paired export differential (2026-11-07):** the same E2E routes the synthetic shape through the Settings import in pinned Remix and Beyond, then exports from both Settings panels and asserts exact encoded-string equality. This exercises the live legacy import-to-export path for the one specimen.
+
+### Live canonical Unicode-name import (2026-11-09)
+
+`tests/e2e/legacy-save-unicode-import.spec.ts` changes the pickaxe name in the
+pinned live Remix runtime to `Pickaxe 🚀`, captures
+`Scripts/Define/functions.js:getSaveString()`, and submits that canonical input
+through `loadGame()` via Settings in Remix and Beyond. It checks the
+source-decoded UTF-16 units in both persisted states, then compares the
+complete decoded Settings exports and exact encoded strings. The functional
+case passes in Chromium, Firefox, and WebKit. The source's first import keeps
+the four UTF-8 bytes as four code units; the next export applies canonical UTF-8
+encoding to those units again. This is one valid current-save shape, not a
+historical-schema claim.

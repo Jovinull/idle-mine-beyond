@@ -91,6 +91,9 @@ jobs:
       - name: Verify four-byte save inputs in all browsers
         run: pnpm test:e2e:save-codec:four-byte:browsers
 
+      - name: Verify canonical Unicode save import in all browsers
+        run: pnpm test:e2e:save-unicode-import:browsers
+
       - name: Run browser smoke test
         run: pnpm test:e2e
 
