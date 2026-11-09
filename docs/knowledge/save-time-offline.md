@@ -102,6 +102,16 @@ The separate `saveApplicationSemantics` capture loads a complete distinct save w
 
 `saveOfflineApplicationSemantics` captures one controlled wrapped save loaded through the pinned `loadGame()` with offline processing enabled. The save selects a generated object, pickaxe, Powers, upgrade levels, notation, and 3,601 seconds away; the probe records live Money/Gem/Planet Coin rates, final resources and maxima, Story/settings/pickaxe state, clock values, and the post-reward storage snapshot. The exact event order is theme application → offline reward message → storage write → `Game Saved!`. Four clock reads are observed: eager `lastActive` fallback, elapsed-time calculation, updated `lastActive`, and `saveGame()` timestamp.
 
+**Live cold-start threshold differential (2026-11-09):** the source-paired
+`tests/e2e/offline-progression.spec.ts` loads the same captured positive-rate
+state with `lastActive` set to exactly 300 seconds or 301 seconds before the
+fixed current time. At 300 seconds, Remix and Beyond show no welcome-back
+message and preserve Money, Gems, and Planet Coins. At 301 seconds, both show
+the offline reward and change Money and Gems. In Chromium, Firefox, and WebKit,
+the two apps' complete decoded saves and encoded exports match for both cases.
+This verifies the live strict-threshold branch for this controlled state; OS
+background scheduling remains open.
+
 **Settings text-field offline-import differential (2026-11-08):** a source-paired E2E imports this captured 3,601-second save through the live Settings button in both Remix and Beyond in Chromium, Firefox, and WebKit. It compares the exact welcome-back message, restored Money/Gem/Planet Coin resources, and final exported legacy bytes after returning to Mining. The source localStorage snapshot contains the offline reward message but not the later `Game Saved!` message: `saveGame()` serializes and writes before appending that confirmation. Beyond’s versioned primary contains the same persisted resource state, and both live exports match in each engine. Chromium matches the captured Money value; in WebKit the pinned source and Beyond both produce a value one final decimal digit lower than the Chromium capture, so WebKit compares against its live source. This proves the manual-import integration for this capture; it does not close other offline durations or real background scheduling.
 
 Absent and empty groups have distinct source behavior. Missing `upgrades` preserves existing Money upgrade levels; missing `gemUpgrades` and `planetCoinUpgrades` reset their families to zero; missing `powers` preserves power values and Wisdom upgrades. A present `powers` group with no `upgrades` resets Wisdom upgrade levels, while an empty `powers.data.values` leaves existing values unchanged. A missing `pickaxe` preserves it, while `{}` sets its name to `Toy Pickaxe` and its Decimal power and quality to zero because `new Decimal(undefined)` runs before the apparent fallback. A present empty `settings` group defaults the formatter index to zero, theme to light, and both toggles to false. These behaviors are captured in `saveSemantics.missingOptionalGroups`, `saveSemantics.emptyPresentGroups`, and `saveApplicationSemantics`.

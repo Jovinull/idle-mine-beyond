@@ -2,6 +2,15 @@
 
 Last updated: 2026-11-09
 
+**Live offline threshold across engines (2026-11-09):** cold-starting the same
+positive-rate source save at exactly 300 seconds preserves Money, Gems, and
+Planet Coins without a welcome-back message; at 301 seconds Remix and Beyond
+apply positive Money and Gem rewards. Both cases compare complete decoded saves
+and encoded exports in Chromium, Firefox, and WebKit. The cold-start test now
+uses a 240-second deadline for the longer cross-browser scenario. Offline
+progression remains In Progress; real OS/browser background scheduling remains
+open.
+
 **Upgrade autosave boundary across engines (2026-11-09):** a live Blacksmith
 purchase now checks that 60,000 ms does not write or show `Game Saved!`, then
 that the next 1 ms frame does. The Settings exports and persisted Blacksmith 1

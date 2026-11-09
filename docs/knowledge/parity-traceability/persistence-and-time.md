@@ -521,7 +521,11 @@ does not expand coverage to other browser quota policies.
 - **Covered boundaries:** captured source cases exercise the strict 300-second
   threshold, just-over-threshold reward, default/upgraded caps and cap overflow,
   disabled and negative elapsed time, zero-rate rewards, and source clock/effect
-  ordering.
+  ordering. A source-paired cold-start now also loads the same positive-rate
+  save at exactly 300 seconds and 301 seconds: the exact boundary preserves
+  Money/Gems/Planet Coins without a welcome-back message; at 301 seconds both
+  Remix and Beyond grant positive Money and Gem rewards and produce the same
+  complete decoded and encoded save.
 - **Pinned browser evidence (2026-10-04):**
   `tests/e2e/offline-progression.spec.ts` cold-starts the pinned Remix and Beyond
   apps in Chromium from the same encoded legacy saves. Frozen-clock cases compare
@@ -541,7 +545,8 @@ does not expand coverage to other browser quota policies.
   timer resets, save confirmation and log order, the saved `lastActive`, and
   complete exported legacy equality; it passes 1/1. This exercises the live
   `saveTimer > 60` path after a long frame as well as the one-hit-per-frame rule.
-  The selected four-scenario cold-start and separate advancing-startup-clock
+  The selected six-scenario cold-start (including the 300/301-second boundary)
+  and separate advancing-startup-clock
   tests also run in Firefox and WebKit; these runs compare message text/color,
   clock-read prefixes, and complete decoded saved state, while the exact
   message-pixel assertion remains Chromium-only. The controlled clock case

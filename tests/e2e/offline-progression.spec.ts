@@ -90,7 +90,7 @@ test("matches captured Remix offline loading behavior in Chromium", async ({
 test("restores capped and backward-clock saves in the pinned Remix and Beyond apps", async ({
   page,
 }, testInfo) => {
-  test.setTimeout(120_000);
+  test.setTimeout(240_000);
 
   const reference = JSON.parse(
     await readFile(
@@ -174,6 +174,30 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
       expectsOfflineReward: false,
     },
     {
+      name: "exact 300-second offline boundary",
+      theme: "light",
+      compareMessagePixels: false,
+      elapsedSeconds: 300,
+      expectsOfflineReward: false,
+      liveRateScenario:
+        reference.data.offlineLoadRateCompositionSemantics.scenarios.find(
+          (candidate) =>
+            candidate.name === "upgraded-asteroid-live-planet-coin-rate",
+        ),
+    },
+    {
+      name: "just over the 300-second offline boundary",
+      theme: "light",
+      compareMessagePixels: false,
+      elapsedSeconds: 301,
+      expectsOfflineReward: true,
+      liveRateScenario:
+        reference.data.offlineLoadRateCompositionSemantics.scenarios.find(
+          (candidate) =>
+            candidate.name === "upgraded-asteroid-live-planet-coin-rate",
+        ),
+    },
+    {
       name: "source-captured upgraded Asteroid live rates",
       theme: "light",
       compareMessagePixels: false,
@@ -225,7 +249,7 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
       sourceSave.settings.numberFormatterIndex = 0;
       sourceSave.mineObjectLevel = input.objectId;
       sourceSave.highestMineObjectLevel = input.objectId;
-      sourceSave.lastActive = fixedNowMs - input.elapsedSeconds * 1000;
+      sourceSave.lastActive = fixedNowMs - scenario.elapsedSeconds * 1000;
       sourceSave.pickaxe = {
         ...sourceSave.pickaxe,
         pow: input.pickaxe.power,
@@ -303,9 +327,14 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
           expect(rates.moneyPerSecond.decimal).not.toBe("0");
           expect(rates.gemsPerSecond.decimal).not.toBe("0");
           expect(rates.planetCoinsPerSecond.decimal).not.toBe("0");
-          expect(events[0]?.message).toContain("Planet Coins.");
-          await expect(sourceMessageLog).toContainText(events[0]!.message);
-          await expect(beyondMessageLog).toContainText(events[0]!.message);
+          if (
+            scenario.elapsedSeconds ===
+            scenario.liveRateScenario.input.elapsedSeconds
+          ) {
+            expect(events[0]?.message).toContain("Planet Coins.");
+            await expect(sourceMessageLog).toContainText(events[0]!.message);
+            await expect(beyondMessageLog).toContainText(events[0]!.message);
+          }
         }
       } else {
         await expect(sourceMessageLog).not.toContainText("Welcome back!");
@@ -382,9 +411,7 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
       const beyondExportField = beyondPage.locator(
         "[data-settings-save-field]",
       );
-      await expect(beyondExportField).not.toHaveValue(
-        "Exported String will appear here...",
-      );
+      await expect(beyondExportField).toHaveValue(/.+/);
       const beyondExport = await beyondExportField.inputValue();
       const sourceDecoded = decodeRemixLegacySave(sourceExport);
       const beyondDecoded = decodeRemixLegacySave(beyondExport);
@@ -399,12 +426,35 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
       expect(beyondDecoded.value, scenario.name).toEqual(sourceDecoded.value);
       if (scenario.liveRateScenario) {
         const { stateAfterLoad } = scenario.liveRateScenario;
-        if (testInfo.project.name === "chromium") {
+        if (
+          scenario.elapsedSeconds ===
+          scenario.liveRateScenario.input.elapsedSeconds
+        ) {
+          if (testInfo.project.name === "chromium") {
+            expect(sourceDecoded.value).toMatchObject({
+              money: stateAfterLoad.money.decimal,
+              gems: stateAfterLoad.gems.decimal,
+              planetCoins: stateAfterLoad.planetCoins.decimal,
+            });
+          }
+        } else if (scenario.elapsedSeconds === 300) {
           expect(sourceDecoded.value).toMatchObject({
-            money: stateAfterLoad.money.decimal,
-            gems: stateAfterLoad.gems.decimal,
-            planetCoins: stateAfterLoad.planetCoins.decimal,
+            money: scenario.liveRateScenario.input.initialResources.money,
+            gems: scenario.liveRateScenario.input.initialResources.gems,
+            planetCoins:
+              scenario.liveRateScenario.input.initialResources.planetCoins,
           });
+        } else if (scenario.elapsedSeconds === 301) {
+          const loadedResources = sourceDecoded.value as Record<
+            string,
+            unknown
+          >;
+          expect(loadedResources["money"]).not.toBe(
+            scenario.liveRateScenario.input.initialResources.money,
+          );
+          expect(loadedResources["gems"]).not.toBe(
+            scenario.liveRateScenario.input.initialResources.gems,
+          );
         }
         expect(beyondExport).toBe(sourceExport);
       }
