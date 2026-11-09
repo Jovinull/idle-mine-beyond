@@ -2,6 +2,15 @@
 
 Last updated: 2026-11-09
 
+**Stale Settings-save interleaving (2026-11-09):** the source-paired
+cross-tab E2E covers a newer Blacksmith purchase followed by a stale tab
+changing Number Format and manually saving. Selection alone leaves shared
+storage unchanged; manual Save overwrites it with the stale whole-game state.
+Remix and Beyond match at Blacksmith 0 / 1,000 Money / formatter 3, while
+Beyond backup retains the preceding Blacksmith 1 / 970 Money snapshot. The
+focused Chromium case passed; Firefox and WebKit have a dedicated CI gate.
+Other same-origin action/write interleavings remain open.
+
 **Live four-byte save import (2026-11-09):** pinned Remix generates a canonical
 save with a supplementary-plane pickaxe name. Importing that same string
 through Settings in Remix and Beyond preserves the source's UTF-16 code units

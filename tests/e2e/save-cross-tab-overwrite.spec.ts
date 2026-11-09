@@ -30,7 +30,12 @@ type LegacySave = {
   highestMineObjectLevel: number;
   mineObjectLevel: number;
   lastActive: number;
-  settings: { theme: string; tab: string; upgradeTab?: string };
+  settings: {
+    theme: string;
+    tab: string;
+    upgradeTab?: string;
+    numberFormatterIndex?: number;
+  };
   upgrades: Record<string, { level: number }>;
   gemUpgrades: Record<string, { level: number }>;
   pickaxe: { name: string; pow: string; quality: string };
@@ -39,6 +44,7 @@ type LegacySave = {
 type ObservableLegacySave = {
   money: string;
   gems: string;
+  settings: { numberFormatterIndex?: number };
   upgrades: Record<string, { level: number }>;
   gemUpgrades: Record<string, { level: number }>;
 };
@@ -49,6 +55,11 @@ type ObservableBeyondState = {
     money: Record<string, number>;
     gems: Record<string, number>;
   };
+};
+
+type ObservableBeyondSave = {
+  simulation: ObservableBeyondState;
+  settings: { numberFormatterIndex: number };
 };
 
 const fixedTime = 1_700_000_000_000;
@@ -118,6 +129,28 @@ async function readBeyondState(
     throw new Error(`Expected a valid Beyond v1 save, got ${decoded.status}.`);
   }
   return decoded.save.state.simulation;
+}
+
+async function readBeyondSave(
+  page: Page,
+  key = "IdleMineBeyond",
+): Promise<ObservableBeyondSave> {
+  const serialized = await page.evaluate(
+    (storageKey) => localStorage.getItem(storageKey),
+    key,
+  );
+  if (serialized === null)
+    throw new Error(`The Beyond save slot ${key} is empty.`);
+  const decoded = decodeRemixBeyondSave(serialized);
+  if (decoded.status !== "valid") {
+    throw new Error(`Expected a valid Beyond v1 save, got ${decoded.status}.`);
+  }
+  return {
+    simulation: decoded.save.state.simulation,
+    settings: {
+      numberFormatterIndex: decoded.save.state.settings.numberFormatterIndex,
+    },
+  };
 }
 
 function sourceBlacksmithCard(page: Page) {
@@ -728,6 +761,184 @@ test("two stale tabs save the same upgrade purchase without merging like pinned 
     expect(await page.evaluate(() => localStorage.getItem("IdleMine"))).toBe(
       encodedInitialSave,
     );
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
+test("a stale Settings save overwrites a newer Money purchase like pinned Remix", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90_000);
+  const fixture = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as SaveFixture;
+  const save = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  save.money = "1000";
+  save.highestMoney = "1000";
+  save.settings.theme = "light";
+  save.settings.tab = "main";
+  save.settings.upgradeTab = "money";
+  save.settings.numberFormatterIndex = 0;
+  save.upgrades["blacksmith"] = { level: 0 };
+  save.lastActive = fixedTime;
+  const encodedInitialSave = encodeRemixLegacySave(save);
+
+  const beyondStalePage = await page.context().newPage();
+  const sourceContext = await browser.newContext({
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+  const sourceStalePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    await Promise.all(
+      [page, beyondStalePage, sourcePage, sourceStalePage].map((target) =>
+        target.addInitScript(initializeSharedStorage, {
+          encoded: encodedInitialSave,
+          now: fixedTime,
+        }),
+      ),
+    );
+    await Promise.all([
+      page.goto("/"),
+      beyondStalePage.goto("/"),
+      sourcePage.goto(sourceUrl),
+      sourceStalePage.goto(sourceUrl),
+    ]);
+    await Promise.all([
+      expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready"),
+      expect(beyondStalePage.locator("#app")).toHaveAttribute(
+        "data-app-state",
+        "ready",
+      ),
+      ...[sourcePage, sourceStalePage].map((target) =>
+        target.waitForFunction(() =>
+          Boolean(
+            (window as Window & { game?: unknown }).game &&
+            document.querySelector("#app > footer"),
+          ),
+        ),
+      ),
+    ]);
+
+    const [beyondInitial, remixInitial] = await Promise.all([
+      readBeyondSave(page),
+      sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+    ]);
+    expect(beyondInitial.simulation.upgrades.money["blacksmith"]).toBe(0);
+    expect(remixInitial).toBe(encodedInitialSave);
+
+    const [beyondCard, remixCard] = [
+      page.locator(
+        '[data-upgrade-group="money"][data-upgrade-key="blacksmith"]',
+      ),
+      sourceBlacksmithCard(sourcePage),
+    ];
+    await Promise.all([beyondCard.click(), remixCard.click()]);
+    await Promise.all([
+      expect(beyondCard).toHaveAttribute("data-upgrade-level", "1"),
+      expect(remixCard.locator(".lvl")).toHaveText("1"),
+    ]);
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      page.getByRole("button", { name: "Save" }).click(),
+      sourcePage.getByRole("button", { name: "Save" }).click(),
+    ]);
+
+    const [beyondNewer, remixNewerEncoded] = await Promise.all([
+      readBeyondSave(page),
+      readLegacySlot(sourcePage),
+    ]);
+    const remixNewer = readSaveState(remixNewerEncoded);
+    expect(beyondNewer.simulation.upgrades.money["blacksmith"]).toBe(1);
+    expect(beyondNewer.simulation.resources.money).toBe("970");
+    expect(beyondNewer.simulation.upgrades.money["blacksmith"]).toBe(
+      remixNewer.upgrades["blacksmith"]?.level,
+    );
+    expect(beyondNewer.simulation.resources.money).toBe(remixNewer.money);
+    expect(await readBeyondSave(page, "IdleMineBeyondBackup")).toEqual(
+      beyondInitial,
+    );
+
+    // Selecting a formatter updates each stale tab's local snapshot without
+    // writing it. The later manual Save persists that entire stale snapshot.
+    await Promise.all([
+      beyondStalePage.locator("[data-game-tab='settings']").click(),
+      sourceStalePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      beyondStalePage.locator("article.settings select").selectOption("3"),
+      sourceStalePage
+        .locator("article.settings select")
+        .selectOption({ index: 3 }),
+    ]);
+    await Promise.all([
+      expect(beyondStalePage.locator("article.settings select")).toHaveValue(
+        "3",
+      ),
+      expect(
+        sourceStalePage.locator("article.settings select"),
+      ).toHaveJSProperty("selectedIndex", 3),
+    ]);
+    expect(
+      await sourceStalePage.evaluate(() => localStorage.getItem("IdleMine")),
+    ).toBe(remixNewerEncoded);
+    expect(await readBeyondSave(beyondStalePage)).toEqual(beyondNewer);
+
+    await Promise.all([
+      beyondStalePage.getByRole("button", { name: "Save" }).click(),
+      sourceStalePage.getByRole("button", { name: "Save" }).click(),
+    ]);
+    const [beyondStale, remixStaleEncoded] = await Promise.all([
+      readBeyondSave(beyondStalePage),
+      readLegacySlot(sourceStalePage),
+    ]);
+    const remixStale = readSaveState(remixStaleEncoded);
+    expect(beyondStale.simulation.upgrades.money["blacksmith"]).toBe(0);
+    expect(beyondStale.simulation.resources.money).toBe("1000");
+    expect(beyondStale.settings.numberFormatterIndex).toBe(3);
+    expect(remixStale.upgrades["blacksmith"]?.level).toBe(0);
+    expect(remixStale.money).toBe("1000");
+    expect(remixStale.settings.numberFormatterIndex).toBe(3);
+    expect(beyondStale.simulation.upgrades.money["blacksmith"]).toBe(
+      remixStale.upgrades["blacksmith"]?.level,
+    );
+    expect(beyondStale.simulation.resources.money).toBe(remixStale.money);
+    expect(await readBeyondSave(page)).toEqual(beyondStale);
+    expect(await readBeyondSave(page, "IdleMineBeyondBackup")).toEqual(
+      beyondNewer,
+    );
+
+    // The fresh tab keeps its local purchase after the peer writes its stale
+    // whole-game snapshot to shared storage.
+    await Promise.all([
+      page.locator("footer button").filter({ hasText: "Mining" }).click(),
+      sourcePage.locator("footer button").filter({ hasText: "Mining" }).click(),
+    ]);
+    await expect(beyondCard).toHaveAttribute("data-upgrade-level", "1");
+    await expect(remixCard.locator(".lvl")).toHaveText("1");
   } finally {
     await sourceContext.close().catch(() => undefined);
   }

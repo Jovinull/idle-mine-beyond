@@ -15,6 +15,15 @@ updated tab still shows its local level 1. Both resource orders passed in
 Chromium, Firefox, and WebKit and run in the cross-browser save gate. Other
 action/write interleavings remain open.
 
+**Stale Settings-save interleaving (2026-11-09):** a fresh tab saves Blacksmith
+1 / 970 Money; its stale peer changes Number Format to index 3 and manually
+saves. The setting selection alone leaves shared storage unchanged, while the
+manual save replaces the whole snapshot with Blacksmith 0 / 1,000 Money and
+formatter index 3. Remix and Beyond match, and Beyond's backup retains the
+newer purchase snapshot. The focused case passed in Chromium; Firefox and
+WebKit coverage is in the dedicated CI gate. Other action/write interleavings
+remain open.
+
 **Settings dark Export alternate viewport (2026-11-08):** after changing preferences, saving, and exporting, the live
 pinned-Remix/Beyond Settings comparison now also matches the full 1366x768 screen in dark theme. The focused visual
 spec passed 3/3 in Chromium; other Settings state and viewport combinations remain open.
