@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-09
 
+**Missing `lastActive` Settings import (2026-11-09):** the captured offline save
+with only `lastActive` omitted now has a live pinned-Remix differential. With a
+fixed startup/import clock, both apps grant no offline reward, write no storage,
+and produce identical full exports containing the fallback timestamp. The
+Chromium, Firefox, and WebKit gate is in the offline-import CI step. This
+captures one omitted-timestamp branch only; legacy import and Offline
+progression remain In Progress.
+
 **Interior Gem Waster craft persistence (2026-11-09):** added a pinned
 `functions.craftPick()` transaction for selected level 2, where Money/Gem Gem
 Waster levels 1/2 produce a 10-Gem cost. The live test selects level 2 in both

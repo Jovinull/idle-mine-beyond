@@ -721,6 +721,14 @@ frame-gap differential in Chromium, Firefox, and WebKit. The Chromium
 Neither controlled case proves actual OS/browser background scheduling; that
 environment gap remains open.
 
+The Settings import E2E also removes only `lastActive` from the captured
+offline save. The pinned Remix loader retains the startup state's timestamp,
+which equals the injected clock; source and Beyond then skip rewards and save
+effects. `tests/e2e/offline-progression.spec.ts` verifies unchanged storage,
+absence of offline/save messages, and complete export equality in Chromium,
+Firefox, and WebKit. This assertion covers the captured omitted-timestamp
+branch, not historical-format prevalence.
+
 Elapsed magnitudes outside the sampled values remain non-exhaustive, qualified
 formula coverage. The browser differentials cover capped positive elapsed time,
 a negative elapsed boundary, an advancing inter-read startup clock, and a
