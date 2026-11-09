@@ -7,8 +7,9 @@ live pinned-Remix persistence differential to exact-price purchases using
 Money, Gems, Planet Coins, and Wisdom. Storage stays unchanged after each
 purchase and through exactly 60,000 ms; at 60,001 ms both runtimes save all
 four purchases, with byte-identical complete Settings exports. Chromium,
-Firefox, and WebKit passed (6/6); the existing single-Blacksmith loss and
-autosave cases also remain green.
+Firefox, and WebKit passed (6/6). Both apps then reload all four zero balances
+and level-one upgrades from that saved state. The earlier single-Blacksmith
+loss and autosave cases also remain green.
 
 **Unicode Settings import no-write assertion corrected (2026-11-09):** CI run
 42700034705 for `d65162c` failed because the live four-byte-name test expected

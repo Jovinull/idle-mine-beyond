@@ -374,10 +374,13 @@ test("autosaves exact-price purchases from all four resource families together",
     return {
       ...purchase,
       ...upgrade,
+      captureName: purchase.name,
     };
   });
   const priceFor = (name: string) => {
-    const purchase = purchases.find((candidate) => candidate.name === name);
+    const purchase = purchases.find(
+      (candidate) => candidate.captureName === name,
+    );
     if (!purchase)
       throw new Error(`Pinned purchase capture is missing: ${name}`);
     return purchase.currentPrice.decimal;
@@ -440,8 +443,11 @@ test("autosaves exact-price purchases from all four resource families together",
     encoded: string;
     now: number;
   }) => {
-    localStorage.clear();
-    localStorage.setItem("IdleMine", encoded);
+    if (sessionStorage.getItem("__upgradeAutosaveSeeded") !== "true") {
+      localStorage.clear();
+      localStorage.setItem("IdleMine", encoded);
+      sessionStorage.setItem("__upgradeAutosaveSeeded", "true");
+    }
     let currentTime = now;
     Object.defineProperty(window, "__upgradeAutosaveNow", {
       configurable: false,
@@ -625,6 +631,70 @@ test("autosaves exact-price purchases from all four resource families together",
       gemUpgrades: { offlineGems: { level: 1 } },
       planetCoinUpgrades: { activePower: { level: 1 } },
       powers: { upgrades: { gemBoostSimple: { level: 1 } } },
+    });
+
+    await Promise.all([page.reload(), sourcePage.reload()]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean((window as Window & { game?: unknown }).game),
+    );
+    await Promise.all([
+      page.locator('[data-game-tab="settings"]').click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      page.locator("[data-settings-export]").click(),
+      sourcePage.getByRole("button", { name: "Export" }).click(),
+    ]);
+    const [reloadedBeyondExport, reloadedSourceExport] = await Promise.all([
+      page.locator("[data-settings-save-field]").inputValue(),
+      sourcePage.locator("article.settings textarea").inputValue(),
+    ]);
+    const readReloadedPurchaseState = (target: typeof page, encoded: string) =>
+      target.evaluate((saveString) => {
+        const decoded = JSON.parse(
+          unescape(decodeURIComponent(atob(saveString))),
+        ) as {
+          money: string;
+          gems: string;
+          planetCoins: string;
+          wisdom: string;
+          upgrades: Record<string, { level: number }>;
+          gemUpgrades: Record<string, { level: number }>;
+          planetCoinUpgrades: Record<string, { level: number }>;
+          powers: { upgrades: Record<string, { level: number }> };
+        };
+        return {
+          money: decoded.money,
+          gems: decoded.gems,
+          planetCoins: decoded.planetCoins,
+          wisdom: decoded.wisdom,
+          moneyUpgrade: decoded.upgrades["activePower"]?.level,
+          gemUpgrade: decoded.gemUpgrades["offlineGems"]?.level,
+          planetCoinUpgrade: decoded.planetCoinUpgrades["activePower"]?.level,
+          wisdomUpgrade: decoded.powers.upgrades["gemBoostSimple"]?.level,
+        };
+      }, encoded);
+    const [reloadedBeyondState, reloadedSourceState] = await Promise.all([
+      readReloadedPurchaseState(page, reloadedBeyondExport),
+      readReloadedPurchaseState(sourcePage, reloadedSourceExport),
+    ]);
+    expect(reloadedBeyondState).toEqual(reloadedSourceState);
+    expect(reloadedBeyondState).toEqual({
+      money: "0",
+      gems: "0",
+      planetCoins: "0",
+      wisdom: "0",
+      moneyUpgrade: 1,
+      gemUpgrade: 1,
+      planetCoinUpgrade: 1,
+      wisdomUpgrade: 1,
     });
   } finally {
     await sourceContext.close().catch(() => undefined);

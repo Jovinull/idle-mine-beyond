@@ -253,7 +253,7 @@ paths have source-backed assertions.
 The source save/export branches above are covered. A live Planet Coin drop
 export extends runtime evidence to one post-mining state in Chromium, Firefox,
 and WebKit in both themes. Arbitrary valid runtime states and other post-mining
-states remain outside the finite fixture domain.
+states remain outside the finite fixture domain. The four-resource autosave case in `tests/e2e/upgrade-persistence-window.spec.ts` also reloads both apps and verifies the saved balances and upgrades in Chromium, Firefox, and WebKit.
 
 **Upgrade purchase autosave integration (2026-11-09):** the
 `Upgrade.buy`/`main.js:update` E2E now covers captured exact-price Money, Gem,
