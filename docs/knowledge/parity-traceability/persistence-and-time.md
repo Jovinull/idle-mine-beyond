@@ -741,10 +741,12 @@ dynamic save combinations remain open.
 `tests/e2e/legacy-save-unicode-import.spec.ts` changes the pickaxe name in the
 pinned live Remix runtime to `Pickaxe 🚀`, captures
 `Scripts/Define/functions.js:getSaveString()`, and submits that canonical input
-through `loadGame()` via Settings in Remix and Beyond. It checks the
-source-decoded UTF-16 units in both persisted states, then compares the
-complete decoded Settings exports and exact encoded strings. The functional
-case passes in Chromium, Firefox, and WebKit. The source's first import keeps
-the four UTF-8 bytes as four code units; the next export applies canonical UTF-8
+through `loadGame()` via Settings in Remix and Beyond. With the import clock
+equal to the save's `lastActive`, both loaders take the no-offline-effect path
+and leave storage empty. The test reads the source's live state and Beyond's
+visible pickaxe name, compares their UTF-16 units, then compares complete
+decoded Settings exports and exact encoded strings. The functional case passes
+in Chromium, Firefox, and WebKit. The source's first import keeps the four
+UTF-8 bytes as four code units; the next export applies canonical UTF-8
 encoding to those units again. This is one valid current-save shape, not a
 historical-schema claim.

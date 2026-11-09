@@ -2,6 +2,15 @@
 
 Last updated: 2026-11-09
 
+**Unicode Settings import no-write assertion corrected (2026-11-09):** CI run
+42700034705 for `d65162c` failed because the live four-byte-name test expected
+a stored Beyond save even though the controlled import is recent and Remix
+does not save below the strict 300-second offline threshold. The test now
+checks that both runtimes leave storage empty, compares the visible Beyond
+pickaxe name with Remix's live UTF-16 units, and still compares full exports.
+The focused Chromium, Firefox, and WebKit gate passes locally; this correction
+is in the local worktree and has not run in GitHub Actions yet.
+
 **Stale Hard Reset clears a newer shared save (2026-11-09):** after a fresh
 same-origin tab saves Blacksmith 1 / 970 Money, a stale tab confirms Hard Reset.
 Pinned Remix clears localStorage in both tabs while the fresh tab retains its

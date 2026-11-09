@@ -64,20 +64,25 @@ test("matches the live Settings import of a canonical four-byte name", async ({
       .getByRole("button", { name: "Import (from Text Field)" })
       .click();
 
-    await expect
-      .poll(() => page.evaluate(() => localStorage.getItem("IdleMineBeyond")))
-      .not.toBeNull();
-    const beyondImportedNameCodeUnits = await page.evaluate(() => {
-      const raw = localStorage.getItem("IdleMineBeyond");
-      if (!raw) throw new Error("Imported Beyond save was not persisted.");
-      const saved = JSON.parse(raw) as {
-        state: { simulation: { pickaxe: { name: string } } };
-      };
-      const name = saved.state.simulation.pickaxe.name;
-      return Array.from({ length: name.length }, (_, index) =>
-        name.charCodeAt(index),
-      );
-    });
+    expect(
+      await page.evaluate(() => Object.keys(localStorage)),
+      "a recent manual Settings import does not save when Remix emits no save effect",
+    ).toEqual([]);
+    expect(await sourcePage.evaluate(() => Object.keys(localStorage))).toEqual(
+      [],
+    );
+    await page.locator("[data-game-tab='mining']").click();
+    const beyondImportedNameCodeUnits = await page
+      .locator(".stats > div")
+      .first()
+      .locator("p")
+      .first()
+      .evaluate((paragraph) => {
+        const name = paragraph.textContent?.trim() ?? "";
+        return Array.from({ length: name.length }, (_, index) =>
+          name.charCodeAt(index),
+        );
+      });
     const initialNameCodeUnits = [
       ...Array.from("Pickaxe ", (character) => character.charCodeAt(0)),
       0xf0,
@@ -88,6 +93,7 @@ test("matches the live Settings import of a canonical four-byte name", async ({
     expect(sourceImportedNameCodeUnits).toEqual(initialNameCodeUnits);
     expect(beyondImportedNameCodeUnits).toEqual(sourceImportedNameCodeUnits);
 
+    await page.locator("[data-game-tab='settings']").click();
     await sourceSettings
       .locator("button")
       .filter({ hasText: "Export" })
