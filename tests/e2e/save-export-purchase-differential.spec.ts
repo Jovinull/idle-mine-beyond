@@ -54,8 +54,10 @@ type ReferenceCorpus = {
 type LegacySave = {
   lastActive: number;
   money: string;
+  highestMoney: string;
   gems: string;
   planetCoins: string;
+  maxPlanetCoins: string;
   maxWisdom: string;
   wisdom: string;
   mineObjectLevel: number;
@@ -520,11 +522,11 @@ test("exports the live save after the Wisdom purchase in dark theme", async ({
   );
 });
 
-test("exports the full live save after purchasing all seven Wisdom upgrades", async ({
+test("exports the full live save after purchasing all 29 upgrades", async ({
   browser,
   page,
 }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(300_000);
   const corpus = JSON.parse(
     await readFile(
       new URL(
@@ -541,10 +543,26 @@ test("exports the full live save after purchasing all seven Wisdom upgrades", as
   sourceSave.highestMineObjectLevel = 170;
   sourceSave.mineObjectLevel = 170;
   sourceSave.lastActive = fixedTime;
-  sourceSave.wisdom = "1e100000000";
+  sourceSave.money = "1e10";
+  sourceSave.highestMoney = sourceSave.money;
+  sourceSave.gems = "1e6";
+  sourceSave.planetCoins = "1e20";
+  sourceSave.maxPlanetCoins = sourceSave.planetCoins;
+  sourceSave.wisdom = "1e150";
   sourceSave.maxWisdom = sourceSave.wisdom;
   sourceSave.settings.tab = "main";
   sourceSave.settings.theme = "light";
+  for (const group of ["money", "gems", "planetCoins"] as const) {
+    const levels = Object.fromEntries(
+      Object.keys(corpus.data.upgradeSemantics.groups[group]).map((key) => [
+        key,
+        { level: 0 },
+      ]),
+    );
+    if (group === "money") sourceSave.upgrades = levels;
+    else if (group === "gems") sourceSave.gemUpgrades = levels;
+    else sourceSave.planetCoinUpgrades = levels;
+  }
   sourceSave.powers.data.values = ["1", "1", "1", "1", "1"];
   sourceSave.powers.upgrades = Object.fromEntries(
     Object.keys(wisdomUpgrades).map((key) => [key, { level: 0 }]),
@@ -584,6 +602,59 @@ test("exports the full live save after purchasing all seven Wisdom upgrades", as
     await sourcePage.waitForFunction(() =>
       Boolean((window as Window & { game?: unknown }).game),
     );
+    const shopGroups = ["money", "gems", "planetCoins"] as const;
+    for (const group of shopGroups) {
+      if (group !== "money") {
+        await Promise.all([
+          page.locator(`[data-upgrade-tab="${group}"]`).click(),
+          sourcePage
+            .locator(".upg-tabs button")
+            .filter({ hasText: groupLabels[group] })
+            .click(),
+        ]);
+      }
+      for (const [key, upgrade] of Object.entries(
+        corpus.data.upgradeSemantics.groups[group],
+      )) {
+        const imageName = upgrade.image.split("/").at(-1);
+        if (!imageName)
+          throw new Error(`Missing upgrade image for ${group}.${key}.`);
+        const beyondCard = page.locator(
+          `[data-upgrade-group="${group}"][data-upgrade-key="${key}"]`,
+        );
+        const sourceCard = sourcePage
+          .locator(".upgradelist .upgrade")
+          .filter({ has: sourcePage.locator(`img[src$="${imageName}"]`) })
+          .first();
+        await Promise.all([beyondCard.click(), sourceCard.click()]);
+        await expect(beyondCard).toHaveAttribute("data-upgrade-level", "1");
+        const sourceLevel = await sourcePage.evaluate(
+          ({ group, key }) => {
+            const game = (
+              window as Window & {
+                game?: {
+                  upgrades: Record<string, { level: number }>;
+                  gemUpgrades: Record<string, { level: number }>;
+                  planetCoinUpgrades: Record<string, { level: number }>;
+                };
+              }
+            ).game;
+            if (!game)
+              throw new Error("Pinned Remix game state is unavailable.");
+            const levels =
+              group === "money"
+                ? game.upgrades
+                : group === "gems"
+                  ? game.gemUpgrades
+                  : game.planetCoinUpgrades;
+            return levels[key]!.level;
+          },
+          { group, key },
+        );
+        expect(sourceLevel).toBe(1);
+      }
+    }
+
     await Promise.all([
       page.locator("[data-game-tab='powers']").click(),
       sourcePage.locator("footer button").filter({ hasText: "Powers" }).click(),
@@ -596,8 +667,10 @@ test("exports the full live save after purchasing all seven Wisdom upgrades", as
         .filter({ hasText: upgrade.name })
         .first();
       await Promise.all([beyondCard.click(), sourceCard.click()]);
-      await expect(beyondCard).toHaveAttribute("data-upgrade-level", "1");
-      await expect(sourceCard).toContainText("1");
+      await Promise.all([
+        expect(beyondCard).toHaveAttribute("data-upgrade-level", "1"),
+        expect(sourceCard).toContainText("1"),
+      ]);
     }
 
     const [beyondLevels, sourceLevels] = await Promise.all([
@@ -624,7 +697,7 @@ test("exports the full live save after purchasing all seven Wisdom upgrades", as
         return keys.map((key) => game.powers.upgrades[key]!.level);
       }, Object.keys(wisdomUpgrades)),
     ]);
-    expect(beyondLevels).toEqual([1, 1, 1, 1, 1, 1, 1]);
+    expect(beyondLevels).toEqual(Array(7).fill(1));
     expect(beyondLevels).toEqual(sourceLevels);
 
     await Promise.all([
@@ -657,7 +730,7 @@ test("exports the full live save after purchasing all seven Wisdom upgrades", as
     ]);
     expect(
       findDifferences(beyondValue, sourceValue),
-      "complete decoded saves after all seven Wisdom purchases",
+      "complete decoded saves after all 29 upgrade purchases",
     ).toEqual([]);
     expect(beyondExport).toBe(sourceExport);
   } finally {

@@ -226,7 +226,7 @@ paths have source-backed assertions.
   The varied all-group live export matches in all three browsers; four
   resource-family purchases and four captured bulk-purchase exports (Money
   buy10/buy100 plus Gem and Planet Coin buy10) match in Chromium, Firefox, and
-  WebKit. The complete seven-Wisdom-purchase state also exports identically in
+  WebKit. The complete 29-upgrade purchase state also exports identically in
   all three browsers. Other levels, alignments, and runtime exports remain
   unverified.
 
@@ -645,14 +645,13 @@ tests/e2e/legacy-save-historical-shape.spec.ts imports the checked-in synthetic 
 
 **Source-paired export differential (2026-11-07):** the same E2E routes the synthetic shape through the Settings import in pinned Remix and Beyond, then exports from both Settings panels and asserts exact encoded-string equality. This exercises the live legacy import-to-export path for the one specimen.
 
-**Seven-Wisdom live export differential (2026-11-09):** the E2E starts from a
-controlled source save with Wisdom unlocked, funds it with the captured
-high-magnitude Decimal input, and sets all seven standalone upgrade levels to
-zero. It performs one live purchase for each card in pinned Remix and Beyond,
-checks all seven levels, then exports through both Settings panels and compares
-the complete decoded objects and exact encoded bytes. Chromium, Firefox, and
-WebKit pass. This extends the existing single Simple Gem Boost purchase export
-to the seven-card combined state; other dynamic save combinations remain open.
+**Complete all-upgrade live export differential (2026-11-09):** the E2E starts
+from a controlled source save, sets all 29 Money, Gem, Planet Coin, and Wisdom
+upgrade levels to zero, and gives each currency a balance above the highest
+level-zero price in its group. It performs one live purchase for every card in pinned
+Remix and Beyond, checks all resulting levels, then compares complete Settings
+export objects and encoded bytes. Chromium, Firefox, and WebKit pass. Other
+dynamic save combinations remain open.
 
 ### Live canonical Unicode-name import (2026-11-09)
 
