@@ -371,7 +371,7 @@ it("composes Remix clicks, idle frames, saves, and Story notifications", () => {
 
 it("composes all captured Remix upgrade purchases into full simulation state", () => {
   const scenarios = corpus.data.upgradeSemantics.purchaseSemantics;
-  expect(scenarios).toHaveLength(20);
+  expect(scenarios).toHaveLength(21);
 
   for (const scenario of scenarios) {
     const state = createInitialRemixSimulationState(

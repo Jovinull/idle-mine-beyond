@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-09
 
+**Shift bulk purchase stops at affordability (2026-11-09):** the pinned Remix
+fixture captures Active Power level 2 with 28,000 Money. Shift buys exactly
+three levels (4,000 + 8,000 + 16,000), ends at level 5 with zero Money, and
+stops before the next aligned level 10. The live Remix/Beyond action and full
+Settings exports match in Chromium, Firefox, and WebKit. Other partial-bulk
+resource and starting-level combinations remain open.
+
 **Stale successful craft save (2026-11-09):** after fresh tabs save Blacksmith
 1 / 970 Money, a stale tab performs a stronger one-Gem craft. The pinned Remix
 `craftPick` saves the stale whole-game state after replacing the pickaxe, so it

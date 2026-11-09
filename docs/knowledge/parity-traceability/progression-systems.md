@@ -156,6 +156,14 @@ between Chromium and WebKit.
 | `Scripts/Define/game.js:getEffectDisplay`: capped current value versus below-cap current-to-next value after the other Gem Waster effect                                                 | `upgradeSemantics.groups.money.gemWaster.samples[*].effectDisplay` captures the levels and resulting text                                          | `tests/parity/remix-upgrade-display.test.ts` compares the captured strings at ordinary and cap samples                                                                                                                                                                                                                                                                                                                                                                   |
 | `Scripts/Define/game.js` per-upgrade price/effect/max-level formulas and cross-upgrade reads                                                                                             | 249 source samples, all 29 definitions, finite caps, and nine interaction states                                                                   | `tests/parity/upgrades.test.ts` compares named formulas/effects/caps and interaction outputs                                                                                                                                                                                                                                                                                                                                                                             |
 
+**Live bulk affordability-stop differential (2026-11-09):** `Upgrade.buy10`
+and `Upgrade.buyN` are source-captured at Active Power level 2 with 28,000
+Money. A real Shift click performs three purchases, stops at level 5 with zero
+Money before aligned level 10, and matches the pinned Remix complete Settings
+export in Chromium, Firefox, and WebKit. The source fixture is
+`buy10-stops-before-alignment-on-affordability`; the asserting test is
+`tests/e2e/save-export-purchase-differential.spec.ts`.
+
 - **Sampled (qualified):** formula/effect values are not captured for every
   non-negative level or cross-upgrade combination. Each pinned formula, finite
   cap/softcap, and reachable purchase branch has source-backed cases in the

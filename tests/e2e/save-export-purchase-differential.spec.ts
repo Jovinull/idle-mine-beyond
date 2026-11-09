@@ -24,6 +24,7 @@ type PurchaseCapture = {
   currentPrice: DecimalCapture;
   startingLevel: number;
   endingLevel: number;
+  purchases: number;
   operation: { method: "buy" | "buy10" | "buy100" };
   startingResources: {
     money: DecimalCapture;
@@ -252,6 +253,19 @@ async function comparePurchaseExport(
       startingResources: {
         money: { decimal: "6.3382530011411475e+32" },
       },
+      endingResources: { money: { decimal: "0" } },
+    });
+  }
+  if (purchaseName === "buy10-stops-before-alignment-on-affordability") {
+    expect(purchase).toMatchObject({
+      group: "money",
+      key: "activePower",
+      startingLevel: 2,
+      endingLevel: 5,
+      purchases: 3,
+      operation: { method: "buy10" },
+      startingResources: { money: { decimal: "28000" } },
+      currentPrice: { decimal: "4000" },
       endingResources: { money: { decimal: "0" } },
     });
   }
@@ -576,6 +590,7 @@ for (const purchaseName of [
   "buy100-from-zero-aligns-through-level-one-hundred",
   "buy10-aligns-current-level",
   "buy100-aligns-current-level",
+  "buy10-stops-before-alignment-on-affordability",
 ]) {
   test(`exports the live save after ${purchaseName}`, async ({
     browser,

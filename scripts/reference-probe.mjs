@@ -6232,6 +6232,14 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 operation: { method: "buy100" },
               },
               {
+                name: "buy10-stops-before-alignment-on-affordability",
+                group: "money",
+                key: "activePower",
+                level: 2,
+                balance: "28000",
+                operation: { method: "buy10" },
+              },
+              {
                 name: "buy10-aligns-current-level",
                 group: "money",
                 key: "activePower",
