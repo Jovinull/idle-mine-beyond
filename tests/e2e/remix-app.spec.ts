@@ -1,7 +1,13 @@
 import { expect, test } from "@playwright/test";
 import { readFile } from "node:fs/promises";
-import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
-import { createFreshBeyondVisualSave } from "./visual-state.js";
+import {
+  decodeRemixLegacySave,
+  encodeRemixLegacySave,
+} from "../../packages/persistence/src/remix-save-codec.js";
+import {
+  createBeyondVisualSaveFromRemixSave,
+  createFreshBeyondVisualSave,
+} from "./visual-state.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
 type StoryRuntimeFixture = {
@@ -3498,6 +3504,79 @@ test("exports damaged save slots before recovering from a supplied Remix save", 
   expect(await page.evaluate(() => localStorage.getItem("IdleMine"))).toBe(
     "legacy-slot-is-preserved",
   );
+});
+
+test("loads the valid stored backup at startup when the primary is invalid", async ({
+  page,
+}) => {
+  const reference = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as SettingsRuntimeFixture;
+  const nowMs = 1_700_000_000_000;
+  const sourceSave = JSON.parse(
+    reference.data.saveApplicationSemantics.inputJson,
+  ) as {
+    lastActive: number;
+    mineObjectLevel: number;
+    settings: { theme: string };
+  };
+  sourceSave.lastActive = nowMs;
+  sourceSave.settings.theme = "dark";
+  const encodedLegacy = encodeRemixLegacySave(sourceSave);
+  const encodedBackup = await createBeyondVisualSaveFromRemixSave({
+    clockMs: nowMs,
+    theme: "dark",
+    tab: "settings",
+    saveString: encodedLegacy,
+  });
+  await page.addInitScript(
+    ({ encodedBackup: backup }) => {
+      localStorage.clear();
+      localStorage.setItem("IdleMineBeyond", "damaged-primary");
+      localStorage.setItem("IdleMineBeyondBackup", backup);
+      localStorage.setItem("IdleMine", "legacy-slot-must-not-be-used");
+      Date.now = () => 1_700_000_000_000;
+    },
+    { encodedBackup },
+  );
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+
+  await expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready");
+  await expect(page.locator("body")).toHaveAttribute("data-theme", "dark");
+  await page.locator("[data-game-tab='settings']").click();
+  await page.locator("[data-settings-export]").click();
+  const exported = await page
+    .locator("[data-settings-save-field]")
+    .inputValue();
+  const decoded = decodeRemixLegacySave(exported);
+  expect(decoded.status).toBe("success");
+  if (decoded.status !== "success") {
+    throw new Error("The startup backup export did not decode.");
+  }
+  expect(decoded.value).toMatchObject({
+    money: reference.data.saveApplicationSemantics.resources.money.decimal,
+    mineObjectLevel: sourceSave.mineObjectLevel,
+    lastActive: nowMs,
+    settings: { theme: "dark" },
+  });
+  expect(
+    await page.evaluate(() => ({
+      primary: localStorage.getItem("IdleMineBeyond"),
+      backup: localStorage.getItem("IdleMineBeyondBackup"),
+      legacy: localStorage.getItem("IdleMine"),
+    })),
+  ).toEqual({
+    primary: "damaged-primary",
+    backup: encodedBackup,
+    legacy: "legacy-slot-must-not-be-used",
+  });
 });
 
 test("recovers a Beyond save from a selected recovery bundle after acknowledgement", async ({

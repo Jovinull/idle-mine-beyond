@@ -233,6 +233,15 @@ The package also defines a strict, versioned Beyond v1 JSON envelope. It stores 
 
 **Recovery-bundle browser differential (2026-11-08):** the live `remix-app.spec.ts` flow now runs in Chromium, Firefox, and WebKit. It loads the captured valid backup from a selected bundle, confirms the import stays disabled until acknowledgement, and checks the restored Beyond v1 save plus unchanged legacy key. Firefox and WebKit use `test:e2e:recovery-file:browsers`.
 
+**Stored-backup startup restore (2026-11-09):** a browser E2E seeds a damaged
+Beyond primary, a valid Beyond backup derived from a captured legacy save, and
+a conflicting legacy key. Startup loads the backup rather than entering
+recovery or migrating the legacy value. With its timestamp equal to the fixed
+clock, there is no offline save effect, so all three storage slots remain
+unchanged. The case is included in the Firefox/WebKit recovery-file gate. This
+verifies that selected startup branch; backup corruption and offline-write
+branches remain covered separately.
+
 `loadRemixBeyondSaveIntoState()` restores a v1 save, runs the same source-backed offline action with an injected clock and selected formatter, and dispatches the theme before offline effects. If rewards are applied, it writes the full post-reward state before dispatching `Game Saved!`. Its controlled load reuses `saveOfflineApplicationSemantics` and matches the captured resources, message, four clock reads, storage order, and timestamp. `createRemixWebGameSession()` invokes this loader at startup and routes simulation save effects through the browser adapter. Its action queue preserves transition/write/effect order and supports explicit legacy-save recovery after startup enters recovery. Standalone Beyond recovery files use the same offline transition and persistence coordinator, and only transition the session to ready after a successful write. The coordinator powers route startup, mining frames, Story state, upgrade purchases, crafting, Settings, Powers, and recovery; native WebView runtime certification remains open.
 
 Additional controlled source cases distinguish an absent group from a present-but-empty group and capture the failure order for empty Base64, invalid Base64, invalid percent escapes, Base64 containing invalid JSON, and a parsed save without `story`. Separate source cases confirm that `atob` accepts ASCII whitespace and omitted Base64 padding. See `saveSemantics.emptyPresentGroups`, `saveSemantics.base64Variants`, and `saveSemantics.loadErrors`; these are representative branches, not a complete historical-save or recovery catalog. The Settings import E2E compares the pinned Chromium decode-error names/messages, alert strings, subsequent parse errors, and no-write result for all eleven captured load-error cases.

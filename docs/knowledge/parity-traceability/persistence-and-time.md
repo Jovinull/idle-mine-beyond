@@ -560,6 +560,13 @@ The complete focused Chromium file passes 2/2. The assertion maps the real
 browser failure to the coordinator's existing backup-write failure branch; it
 does not expand coverage to other browser quota policies.
 
+The browser startup E2E now complements the storage selector's unit case for a
+damaged primary with a valid backup. It restores a source-derived Beyond v1
+state, ignores a conflicting legacy slot, and asserts that primary, backup,
+and legacy storage remain unchanged when the fixed clock yields no offline
+save effect. `tests/e2e/remix-app.spec.ts` covers this path in Chromium,
+Firefox, and WebKit through `test:e2e:recovery-file:browsers`.
+
 ## Native save adapter
 
 - **Remix source:** no native storage adapter exists in Remix; its observable

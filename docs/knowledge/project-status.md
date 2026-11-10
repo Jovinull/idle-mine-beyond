@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-09
 
+**Startup restore from a valid Beyond backup (2026-11-09):** a browser E2E
+now starts with a damaged primary, valid captured backup, and a conflicting
+legacy slot. It verifies startup selects the backup, restores its captured
+Money/progress and dark theme, and leaves every slot unchanged when offline
+elapsed time is zero. Chromium passed locally; the Firefox/WebKit recovery-file
+gate includes the case for CI. Beyond save storage and recovery remains In
+Progress.
+
 **Missing `lastActive` Settings import (2026-11-09):** the captured offline save
 with only `lastActive` omitted now has a live pinned-Remix differential. With a
 fixed startup/import clock, both apps grant no offline reward, write no storage,
