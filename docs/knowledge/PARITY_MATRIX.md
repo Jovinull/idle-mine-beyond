@@ -566,6 +566,13 @@ Pickaxe strict-replacement boundary (2026-11-07): the reference fixture now capt
 
 **Live canonical Unicode-name import (2026-11-09):** a pinned Remix save with `Pickaxe 🚀` now goes through the live Settings import in Remix and Beyond. The imported UTF-16 code units corresponding to its four UTF-8 bytes and complete re-export bytes/objects match in Chromium, Firefox, and WebKit (3/3); this selected current-save case does not close other historical formats or input shapes.
 
+**Generated long save-input sample (2026-11-10):** a fixed-seed fixture adds
+64 quote-wrapped external byte strings from 5 to 96 bytes. The pinned decoder
+expression and Beyond agree on 14 valid JSON strings, 18 invalid JSON inputs,
+and 32 invalid UTF-8 inputs in Chromium, Firefox, and WebKit (192 comparisons).
+This sample narrows but does not close the arbitrary-input or historical-save
+scope; Save encoding and shape remains In Progress.
+
 **Shop level-two raster diagnostic (2026-11-08):** live Windows Chromium reproduced the dark Planet Coins 1440x900 full-screen mismatch at (810,152) (Remix (4,4,4), Beyond (3,3,3)), while all card/detail captures and all 477 affected-card computed styles matched. Removing border radius from only the second card in both pages made the diagnostic full-screen hashes equal. This isolates the differing pixel to rounded-corner rasterization; the normal strict comparison remains open without masks or tolerances.
 
 **Single successful craft export (2026-11-08):** the captured `better-craft-replaces-and-saves` source case has a separate functional differential in Firefox and WebKit, comparing success feedback, equipped pickaxe, RNG draw count, and the complete byte-identical Settings export plus decoded saved replacement. The selected-level craft case is recorded above and runs in all three engines. The strict WebKit screenshot comparison still has a raster mismatch and remains open; no visual parity is claimed by the functional checks.

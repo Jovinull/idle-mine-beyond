@@ -2,6 +2,16 @@
 
 Last updated: 2026-11-10
 
+**Generated external save-byte sample (2026-11-10):** added a pinned-seed
+sample of 64 URI-wrapped byte strings from 5 to 96 bytes to the Remix codec
+differential. Printable ASCII and full-range byte sequences produce 14 valid
+JSON strings, 18 invalid JSON results, and 32 invalid UTF-8 results from the
+pinned decoder expression; Beyond matches in Chromium, Firefox, and WebKit
+(192 comparisons). The sample hash is recorded in
+`tests/fixtures/parity/remix-save-external-byte-sample.json`. Longer input
+spaces and historical save formats remain open; Save encoding and shape stays
+In Progress.
+
 **Mining-drop save/reload differential (2026-11-10):** four captured mining
 outcomes (failed Gem then Planet Coin, Gem award, Wisdom scaling, and Wisdom
 with active Power of Mining) now compare manual Save and page reloads in

@@ -1,5 +1,15 @@
 # Saves, time, and offline progression
 
+**Deterministic long save-input sample (2026-11-10):**
+`tests/fixtures/parity/remix-save-external-byte-sample.json` records a
+xorshift32 seed and hash for 64 quote-wrapped byte strings, each 5–96 bytes.
+The test compares the pinned `loadGame()` decoder expression
+(`atob` → `decodeURIComponent` → `unescape` → JSON parse) with Beyond in
+Chromium, Firefox, and WebKit. The fixed sample produces 14 successful JSON
+strings, 18 invalid JSON outcomes, and 32 invalid UTF-8 outcomes per browser;
+all results match. Arbitrary long input and historical save formats remain
+open.
+
 **Mining-drop save/reload (2026-11-10):** four source-captured live mining
 outcomes are manually saved and reloaded in both themes. Gems, Planet Coins,
 Wisdom, Power of Mining, and other persisted fields match pinned Remix in
