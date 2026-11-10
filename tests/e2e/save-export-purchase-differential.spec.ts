@@ -343,6 +343,22 @@ async function comparePurchaseExport(
       endingResources: { wisdom: { decimal: "99999999990000000000" } },
     });
   }
+  if (
+    purchaseName ===
+    "buy10-wisdom-power-power-active-buys-two-stops-on-affordability"
+  ) {
+    expect(purchase).toMatchObject({
+      group: "wisdom",
+      key: "powerPowerActive",
+      startingLevel: 0,
+      endingLevel: 2,
+      purchases: 2,
+      operation: { method: "buy10" },
+      startingResources: { wisdom: { decimal: "1001" } },
+      currentPrice: { decimal: "1" },
+      endingResources: { wisdom: { decimal: "0" } },
+    });
+  }
   if (purchaseName === "buy100-wisdom-power-power-active-from-zero") {
     expect(purchase).toMatchObject({
       group: "wisdom",
@@ -709,6 +725,7 @@ for (const purchaseName of [
   "buy10-gem-multiplier-stops-before-alignment-on-affordability",
   "buy10-planet-coin-gem-multiplier-stops-before-alignment-on-affordability",
   "buy10-wisdom-simple-gem-boost-stops-before-alignment-on-affordability",
+  "buy10-wisdom-power-power-active-buys-two-stops-on-affordability",
   "buy100-wisdom-power-power-active-from-zero",
 ]) {
   test(`exports the live save after ${purchaseName}`, async ({

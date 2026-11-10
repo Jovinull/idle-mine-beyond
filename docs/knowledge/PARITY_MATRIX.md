@@ -1,5 +1,12 @@
 # Parity matrix
 
+**Wisdom bulk purchase stops on affordability (2026-11-10):** the live
+Power Power (Active) `buy10` starts at level 0 with 1001 Wisdom, buys levels
+0→1 and 1→2, then stops before the next unaffordable price. The full decoded
+Settings export and encoded bytes match pinned Remix in Chromium, Firefox,
+and WebKit. The Wisdom/Powers row remains In Progress for other balances,
+prestige inputs, and render states.
+
 **Long external save-input sample (2026-11-10):** the fixed-seed differential
 now covers 64 quote-wrapped strings sampled from 97–4096 bytes (actual lengths
 119–4069) in Chromium, Firefox, and WebKit. Remix and Beyond match all 32

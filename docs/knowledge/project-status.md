@@ -2,6 +2,11 @@
 
 Last updated: 2026-11-10
 
+**Wisdom bulk affordability export (2026-11-10):** added the live
+Power Power (Active) Shift purchase with 1001 Wisdom. Remix and Beyond buy two
+levels, stop when the next costs more than the remaining balance, and produce
+identical complete Settings exports in Chromium, Firefox, and WebKit.
+
 **Long external save-input sample (2026-11-10):** expanded the deterministic
 source-paired decoder sample from 5–96 bytes to 64 cases in the configured
 97–4096 range (actual generated lengths 119–4069). Remix and Beyond match
