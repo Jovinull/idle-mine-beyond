@@ -2,6 +2,17 @@
 
 Last updated: 2026-11-10
 
+**Offline live-rate cold starts at Mud and the last object (2026-11-10):**
+extended the pinned-Remix/Beyond cold-start differential to the remaining
+captured live-rate compositions. Fresh initial-upgrade state at Mud now matches
+the money-only welcome message and complete save; the last-damageable-object
+state matches its Money+Gem message with no Planet Coin reward. The five
+captured `offlineLoadRateCompositionSemantics` states are now source-paired in
+Chromium, Firefox, and WebKit. Their inputs use Remix's save expression rather
+than Beyond's codec. Chromium passed in 13 seconds, Firefox in 32 seconds, and
+WebKit in 4.8 minutes; the WebKit test budget is 8 minutes. OS/browser
+background scheduling remains open, so Offline progression stays In Progress.
+
 **Pinned purchase-save encoding (2026-11-10):** the live purchase/export E2E
 now creates source-side inputs with the exact `getSaveString()` expression
 from the pinned runtime instead of Beyond's save codec. The 25 purchase cases
@@ -102,7 +113,7 @@ remain open.
 
 **Out-of-range formatter import across browsers (2026-11-09):** the source-paired Settings import at the first index beyond Remix's formatter list now compares its native render TypeError against the same browser's pinned runtime in Chromium, Firefox, and WebKit. The dedicated Firefox/WebKit CI gate preserves cross-engine coverage; the legacy loader's unvalidated behavior remains intentional for parity.
 
-**Maximum Offline Time cap (2026-11-09):** pinned Remix caps level-42 Offline Time at 48 hours. The reference corpus now captures the exact cap and one second beyond it, with identical clamped outcomes. A live level-90 Asteroid restore at 172801 seconds compares three nonzero resource rewards, message text, and full exports in Chromium, Firefox, and WebKit. Offline progression remains In Progress; actual OS/browser background scheduling and other live-rate saves remain open.
+**Maximum Offline Time cap (2026-11-09):** pinned Remix caps level-42 Offline Time at 48 hours. The reference corpus captures the exact cap and one second beyond it, with identical clamped outcomes. A live level-90 Asteroid restore at 172801 seconds compares three nonzero resource rewards, message text, and full exports in Chromium, Firefox, and WebKit. The five captured live-rate compositions are now all exercised by source-paired cold starts; actual OS/browser background scheduling remains open, so Offline progression remains In Progress.
 
 **Restore and save from a valid Beyond backup (2026-11-09):** a browser E2E
 starts with a damaged primary, valid captured backup, and a conflicting legacy

@@ -1,5 +1,14 @@
 # Parity matrix
 
+**Offline live-rate cold starts at Mud and the last object (2026-11-10):**
+the remaining captured live-rate compositions are now compared through live
+Remix and Beyond cold starts. Initial Mud verifies the Money-only return
+message with no Gem or Planet Coin reward; the last-damageable-object case
+verifies Money+Gems with no Planet Coin reward. All five captured live-rate
+compositions pass in Chromium, Firefox, and WebKit using source-expression
+encoded inputs. OS/browser background scheduling remains open; Offline
+progression stays In Progress.
+
 **Single-click finite upgrade caps (2026-11-10):** source/Beyond synthetic
 click events on every finite-capped Money, Gem, and Planet Coin card leave
 levels and resource headers unchanged; storage snapshots also remain unchanged

@@ -11,6 +11,16 @@ import {
 import type { RemixMineObjectCatalog } from "../../packages/core/src/index.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
+async function encodeWithRemixSaveExpression(page: Page, save: unknown) {
+  return page.evaluate((value) => {
+    const json = JSON.stringify(value);
+    if (json === undefined) {
+      throw new Error("Offline source save input is not JSON.");
+    }
+    return btoa(escape(encodeURIComponent(json)));
+  }, save);
+}
+
 test("matches captured Remix offline loading behavior in Chromium", async ({
   page,
 }) => {
@@ -90,7 +100,7 @@ test("matches captured Remix offline loading behavior in Chromium", async ({
 test("restores capped and backward-clock saves in the pinned Remix and Beyond apps", async ({
   page,
 }, testInfo) => {
-  test.setTimeout(240_000);
+  test.setTimeout(480_000);
 
   const reference = JSON.parse(
     await readFile(
@@ -198,6 +208,29 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
         ),
     },
     {
+      name: "initial Mud live rates with no offline Gem or PC reward",
+      theme: "light",
+      compareMessagePixels: false,
+      elapsedSeconds: 3601,
+      expectsOfflineReward: true,
+      liveRateScenario:
+        reference.data.offlineLoadRateCompositionSemantics.scenarios.find(
+          (candidate) => candidate.name === "initial-mud-live-money-rate",
+        ),
+    },
+    {
+      name: "last damageable object live Gem reward without Planet Coins",
+      theme: "light",
+      compareMessagePixels: false,
+      elapsedSeconds: 3601,
+      expectsOfflineReward: true,
+      liveRateScenario:
+        reference.data.offlineLoadRateCompositionSemantics.scenarios.find(
+          (candidate) =>
+            candidate.name === "last-damageable-object-live-gem-rate",
+        ),
+    },
+    {
       name: "source-captured upgraded Asteroid live rates",
       theme: "light",
       compareMessagePixels: false,
@@ -272,6 +305,15 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
       sourceSave.gems = input.initialResources.gems;
       sourceSave.planetCoins = input.initialResources.planetCoins;
       sourceSave.maxPlanetCoins = input.initialResources.maxPlanetCoins;
+      sourceSave.powers.data.values = ["1", "1", "1", "1", "1"];
+      for (const group of [
+        sourceSave.upgrades,
+        sourceSave.gemUpgrades,
+        sourceSave.planetCoinUpgrades,
+        sourceSave.powers.upgrades,
+      ]) {
+        for (const upgrade of Object.values(group)) upgrade.level = 0;
+      }
       sourceSave.powers.data.values[0] = input.miningPower;
       sourceSave.powers.data.values[4] = input.exquisityPower;
       for (const [group, levels] of Object.entries(input.miningUpgrades)) {
@@ -297,7 +339,10 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
         level: input.offlineUpgrades.offlinePC,
       };
     }
-    const encodedLegacySave = encodeRemixLegacySave(sourceSave);
+    const encodedLegacySave = await encodeWithRemixSaveExpression(
+      page,
+      sourceSave,
+    );
 
     const sourcePage = await page.context().newPage();
     const beyondPage = await page.context().newPage();
@@ -336,17 +381,27 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
         await expect(beyondMessageLog).toContainText("Game Saved!");
         if (scenario.liveRateScenario) {
           const { rates, events } = scenario.liveRateScenario;
-          const rateValues = [
-            rates.moneyPerSecond.decimal,
-            rates.gemsPerSecond.decimal,
-            rates.planetCoinsPerSecond.decimal,
-          ];
-          const ratesAreZero = rateValues.every((rate) => rate === "0");
-          if (ratesAreZero) {
-            expect(rateValues).toEqual(["0", "0", "0"]);
-          } else {
-            expect(rateValues.every((rate) => rate !== "0")).toBe(true);
-          }
+          const sourceRateValues = await sourcePage.evaluate(() => {
+            const remixWindow = window as Window & {
+              functions: {
+                getMPS(): { toString(): string };
+                getGPS(): { toString(): string };
+                getPCPS(): { toString(): string };
+              };
+            };
+            return [
+              remixWindow.functions.getMPS().toString(),
+              remixWindow.functions.getGPS().toString(),
+              remixWindow.functions.getPCPS().toString(),
+            ];
+          });
+          expect(sourceRateValues.map((rate) => rate !== "0")).toEqual(
+            [
+              rates.moneyPerSecond,
+              rates.gemsPerSecond,
+              rates.planetCoinsPerSecond,
+            ].map(({ decimal }) => decimal !== "0"),
+          );
           if (
             scenario.elapsedSeconds ===
             scenario.liveRateScenario.input.elapsedSeconds
@@ -581,6 +636,15 @@ test("matches Remix zero-rate offline cold start and save", async ({
     pow: input.pickaxe.power,
     quality: input.pickaxe.quality,
   };
+  sourceSave.powers.data.values = ["1", "1", "1", "1", "1"];
+  for (const group of [
+    sourceSave.upgrades,
+    sourceSave.gemUpgrades,
+    sourceSave.planetCoinUpgrades,
+    sourceSave.powers.upgrades,
+  ]) {
+    for (const upgrade of Object.values(group)) upgrade.level = 0;
+  }
   sourceSave.powers.data.values[0] = input.miningPower;
   sourceSave.powers.data.values[4] = input.exquisityPower;
   for (const [group, levels] of Object.entries(input.miningUpgrades)) {
@@ -608,7 +672,10 @@ test("matches Remix zero-rate offline cold start and save", async ({
   sourceSave.settings.tab = "main";
   sourceSave.settings.numberFormatterIndex = 0;
   sourceSave.settings.theme = "light";
-  const encodedLegacySave = encodeRemixLegacySave(sourceSave);
+  const encodedLegacySave = await encodeWithRemixSaveExpression(
+    page,
+    sourceSave,
+  );
   const sourcePage = await page.context().newPage();
   const beyondPage = await page.context().newPage();
   const visibleMessages = async (target: Page) =>

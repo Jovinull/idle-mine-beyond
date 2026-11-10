@@ -634,7 +634,9 @@ through `test:e2e:recovery-file:browsers`.
   source clock reads and event order in `tests/parity/offline-progression.test.ts`
   and `legacy-save-offline-application.test.ts`; update timing and save order in
   `tests/parity/mining-transitions.test.ts`; browser reload cases in
-  `tests/e2e/offline-progression.spec.ts`. The new phase differential covers
+  `tests/e2e/offline-progression.spec.ts`. The cold-start E2E now exercises all
+  five captured `offlineLoadRateCompositionSemantics` states, including the
+  initial object and last-damageable object. The new phase differential covers
   ten thousand randomized actions per fixed seed, including clocked idle frames
   and save timestamps.
 - **Covered boundaries:** captured source cases exercise the strict 300-second
@@ -648,36 +650,36 @@ through `test:e2e:recovery-file:browsers`.
   captured object 214 after 3,601 seconds with zero rates for
   all three resources: Remix still logs `0 $`, updates `lastActive`, and saves
   without changing resource/high-water fields; Beyond matches the full save.
-- **Pinned browser evidence (2026-10-04):**
-  `tests/e2e/offline-progression.spec.ts` cold-starts the pinned Remix and Beyond
-  apps in Chromium from the same encoded legacy saves. Frozen-clock cases compare
-  visible return-message text/color and complete legacy exports for a restore
-  beyond the upgraded seven-hour cap and a 60-second backward wall-clock jump.
-  The source save selects formatter index 3 (`Letters` in the pinned formatter
-  registry), and the differential compares its formatted message and full save.
-  The cap-state `.messagelog` crop matches exactly at 1440×900 in both themes.
-  A separate startup case advances the controlled wall clock between the
-  source-observed fallback, elapsed-time, `lastActive`, and save reads (301,
-  302, and 303 seconds after the saved timestamp). It checks the mapped read
-  prefixes, clamps later framework reads, and compares message order and full
-  legacy exports. All three cold-start E2E cases match the pinned source. A
-  fourth E2E freezes both pinned Remix and Beyond with Chromium's
-  `Page.setWebLifecycleState`, advances the injected wall clock by 120 seconds,
-  and resumes both pages. It asserts exactly one resumed auto-pickaxe hit, both
-  timer resets, save confirmation and log order, the saved `lastActive`, and
-  complete exported legacy equality; it passes 1/1. This exercises the live
-  `saveTimer > 60` path after a long frame as well as the one-hit-per-frame rule.
-  The selected six-scenario cold-start (including the 300/301-second boundary)
-  and separate advancing-startup-clock
-  tests also run in Firefox and WebKit; these runs compare message text/color,
-  clock-read prefixes, and complete decoded saved state, while the exact
-  message-pixel assertion remains Chromium-only. The controlled clock case
-  compares the source's persisted legacy snapshot with the complete
-  legacy-shaped Beyond state restored from its primary; this case does not
-  assert raw encoded-string equality. The captured level-90
-  Asteroid fixture's Money output differs by one final decimal digit in WebKit,
-  but source and Beyond exports match byte-for-byte there; this engine-specific
-  captured-value distinction does not count as a Beyond/source divergence.
+  - **Pinned browser evidence (2026-10-04):**
+    `tests/e2e/offline-progression.spec.ts` cold-starts the pinned Remix and Beyond
+    apps in Chromium from the same encoded legacy saves. Frozen-clock cases compare
+    visible return-message text/color and complete legacy exports for a restore
+    beyond the upgraded seven-hour cap and a 60-second backward wall-clock jump.
+    The source save selects formatter index 3 (`Letters` in the pinned formatter
+    registry), and the differential compares its formatted message and full save.
+    The cap-state `.messagelog` crop matches exactly at 1440×900 in both themes.
+    A separate startup case advances the controlled wall clock between the
+    source-observed fallback, elapsed-time, `lastActive`, and save reads (301,
+    302, and 303 seconds after the saved timestamp). It checks the mapped read
+    prefixes, clamps later framework reads, and compares message order and full
+    legacy exports. All three cold-start E2E cases match the pinned source. A
+    fourth E2E freezes both pinned Remix and Beyond with Chromium's
+    `Page.setWebLifecycleState`, advances the injected wall clock by 120 seconds,
+    and resumes both pages. It asserts exactly one resumed auto-pickaxe hit, both
+    timer resets, save confirmation and log order, the saved `lastActive`, and
+    complete exported legacy equality; it passes 1/1. This exercises the live
+    `saveTimer > 60` path after a long frame as well as the one-hit-per-frame rule.
+    The selected six-scenario cold-start (including the 300/301-second boundary)
+    and separate advancing-startup-clock
+    tests also run in Firefox and WebKit; these runs compare message text/color,
+    clock-read prefixes, and complete decoded saved state, while the exact
+    message-pixel assertion remains Chromium-only. The controlled clock case
+    compares the source's persisted legacy snapshot with the complete
+    legacy-shaped Beyond state restored from its primary; this case does not
+    assert raw encoded-string equality. The captured level-90
+    Asteroid fixture's Money output differs by one final decimal digit in WebKit,
+    but source and Beyond exports match byte-for-byte there; this engine-specific
+    captured-value distinction does not count as a Beyond/source divergence.
 - **Sampled (qualified):** sixteen elapsed values generated with xorshift32 seed
   `0x4f46464c` cover the open interval from the reward threshold through values
   above the seven-hour upgraded cap. The pinned `loadGame()` fixture records
@@ -750,13 +752,22 @@ background-scheduling gap.
 
 ### Offline/time function and branch trace
 
-| Pinned Remix function/path and branch                                                                                                                                                           | Source evidence                                                                                                                                     | Beyond assertion                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Scripts/Define/functions.js:loadGame`: `offlineSec <= 300` or `nooffline` skips reward/rate computation; `offlineSec > 300` enters the offline path                                            | exact threshold, disabled flag, clock-read cases, and maximum-cap boundary in offline/save application fixtures                                     | `tests/parity/offline-progression.test.ts` and `tests/parity/legacy-save-offline-application.test.ts` assert strict boundary, no-rate-resolution branch, and disabled branch                                                                                                                                                                                                                                                                                                                                                               |
-| Offline duration cap uses default six hours or `offlineTime` upgrade; Money is half-rate while Gems/PC use their respective upgraded rates and floor                                            | default/upgraded/max level-42 cap cases and five source live-rate states in `offlineProgressionSemantics` and `offlineLoadRateCompositionSemantics` | `tests/parity/offline-progression.test.ts` compares each resource reward; `tests/e2e/offline-progression.spec.ts` source-pairs cold-start restores above the seven-hour upgrade cap and the maximum 48-hour cap; the max-level-42 Asteroid case verifies capped Money/Gem/Planet Coin rewards and complete save equality in Chromium, Firefox, and WebKit                                                                                                                                                                                  |
-| Positive Gem/PC rewards conditionally extend the welcome-back message; rewards update balances/high-water, log, timestamp, and save in source order                                             | zero/positive reward combinations and captured load event/clock sequence                                                                            | `tests/parity/offline-progression.test.ts`, `tests/parity/legacy-save-offline-application.test.ts`, and `tests/e2e/offline-progression.spec.ts` compare the captured three-resource return message plus complete pinned Remix/Beyond exports for a controlled level-90 Asteroid cold start; the E2E also source-pairs a 3,601-second legacy save manually imported through Settings, comparing the welcome-back message, persisted resource snapshot, save/message order, and byte-identical full exports in Chromium, Firefox, and WebKit |
-| `Scripts/main.js:update`: idle timer equal/under threshold does not hit; over threshold performs one hit then zeroes timer; save timer is strict `> 60`, one save per frame, then Story refresh | named `simulationFrameSemantics` threshold, long-delta, and event-order cases                                                                       | `tests/parity/mining-transitions.test.ts` and `tests/parity/simulation-action.test.ts` compare timer state, hit count, save count, and effect order; `tests/e2e/offline-progression.spec.ts` compares the source and Beyond after a controlled 120-second frame gap in Chromium, Firefox, and WebKit, including one hit, both timer resets, save confirmation, timestamp, log order, and full exports                                                                                                                                      |
-| Offline load updates `lastActive` only in applied-reward branch; absent `lastActive` uses source clock default; error/nooffline paths preserve source clock-read order                          | `dateNowReads`, fallback, and decode-error records                                                                                                  | `tests/parity/legacy-save-offline-application.test.ts` and `tests/parity/remix-web-game-session.test.ts` assert exact clock reads and persisted timestamp                                                                                                                                                                                                                                                                                                                                                                                  |
+`tests/e2e/offline-progression.spec.ts` now source-pairs cold starts for all
+five live rate-composition captures. `initial-mud-live-money-rate` earns Money
+only and omits both optional return-message clauses;
+`last-damageable-object-live-gem-rate` earns Money+Gems and omits Planet Coins.
+Those two fixtures are encoded with the pinned `getSaveString()` expression
+and compare live messages and complete exports in Chromium, Firefox, and
+WebKit. The level-90 Asteroid, 48-hour cap, and zero-rate Universe cases remain
+in the same cross-browser cold-start suite.
+
+| Pinned Remix function/path and branch                                                                                                                                                           | Source evidence                                                                                                                                     | Beyond assertion                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Scripts/Define/functions.js:loadGame`: `offlineSec <= 300` or `nooffline` skips reward/rate computation; `offlineSec > 300` enters the offline path                                            | exact threshold, disabled flag, clock-read cases, and maximum-cap boundary in offline/save application fixtures                                     | `tests/parity/offline-progression.test.ts` and `tests/parity/legacy-save-offline-application.test.ts` assert strict boundary, no-rate-resolution branch, and disabled branch                                                                                                                                                                                                                                                                                                                                                                                           |
+| Offline duration cap uses default six hours or `offlineTime` upgrade; Money is half-rate while Gems/PC use their respective upgraded rates and floor                                            | default/upgraded/max level-42 cap cases and five source live-rate states in `offlineProgressionSemantics` and `offlineLoadRateCompositionSemantics` | `tests/parity/offline-progression.test.ts` compares each resource reward; `tests/e2e/offline-progression.spec.ts` source-pairs initial-Mud Money-only, last-damageable Money+Gem, upgraded-Asteroid, and maximum-cap restores; the zero-rate Universe case verifies capped Money/Gem/Planet Coin rewards and complete save equality in Chromium, Firefox, and WebKit                                                                                                                                                                                                   |
+| Positive Gem/PC rewards conditionally extend the welcome-back message; rewards update balances/high-water, log, timestamp, and save in source order                                             | zero/positive reward combinations and captured load event/clock sequence                                                                            | `tests/parity/offline-progression.test.ts`, `tests/parity/legacy-save-offline-application.test.ts`, and `tests/e2e/offline-progression.spec.ts` compare Money-only initial-Mud, Money+Gem last-damageable, three-resource level-90 Asteroid, and zero-rate Universe messages plus complete pinned Remix/Beyond exports; the E2E also source-pairs a 3,601-second legacy save manually imported through Settings, comparing the welcome-back message, persisted resource snapshot, save/message order, and byte-identical full exports in Chromium, Firefox, and WebKit |
+| `Scripts/main.js:update`: idle timer equal/under threshold does not hit; over threshold performs one hit then zeroes timer; save timer is strict `> 60`, one save per frame, then Story refresh | named `simulationFrameSemantics` threshold, long-delta, and event-order cases                                                                       | `tests/parity/mining-transitions.test.ts` and `tests/parity/simulation-action.test.ts` compare timer state, hit count, save count, and effect order; `tests/e2e/offline-progression.spec.ts` compares the source and Beyond after a controlled 120-second frame gap in Chromium, Firefox, and WebKit, including one hit, both timer resets, save confirmation, timestamp, log order, and full exports                                                                                                                                                                  |
+| Offline load updates `lastActive` only in applied-reward branch; absent `lastActive` uses source clock default; error/nooffline paths preserve source clock-read order                          | `dateNowReads`, fallback, and decode-error records                                                                                                  | `tests/parity/legacy-save-offline-application.test.ts` and `tests/parity/remix-web-game-session.test.ts` assert exact clock reads and persisted timestamp                                                                                                                                                                                                                                                                                                                                                                                                              |
 
 The `Scripts/main.js:update` browser integration now checks the 120-second
 frame-gap differential in Chromium, Firefox, and WebKit. The Chromium

@@ -304,6 +304,20 @@ The hard-reset implementation calls localStorage.clear(), which clears all origi
 
 ## Offline progression observed in source
 
+**Live rate-composition cold starts (2026-11-10):** the five captured
+`offlineLoadRateCompositionSemantics` states are exercised through live
+`loadGame()` cold starts in the paired Remix/Beyond browser test. The 3,601-
+second initial-Mud state earns Money only and omits both optional reward clauses
+from the welcome-back message. The last-damageable-object state earns Money and
+six Gems, includes the Gem clause, and omits Planet Coins. The other captures
+cover the level-90 Asteroid rate composition, its 48-hour cap, and a zero-rate
+Universe object. The two added states compare messages and full exports in
+Chromium, Firefox, and WebKit. Source saves use the pinned
+`getSaveString()` expression. Their fixture-derived inputs begin with all
+upgrades at level zero before applying each capture's explicit levels. This
+closes the missing live checks for those two captured rate compositions; it
+does not cover actual OS/browser background scheduling.
+
 **Verified legacy behavior (pinned source and controlled runtime):** `functions.loadGame()` evaluates its `Date.now()` fallback while reading `lastActive`, then reads the clock again for elapsed time even when the save already has a timestamp. Rewards apply only when elapsed time is strictly greater than 300 seconds and `nooffline` is false. In that branch it obtains Money, Gem, and Planet Coin rates from `getMPS()`, `getGPS()`, and `getPCPS()` using the loaded current object, pickaxe, Powers, upgrades, and highest-damageable scan. The offline duration is `Math.min(3600 * (6 + Offline Time effect), elapsedSeconds)`. Money is `MPS × (0.5 × duration)`; Gems and Planet Coins are `floor(rate × upgrade effect × duration)`, with their respective offline-upgrade effects. On apply, Remix logs a return message, updates resources and their maxima, reads `Date.now()` for `lastActive`, then `saveGame()` reads it again before storing the save. A controlled advancing-clock case captures these separate reads.
 
 Twelve named boundary cases plus sixteen elapsed-time samples generated with xorshift32 seed `0x4f46464c` live in `offlineProgressionSemantics`. The cases include the exact 48-hour maximum cap at Offline Time level 42 and one second beyond it, alongside missing timestamps, the strict 300-second threshold, exact/over default cap, an upgraded cap, `nooffline`, negative elapsed time, zero rates, and clock movement between reward calculation and save. Every generated input and complete source result is captured; `tests/parity/offline-progression.test.ts` compares resources, maxima, messages, clock reads, timestamps, and writes. The probe stubs MPS/GPS/PCPS to isolate the offline-load branch; it does not validate every live state that generates those rates. Manual import in `index.html` calls `loadGame(saveString)` without a `nooffline` argument, so it follows the same offline check; hard reset explicitly passes `true`.
