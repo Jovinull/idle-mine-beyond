@@ -286,6 +286,32 @@ it("migrates the legacy key during startup without changing it", async () => {
   expect(test.effects[2]).toMatch(/^log:Game Saved!$/);
 });
 
+it("resets runtime-only tab selections to pinned defaults when loading v1", async () => {
+  const storage = new MemoryStorage();
+  const firstSession = createSessionInput({ storage });
+  const firstInitialization = await firstSession.session.initialize();
+  expect(firstInitialization.status).toBe("ready");
+  await firstSession.session.updateApplicationState((state) => ({
+    ...state,
+    simulation: {
+      ...state.simulation,
+      resources: { ...state.simulation.resources, money: new Decimal(1000) },
+    },
+    settings: { ...state.settings, tab: "settings", upgradeTab: "gems" },
+  }));
+  expect((await firstSession.session.saveNow()).status).toBe("saved");
+
+  const nextSession = createSessionInput({ storage });
+  const initialized = await nextSession.session.initialize();
+  expect(initialized.status).toBe("ready");
+  if (initialized.status !== "ready") {
+    throw new Error("The saved v1 session did not initialize.");
+  }
+  expect(initialized.state.settings.tab).toBe("main");
+  expect(initialized.state.settings.upgradeTab).toBe("money");
+  expect(initialized.state.simulation.resources.money.toString()).toBe("1000");
+});
+
 it("does not fall back to legacy data when Beyond reports an unsupported version", async () => {
   const storage = new MemoryStorage();
   storage.primary = JSON.stringify({

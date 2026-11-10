@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-10
 
+**Manual upgrade Save/reload and fresh-session tabs (2026-11-10):** source-
+paired browser coverage now checks that an unsaved Blacksmith purchase is lost,
+then that Settings → Save persists the next purchase and reload restores
+Blacksmith 1 / 970 Money. Remix ignores serialized primary and upgrade tabs;
+the Beyond session now returns to Mining and the Money group when loading v1.
+
 **Independent Remix encoding for offline browser inputs (2026-11-10):** the
 capped/backward-clock, advancing-clock, and 120-second frame-gap E2Es now build
 startup saves with the pinned `getSaveString()` expression. Offline behavior

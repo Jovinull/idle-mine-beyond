@@ -270,6 +270,19 @@ function initialApplicationState(
   );
 }
 
+function applyPinnedFreshRuntimeSelections(
+  state: RemixLegacySaveApplicationState,
+): RemixLegacySaveApplicationState {
+  return {
+    ...state,
+    settings: {
+      ...state.settings,
+      tab: "main",
+      upgradeTab: "money",
+    },
+  };
+}
+
 function actionInput(
   state: RemixLegacySaveApplicationState["simulation"],
   action: RemixSimulationAction,
@@ -337,7 +350,7 @@ export function createRemixWebGameSession(
     });
 
     if (beyond.status === "loaded") {
-      state = beyond.state;
+      state = applyPinnedFreshRuntimeSelections(beyond.state);
       return {
         status: "ready",
         source: beyond.source,
@@ -345,7 +358,7 @@ export function createRemixWebGameSession(
       };
     }
     if (beyond.status === "persistenceFailed") {
-      state = beyond.state;
+      state = applyPinnedFreshRuntimeSelections(beyond.state);
       return {
         status: "ready",
         source: beyond.source,

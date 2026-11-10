@@ -1,5 +1,12 @@
 # Parity matrix
 
+**Manual upgrade save and fresh-session tab defaults (2026-11-10):** after an
+unsaved Blacksmith purchase is lost on reload, the live purchase can be saved
+manually from Settings; Remix and Beyond then export the same complete save
+and restore Blacksmith 1 / 970 Money after another reload. The pinned loader
+does not restore serialized `settings.tab` or `settings.upgradeTab`; Beyond's
+web session now resets them to `main` / `money` on startup from v1 saves.
+
 **Classified Linux Story raster deltas (2026-11-10):** WSL 24.04 Chromium
 compares all four natural Chapter 3-6 routes at four viewports in both themes.
 Nine captures have exactly two changed RGBA pixels: the light objective label

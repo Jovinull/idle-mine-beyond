@@ -1,7 +1,16 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
-import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
+
+async function encodeWithRemixSaveExpression(page: Page, save: unknown) {
+  return page.evaluate((value) => {
+    const json = JSON.stringify(value);
+    if (json === undefined) {
+      throw new Error("Upgrade persistence input is not JSON.");
+    }
+    return btoa(escape(encodeURIComponent(json)));
+  }, save);
+}
 
 type PurchaseGroup = "money" | "gems" | "planetCoins" | "wisdom";
 
@@ -54,7 +63,7 @@ test("an unsaved upgrade purchase is lost on reload like pinned Remix", async ({
   save.settings.upgradeTab = "money";
   save.upgrades["blacksmith"] = { level: 0 };
   save.lastActive = fixedTime;
-  const encodedSave = encodeRemixLegacySave(save);
+  const encodedSave = await encodeWithRemixSaveExpression(page, save);
   const sourceContext = await browser.newContext({
     locale: "en-US",
     timezoneId: "UTC",
@@ -68,8 +77,11 @@ test("an unsaved upgrade purchase is lost on reload like pinned Remix", async ({
     encoded: string;
     now: number;
   }) => {
-    localStorage.clear();
-    localStorage.setItem("IdleMine", encoded);
+    if (sessionStorage.getItem("__upgradePersistenceSeeded") !== "true") {
+      localStorage.clear();
+      localStorage.setItem("IdleMine", encoded);
+      sessionStorage.setItem("__upgradePersistenceSeeded", "true");
+    }
     Date.now = () => now;
   };
 
@@ -147,6 +159,78 @@ test("an unsaved upgrade purchase is lost on reload like pinned Remix", async ({
     expect(
       await sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
     ).toBe(sourceBeforePurchase);
+
+    await Promise.all([beyondCard.click(), sourceCard.click()]);
+    await expect(beyondCard).toHaveAttribute("data-upgrade-level", "1");
+    await expect(sourceCard.locator(".lvl")).toHaveText("1");
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      page.locator("[data-settings-save]").click(),
+      sourcePage
+        .locator("article.settings")
+        .getByRole("button", { name: "Save", exact: true })
+        .click(),
+    ]);
+    const [manualSaveStorage, sourceManualSave] = await Promise.all([
+      readStorage(),
+      sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+    ]);
+    if (manualSaveStorage.legacy === null || sourceManualSave === null) {
+      throw new Error("Manual Save did not persist both legacy snapshots.");
+    }
+    expect(manualSaveStorage.legacy).toBe(encodedSave);
+    expect(manualSaveStorage.beyond).not.toBe(beforePurchase.beyond);
+    const persistedBeyond = JSON.parse(manualSaveStorage.beyond ?? "null") as {
+      state?: {
+        simulation?: {
+          resources?: { money?: string };
+          upgrades?: { money?: { blacksmith?: number } };
+        };
+      };
+    } | null;
+    expect({
+      money: persistedBeyond?.state?.simulation?.resources?.money,
+      blacksmith:
+        persistedBeyond?.state?.simulation?.upgrades?.money?.blacksmith,
+    }).toEqual({ money: "970", blacksmith: 1 });
+
+    await Promise.all([
+      page.locator("[data-settings-export]").click(),
+      sourcePage
+        .locator("article.settings")
+        .getByRole("button", { name: "Export", exact: true })
+        .click(),
+    ]);
+    const [beyondExport, sourceExport] = await Promise.all([
+      page.locator("[data-settings-save-field]").inputValue(),
+      sourcePage.locator("article.settings textarea").inputValue(),
+    ]);
+    expect(beyondExport).toBe(sourceExport);
+
+    await Promise.all([page.reload(), sourcePage.reload()]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean((window as Window & { game?: unknown }).game),
+    );
+    await Promise.all([
+      page.locator("[data-game-tab='mining']").click(),
+      sourcePage.locator("footer button").filter({ hasText: "Mining" }).click(),
+    ]);
+    await expect(beyondCard).toHaveAttribute("data-upgrade-level", "1");
+    await expect(sourceCard.locator(".lvl")).toHaveText("1");
+    expect(await readStorage()).toEqual(manualSaveStorage);
+    expect(
+      await sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+    ).toBe(sourceManualSave);
   } finally {
     await sourceContext.close().catch(() => undefined);
   }
@@ -185,7 +269,7 @@ test("an upgrade purchase persists after the source autosave threshold", async (
   save.upgrades["blacksmith"] = { level: 0 };
   save.pickaxe = { ...save.pickaxe, pow: "0", quality: "0" };
   save.lastActive = fixedTime;
-  const encodedSave = encodeRemixLegacySave(save);
+  const encodedSave = await encodeWithRemixSaveExpression(page, save);
   const sourceContext = await browser.newContext({
     locale: "en-US",
     timezoneId: "UTC",
@@ -429,7 +513,7 @@ test("autosaves exact-price purchases from all four resource families together",
   );
   save.pickaxe = { ...save.pickaxe, pow: "0", quality: "0" };
   save.lastActive = fixedTime;
-  const encodedSave = encodeRemixLegacySave(save);
+  const encodedSave = await encodeWithRemixSaveExpression(page, save);
   const sourceContext = await browser.newContext({
     locale: "en-US",
     timezoneId: "UTC",
