@@ -86,6 +86,12 @@ purchases each once in both live apps, and compares every level plus the
 complete decoded Settings exports and encoded bytes. The case passed in
 Chromium, Firefox, and WebKit. Other dynamic save combinations remain open.
 
+**Pinned purchase-save input encoding (2026-11-10):** the purchase/export E2E
+constructs source-side inputs with the pinned Remix `getSaveString()`
+expression, not the Beyond codec. The full suite passes in Chromium (25/25),
+Firefox, and WebKit (50/50 combined cross-browser cases). This keeps fixture
+encoding independent of the product encoder.
+
 **Prestige full-save differential (2026-11-08):** after each of the four
 enabled Power Prestige actions, the source-paired E2E compares the complete
 Settings export bytes and decoded object. All four passed in Chromium,
@@ -567,7 +573,7 @@ Historical save import/export differential (2026-11-07): the Settings E2E applie
 
 Historical save import selector state (2026-11-08): the same source-paired Settings flow verifies that Remix leaves its Number Format select unselected immediately after import (`selectedIndex = -1`) and compares the selector after leaving and re-entering Settings. Beyond matches the full-screen pixels after import and the selector state after re-entry; the synthetic historical save export remains byte-identical. This adds one fixture-specific UI branch to the Settings and input controls row; arbitrary save shapes remain open.
 
-Live purchase export differential (2026-11-08): `tests/e2e/save-export-purchase-differential.spec.ts` buys the pinned Money Active Power (1000 Money), Gem Offline Gems (4444 Gems), Planet Coin Active Power (100 Planet Coins), and Wisdom Simple Gem Boost (10 billion Wisdom) captures in both live apps. It also performs captured Shift buy10 and Control buy100 Money purchases, plus Shift buy10 Gem and Planet Coin Gem Multiplication purchases from level 0 to 10. All eight complete decoded Settings export objects and encoded byte strings match in Chromium, Firefox, and WebKit (8/8 per engine); other purchase levels, alignments, and runtime states remain open.
+Live purchase export differential (2026-11-08): `tests/e2e/save-export-purchase-differential.spec.ts` buys the pinned Money Active Power (1000 Money), Gem Offline Gems (4444 Gems), Planet Coin Active Power (100 Planet Coins), and Wisdom Simple Gem Boost (10 billion Wisdom) captures in both live apps. It also performs captured Shift buy10 and Control buy100 Money purchases, plus Shift buy10 Gem and Planet Coin Gem Multiplication purchases from level 0 to 10. All eight complete decoded Settings export objects and encoded byte strings match in Chromium, Firefox, and WebKit (8/8 per engine); other purchase levels, alignments, and runtime states remain open. The suite now constructs source-side inputs with the pinned Remix `getSaveString()` expression rather than Beyond's save codec; all 25 purchase cases pass in Chromium, Firefox, and WebKit.
 
 Pickaxe strict-replacement boundary (2026-11-07): the reference fixture now captures candidate damage below the equipped pickaxe; parity asserts the above/equal/below outcomes, and a source-paired E2E compares the weaker-dud screen in both themes at 1440x900 and 1366x768 (4/4). Pickaxe crafting/naming remains In Progress for its other states.
 

@@ -1,7 +1,6 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
-import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
 import { createBeyondVisualSaveFromRemixSave } from "./visual-state.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
@@ -78,6 +77,14 @@ type LegacySave = {
   };
   pickaxe: { name: string; pow: string; quality: string };
 };
+
+async function encodeWithRemixExpression(page: Page, save: LegacySave) {
+  return page.evaluate((value) => {
+    const json = JSON.stringify(value);
+    if (json === undefined) throw new Error("Remix save input is not JSON.");
+    return btoa(escape(encodeURIComponent(json)));
+  }, save);
+}
 
 function findDifferences(
   beyond: unknown,
@@ -443,7 +450,7 @@ async function comparePurchaseExport(
     probeSave[balanceKey] = "0";
     const exactPinnedPrice = await capturePinnedUpgradePrice(
       browser,
-      encodeRemixLegacySave(probeSave),
+      await encodeWithRemixExpression(page, probeSave),
       alignedResourceCase.group,
       purchase.key,
     );
@@ -452,7 +459,7 @@ async function comparePurchaseExport(
     }
     sourceSave[balanceKey] = exactPinnedPrice;
   }
-  const encodedSourceSave = encodeRemixLegacySave(sourceSave);
+  const encodedSourceSave = await encodeWithRemixExpression(page, sourceSave);
   const encodedBeyondSave = await createBeyondVisualSaveFromRemixSave({
     clockMs: fixedTime,
     theme,
@@ -800,7 +807,7 @@ test("exports the full live save after purchasing all 29 upgrades", async ({
   sourceSave.powers.upgrades = Object.fromEntries(
     Object.keys(wisdomUpgrades).map((key) => [key, { level: 0 }]),
   );
-  const encodedSourceSave = encodeRemixLegacySave(sourceSave);
+  const encodedSourceSave = await encodeWithRemixExpression(page, sourceSave);
   const encodedBeyondSave = await createBeyondVisualSaveFromRemixSave({
     clockMs: fixedTime,
     theme: "light",

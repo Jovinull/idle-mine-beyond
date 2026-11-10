@@ -128,7 +128,11 @@ compares complete decoded Settings exports and encoded bytes with live Remix
 in Chromium, Firefox, and WebKit. For cross-browser runs, the starting balance
 is obtained from that browser's pinned Remix `currentPrice()` before both apps
 are seeded; this preserves exact affordability when Decimal formatting differs
-between Chromium and WebKit.
+between Chromium and WebKit. All source-side purchase inputs now use the
+pinned `Scripts/Define/functions.js:getSaveString()` expression rather than
+the Beyond save codec, keeping fixture encoding independent of the product
+encoder. The full suite passes in Chromium (25/25), Firefox, and WebKit
+(50/50 combined cross-browser cases).
 
 ### Upgrade function and branch trace
 

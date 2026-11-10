@@ -309,6 +309,9 @@ the exact-price Money purchases from levels 9 and 99, and compares complete
 decoded Settings exports and encoded bytes against live Remix in Chromium,
 Firefox, and WebKit. These extend the existing zero-level purchase exports to
 two captured nonzero alignments; other runtime purchase states remain open.
+Source-side saves in this suite use the pinned Remix `getSaveString()`
+expression rather than the Beyond save codec; all 25 cases pass in Chromium,
+Firefox, and WebKit (50/50 combined cross-browser cases).
 
 The four source-paired positive Prestige exports also match full encoded bytes
 and decoded objects in Chromium, Firefox, and WebKit. Chromium checks the

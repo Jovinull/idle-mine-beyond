@@ -2,6 +2,11 @@
 
 Last updated: 2026-11-10
 
+**Pinned purchase-save encoding (2026-11-10):** the live purchase/export E2E
+now creates source-side inputs with the exact `getSaveString()` expression
+from the pinned runtime instead of Beyond's save codec. The 25 purchase cases
+pass in Chromium, Firefox, and WebKit.
+
 **Single-click finite upgrade caps (2026-11-10):** added a source-paired test
 that dispatches synthetic click events to every finite Money, Gem, and Planet
 Coin card at cap. Inputs use the pinned Remix save-encoding expression rather
