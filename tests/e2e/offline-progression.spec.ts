@@ -1485,7 +1485,7 @@ async function verifyLongFrame(page: Page, freezePages: boolean) {
     quality: "1",
   };
   sourceSave.powers.data.values = ["1", "1", "1", "1", "1"];
-  sourceSave.powers.upgrades = {};
+  sourceSave.powers.upgrades = { powerPowerIdle: { level: 1 } };
   sourceSave.settings.tab = "main";
   sourceSave.settings.theme = "light";
   sourceSave.story = {
@@ -1674,6 +1674,14 @@ async function verifyLongFrame(page: Page, freezePages: boolean) {
       throw new Error("Could not decode the frozen-resume save comparison.");
     }
     expect(beyondDecoded.value).toEqual(sourceDecoded.value);
+    const sourcePowerOfMining = (
+      sourceDecoded.value as { powers: { data: { values: string[] } } }
+    ).powers.data.values[0];
+    const beyondPowerOfMining = (
+      beyondDecoded.value as { powers: { data: { values: string[] } } }
+    ).powers.data.values[0];
+    expect(sourcePowerOfMining).toBe("1.00002");
+    expect(beyondPowerOfMining).toBe("1.00002");
     expect((sourceDecoded.value as { lastActive: number }).lastActive).toBe(
       startNowMs + 120_000,
     );

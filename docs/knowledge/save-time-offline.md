@@ -313,11 +313,12 @@ clock by exactly 120 seconds while the animation loop remains active. The next
 `requestAnimationFrame` update performs one auto-pickaxe hit despite the long
 delta, resets the auto timer, passes the strict 60-second save threshold once,
 resets the save timer, updates `lastActive`, and emits the save confirmation in
-both apps. Full exported legacy saves and visible log order match in Chromium,
-Firefox, and WebKit (3/3); the dedicated Firefox/WebKit case runs in CI. This is
-a controlled long-frame integration check. Actual OS/browser background
-scheduling and throttling remain open, and native WebView lifecycle is outside
-web-v1.
+both apps. Power Power (Idle) level 1 raises Power of Mining from 1 to 1.00002
+after the hit; the full exported legacy save contains that post-hit value. Full
+exports and visible log order match in Chromium, Firefox, and WebKit (3/3); the
+dedicated Firefox/WebKit case runs in CI. This is a controlled long-frame
+integration check. Actual OS/browser background scheduling and throttling
+remain open, and native WebView lifecycle is outside web-v1.
 
 The existing Chromium CDP `Page.setWebLifecycleState` freeze/resume case
 remains a separate check and continues to verify one resumed frame. The

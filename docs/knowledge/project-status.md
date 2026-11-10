@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-09
 
+**Idle Power of Mining persisted after long frame (2026-11-09):** the
+source-paired 120-second frame-gap export now starts with Power Power (Idle) at
+level 1. Remix processes one idle hit, then raises Power of Mining from 1 to
+1.00002 before its periodic save; complete exports match in Chromium, Firefox,
+and WebKit. This controlled frame does not characterize real OS/background
+scheduling.
+
 **Active-click Power of Mining in save export (2026-11-09):** extended the
 source-paired post-mining Settings export with Power Power (Active) at level 1.
 After the captured object-169 click, the pinned runtime advances Power of
