@@ -6661,6 +6661,22 @@ async function capture(reference, dependencies, dependencySnapshots) {
               ],
             },
             {
+              name: "pre-portal-generated-object-name-live-craft",
+              gems: "1",
+              highestMineObjectLevel: 110,
+              powers: ["1", "1", "1", "1", "1"],
+              upgradeLevels: {},
+              randomValues: [0.3, 0.8, 0.4, 0.4, 0.7, 0.6, 0.4, 0.8, 0.8, 0.9],
+            },
+            {
+              name: "post-portal-generated-object-name-live-craft",
+              gems: "1",
+              highestMineObjectLevel: 180,
+              powers: ["1", "1", "1", "1", "1"],
+              upgradeLevels: {},
+              randomValues: [0.3, 0.8, 0.4, 0.4, 0.7, 0.6, 0.4, 0.8, 0.8, 0.9],
+            },
+            {
               name: "generated-word-name",
               gems: "5",
               highestMineObjectLevel: 0,
@@ -6940,6 +6956,40 @@ async function capture(reference, dependencies, dependencySnapshots) {
                 upgradeLevels: {},
                 shiftHeld: false,
                 randomValues: [...baselineRandomValues],
+              },
+              {
+                name: "pre-portal-generated-object-name-live-craft",
+                gems: "1",
+                usedGemsLevel: 0,
+                equippedPickaxe: {
+                  name: "Toy Pickaxe",
+                  power: "0",
+                  quality: "0",
+                },
+                highestMineObjectLevel: 110,
+                powers: ["1", "1", "1", "1", "1"],
+                upgradeLevels: {},
+                shiftHeld: false,
+                randomValues: [
+                  0.3, 0.8, 0.4, 0.4, 0.7, 0.6, 0.4, 0.8, 0.8, 0.9,
+                ],
+              },
+              {
+                name: "post-portal-generated-object-name-live-craft",
+                gems: "1",
+                usedGemsLevel: 0,
+                equippedPickaxe: {
+                  name: "Toy Pickaxe",
+                  power: "0",
+                  quality: "0",
+                },
+                highestMineObjectLevel: 180,
+                powers: ["1", "1", "1", "1", "1"],
+                upgradeLevels: {},
+                shiftHeld: false,
+                randomValues: [
+                  0.3, 0.8, 0.4, 0.4, 0.7, 0.6, 0.4, 0.8, 0.8, 0.9,
+                ],
               },
               {
                 name: "special-anchor-generated-name-live-craft",

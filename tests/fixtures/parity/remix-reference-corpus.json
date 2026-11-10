@@ -138951,6 +138951,66 @@
           }
         },
         {
+          "name": "pre-portal-generated-object-name-live-craft",
+          "input": {
+            "name": "pre-portal-generated-object-name-live-craft",
+            "gems": "1",
+            "highestMineObjectLevel": 110,
+            "powers": ["1", "1", "1", "1", "1"],
+            "upgradeLevels": {},
+            "randomValues": [0.3, 0.8, 0.4, 0.4, 0.7, 0.6, 0.4, 0.8, 0.8, 0.9]
+          },
+          "randomCalls": 10,
+          "result": {
+            "name": "Sturdy Albuycawlite Crystal Pick",
+            "power": {
+              "decimal": "29.2",
+              "mantissa": 2.92,
+              "exponent": 1
+            },
+            "quality": {
+              "decimal": "1.0215",
+              "mantissa": 1.0215,
+              "exponent": 0
+            },
+            "damage": {
+              "decimal": "29.8278",
+              "mantissa": 2.98278,
+              "exponent": 1
+            }
+          }
+        },
+        {
+          "name": "post-portal-generated-object-name-live-craft",
+          "input": {
+            "name": "post-portal-generated-object-name-live-craft",
+            "gems": "1",
+            "highestMineObjectLevel": 180,
+            "powers": ["1", "1", "1", "1", "1"],
+            "upgradeLevels": {},
+            "randomValues": [0.3, 0.8, 0.4, 0.4, 0.7, 0.6, 0.4, 0.8, 0.8, 0.9]
+          },
+          "randomCalls": 10,
+          "result": {
+            "name": "Sturdy HR 6959-b Pick",
+            "power": {
+              "decimal": "29.2",
+              "mantissa": 2.92,
+              "exponent": 1
+            },
+            "quality": {
+              "decimal": "1.0215",
+              "mantissa": 1.0215,
+              "exponent": 0
+            },
+            "damage": {
+              "decimal": "29.8278",
+              "mantissa": 2.98278,
+              "exponent": 1
+            }
+          }
+        },
+        {
           "name": "generated-word-name",
           "input": {
             "name": "generated-word-name",
@@ -139687,6 +139747,170 @@
               "damage": {
                 "decimal": "31.5",
                 "mantissa": 3.15,
+                "exponent": 1
+              }
+            }
+          }
+        },
+        {
+          "name": "pre-portal-generated-object-name-live-craft",
+          "input": {
+            "name": "pre-portal-generated-object-name-live-craft",
+            "gems": "1",
+            "usedGemsLevel": 0,
+            "equippedPickaxe": {
+              "name": "Toy Pickaxe",
+              "power": "0",
+              "quality": "0"
+            },
+            "highestMineObjectLevel": 110,
+            "powers": ["1", "1", "1", "1", "1"],
+            "upgradeLevels": {},
+            "shiftHeld": false,
+            "randomValues": [0.3, 0.8, 0.4, 0.4, 0.7, 0.6, 0.4, 0.8, 0.8, 0.9],
+            "craftGems": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          },
+          "randomCalls": 10,
+          "saveCalls": 1,
+          "saveSnapshots": [
+            {
+              "gems": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "pickaxe": {
+                "name": "Sturdy Albuycawlite Crystal Pick",
+                "power": {
+                  "decimal": "29.2",
+                  "mantissa": 2.92,
+                  "exponent": 1
+                },
+                "quality": {
+                  "decimal": "1.0215",
+                  "mantissa": 1.0215,
+                  "exponent": 0
+                }
+              }
+            }
+          ],
+          "eventOrder": [
+            "log:Got a new Pickaxe! \"Sturdy Albuycawlite Crystal Pick\"",
+            "save"
+          ],
+          "messageLog": [
+            {
+              "message": "Got a new Pickaxe! \"Sturdy Albuycawlite Crystal Pick\"",
+              "color": "#00b400"
+            }
+          ],
+          "result": {
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "pickaxe": {
+              "name": "Sturdy Albuycawlite Crystal Pick",
+              "power": {
+                "decimal": "29.2",
+                "mantissa": 2.92,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "1.0215",
+                "mantissa": 1.0215,
+                "exponent": 0
+              },
+              "damage": {
+                "decimal": "29.8278",
+                "mantissa": 2.98278,
+                "exponent": 1
+              }
+            }
+          }
+        },
+        {
+          "name": "post-portal-generated-object-name-live-craft",
+          "input": {
+            "name": "post-portal-generated-object-name-live-craft",
+            "gems": "1",
+            "usedGemsLevel": 0,
+            "equippedPickaxe": {
+              "name": "Toy Pickaxe",
+              "power": "0",
+              "quality": "0"
+            },
+            "highestMineObjectLevel": 180,
+            "powers": ["1", "1", "1", "1", "1"],
+            "upgradeLevels": {},
+            "shiftHeld": false,
+            "randomValues": [0.3, 0.8, 0.4, 0.4, 0.7, 0.6, 0.4, 0.8, 0.8, 0.9],
+            "craftGems": {
+              "decimal": "1",
+              "mantissa": 1,
+              "exponent": 0
+            }
+          },
+          "randomCalls": 10,
+          "saveCalls": 1,
+          "saveSnapshots": [
+            {
+              "gems": {
+                "decimal": "0",
+                "mantissa": 0,
+                "exponent": 0
+              },
+              "pickaxe": {
+                "name": "Sturdy HR 6959-b Pick",
+                "power": {
+                  "decimal": "29.2",
+                  "mantissa": 2.92,
+                  "exponent": 1
+                },
+                "quality": {
+                  "decimal": "1.0215",
+                  "mantissa": 1.0215,
+                  "exponent": 0
+                }
+              }
+            }
+          ],
+          "eventOrder": [
+            "log:Got a new Pickaxe! \"Sturdy HR 6959-b Pick\"",
+            "save"
+          ],
+          "messageLog": [
+            {
+              "message": "Got a new Pickaxe! \"Sturdy HR 6959-b Pick\"",
+              "color": "#00b400"
+            }
+          ],
+          "result": {
+            "gems": {
+              "decimal": "0",
+              "mantissa": 0,
+              "exponent": 0
+            },
+            "pickaxe": {
+              "name": "Sturdy HR 6959-b Pick",
+              "power": {
+                "decimal": "29.2",
+                "mantissa": 2.92,
+                "exponent": 1
+              },
+              "quality": {
+                "decimal": "1.0215",
+                "mantissa": 1.0215,
+                "exponent": 0
+              },
+              "damage": {
+                "decimal": "29.8278",
+                "mantissa": 2.98278,
                 "exponent": 1
               }
             }

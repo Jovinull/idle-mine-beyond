@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-10
 
+**Procedural pickaxe names across generator regions (2026-11-10):** live
+`functions.craftPick()` now covers generated object IDs 105 (pre-Portal), 175
+(post-Portal/pre-Universe), and 210 (post-Universe fallback). Each source-paired
+craft checks its exact name, ten RNG draws, and complete encoded/decoded
+Settings export against pinned Remix in Chromium, Firefox, and WebKit. Crafting
+and naming remain In Progress for other states and presentation evidence.
+
 **Fresh-tab autosave after stale Hard Reset (2026-11-10):** after a stale
 same-origin tab clears storage with Hard Reset, a fresh tab still holds its
 Blacksmith 1 / 970 Money state in memory. Advancing that tab's loop clock by

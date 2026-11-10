@@ -50,6 +50,24 @@ type CraftCorpus = {
 
 const fixedClock = 1_700_000_000_000;
 
+const liveGeneratedNameCases = [
+  {
+    name: "pre-portal-generated-object-name-live-craft",
+    objectId: 105,
+    expectedName: "Sturdy Albuycawlite Crystal Pick",
+  },
+  {
+    name: "post-portal-generated-object-name-live-craft",
+    objectId: 175,
+    expectedName: "Sturdy HR 6959-b Pick",
+  },
+  {
+    name: "special-anchor-generated-name-live-craft",
+    objectId: 210,
+    expectedName: "Sturdy HD 4943-b Pick",
+  },
+];
+
 function seedSave({ encoded, now }: { encoded: string; now: number }) {
   localStorage.clear();
   localStorage.setItem("IdleMine", encoded);
@@ -69,148 +87,159 @@ async function installCraftRandomSequence(
   }, values);
 }
 
-test("exports the pinned special-anchor craft result exactly", async ({
-  browser,
-  page,
-}) => {
-  test.setTimeout(120_000);
-  const corpus = JSON.parse(
-    await readFile(
-      new URL(
-        "../fixtures/parity/remix-reference-corpus.json",
-        import.meta.url,
+for (const nameCase of liveGeneratedNameCases) {
+  test(`exports the pinned craft result for generated object ${nameCase.objectId}`, async ({
+    browser,
+    page,
+  }) => {
+    test.setTimeout(120_000);
+    const corpus = JSON.parse(
+      await readFile(
+        new URL(
+          "../fixtures/parity/remix-reference-corpus.json",
+          import.meta.url,
+        ),
+        "utf8",
       ),
-      "utf8",
-    ),
-  ) as CraftCorpus;
-  const craft = corpus.data.pickaxeCraftingSemantics.attempts.find(
-    ({ name }) => name === "special-anchor-generated-name-live-craft",
-  );
-  if (!craft) throw new Error("Missing captured special-anchor name craft.");
-  expect(craft.result.pickaxe.name).toBe("Sturdy HD 4943-b Pick");
-  expect(craft.randomCalls).toBe(10);
-
-  const save = JSON.parse(
-    corpus.data.saveApplicationSemantics.inputJson,
-  ) as LegacySave;
-  save.gems = craft.input.gems;
-  save.mineObjectLevel = craft.input.highestMineObjectLevel;
-  save.highestMineObjectLevel = craft.input.highestMineObjectLevel;
-  save.lastActive = fixedClock;
-  Object.assign(save.settings, { tab: "main", theme: "light" });
-  save.upgrades = {};
-  save.gemUpgrades = {};
-  save.planetCoinUpgrades = {};
-  save.powers.data.values = ["1", "1", "1", "1", "1"];
-  save.powers.upgrades = {};
-  save.pickaxe = {
-    name: craft.input.equippedPickaxe.name,
-    pow: craft.input.equippedPickaxe.power,
-    quality: craft.input.equippedPickaxe.quality,
-  };
-  const encoded = encodeRemixLegacySave(save);
-  const sourceContext = await browser.newContext({
-    colorScheme: "light",
-    locale: "en-US",
-    timezoneId: "UTC",
-    viewport: { width: 1440, height: 900 },
-  });
-  const sourcePage = await sourceContext.newPage();
-  try {
-    const sourceUrl = await routePinnedRemixOracle(sourceContext);
-    await Promise.all([
-      page.setViewportSize({ width: 1440, height: 900 }),
-      page.addInitScript(seedSave, { encoded, now: fixedClock }),
-      sourcePage.addInitScript(seedSave, { encoded, now: fixedClock }),
-    ]);
-    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
-    await Promise.all([
-      expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready"),
-      sourcePage.waitForFunction(() =>
-        Boolean((window as Window & { game?: unknown }).game),
-      ),
-    ]);
-    await Promise.all([
-      installCraftRandomSequence(page, craft.input.randomValues),
-      installCraftRandomSequence(sourcePage, craft.input.randomValues),
-    ]);
-    await Promise.all([
-      page.locator("[data-craft-pickaxe]").click(),
-      sourcePage.locator(".craft-pickaxe button:not(.level-change)").click(),
-    ]);
-    const beyondName = page
-      .locator(".stats > div")
-      .first()
-      .locator("p")
-      .first();
-    const sourceName = sourcePage
-      .locator(".stats > div")
-      .first()
-      .locator("p")
-      .first();
-    await Promise.all([
-      expect(beyondName).toHaveText(craft.result.pickaxe.name),
-      expect(sourceName).toHaveText(craft.result.pickaxe.name),
-      expect(page.locator(".messagelog")).toContainText(
-        craft.messageLog[0]!.message,
-      ),
-      expect(sourcePage.locator(".messagelog")).toContainText(
-        craft.messageLog[0]!.message,
-      ),
-    ]);
-    const [beyondCalls, remixCalls] = await Promise.all([
-      page.evaluate(() =>
-        (
-          window as Window & { __craftRandomCalls?: () => number }
-        ).__craftRandomCalls?.(),
-      ),
-      sourcePage.evaluate(() =>
-        (
-          window as Window & { __craftRandomCalls?: () => number }
-        ).__craftRandomCalls?.(),
-      ),
-    ]);
-    expect(beyondCalls).toBe(craft.randomCalls);
-    expect(remixCalls).toBe(craft.randomCalls);
-
-    await Promise.all([
-      page.locator("[data-game-tab='settings']").click(),
-      sourcePage
-        .locator("footer button")
-        .filter({ hasText: "Settings" })
-        .click(),
-    ]);
-    await Promise.all([
-      page.locator("[data-settings-export]").click(),
-      sourcePage
-        .locator("article.settings button")
-        .filter({ hasText: "Export" })
-        .click(),
-    ]);
-    const [beyondExport, sourceExport] = await Promise.all([
-      page.locator("[data-settings-save-field]").inputValue(),
-      sourcePage.locator("article.settings textarea").inputValue(),
-    ]);
-    expect(beyondExport, "complete special-anchor save export bytes").toBe(
-      sourceExport,
+    ) as CraftCorpus;
+    const craft = corpus.data.pickaxeCraftingSemantics.attempts.find(
+      ({ name }) => name === nameCase.name,
     );
-    const beyondDecoded = decodeRemixLegacySave(beyondExport);
-    const sourceDecoded = decodeRemixLegacySave(sourceExport);
-    expect(beyondDecoded.status).toBe("success");
-    expect(sourceDecoded.status).toBe("success");
-    if (
-      beyondDecoded.status !== "success" ||
-      sourceDecoded.status !== "success"
-    ) {
-      throw new Error("Could not decode the special-anchor craft exports.");
+    if (!craft) {
+      throw new Error(`Missing captured craft name case ${nameCase.name}.`);
     }
-    expect(beyondDecoded.value).toEqual(sourceDecoded.value);
-    expect((beyondDecoded.value as LegacySave).pickaxe).toEqual({
-      name: craft.result.pickaxe.name,
-      pow: craft.result.pickaxe.power.decimal,
-      quality: craft.result.pickaxe.quality.decimal,
+    expect(craft.result.pickaxe.name).toBe(nameCase.expectedName);
+    const nameObjectId = Math.max(
+      0,
+      craft.input.highestMineObjectLevel -
+        12 +
+        Math.round(craft.input.randomValues[8]! * 9),
+    );
+    expect(nameObjectId).toBe(nameCase.objectId);
+    expect(craft.randomCalls).toBe(10);
+
+    const save = JSON.parse(
+      corpus.data.saveApplicationSemantics.inputJson,
+    ) as LegacySave;
+    save.gems = craft.input.gems;
+    save.mineObjectLevel = craft.input.highestMineObjectLevel;
+    save.highestMineObjectLevel = craft.input.highestMineObjectLevel;
+    save.lastActive = fixedClock;
+    Object.assign(save.settings, { tab: "main", theme: "light" });
+    save.upgrades = {};
+    save.gemUpgrades = {};
+    save.planetCoinUpgrades = {};
+    save.powers.data.values = ["1", "1", "1", "1", "1"];
+    save.powers.upgrades = {};
+    save.pickaxe = {
+      name: craft.input.equippedPickaxe.name,
+      pow: craft.input.equippedPickaxe.power,
+      quality: craft.input.equippedPickaxe.quality,
+    };
+    const encoded = encodeRemixLegacySave(save);
+    const sourceContext = await browser.newContext({
+      colorScheme: "light",
+      locale: "en-US",
+      timezoneId: "UTC",
+      viewport: { width: 1440, height: 900 },
     });
-  } finally {
-    await sourceContext.close().catch(() => undefined);
-  }
-});
+    const sourcePage = await sourceContext.newPage();
+    try {
+      const sourceUrl = await routePinnedRemixOracle(sourceContext);
+      await Promise.all([
+        page.setViewportSize({ width: 1440, height: 900 }),
+        page.addInitScript(seedSave, { encoded, now: fixedClock }),
+        sourcePage.addInitScript(seedSave, { encoded, now: fixedClock }),
+      ]);
+      await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+      await Promise.all([
+        expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready"),
+        sourcePage.waitForFunction(() =>
+          Boolean((window as Window & { game?: unknown }).game),
+        ),
+      ]);
+      await Promise.all([
+        installCraftRandomSequence(page, craft.input.randomValues),
+        installCraftRandomSequence(sourcePage, craft.input.randomValues),
+      ]);
+      await Promise.all([
+        page.locator("[data-craft-pickaxe]").click(),
+        sourcePage.locator(".craft-pickaxe button:not(.level-change)").click(),
+      ]);
+      const beyondName = page
+        .locator(".stats > div")
+        .first()
+        .locator("p")
+        .first();
+      const sourceName = sourcePage
+        .locator(".stats > div")
+        .first()
+        .locator("p")
+        .first();
+      await Promise.all([
+        expect(beyondName).toHaveText(craft.result.pickaxe.name),
+        expect(sourceName).toHaveText(craft.result.pickaxe.name),
+        expect(page.locator(".messagelog")).toContainText(
+          craft.messageLog[0]!.message,
+        ),
+        expect(sourcePage.locator(".messagelog")).toContainText(
+          craft.messageLog[0]!.message,
+        ),
+      ]);
+      const [beyondCalls, remixCalls] = await Promise.all([
+        page.evaluate(() =>
+          (
+            window as Window & { __craftRandomCalls?: () => number }
+          ).__craftRandomCalls?.(),
+        ),
+        sourcePage.evaluate(() =>
+          (
+            window as Window & { __craftRandomCalls?: () => number }
+          ).__craftRandomCalls?.(),
+        ),
+      ]);
+      expect(beyondCalls).toBe(craft.randomCalls);
+      expect(remixCalls).toBe(craft.randomCalls);
+
+      await Promise.all([
+        page.locator("[data-game-tab='settings']").click(),
+        sourcePage
+          .locator("footer button")
+          .filter({ hasText: "Settings" })
+          .click(),
+      ]);
+      await Promise.all([
+        page.locator("[data-settings-export]").click(),
+        sourcePage
+          .locator("article.settings button")
+          .filter({ hasText: "Export" })
+          .click(),
+      ]);
+      const [beyondExport, sourceExport] = await Promise.all([
+        page.locator("[data-settings-save-field]").inputValue(),
+        sourcePage.locator("article.settings textarea").inputValue(),
+      ]);
+      expect(beyondExport, "complete generated-name craft export bytes").toBe(
+        sourceExport,
+      );
+      const beyondDecoded = decodeRemixLegacySave(beyondExport);
+      const sourceDecoded = decodeRemixLegacySave(sourceExport);
+      expect(beyondDecoded.status).toBe("success");
+      expect(sourceDecoded.status).toBe("success");
+      if (
+        beyondDecoded.status !== "success" ||
+        sourceDecoded.status !== "success"
+      ) {
+        throw new Error("Could not decode the generated-name craft exports.");
+      }
+      expect(beyondDecoded.value).toEqual(sourceDecoded.value);
+      expect((beyondDecoded.value as LegacySave).pickaxe).toEqual({
+        name: craft.result.pickaxe.name,
+        pow: craft.result.pickaxe.power.decimal,
+        quality: craft.result.pickaxe.quality.decimal,
+      });
+    } finally {
+      await sourceContext.close().catch(() => undefined);
+    }
+  });
+}
