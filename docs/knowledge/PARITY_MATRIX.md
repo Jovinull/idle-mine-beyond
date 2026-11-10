@@ -1,5 +1,12 @@
 # Parity matrix
 
+**Long external save-input sample (2026-11-10):** the fixed-seed differential
+now covers 64 quote-wrapped strings sampled from 97–4096 bytes (actual lengths
+119–4069) in Chromium, Firefox, and WebKit. Remix and Beyond match all 32
+invalid-JSON and 32 invalid-UTF-8 outcomes. This adds bounded input evidence;
+the Save encoding and save shape row remains In Progress for arbitrary byte
+strings and historical save formats.
+
 **Non-lethal Mud hit at alternate viewports (2026-11-10):** live source/Beyond
 full-screen comparisons now cover HP 80 after one click at 1366×768 and
 1920×1080, in both themes. The pinned state and 1440×900 pair remain covered;

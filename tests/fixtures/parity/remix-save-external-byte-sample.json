@@ -4,16 +4,15 @@
   "generator": "xorshift32",
   "seed": 1515602252,
   "sampleCount": 64,
-  "minimumByteLength": 5,
-  "maximumByteLength": 96,
+  "minimumByteLength": 97,
+  "maximumByteLength": 4096,
   "alternatingModes": {
     "ascii": "Printable ASCII bytes 0x20-0x7e",
     "byte": "Full byte range 0x00-0xff"
   },
-  "generatedCasesSha256": "508be607618de8bb3936714512c99c38bc3c0b926c772e87cfbe3e7cda1046af",
+  "generatedCasesSha256": "afd05bf0c1131590f2127ab9ab2065f8615fc1fc5b7d4b33d0d4520a358cdc51",
   "sourceOutcomeCounts": {
-    "success": 14,
-    "invalidJson": 18,
+    "invalidJson": 32,
     "invalidEncoding": 32
   }
 }

@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-10
 
+**Long external save-input sample (2026-11-10):** expanded the deterministic
+source-paired decoder sample from 5–96 bytes to 64 cases in the configured
+97–4096 range (actual generated lengths 119–4069). Remix and Beyond match
+status, decoded values, and errors in Chromium, Firefox, and WebKit; this
+selected sample does not certify arbitrary input or historical save formats.
+
 **Non-lethal Mud hit at alternate viewports (2026-11-10):** added live
 Remix/Beyond full-screen comparisons for HP 80 after one click at 1366×768 and
 1920×1080, in light and dark themes. All six source pairs pass in Chromium;
