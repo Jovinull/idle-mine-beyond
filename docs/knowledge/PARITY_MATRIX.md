@@ -1,5 +1,13 @@
 # Parity matrix
 
+**Classified Linux Story raster deltas (2026-11-10):** WSL 24.04 Chromium
+compares all four natural Chapter 3-6 routes at four viewports in both themes.
+Nine captures have exactly two changed RGBA pixels: the light objective label
+at 1366x768 and 1920x1080 on each route, plus the Chapter 4 dark label at
+1366x768. The E2E asserts each exact source/Beyond color at its exact position;
+the other 23 captures require exact full-screen equality. This does not claim
+zero-pixel parity, so the Story/theme rows remain In progress.
+
 **Default six-hour offline cap (2026-11-10):** live fresh-Mud cold starts
 using source-captured Money-only rates now compare exactly 21,600 seconds and
 21,601 seconds with `offlineTime` level 0. Pinned Remix produces identical

@@ -1,7 +1,16 @@
 import { createHash } from "node:crypto";
 import { inflateSync } from "node:zlib";
 
-export function renderedPixelHash(screenshot: Buffer): string {
+type RenderedPixels = { width: number; height: number; rgba: Buffer };
+
+export type RenderedPixelDifference = {
+  x: number;
+  y: number;
+  expected: [number, number, number, number];
+  actual: [number, number, number, number];
+};
+
+function decodeRenderedPixels(screenshot: Buffer): RenderedPixels {
   const signature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
   if (!screenshot.subarray(0, 8).equals(signature)) {
     throw new Error("Expected a PNG screenshot.");
@@ -85,5 +94,50 @@ export function renderedPixelHash(screenshot: Buffer): string {
     source += bytesPerPixel;
     destination += 4;
   }
-  return createHash("sha256").update(rgba).digest("hex");
+  return { width, height, rgba };
+}
+
+export function renderedPixelHash(screenshot: Buffer): string {
+  return createHash("sha256")
+    .update(decodeRenderedPixels(screenshot).rgba)
+    .digest("hex");
+}
+
+export function renderedPixelDifferences(
+  expectedScreenshot: Buffer,
+  actualScreenshot: Buffer,
+): RenderedPixelDifference[] {
+  const expected = decodeRenderedPixels(expectedScreenshot);
+  const actual = decodeRenderedPixels(actualScreenshot);
+  if (expected.width !== actual.width || expected.height !== actual.height) {
+    throw new Error("Cannot compare screenshots with different dimensions.");
+  }
+
+  const differences: RenderedPixelDifference[] = [];
+  for (let pixel = 0; pixel < expected.width * expected.height; pixel += 1) {
+    const offset = pixel * 4;
+    const expectedPixel = [
+      expected.rgba[offset]!,
+      expected.rgba[offset + 1]!,
+      expected.rgba[offset + 2]!,
+      expected.rgba[offset + 3]!,
+    ] as [number, number, number, number];
+    const actualPixel = [
+      actual.rgba[offset]!,
+      actual.rgba[offset + 1]!,
+      actual.rgba[offset + 2]!,
+      actual.rgba[offset + 3]!,
+    ] as [number, number, number, number];
+    if (
+      expectedPixel.some((channel, index) => channel !== actualPixel[index])
+    ) {
+      differences.push({
+        x: pixel % expected.width,
+        y: Math.floor(pixel / expected.width),
+        expected: expectedPixel,
+        actual: actualPixel,
+      });
+    }
+  }
+  return differences;
 }

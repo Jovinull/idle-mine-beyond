@@ -2,6 +2,16 @@
 
 Last updated: 2026-11-10
 
+**Linux Story raster delta classification (2026-11-10):** WSL 24.04 Chromium
+compares all four natural Chapter 3-6 routes at four viewports in both themes.
+Nine captures have exactly two changed RGBA pixels: the light objective label
+at 1366x768 and 1920x1080 on each route, plus the Chapter 4 dark label at
+1366x768. Loaded Work Sans, computed styles, and geometry match; changing the
+Beyond Story host's overflow, background, or display leaves its hash unchanged.
+The live test asserts these exact source/Beyond pixel values and keeps strict
+full-screen equality for the other 23 captures. This is a known raster delta,
+not zero-pixel parity.
+
 **Default offline cap at six hours (2026-11-10):** source-paired cold starts
 with live Mud rates now compare exactly 21,600 seconds and 21,601 seconds at
 `offlineTime` level 0. The Remix saves are equal across both durations, and

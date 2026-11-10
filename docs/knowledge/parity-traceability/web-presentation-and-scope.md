@@ -18,12 +18,15 @@ gaps below.
 | Mining visual states, controlled full craft panel, and primary screens at canonical and alternate viewports                          | captured Mining phases, craft-panel state, and primary-screen viewport set                          | `tests/e2e/priority-visual.spec.ts` compares selected states; `tests/e2e/remix-app.spec.ts` compares the full craft panel on Windows and Linux; `tests/parity/visual-baselines.test.ts` validates screenshot metadata and hashes                                                                                                                                                                                                                                                                                                                                                                                        |
 | `index.html` document-language metadata: no `lang` attribute on the root element                                                     | Pinned Remix `index.html` root element                                                              | `tests/e2e/remix-app.spec.ts` compares the Beyond and pinned root `lang` attributes and computed `-webkit-locale`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
-The Chapter 3 light mismatch was reproduced with Ubuntu 24.04 Chromium through
-WSL on 2026-11-09. Four existing host CSS variants and an app visibility
-hide/show across two animation frames leave the Beyond screenshot hash
-unchanged. Text, loaded Work Sans fonts, computed styles, and objective
-character geometry match; the cause remains undetermined. Later Linux
-viewports remain unverified.
+The natural Story raster comparison ran on Ubuntu 24.04 Chromium through WSL
+on 2026-11-10 for all four Chapter 3-6 routes, four viewports, and both themes.
+Nine captures differ only at two glyph-edge pixels: the light objective label
+at 1366x768 (`y=632,633`) and 1920x1080 (`y=850,851`) on each route, plus
+Chapter 4 dark at 1366x768 (`y=632,633`). The source/Beyond RGBA values at every
+changed pixel are recorded in the E2E assertion. Loaded Work Sans,
+text/ancestor geometry, and computed styles match; the other 23 captures retain
+exact full-screen hash equality. This records known raster deltas without
+treating them as zero-pixel parity. The paint cause remains open.
 
 This matrix row is a roll-up, not an additional source function. The function
 branches are listed in the state-specific maps below; its status is the union
