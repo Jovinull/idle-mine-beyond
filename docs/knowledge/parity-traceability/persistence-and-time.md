@@ -759,8 +759,11 @@ only and omits both optional return-message clauses;
 `last-damageable-object-live-gem-rate` earns Money+Gems and omits Planet Coins.
 Those two fixtures are encoded with the pinned `getSaveString()` expression
 and compare live messages and complete exports in Chromium, Firefox, and
-WebKit. The level-90 Asteroid, 48-hour cap, and zero-rate Universe cases remain
-in the same cross-browser cold-start suite.
+WebKit. The capped/backward-clock and advancing-clock cases, plus both
+120-second frame-gap cases, also encode their source-shaped inputs with that
+Remix expression rather than Beyond's encoder; their app-to-app assertions are
+unchanged. The level-90 Asteroid, 48-hour cap, and zero-rate Universe cases
+remain in the same cross-browser cold-start suite.
 
 **Live default-cap differential:** `tests/e2e/offline-progression.spec.ts`
 reuses the pinned fresh-Mud live-rate capture with `offlineTime` level 0 at

@@ -2,6 +2,11 @@
 
 Last updated: 2026-11-10
 
+**Independent Remix encoding for offline browser inputs (2026-11-10):** the
+capped/backward-clock, advancing-clock, and 120-second frame-gap E2Es now build
+startup saves with the pinned `getSaveString()` expression. Offline behavior
+and its In Progress status are unchanged; all nine focused Chromium cases pass.
+
 **Linux Story raster delta classification (2026-11-10):** WSL 24.04 Chromium
 compares all four natural Chapter 3-6 routes at four viewports in both themes.
 Nine captures have exactly two changed RGBA pixels: the light objective label

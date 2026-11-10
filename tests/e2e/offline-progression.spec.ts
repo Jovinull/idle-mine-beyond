@@ -4,7 +4,6 @@ import { readFile } from "node:fs/promises";
 import {
   decodeRemixBeyondSave,
   decodeRemixLegacySave,
-  encodeRemixLegacySave,
   createRemixLegacySaveExportData,
   restoreRemixBeyondSave,
 } from "../../packages/persistence/src/index.js";
@@ -917,7 +916,10 @@ test("matches Remix when the wall clock advances between offline-load reads", as
   };
   sourceSave.settings.tab = "main";
   sourceSave.settings.theme = "dark";
-  const encodedLegacySave = encodeRemixLegacySave(sourceSave);
+  const encodedLegacySave = await encodeWithRemixSaveExpression(
+    page,
+    sourceSave,
+  );
   const sourcePage = await page.context().newPage();
   const beyondPage = await page.context().newPage();
 
@@ -1626,7 +1628,10 @@ async function verifyLongFrame(page: Page, freezePages: boolean) {
   };
   sourceSave.upgrades["idlePower"] = { level: 0 };
   sourceSave.upgrades["idleSpeed"] = { level: 0 };
-  const encodedLegacySave = encodeRemixLegacySave(sourceSave);
+  const encodedLegacySave = await encodeWithRemixSaveExpression(
+    page,
+    sourceSave,
+  );
 
   const sourcePage = await page.context().newPage();
   const initializeClockAndSave = ({

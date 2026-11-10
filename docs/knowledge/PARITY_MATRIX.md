@@ -17,6 +17,12 @@ and WebKit. The same suite compares the exact 172,800-second maximum cap and
 `offlineTime` level 42; source exports are identical and Beyond matches in all
 three engines. OS/browser background scheduling remains a separate open gap.
 
+**Remix-authored offline test inputs (2026-11-10):** capped/backward-clock,
+advancing-clock, and 120-second frame-gap browser cases now encode their
+source-shaped startup saves with the pinned Remix `getSaveString()` expression
+(`btoa(escape(encodeURIComponent(JSON.stringify(game))))`), independently of
+Beyond's save encoder. Their behavior and parity status are unchanged.
+
 **Wisdom bulk purchase stops on affordability (2026-11-10):** the live
 Power Power (Active) `buy10` starts at level 0 with 1001 Wisdom, buys levels
 0→1 and 1→2, then stops before the next unaffordable price. The full decoded
