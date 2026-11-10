@@ -188,6 +188,18 @@ Coin upgrade each, it compares Shift from cap minus one to cap and the Control
 no-op at cap, including level labels, affordability state, and resource header.
 Both focused browser runs passed.
 
+**Single-click finite-cap no-op differential (2026-11-10):**
+`tests/e2e/upgrade-cap-purchase-differential.spec.ts` imports a source-shaped
+save with every finite Money, Gem, and Planet Coin upgrade at its cap and
+abundant balances. It dispatches a synthetic click event to each rendered card
+in both live apps and compares unchanged levels and resource headers; all
+localStorage slots remain unchanged after the sequence. The pinned
+`Upgrade.buy()` returns `false` when
+`level < getMaxLevel()` is false, even though the card's click handler still
+calls `buyUpgrade()`. Chromium, Firefox, and WebKit pass. This covers the
+single-click cap guard for the finite shop definitions; other purchase states
+remain open.
+
 ### Upgrade-tab state and export trace
 
 - **Remix source branches:** each resource tab writes `game.settings.upgradeTab`;

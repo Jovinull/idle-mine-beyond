@@ -83,6 +83,41 @@ function makeSave(
   return encodeRemixLegacySave(save);
 }
 
+function makeAllCappedSave(
+  source: LegacySave,
+  fixture: Fixture["data"]["upgradeSemantics"]["groups"],
+): string {
+  const save = structuredClone(source);
+  save.money = "1e1000";
+  save.gems = "1e1000";
+  save.planetCoins = "1e1000";
+  save.highestMineObjectLevel = 90;
+  save.mineObjectLevel = 1;
+  save.lastActive = fixedTime;
+  save.settings.tab = "main";
+  save.settings.theme = "light";
+  save.settings.upgradeTab = "money";
+  save.upgrades = Object.fromEntries(
+    Object.keys(fixture.money).map((key) => [key, { level: 0 }]),
+  );
+  save.gemUpgrades = Object.fromEntries(
+    Object.keys(fixture.gems).map((key) => [key, { level: 0 }]),
+  );
+  save.planetCoinUpgrades = Object.fromEntries(
+    Object.keys(fixture.planetCoins).map((key) => [key, { level: 0 }]),
+  );
+  for (const group of ["money", "gems", "planetCoins"] as const) {
+    const levels = save[levelMaps[group]];
+    for (const [key, upgrade] of Object.entries(fixture[group])) {
+      if (Number.isFinite(upgrade.maxLevel)) {
+        levels[key] = { level: upgrade.maxLevel as number };
+      }
+    }
+  }
+  save.pickaxe = { name: "Probe Pickaxe", pow: "0", quality: "0" };
+  return encodeRemixLegacySave(save);
+}
+
 async function seedAndReload(
   page: Page,
   encoded: string,
@@ -295,6 +330,150 @@ test("matches modifier purchases at and immediately below finite shop caps", asy
         ).toBe(normalizedText(sourceBefore));
       });
     }
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
+test("single clicks are no-ops at every finite upgrade cap", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(180_000);
+  const fixture = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as Fixture;
+  const sourceSave = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  const capSave = makeAllCappedSave(
+    sourceSave,
+    fixture.data.upgradeSemantics.groups,
+  );
+  const sourceContext = await browser.newContext({
+    colorScheme: "light",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    const initialize = ({
+      encoded,
+      time,
+    }: {
+      encoded: string;
+      time: number;
+    }) => {
+      localStorage.clear();
+      localStorage.setItem("IdleMine", encoded);
+      Date.now = () => time;
+    };
+    await Promise.all([
+      page.addInitScript(initialize, { encoded: capSave, time: fixedTime }),
+      sourcePage.addInitScript(initialize, {
+        encoded: capSave,
+        time: fixedTime,
+      }),
+      page.emulateMedia({ colorScheme: "light" }),
+      page.setViewportSize({ width: 1440, height: 900 }),
+    ]);
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean(
+        (window as Window & { game?: unknown }).game &&
+        document.querySelector("#app > footer"),
+      ),
+    );
+
+    const storageSnapshot = (target: Page) =>
+      target.evaluate(() =>
+        Object.fromEntries(
+          Object.keys(localStorage)
+            .sort()
+            .map((storageKey) => [
+              storageKey,
+              localStorage.getItem(storageKey),
+            ]),
+        ),
+      );
+    const [beyondBefore, sourceBefore] = await Promise.all([
+      storageSnapshot(page),
+      storageSnapshot(sourcePage),
+    ]);
+
+    for (const group of ["money", "gems", "planetCoins"] as const) {
+      const cappedUpgrades = Object.entries(
+        fixture.data.upgradeSemantics.groups[group],
+      ).filter(([, upgrade]) => Number.isFinite(upgrade.maxLevel));
+      if (cappedUpgrades.length === 0) continue;
+      await test.step(`${group} cards remain unchanged after clicks at cap`, async () => {
+        await Promise.all([
+          page.locator(`[data-upgrade-tab="${group}"]`).click(),
+          sourcePage
+            .locator(".upg-tabs button")
+            .filter({ hasText: groupLabels[group] })
+            .click(),
+        ]);
+        const headerBefore = normalizedText(
+          await page.locator("header").innerText(),
+        );
+        const sourceHeaderBefore = normalizedText(
+          await sourcePage.locator("header").innerText(),
+        );
+        expect(headerBefore).toBe(sourceHeaderBefore);
+
+        for (const [key, upgrade] of cappedUpgrades) {
+          const cap = upgrade.maxLevel as number;
+          const atCap = upgrade.samples.find((sample) => sample.level === cap);
+          if (!atCap) {
+            throw new Error(`Pinned ${group}.${key} cap sample is missing.`);
+          }
+          const imageName = upgrade.image.split("/").at(-1)!;
+          const card = page.locator(
+            `[data-upgrade-group="${group}"][data-upgrade-key="${key}"]`,
+          );
+          const sourceCard = sourcePage
+            .locator(".upgradelist .upgrade")
+            .filter({ has: sourcePage.locator(`img[src$="${imageName}"]`) })
+            .first();
+          await expect(card).toHaveAttribute("data-upgrade-level", String(cap));
+          await expect(card.locator(".lvl")).toHaveText(atCap.levelDisplay);
+          await expect(sourceCard.locator(".lvl")).toHaveText(
+            atCap.levelDisplay,
+          );
+          await Promise.all([
+            card.dispatchEvent("click"),
+            sourceCard.dispatchEvent("click"),
+          ]);
+          await expect(card).toHaveAttribute("data-upgrade-level", String(cap));
+          await expect(sourceCard.locator(".lvl")).toHaveText(
+            atCap.levelDisplay,
+          );
+          expect(normalizedText(await page.locator("header").innerText())).toBe(
+            headerBefore,
+          );
+          expect(
+            normalizedText(await sourcePage.locator("header").innerText()),
+          ).toBe(sourceHeaderBefore);
+        }
+      });
+    }
+
+    expect(await storageSnapshot(page)).toEqual(beyondBefore);
+    expect(await storageSnapshot(sourcePage)).toEqual(sourceBefore);
   } finally {
     await sourceContext.close().catch(() => undefined);
   }
