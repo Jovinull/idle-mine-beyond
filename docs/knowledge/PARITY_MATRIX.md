@@ -1,5 +1,12 @@
 # Parity matrix
 
+**Legacy import with individual optional groups omitted (2026-11-10):** live
+Settings imports now remove each optional group separately from a captured
+varied save, including `powers.data` and `powers.upgrades`. The tests verify
+source-specific retention/reset behavior and compare complete encoded exports
+against Remix in Chromium, Firefox, and WebKit. Legacy import/recovery remains
+In Progress for other historical shapes and states.
+
 **Fractional Gem balance after a successful craft (2026-11-10):** the
 source-captured 2.6-Gem craft now runs through the real Mining button. Remix
 and Beyond spend 1 Gem, round the remaining balance to 2 before the successful

@@ -2,6 +2,15 @@
 
 Last updated: 2026-11-10
 
+**Legacy import with individual optional groups omitted (2026-11-10):** live
+Settings imports now omit `settings`, each upgrade group, the whole `powers`
+group, its `data` and `upgrades` subgroups separately, and `pickaxe` from a
+captured varied save. The results preserve live Money/Powers/tool values,
+reset Gem/Planet Coin upgrades, and reset nested Power upgrades according to
+the pinned loader. Complete exports and encoded bytes match Remix in
+Chromium, Firefox, and WebKit. The legacy import area remains In Progress for
+other historical save shapes.
+
 **Fractional Gem balance after a successful craft (2026-11-10):** the
 source-captured `fractional-gem-balance-rounds-after-spend` case is now a live
 Remix/Beyond Mining interaction. Starting from 2.6 Gems, both spend 1, round

@@ -31,6 +31,16 @@ after reload in Chromium, Firefox, and WebKit.
 
 ## Legacy save behavior observed in source
 
+**Individual optional-group imports (2026-11-10):** starting from the same
+captured populated state, source-paired Settings imports separately omit
+`settings`, each of the four upgrade groups, `powers`, `powers.data`,
+`powers.upgrades`, and `pickaxe`. The pinned `loadGame()` leaves settings,
+Money upgrades, the Powers group/data, and pickaxe values live; absent Gem and
+Planet Coin groups reset their levels; absent `powers.upgrades` resets only
+those levels while still applying incoming Power values. Chromium, Firefox,
+and WebKit compare the complete decoded exports and encoded bytes. Other
+historical save shapes remain open.
+
 Scripts/Define/functions.js stores the save under localStorage key IdleMine. It serializes the game object as JSON, applies encodeURIComponent and escape, then Base64-encodes it. Import reverses Base64, decodeURIComponent, and unescape before JSON parsing. Base64 is encoding, not encryption.
 
 The selected upgrade group is a session setting with a legacy persistence quirk: clicking a group updates live `settings.upgradeTab`, panel navigation retains it, and export includes it; the pinned `loadGame()` does not apply that field on cold start, which returns to the `game.js` default `money`. The source-paired E2E `tests/e2e/upgrade-tab-state-differential.spec.ts` verifies panel retention, exported values, and the cold-load reset. Preserve this asymmetry.

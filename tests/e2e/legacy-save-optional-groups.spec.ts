@@ -50,7 +50,7 @@ type ExportedSave = {
   planetCoins: string;
   wisdom: string;
   lastActive: number;
-  settings: { tab: string; theme: string };
+  settings: { tab: string; theme: string; numberFormatterIndex: number };
   upgrades: Record<string, { level: number }>;
   gemUpgrades: Record<string, { level: number }>;
   planetCoinUpgrades: Record<string, { level: number }>;
@@ -71,8 +71,14 @@ const fixture = JSON.parse(
 const highMagnitudeDecimalSave = fixture.data.saveExportSemantics.variants.find(
   (variant) => variant.name === "high-magnitude-decimal-fields",
 );
+const variedUpgradeSave = fixture.data.saveExportSemantics.variants.find(
+  (variant) => variant.name === "varied-settings-and-all-upgrades",
+);
 if (!highMagnitudeDecimalSave?.inputJson) {
   throw new Error("Missing the captured high-magnitude Decimal save.");
+}
+if (!variedUpgradeSave?.inputJson) {
+  throw new Error("Missing the captured varied all-upgrade save.");
 }
 
 async function encodeWithPinnedRuntime(
@@ -198,7 +204,7 @@ test("matches Remix imports with optional groups and varied all-upgrade state", 
   page,
   browser,
 }) => {
-  test.setTimeout(120_000);
+  test.setTimeout(300_000);
   const sourceContext = await browser.newContext({
     colorScheme: "dark",
     locale: "en-US",
@@ -357,6 +363,136 @@ test("matches Remix imports with optional groups and varied all-upgrade state", 
             sourceExport,
           );
         }
+      });
+    }
+
+    const partialInputs: {
+      name: string;
+      omit:
+        | "settings"
+        | "upgrades"
+        | "gemUpgrades"
+        | "planetCoinUpgrades"
+        | "powers"
+        | "pickaxe";
+      check: (result: ExportedSave) => void;
+    }[] = [
+      {
+        name: "settings group absent retains the live formatter",
+        omit: "settings",
+        check: (result) => expect(result.settings.numberFormatterIndex).toBe(3),
+      },
+      {
+        name: "Money upgrades absent retain live levels",
+        omit: "upgrades",
+        check: (result) => {
+          expect(result.upgrades["idleSpeed"]!.level).toBe(4);
+          expect(result.upgrades["blacksmith"]!.level).toBe(0);
+        },
+      },
+      {
+        name: "Gem upgrades absent reset the live group",
+        omit: "gemUpgrades",
+        check: (result) =>
+          expect(result.gemUpgrades["offlineGems"]!.level).toBe(0),
+      },
+      {
+        name: "Planet Coin upgrades absent reset the live group",
+        omit: "planetCoinUpgrades",
+        check: (result) =>
+          expect(result.planetCoinUpgrades["offlinePC"]!.level).toBe(0),
+      },
+      {
+        name: "Powers group absent retains values and upgrades",
+        omit: "powers",
+        check: (result) => {
+          expect(result.powers.data.values[0]).toBe("2");
+          expect(result.powers.upgrades["powerPowerActive"]!.level).toBe(7);
+        },
+      },
+      {
+        name: "pickaxe group absent retains the live tool",
+        omit: "pickaxe",
+        check: (result) =>
+          expect(result.pickaxe).toEqual({
+            name: "Probe Pickaxe",
+            pow: "123",
+            quality: "4",
+          }),
+      },
+    ];
+
+    for (const scenario of partialInputs) {
+      await test.step(scenario.name, async () => {
+        await setSaveAndReload(page, sourcePage, encodedSeedSave);
+        await selectSettings(page, sourcePage);
+        const input = JSON.parse(variedUpgradeSave.inputJson!) as Record<
+          string,
+          unknown
+        >;
+        delete input[scenario.omit];
+        const encodedImport = await encodeWithPinnedRuntime(sourcePage, input);
+        const [beyondExport, sourceExport] = await importAndExport(
+          page,
+          sourcePage,
+          encodedImport,
+        );
+        const [result, sourceResult] = await Promise.all([
+          decodeExport(page, beyondExport),
+          decodeExport(sourcePage, sourceExport),
+        ]);
+        expect(result, `${scenario.name} complete source export`).toEqual(
+          sourceResult,
+        );
+        expect(beyondExport, `${scenario.name} encoded save`).toBe(
+          sourceExport,
+        );
+        scenario.check(result);
+      });
+    }
+
+    for (const scenario of [
+      {
+        name: "Powers data absent retains values and imports upgrades",
+        omit: "data",
+        expectedValue: "2",
+        expectedUpgrade: 5,
+      },
+      {
+        name: "Powers upgrades absent resets upgrades and imports values",
+        omit: "upgrades",
+        expectedValue: "11",
+        expectedUpgrade: 0,
+      },
+    ] as const) {
+      await test.step(scenario.name, async () => {
+        await setSaveAndReload(page, sourcePage, encodedSeedSave);
+        await selectSettings(page, sourcePage);
+        const input = JSON.parse(variedUpgradeSave.inputJson!) as {
+          powers: Record<string, unknown>;
+          [key: string]: unknown;
+        };
+        delete input.powers[scenario.omit];
+        const encodedImport = await encodeWithPinnedRuntime(sourcePage, input);
+        const [beyondExport, sourceExport] = await importAndExport(
+          page,
+          sourcePage,
+          encodedImport,
+        );
+        const [result, sourceResult] = await Promise.all([
+          decodeExport(page, beyondExport),
+          decodeExport(sourcePage, sourceExport),
+        ]);
+        expect(result, `${scenario.name} complete source export`).toEqual(
+          sourceResult,
+        );
+        expect(beyondExport, `${scenario.name} encoded save`).toBe(
+          sourceExport,
+        );
+        expect(result.powers.data.values[0]).toBe(scenario.expectedValue);
+        expect(result.powers.upgrades["powerPowerActive"]!.level).toBe(
+          scenario.expectedUpgrade,
+        );
       });
     }
   } finally {
