@@ -55,7 +55,9 @@ match pinned Remix in Chromium, Firefox, and WebKit; Firefox/WebKit run in CI.
 generated object IDs 105 (pre-Portal), 175 (post-Portal/pre-Universe), and 210
 (post-Universe fallback) check each exact generated name, ten RNG draws, and
 complete encoded/decoded Settings export against pinned Remix in Chromium,
-Firefox, and WebKit. Other craft states and naming inputs remain open.
+Firefox, and WebKit. After reload, the generated name persists, the transient
+message log clears as in Remix, and complete exports remain byte-identical.
+Other craft states and naming inputs remain open.
 
 **Craft no-save outcomes across engines (2026-11-09):** the source-paired live
 test compares equal-damage dud, weaker-damage dud, and insufficient-Gem craft

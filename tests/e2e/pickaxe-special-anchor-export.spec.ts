@@ -39,6 +39,7 @@ type LegacySave = {
     upgrades: Record<string, { level: number }>;
   };
   pickaxe: { name: string; pow: string; quality: string };
+  messageLog?: { message: string; color: string }[];
 };
 
 type CraftCorpus = {
@@ -69,8 +70,11 @@ const liveGeneratedNameCases = [
 ];
 
 function seedSave({ encoded, now }: { encoded: string; now: number }) {
-  localStorage.clear();
-  localStorage.setItem("IdleMine", encoded);
+  if (sessionStorage.getItem("pickaxe-export-seed-installed") !== "true") {
+    localStorage.clear();
+    localStorage.setItem("IdleMine", encoded);
+    sessionStorage.setItem("pickaxe-export-seed-installed", "true");
+  }
   Date.now = () => now;
 }
 
@@ -238,6 +242,61 @@ for (const nameCase of liveGeneratedNameCases) {
         pow: craft.result.pickaxe.power.decimal,
         quality: craft.result.pickaxe.quality.decimal,
       });
+
+      await Promise.all([page.reload(), sourcePage.reload()]);
+      await Promise.all([
+        expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready"),
+        sourcePage.waitForFunction(() =>
+          Boolean((window as Window & { game?: unknown }).game),
+        ),
+      ]);
+      const [reloadedBeyondName, reloadedSourceName] = await Promise.all([
+        page.locator(".stats > div").first().locator("p").first().textContent(),
+        sourcePage
+          .locator(".stats > div")
+          .first()
+          .locator("p")
+          .first()
+          .textContent(),
+      ]);
+      expect(reloadedBeyondName?.trim()).toBe(craft.result.pickaxe.name);
+      expect(reloadedSourceName?.trim()).toBe(craft.result.pickaxe.name);
+
+      await Promise.all([
+        page.locator("[data-game-tab='settings']").click(),
+        sourcePage
+          .locator("footer button")
+          .filter({ hasText: "Settings" })
+          .click(),
+      ]);
+      await Promise.all([
+        page.locator("[data-settings-export]").click(),
+        sourcePage
+          .locator("article.settings button")
+          .filter({ hasText: "Export" })
+          .click(),
+      ]);
+      const [reloadedBeyondExport, reloadedSourceExport] = await Promise.all([
+        page.locator("[data-settings-save-field]").inputValue(),
+        sourcePage.locator("article.settings textarea").inputValue(),
+      ]);
+      expect(reloadedBeyondExport).toBe(reloadedSourceExport);
+      const reloadedBeyondDecoded = decodeRemixLegacySave(reloadedBeyondExport);
+      const reloadedSourceDecoded = decodeRemixLegacySave(reloadedSourceExport);
+      expect(reloadedBeyondDecoded.status).toBe("success");
+      expect(reloadedSourceDecoded.status).toBe("success");
+      if (
+        reloadedBeyondDecoded.status !== "success" ||
+        reloadedSourceDecoded.status !== "success"
+      ) {
+        throw new Error(
+          "Could not decode the reloaded generated-name exports.",
+        );
+      }
+      expect(reloadedBeyondDecoded.value).toEqual(reloadedSourceDecoded.value);
+      expect((reloadedBeyondDecoded.value as LegacySave).messageLog).toEqual(
+        [],
+      );
     } finally {
       await sourceContext.close().catch(() => undefined);
     }

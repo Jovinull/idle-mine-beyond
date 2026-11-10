@@ -9,6 +9,12 @@ craft checks its exact name, ten RNG draws, and complete encoded/decoded
 Settings export against pinned Remix in Chromium, Firefox, and WebKit. Crafting
 and naming remain In Progress for other states and presentation evidence.
 
+**Generated-name craft save/reload (2026-11-10):** after those successful
+crafts, reloading both apps preserves the generated pickaxe name and produces
+byte-identical complete Settings exports. The serialized success log is cleared
+on reload in both apps, matching Remix's `loadGame()` behavior. Chromium,
+Firefox, and WebKit pass for IDs 105, 175, and 210.
+
 **Fresh-tab autosave after stale Hard Reset (2026-11-10):** after a stale
 same-origin tab clears storage with Hard Reset, a fresh tab still holds its
 Blacksmith 1 / 970 Money state in memory. Advancing that tab's loop clock by

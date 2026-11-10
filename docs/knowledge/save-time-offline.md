@@ -1,5 +1,12 @@
 # Saves, time, and offline progression
 
+**Generated-name craft reload across procedural regions (2026-11-10):** after
+a source-paired successful craft at generated-name IDs 105, 175, and 210, a
+fresh page in both Remix and Beyond retains the crafted pickaxe name. The
+serialized success message is not restored by `loadGame()` in either app, so
+the post-reload message log is empty; full Settings exports are byte-identical
+after reload in Chromium, Firefox, and WebKit.
+
 ## Legacy save behavior observed in source
 
 Scripts/Define/functions.js stores the save under localStorage key IdleMine. It serializes the game object as JSON, applies encodeURIComponent and escape, then Base64-encodes it. Import reverses Base64, decodeURIComponent, and unescape before JSON parsing. Base64 is encoding, not encryption.
