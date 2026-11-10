@@ -238,9 +238,11 @@ Beyond primary, a valid Beyond backup derived from a captured legacy save, and
 a conflicting legacy key. Startup loads the backup rather than entering
 recovery or migrating the legacy value. With its timestamp equal to the fixed
 clock, there is no offline save effect, so all three storage slots remain
-unchanged. The case is included in the Firefox/WebKit recovery-file gate. This
-verifies that selected startup branch; backup corruption and offline-write
-branches remain covered separately.
+unchanged. It then manually saves the recovered state: the primary becomes a
+valid restored save, the existing valid backup remains byte-identical, and the
+legacy key remains unchanged. The case is included in the Firefox/WebKit
+recovery-file gate. Backup corruption and offline-write branches remain covered
+separately.
 
 `loadRemixBeyondSaveIntoState()` restores a v1 save, runs the same source-backed offline action with an injected clock and selected formatter, and dispatches the theme before offline effects. If rewards are applied, it writes the full post-reward state before dispatching `Game Saved!`. Its controlled load reuses `saveOfflineApplicationSemantics` and matches the captured resources, message, four clock reads, storage order, and timestamp. `createRemixWebGameSession()` invokes this loader at startup and routes simulation save effects through the browser adapter. Its action queue preserves transition/write/effect order and supports explicit legacy-save recovery after startup enters recovery. Standalone Beyond recovery files use the same offline transition and persistence coordinator, and only transition the session to ready after a successful write. The coordinator powers route startup, mining frames, Story state, upgrade purchases, crafting, Settings, Powers, and recovery; native WebView runtime certification remains open.
 

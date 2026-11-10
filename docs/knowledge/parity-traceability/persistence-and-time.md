@@ -564,8 +564,10 @@ The browser startup E2E now complements the storage selector's unit case for a
 damaged primary with a valid backup. It restores a source-derived Beyond v1
 state, ignores a conflicting legacy slot, and asserts that primary, backup,
 and legacy storage remain unchanged when the fixed clock yields no offline
-save effect. `tests/e2e/remix-app.spec.ts` covers this path in Chromium,
-Firefox, and WebKit through `test:e2e:recovery-file:browsers`.
+save effect. It then manually saves and verifies the primary is replaced, the
+valid backup remains byte-identical, and the legacy slot stays untouched.
+`tests/e2e/remix-app.spec.ts` covers this path in Chromium, Firefox, and WebKit
+through `test:e2e:recovery-file:browsers`.
 
 ## Native save adapter
 

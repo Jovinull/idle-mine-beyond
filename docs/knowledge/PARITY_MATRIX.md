@@ -295,12 +295,12 @@ evidence but does not close the pixel mismatch or change the strict assertion.
 
 Browser persistence failure evidence (2026-10-05): the Chromium write/read failure tests passed 4/4, covering injected backup/primary `QuotaExceededError`, primary/backup `SecurityError`, retained save slots, recovery UI, retry, and export failure. Real quota policy, cross-tab races, and process termination remain separate open environment evidence; Beyond save storage and recovery stays In progress.
 
-Stored-backup startup recovery (2026-11-09): a source-derived valid Beyond v1
-backup is restored at startup when the primary is invalid. The live browser case
-asserts restored state/theme, no legacy migration, and no slot writes when the
-controlled clock produces no offline save effect. Chromium passed locally;
-Firefox and WebKit are in the recovery-file CI gate. The Beyond save storage
-and recovery row remains In progress.
+Stored-backup recovery (2026-11-09): a source-derived valid Beyond v1 backup is
+restored at startup when the primary is invalid. Manual Save then replaces the
+damaged primary while preserving the valid backup byte-for-byte and leaving the
+legacy key unchanged. Chromium passed locally; Firefox and WebKit are in the
+recovery-file CI gate. The Beyond save storage and recovery row remains In
+progress.
 
 Real localStorage quota follow-up (2026-11-07): the focused Chromium E2E now covers native quota exhaustion on both primary creation and backup retention. The latter preserves a byte-identical valid primary, leaves backup absent, and appends no success log. Both cases passed; other browser/profile quota policies remain open.
 

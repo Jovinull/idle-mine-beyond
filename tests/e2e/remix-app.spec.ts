@@ -3506,7 +3506,7 @@ test("exports damaged save slots before recovering from a supplied Remix save", 
   );
 });
 
-test("loads the valid stored backup at startup when the primary is invalid", async ({
+test("loads a valid stored backup and saves without replacing that backup", async ({
   page,
 }) => {
   const reference = JSON.parse(
@@ -3576,6 +3576,39 @@ test("loads the valid stored backup at startup when the primary is invalid", asy
     primary: "damaged-primary",
     backup: encodedBackup,
     legacy: "legacy-slot-must-not-be-used",
+  });
+
+  await page.locator("[data-settings-save]").click();
+  await page.locator("[data-game-tab='mining']").click();
+  await expect(page.locator(".messagelog p").last()).toHaveText("Game Saved!");
+  const afterSave = await page.evaluate(() => ({
+    primary: localStorage.getItem("IdleMineBeyond"),
+    backup: localStorage.getItem("IdleMineBeyondBackup"),
+    legacy: localStorage.getItem("IdleMine"),
+  }));
+  expect(afterSave.primary).not.toBe("damaged-primary");
+  expect(afterSave.backup).toBe(encodedBackup);
+  expect(afterSave.legacy).toBe("legacy-slot-must-not-be-used");
+  if (afterSave.primary === null) {
+    throw new Error("Manual Save did not create a Beyond primary slot.");
+  }
+  const decodedPrimary = JSON.parse(afterSave.primary) as {
+    state: {
+      settings: { theme: string };
+      simulation: {
+        resources: { money: string };
+        mineObjectLevel: number;
+      };
+    };
+  };
+  expect(decodedPrimary.state).toMatchObject({
+    settings: { theme: "dark" },
+    simulation: {
+      resources: {
+        money: reference.data.saveApplicationSemantics.resources.money.decimal,
+      },
+      mineObjectLevel: sourceSave.mineObjectLevel,
+    },
   });
 });
 
