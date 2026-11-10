@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-10
 
+**Below-price shop screens at alternate viewport (2026-11-10):** added full
+source/Beyond screen comparisons for Money, Gems, and Planet Coins at one cent
+below each pinned price, at 1366x768 in light and dark themes. All six pairs
+match exactly in `tests/e2e/upgrade-affordability-differential.spec.ts`.
+Broader shop states, viewport combinations, and the matrix row remain open.
+
 **Generated external save-byte sample (2026-11-10):** added a pinned-seed
 sample of 64 URI-wrapped byte strings from 5 to 96 bytes to the Remix codec
 differential. Printable ASCII and full-range byte sequences produce 14 valid

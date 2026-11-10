@@ -85,6 +85,11 @@ Remix exposes the Planet Coin resource and the `PC Upgrades` tab when
 both apps, opens the tab at 90, and compares the seven visible cards. Chromium,
 Firefox, and WebKit pass; the broader Planet Coin presentation remains open.
 
+**Below-price shop screens:** the source-paired affordability E2E compares full
+Money, Gem, and Planet Coin screens one cent below their pinned purchase prices
+at 1366x768 in both themes. All six Chromium captures match exactly; broader
+balances, viewports, and shop states remain open.
+
 **Wisdom single-purchase affordability:** the live pinned Remix differential
 recalculates each card's price at starting levels 0 and 1, then tries each
 purchase with Wisdom at 99% of its exact price and at the exact price. Below

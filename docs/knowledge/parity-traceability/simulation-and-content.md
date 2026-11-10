@@ -458,7 +458,9 @@ rendering remain separate parity areas.
   images for the Planet Coin tab at levels zero and one in both themes. Level
   one is the first non-cap state for every Planet Coin card. The source-paired
   affordability flow also compares the Planet Coin zero-resource and exact-
-  price complete views in both themes. Other full-screen resource balances and
+  price complete views in both themes. The full-screen below-price boundary
+  also matches at 1366x768 in both themes in
+  `tests/e2e/upgrade-affordability-differential.spec.ts`. Other full-screen resource balances and
   Planet Coin shop visibility/render combinations remain open as visual
   evidence; these do not identify an uncovered price, purchase, or RNG source
   branch. The matrix remains In progress for this separate visual scope.

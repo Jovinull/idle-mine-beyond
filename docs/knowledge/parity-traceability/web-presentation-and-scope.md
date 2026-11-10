@@ -250,7 +250,10 @@ explicit visual gaps above.
   source/Beyond full-viewport pairs on Windows), asserted in the isolated
   `matches exact-price shop screens at 1366x768` test. Linux evidence for these
   alternate-viewport captures remains open. A dedicated
-  full-screen differential covers the immediate stale labels and the refreshed
+  full-screen differential also compares the one-cent-below-price screens for
+  Money, Gems, and Planet Coins; they match in both themes at 1366x768 in
+  `matches below-price shop screens at 1366x768`. Linux evidence remains open.
+  A separate differential covers the immediate stale labels and the refreshed
   active hints for Shift, Control, and Shift+Control on Money Active Power in
   both themes. A second differential now covers the refreshed full-screen hints
   for the first card in all three resource groups, in both themes at 1440×900

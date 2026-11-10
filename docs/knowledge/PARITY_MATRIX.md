@@ -474,6 +474,8 @@ retains semantic gate assertions without pixel baselines.
 
 Shop zero-resource alternate viewport (2026-11-07): the focused source-paired Chromium E2E captures Money, Gem, and Planet Coin screens at 1366x768 with the relevant balance at zero. All three groups match at zero pixels in light and dark (6 captures; 2/2 theme tests). Other shop states and viewports remain open.
 
+Shop below-price alternate viewport (2026-11-10): a source-paired Chromium E2E compares full Money, Gem, and Planet Coin screens at one cent below their pinned prices at 1366x768 in light and dark. All six screens match at zero pixels; other balances and viewport/theme combinations remain open.
+
 Shop level-one catalog alternate viewport (2026-11-07): full Money, Gem, and Planet Coin catalog screens at level one with abundant resources also match pinned Remix at 1366x768 in both themes (6 captures; 2/2 theme tests). Broader levels and viewport combinations remain open.
 
 The source-paired catalog differential compares full viewports for Money, Gem,
