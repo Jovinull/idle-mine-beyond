@@ -1,5 +1,12 @@
 # Parity matrix
 
+**Sequential Power-value Settings import (2026-11-10):** the live Settings
+E2E imports the captured seven-value save, exports it, then imports the
+five-value save without reloading. Both runtimes preserve the trailing `80`
+and `90`, and their complete decoded exports and encoded bytes match after
+both steps in Chromium, Firefox, and WebKit. Save export and round-trip remains
+In Progress for other dynamic states.
+
 **Offline live-rate cold starts at Mud and the last object (2026-11-10):**
 the remaining captured live-rate compositions are now compared through live
 Remix and Beyond cold starts. Initial Mud verifies the Money-only return

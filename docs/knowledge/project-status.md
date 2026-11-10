@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-10
 
+**Sequential Power-value imports through Settings (2026-11-10):** added a live
+same-runtime import/export differential for the pinned seven-value save,
+followed by the five-value save. Remix and Beyond both update the first five
+values and retain trailing `80` and `90`; complete decoded exports and encoded
+bytes match after both imports in Chromium, Firefox, and WebKit. This adds the
+Settings integration for the sequential-load quirk; general save export and
+round-trip remains In Progress.
+
 **Offline live-rate cold starts at Mud and the last object (2026-11-10):**
 extended the pinned-Remix/Beyond cold-start differential to the remaining
 captured live-rate compositions. Fresh initial-upgrade state at Mud now matches

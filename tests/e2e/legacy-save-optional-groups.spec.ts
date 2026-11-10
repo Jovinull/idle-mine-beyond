@@ -30,6 +30,12 @@ type OptionalGroupFixture = {
     saveSemantics: {
       missingOptionalGroups: { inputJson: string };
       emptyPresentGroups: { inputJson: string };
+      powerValueReloadSemantics: {
+        extendedInputJson: string;
+        shortInputJson: string;
+        afterExtended: string[];
+        afterShort: string[];
+      };
     };
     saveExportSemantics: {
       variants: { name: string; inputJson?: string }[];
@@ -407,6 +413,102 @@ test("matches optional-group save import from a fresh runtime", async ({
     ]);
     expect(beyondResult, "complete fresh-runtime export").toEqual(sourceResult);
     expect(beyondExport, "encoded fresh-runtime export").toBe(sourceExport);
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
+test("retains extra Power values after importing a shorter save in Settings", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(120_000);
+  const sourceContext = await browser.newContext({
+    colorScheme: "dark",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    const encodedSeedSave = await encodeWithPinnedRuntime(
+      sourcePage,
+      makeSeedSave(),
+    );
+    const initialize = { key: seedKey, time: fixedTime };
+    await Promise.all([
+      page.addInitScript(seedPage, {
+        ...initialize,
+        encoded: encodedSeedSave,
+      }),
+      sourcePage.addInitScript(seedPage, {
+        ...initialize,
+        encoded: encodedSeedSave,
+      }),
+    ]);
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean((window as Window & { game?: unknown }).game),
+    );
+    await selectSettings(page, sourcePage);
+
+    const reloadSemantics =
+      fixture.data.saveSemantics.powerValueReloadSemantics;
+    const encodedExtendedSave = await encodeJsonWithPinnedRuntime(
+      sourcePage,
+      reloadSemantics.extendedInputJson,
+    );
+    const [beyondExtendedExport, sourceExtendedExport] = await importAndExport(
+      page,
+      sourcePage,
+      encodedExtendedSave,
+    );
+    const [beyondExtended, sourceExtended] = await Promise.all([
+      decodeExport(page, beyondExtendedExport),
+      decodeExport(sourcePage, sourceExtendedExport),
+    ]);
+    expect(sourceExtended.powers.data.values).toEqual(
+      reloadSemantics.afterExtended,
+    );
+    expect(beyondExtended.powers.data.values).toEqual(
+      reloadSemantics.afterExtended,
+    );
+    expect(beyondExtended, "seven-value complete export").toEqual(
+      sourceExtended,
+    );
+    expect(beyondExtendedExport, "seven-value encoded export").toBe(
+      sourceExtendedExport,
+    );
+
+    const encodedShortSave = await encodeJsonWithPinnedRuntime(
+      sourcePage,
+      reloadSemantics.shortInputJson,
+    );
+    const [beyondShortExport, sourceShortExport] = await importAndExport(
+      page,
+      sourcePage,
+      encodedShortSave,
+    );
+    const [beyondShort, sourceShort] = await Promise.all([
+      decodeExport(page, beyondShortExport),
+      decodeExport(sourcePage, sourceShortExport),
+    ]);
+    expect(sourceShort.powers.data.values).toEqual(reloadSemantics.afterShort);
+    expect(beyondShort.powers.data.values).toEqual(reloadSemantics.afterShort);
+    expect(beyondShort, "five-then-retained-values complete export").toEqual(
+      sourceShort,
+    );
+    expect(beyondShortExport, "five-then-retained-values encoded export").toBe(
+      sourceShortExport,
+    );
   } finally {
     await sourceContext.close().catch(() => undefined);
   }
