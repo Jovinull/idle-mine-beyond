@@ -27,8 +27,10 @@ and Beyond in Chromium, Firefox, and WebKit.
 **Optional-group import from a fresh runtime (2026-11-10):** the live Settings
 flow now imports the captured save with absent optional groups after starting
 both applications without a stored save. The complete export object and encoded
-bytes match pinned Remix in Chromium, Firefox, and WebKit. Populated-session
-imports remain covered separately; historical formats remain open.
+bytes match pinned Remix in Chromium, Firefox, and WebKit. The suite inputs use
+the pinned Remix save-encoding expression instead of the Beyond codec.
+Populated-session imports remain covered separately; historical formats
+remain open.
 
 **Composed external UTF-8 save inputs (2026-11-09):** the pinned save decoder
 comparison now includes two valid multi-scalar strings and two longer malformed

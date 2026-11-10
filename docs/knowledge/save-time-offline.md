@@ -206,6 +206,15 @@ The thirteenth compact source variant is a **synthetic high-magnitude Decimal sa
 
 The probe confirms the source's exact encode/decode order and a Unicode corruption on round-trip. See the dedicated legacy quirk entry; preserve the observed behavior while parity is the goal. `loadGame()` performs field-by-field assignment rather than schema validation or a versioned migration. Its defaults are not uniform: raw settings, Story, and progress values use `loadVal`, but resource and pickaxe Decimal expressions call `new Decimal(value)` before `loadVal`; in the pinned runtime omitted resource fields therefore load as Decimal zero (including Gems despite the nominal alternate of 5). A missing pickaxe group retains the current pickaxe, while a present empty group loads name `Toy Pickaxe` and Decimal-zero power/quality. The synthetic `{ "story": {} }` case also shows absent Gem and Planet Coin upgrade groups resetting to zero while absent settings, Money upgrades, Powers, and pickaxe leave seeded runtime values in place. If the Powers group is present but its upgrades are absent, Wisdom upgrade levels reset to zero. These controlled captures prove those specific branches, not a complete catalog of old-save variants or corrupt-input behavior. The source-paired `tests/e2e/legacy-save-optional-groups.spec.ts` imports the absent-group and present-empty-group captures into populated live sessions through Settings; both complete legacy exports match pinned Remix, including retained/reset upgrade levels, Power values, pickaxe, and Settings state.
 
+**Source-encoded optional-group import inputs (2026-11-10):** the live
+Settings suite now encodes its seed and imported valid JSON with the expression
+from pinned Remix `functions.getSaveString()`, not
+`packages/persistence/src/remix-save-codec.ts`. This independent input path is
+used for absent and present-empty groups, varied all-upgrade state, the
+high-magnitude Decimal state, the fresh-runtime import, live Gem Waster
+selection, and serialized timer values. Full source/Beyond exports match in
+Chromium, Firefox, and WebKit.
+
 ## Multiple browser tabs
 
 **Verified source behavior (2026-11-07):** Remix `saveGame()` serializes the

@@ -1,6 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
-import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
 const fixedTime = 1_700_000_000_000;
@@ -70,18 +69,30 @@ if (!highMagnitudeDecimalSave?.inputJson) {
   throw new Error("Missing the captured high-magnitude Decimal save.");
 }
 
-function encodeJson(inputJson: string): string {
-  return encodeRemixLegacySave(
-    JSON.parse(inputJson) as Record<string, unknown>,
-  );
+async function encodeWithPinnedRuntime(
+  page: Page,
+  save: unknown,
+): Promise<string> {
+  return page.evaluate((value) => {
+    const json = JSON.stringify(value);
+    if (json === undefined) throw new Error("Pinned save input is not JSON.");
+    return btoa(escape(encodeURIComponent(json)));
+  }, save);
 }
 
-function makeSeedSave(): string {
+async function encodeJsonWithPinnedRuntime(
+  page: Page,
+  inputJson: string,
+): Promise<string> {
+  return encodeWithPinnedRuntime(page, JSON.parse(inputJson));
+}
+
+function makeSeedSave(): LegacySave {
   const save = JSON.parse(
     fixture.data.saveApplicationSemantics.inputJson,
   ) as LegacySave;
   save.lastActive = fixedTime;
-  return encodeRemixLegacySave(save);
+  return save;
 }
 
 function seedPage({
@@ -193,14 +204,15 @@ test("matches Remix imports with optional groups and varied all-upgrade state", 
 
   try {
     const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    const encodedSeedSave = await encodeWithPinnedRuntime(sourcePage, seedSave);
     await Promise.all([
       page.addInitScript(seedPage, {
-        encoded: seedSave,
+        encoded: encodedSeedSave,
         key: seedKey,
         time: fixedTime,
       }),
       sourcePage.addInitScript(seedPage, {
-        encoded: seedSave,
+        encoded: encodedSeedSave,
         key: seedKey,
         time: fixedTime,
       }),
@@ -286,12 +298,16 @@ test("matches Remix imports with optional groups and varied all-upgrade state", 
 
     for (const scenario of cases) {
       await test.step(scenario.name, async () => {
-        await setSaveAndReload(page, sourcePage, seedSave);
+        await setSaveAndReload(page, sourcePage, encodedSeedSave);
         await selectSettings(page, sourcePage);
+        const encodedImport = await encodeJsonWithPinnedRuntime(
+          sourcePage,
+          scenario.inputJson,
+        );
         const [beyondExport, sourceExport] = await importAndExport(
           page,
           sourcePage,
-          encodeJson(scenario.inputJson),
+          encodedImport,
         );
         const [result, sourceResult] = await Promise.all([
           decodeExport(page, beyondExport),
@@ -380,7 +396,10 @@ test("matches optional-group save import from a fresh runtime", async ({
     const [beyondExport, sourceExport] = await importAndExport(
       page,
       sourcePage,
-      encodeJson(fixture.data.saveSemantics.missingOptionalGroups.inputJson),
+      await encodeJsonWithPinnedRuntime(
+        sourcePage,
+        fixture.data.saveSemantics.missingOptionalGroups.inputJson,
+      ),
     );
     const [beyondResult, sourceResult] = await Promise.all([
       decodeExport(page, beyondExport),
@@ -430,13 +449,9 @@ test("preserves the current Gem Waster selection when importing a legacy save", 
 
   try {
     const sourceUrl = await routePinnedRemixOracle(sourceContext);
-    const encodeWithPinnedRuntime = (save: LegacySave) =>
-      sourcePage.evaluate((value) => {
-        return btoa(escape(encodeURIComponent(JSON.stringify(value))));
-      }, save);
     const [encodedSeed, encodedImport] = await Promise.all([
-      encodeWithPinnedRuntime(seedSave),
-      encodeWithPinnedRuntime(importedSave),
+      encodeWithPinnedRuntime(sourcePage, seedSave),
+      encodeWithPinnedRuntime(sourcePage, importedSave),
     ]);
     await Promise.all([
       page.addInitScript(seedPage, {
@@ -536,14 +551,9 @@ test("preserves live timers when importing serialized timer values", async ({
 
   try {
     const sourceUrl = await routePinnedRemixOracle(sourceContext);
-    const encodeWithPinnedRuntime = (save: LegacySave) =>
-      sourcePage.evaluate(
-        (value) => btoa(escape(encodeURIComponent(JSON.stringify(value)))),
-        save,
-      );
     const [encodedSeed, encodedImport] = await Promise.all([
-      encodeWithPinnedRuntime(seedSave),
-      encodeWithPinnedRuntime(importedSave),
+      encodeWithPinnedRuntime(sourcePage, seedSave),
+      encodeWithPinnedRuntime(sourcePage, importedSave),
     ]);
     await Promise.all([
       page.addInitScript(seedPage, {

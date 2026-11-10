@@ -11,9 +11,11 @@ WebKit pass; the shop rows remain In Progress for other purchase states.
 
 **Optional-group import from a fresh runtime (2026-11-10):** the Settings E2E
 now imports the pinned absent-optional-groups save after launching both Remix
-and Beyond without stored saves. Complete decoded exports and encoded bytes
-match in Chromium, Firefox, and WebKit. Existing populated-session import
-coverage remains separate; broader historical save formats stay open.
+and Beyond without stored saves. The full optional-groups E2E suite now
+generates its encoded inputs with the pinned Remix expression rather than the
+Beyond codec. Complete decoded exports and encoded bytes match in Chromium,
+Firefox, and WebKit. Existing populated-session import coverage remains
+separate; broader historical save formats stay open.
 
 **Below-price shop screens at alternate viewport (2026-11-10):** added full
 source/Beyond screen comparisons for Money, Gems, and Planet Coins at one cent
