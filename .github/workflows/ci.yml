@@ -133,6 +133,10 @@ jobs:
         if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:save-import-errors:browsers
 
+      - name: Verify invalid formatter import in Firefox and WebKit
+        if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
+        run: pnpm test:e2e:invalid-formatter:browsers
+
       - name: Verify manual offline save imports in Firefox and WebKit
         if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:offline-import:browsers

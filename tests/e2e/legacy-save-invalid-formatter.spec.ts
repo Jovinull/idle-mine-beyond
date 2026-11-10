@@ -37,16 +37,42 @@ test("matches Remix render failure for an imported out-of-range formatter", asyn
     viewport: { width: 1440, height: 900 },
   });
   const sourcePage = await sourceContext.newPage();
-  const beyondPageErrors: string[] = [];
-  const sourcePageErrors: string[] = [];
-  page.on("pageerror", (error) => beyondPageErrors.push(error.message));
-  sourcePage.on("pageerror", (error) => sourcePageErrors.push(error.message));
-  page.on("console", (message) => {
-    if (message.type() === "error") beyondPageErrors.push(message.text());
+  const beyondRuntimeErrors: { name: string; message: string }[] = [];
+  const sourceRuntimeErrors: { name: string; message: string }[] = [];
+  const sourceConsoleErrors: { name: string | null; message: string }[] = [];
+  const beyondConsoleErrors: { name: string | null; message: string }[] = [];
+  page.on("pageerror", (error) => {
+    beyondRuntimeErrors.push({ name: error.name, message: error.message });
   });
-  sourcePage.on("console", (message) => {
-    if (message.type() === "error") sourcePageErrors.push(message.text());
+  sourcePage.on("pageerror", (error) => {
+    sourceRuntimeErrors.push({ name: error.name, message: error.message });
   });
+  const captureConsoleErrors = (
+    target: typeof page,
+    capturedErrors: { name: string | null; message: string }[],
+  ) => {
+    target.on("console", async (message) => {
+      if (message.type() !== "error") return;
+      const errors = await Promise.all(
+        message
+          .args()
+          .map((argument) =>
+            argument.evaluate((value) =>
+              value instanceof Error
+                ? { name: value.name, message: value.message }
+                : null,
+            ),
+          ),
+      );
+      capturedErrors.push(
+        ...errors.filter(
+          (error): error is { name: string; message: string } => error !== null,
+        ),
+      );
+    });
+  };
+  captureConsoleErrors(page, beyondConsoleErrors);
+  captureConsoleErrors(sourcePage, sourceConsoleErrors);
 
   try {
     const sourceUrl = await routePinnedRemixOracle(sourceContext);
@@ -110,19 +136,40 @@ test("matches Remix render failure for an imported out-of-range formatter", asyn
         };
       }
     });
-    const sourceRenderError =
-      "Cannot read properties of undefined (reading 'name')";
     expect(sourceFormatter.status).toBe("threw");
     expect(sourceFormatter.errorName).toBe("TypeError");
-    expect(sourceFormatter.errorMessage).toBe(sourceRenderError);
+    const sourceRenderError = sourceFormatter.errorMessage;
+    if (!sourceRenderError) {
+      throw new Error("Pinned Remix did not expose the formatter TypeError.");
+    }
     await expect
       .poll(() =>
-        sourcePageErrors.some((message) => message.includes(sourceRenderError)),
+        [...sourceRuntimeErrors, ...sourceConsoleErrors].some(
+          (error) => error.name === "TypeError",
+        ),
       )
       .toBe(true);
+    const sourceRenderedError = [
+      ...sourceRuntimeErrors,
+      ...sourceConsoleErrors,
+    ].find((error) => error.name === "TypeError");
+    expect(sourceRenderedError?.message).toBe(sourceRenderError);
+    // The browser names the undefined receiver in its native message, while
+    // the Beyond build minifies that local identifier. Svelte's development
+    // pageerror also appends a component trace after the native message.
+    const normalizeFormatterReceiver = (message: string) =>
+      message
+        .replace(/\n\n\tin[\s\S]*$/, "")
+        .replaceAll("game.numberFormatter", "<formatter>")
+        .replace(/\bt(?= is undefined|\.name')/g, "<formatter>");
+    const sourceErrorShape = normalizeFormatterReceiver(sourceRenderError);
     await expect
       .poll(() =>
-        beyondPageErrors.some((message) => message.includes(sourceRenderError)),
+        [...beyondRuntimeErrors, ...beyondConsoleErrors].some(
+          (error) =>
+            error.name === "TypeError" &&
+            normalizeFormatterReceiver(error.message) === sourceErrorShape,
+        ),
       )
       .toBe(true);
   } finally {
