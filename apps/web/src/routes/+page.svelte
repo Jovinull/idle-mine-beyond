@@ -68,7 +68,9 @@
   const formatters = createRemixFormatters();
 
   let appState = $state<RemixLegacySaveApplicationState>();
-  let numberFormatterUnselected = $state(false);
+  let numberFormatterSelectionOverride = $state<number | null | undefined>(
+    undefined,
+  );
   let powerTableRefreshRevision = $state(0);
   let upgradeFeedbackRevision = $state(0);
   let gameSession: RemixWebGameSession | undefined;
@@ -217,7 +219,7 @@
   }
 
   async function changeNumberFormatter(index: number) {
-    numberFormatterUnselected = false;
+    numberFormatterSelectionOverride = undefined;
     await updateApplicationState((state) => ({
       ...state,
       settings: { ...state.settings, numberFormatterIndex: index },
@@ -287,6 +289,10 @@
 
   async function importCurrentSave(saveString: string) {
     if (!gameSession) return;
+    const visibleNumberFormatterSelection =
+      numberFormatterSelectionOverride === undefined
+        ? (appState?.settings.numberFormatterIndex ?? 0)
+        : numberFormatterSelectionOverride;
     actionError = "";
     try {
       const result = await gameSession.importLegacySave(saveString);
@@ -315,8 +321,8 @@
       }
 
       appState = result.state;
-      // Remix leaves the mounted select unselected until Settings is re-entered.
-      numberFormatterUnselected = true;
+      // The source leaves the mounted select unchanged until its 50 ms refresh.
+      numberFormatterSelectionOverride = visibleNumberFormatterSelection;
       if (result.result.status === "persistenceFailed") {
         actionError = `Save failed: ${result.result.persistence.status}`;
       }
@@ -520,7 +526,7 @@
         }, effect.delayMs);
       } else {
         window.setTimeout(() => {
-          numberFormatterUnselected = false;
+          numberFormatterSelectionOverride = undefined;
         }, effect.delayMs);
       }
     }
@@ -782,9 +788,10 @@
         <SettingsPanel
           settings={appState.settings}
           {formatters}
-          numberFormatterSelection={numberFormatterUnselected
-            ? null
-            : appState.settings.numberFormatterIndex}
+          numberFormatterSelection={numberFormatterSelectionOverride ===
+          undefined
+            ? appState.settings.numberFormatterIndex
+            : numberFormatterSelectionOverride}
           onNumberFormatterChange={changeNumberFormatter}
           onThemeChange={changeTheme}
           onPreferenceChange={changePreference}

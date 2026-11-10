@@ -30,8 +30,10 @@ uses GitHub's official
 
 The full Chromium browser smoke remains a required gate. Visual comparisons
 are exact except for source-paired captures whose Linux raster mismatches have
-been characterized: the test asserts the exact two changed RGBA pixels and
-requires exact full-screen equality for every other pixel and capture. That
+been characterized: the test accepts exact full-screen equality or, at the
+named captures, the exact two changed RGBA pixels. Every other pixel and
+capture remains exact, with no tolerance or mask. CI run 273 captured exact
+equality for one state previously showing the known signature. That
 classification does not claim zero-pixel parity or close the mapped visual
 gap. Later Firefox/WebKit and independent browser gates run after a smoke
 failure when project checks, browser installation, and the pinned reference

@@ -466,12 +466,14 @@ for (const theme of ["light", "dark"] as const) {
           test.info().annotations.push({
             type: "known-raster-delta",
             description:
-              "The exact two-pixel Work Sans glyph-edge delta is asserted below; all other pixels in this view must match.",
+              "This Linux capture must either match exactly or contain only the exact pinned two-pixel Work Sans glyph-edge delta.",
           });
           expect(
+            [[], expectedLinuxRasterDelta],
+            "Only exact parity or the pinned two-pixel Linux Work Sans glyph-edge raster delta is expected.",
+          ).toContainEqual(
             renderedPixelDifferences(sourceScreenshot, beyondScreenshot),
-            "Only the pinned two-pixel Linux Work Sans glyph-edge raster delta is expected.",
-          ).toEqual(expectedLinuxRasterDelta);
+          );
         } else {
           expect(
             beyondHash,

@@ -1,5 +1,14 @@
 # Parity matrix
 
+**Historical Settings WebKit raster (2026-11-10):** Windows WebKit preserved
+the Remix number-format selection after import and refreshed it on Settings
+re-entry, but its full-screen comparison differed at 92 glyph-edge pixels in
+the final “Game.” of the description. Source and Beyond report matching text
+geometry, loaded Work Sans, and computed font; the strict capture remains open
+with an exact difference fingerprint limited to Windows WebKit. All other
+pixels, browsers, and platforms still require full-screen hash equality; the
+raster discrepancy remains open without a tolerance or mask.
+
 **Manual upgrade save and fresh-session tab defaults (2026-11-10):** after an
 unsaved Blacksmith purchase is lost on reload, the live purchase can be saved
 manually from Settings; Remix and Beyond then export the same complete save
@@ -11,9 +20,11 @@ web session now resets them to `main` / `money` on startup from v1 saves.
 compares all four natural Chapter 3-6 routes at four viewports in both themes.
 Nine captures have exactly two changed RGBA pixels: the light objective label
 at 1366x768 and 1920x1080 on each route, plus the Chapter 4 dark label at
-1366x768. The E2E asserts each exact source/Beyond color at its exact position;
-the other 23 captures require exact full-screen equality. This does not claim
-zero-pixel parity, so the Story/theme rows remain In progress.
+1366x768. CI run 273 captured exact equality on that dark Chapter 4 state. The
+E2E accepts either exact equality or the exact recorded two-pixel signature at
+those locations; all other captures still require exact full-screen equality,
+with no pixel tolerance. This does not claim zero-pixel parity, so the
+Story/theme rows remain In progress.
 
 **Default six-hour offline cap (2026-11-10):** live fresh-Mud cold starts
 using source-captured Money-only rates now compare exactly 21,600 seconds and
@@ -664,7 +675,7 @@ Historical save UI integration (2026-11-07): tests/e2e/legacy-save-historical-sh
 
 Historical save import/export differential (2026-11-07): the Settings E2E applies the same synthetic fixture through the live text-import flow in Remix and Beyond, then asserts exact encoded export equality. The result adds one source-paired historical shape; general legacy-format compatibility remains In Progress.
 
-Historical save import selector state (2026-11-08): the same source-paired Settings flow verifies that Remix leaves its Number Format select unselected immediately after import (`selectedIndex = -1`) and compares the selector after leaving and re-entering Settings. Beyond matches the full-screen pixels after import and the selector state after re-entry; the synthetic historical save export remains byte-identical. This adds one fixture-specific UI branch to the Settings and input controls row; arbitrary save shapes remain open.
+Historical save import selector state (2026-11-10): the source leaves the mounted Number Format select at its previous visible choice after import; it does not bind the DOM selection to the newly loaded formatter. The 50 ms Settings-entry refresh selects the loaded formatter when Settings is re-entered. The E2E starts both apps at Standard, imports the historical fixture with Engineering, verifies Standard remains visible through the import, then compares Engineering after re-entry and the byte-identical full export. Beyond preserves that temporary visible selection and refreshes it on the same source timer. Arbitrary save shapes remain open.
 
 Live purchase export differential (2026-11-08): `tests/e2e/save-export-purchase-differential.spec.ts` buys the pinned Money Active Power (1000 Money), Gem Offline Gems (4444 Gems), Planet Coin Active Power (100 Planet Coins), and Wisdom Simple Gem Boost (10 billion Wisdom) captures in both live apps. It also performs captured Shift buy10 and Control buy100 Money purchases, plus Shift buy10 Gem and Planet Coin Gem Multiplication purchases from level 0 to 10. All eight complete decoded Settings export objects and encoded byte strings match in Chromium, Firefox, and WebKit (8/8 per engine); other purchase levels, alignments, and runtime states remain open. The suite now constructs source-side inputs with the pinned Remix `getSaveString()` expression rather than Beyond's save codec; all 25 purchase cases pass in Chromium, Firefox, and WebKit.
 
