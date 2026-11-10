@@ -2,6 +2,19 @@
 
 Last updated: 2026-11-10
 
+**Mining-drop save/reload differential (2026-11-10):** four captured mining
+outcomes (failed Gem then Planet Coin, Gem award, Wisdom scaling, and Wisdom
+with active Power of Mining) now compare manual Save and page reloads in
+both themes. Resource state, cleared message log, and all fields except the
+browser-managed Settings export textarea match pinned Remix in Chromium,
+Firefox, and WebKit (24 browser/theme/outcome pairs). `clickMineObject()` does
+not save by itself; the test explicitly saves before reloading. Remix's
+`loadGame()` ignores `settings.exportFieldString`, and Beyond now resets that
+field to the source placeholder when restoring a v1 save. Firefox and WebKit
+may restore the Remix textarea as native form state, so that transient field
+is excluded from the live post-reload object comparison. Save export and
+round-trip remains In Progress.
+
 **Procedural pickaxe names across generator regions (2026-11-10):** live
 `functions.craftPick()` now covers generated object IDs 105 (pre-Portal), 175
 (post-Portal/pre-Universe), and 210 (post-Universe fallback). Each source-paired

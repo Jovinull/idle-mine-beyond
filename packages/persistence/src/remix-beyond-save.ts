@@ -5,7 +5,10 @@ import {
   type RemixMineObjectCatalog,
 } from "@idle-mine-beyond/core";
 import { z } from "zod";
-import type { RemixLegacySaveApplicationState } from "./remix-legacy-save-application.js";
+import {
+  REMIX_DEFAULT_EXPORT_FIELD_STRING,
+  type RemixLegacySaveApplicationState,
+} from "./remix-legacy-save-application.js";
 
 const decimalStringSchema = z
   .string()
@@ -277,7 +280,11 @@ export function restoreRemixBeyondSave(
   return {
     simulation,
     storyScrollY: state.storyScrollY,
-    settings: { ...state.settings },
+    settings: {
+      ...state.settings,
+      // Remix loadGame() does not restore this Settings input from the save.
+      exportFieldString: REMIX_DEFAULT_EXPORT_FIELD_STRING,
+    },
     powerValueExtras: state.powerValueExtras.map((value) => new Decimal(value)),
   };
 }

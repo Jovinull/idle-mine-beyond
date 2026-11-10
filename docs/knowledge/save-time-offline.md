@@ -1,5 +1,17 @@
 # Saves, time, and offline progression
 
+**Mining-drop save/reload (2026-11-10):** four source-captured live mining
+outcomes are manually saved and reloaded in both themes. Gems, Planet Coins,
+Wisdom, Power of Mining, and other persisted fields match pinned Remix in
+Chromium, Firefox, and WebKit; the source success message is cleared on reload.
+`clickMineObject()` does not call `saveGame()`, so the paired test explicitly
+uses the Settings Save button. `loadGame()` does not apply
+`settings.exportFieldString`; Beyond's v1 restore now resets it to the initial
+Remix placeholder. Firefox and WebKit can restore the Remix textarea using
+native form state, so the live post-reload export comparison omits only that
+browser-managed field. The loader rule is independently asserted by
+`tests/parity/remix-beyond-save-load.test.ts`.
+
 **Generated-name craft reload across procedural regions (2026-11-10):** after
 a source-paired successful craft at generated-name IDs 105, 175, and 210, a
 fresh page in both Remix and Beyond retains the crafted pickaxe name. The

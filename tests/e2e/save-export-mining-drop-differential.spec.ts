@@ -122,8 +122,9 @@ function initializeDropSave({
   now: number;
   randomValues: readonly number[];
 }): void {
-  localStorage.clear();
-  localStorage.setItem(storageKey, encoded);
+  if (localStorage.getItem(storageKey) === null) {
+    localStorage.setItem(storageKey, encoded);
+  }
   Date.now = () => now;
   let draws = 0;
   Object.defineProperty(window, "__idleMineDropExportDrawCount", {
@@ -155,9 +156,24 @@ async function exportValue(page: Page) {
       wisdom: string;
       maxWisdom: string;
       powers: { data: { values: string[] } };
+      messageLog: { message: string; color: string }[];
+      settings: Record<string, unknown> & { exportFieldString: string };
     };
   }, encoded);
   return { encoded, value };
+}
+
+function withoutExportFieldString(
+  value: Awaited<ReturnType<typeof exportValue>>["value"],
+) {
+  return {
+    ...value,
+    settings: Object.fromEntries(
+      Object.entries(value.settings).filter(
+        ([key]) => key !== "exportFieldString",
+      ),
+    ),
+  };
 }
 
 for (const theme of ["light", "dark"] as const) {
@@ -335,6 +351,63 @@ for (const theme of ["light", "dark"] as const) {
           expect(beyondExport.value.gems).toBe(variant.expectedResources.gems);
         }
         expect(beyondExport.encoded).toBe(sourceExport.encoded);
+
+        await Promise.all([
+          page.locator("[data-settings-save]").click(),
+          sourcePage.getByRole("button", { name: "Save", exact: true }).click(),
+        ]);
+        await Promise.all([
+          page.locator("[data-settings-export]").click(),
+          sourcePage
+            .getByRole("button", { name: "Export", exact: true })
+            .click(),
+        ]);
+        const [savedBeyond, savedSource] = await Promise.all([
+          exportValue(page),
+          exportValue(sourcePage),
+        ]);
+        expect(savedBeyond.value).toEqual(savedSource.value);
+        expect(savedBeyond.encoded).toBe(savedSource.encoded);
+
+        await Promise.all([page.reload(), sourcePage.reload()]);
+        await Promise.all([
+          expect(page.locator("#app")).toHaveAttribute(
+            "data-app-state",
+            "ready",
+          ),
+          sourcePage.waitForFunction(() =>
+            Boolean((window as Window & { game?: unknown }).game),
+          ),
+        ]);
+        await Promise.all([
+          page.locator("[data-game-tab='settings']").click(),
+          sourcePage
+            .locator("footer button")
+            .filter({ hasText: "Settings" })
+            .click(),
+        ]);
+        await Promise.all([
+          page.locator("[data-settings-export]").click(),
+          sourcePage
+            .getByRole("button", { name: "Export", exact: true })
+            .click(),
+        ]);
+        const [reloadedBeyond, reloadedSource] = await Promise.all([
+          exportValue(page),
+          exportValue(sourcePage),
+        ]);
+        // Firefox and WebKit can restore Remix's textarea as native form
+        // state; its loader ignores this field, so compare game state without
+        // that browser-managed input value.
+        expect(withoutExportFieldString(reloadedBeyond.value)).toEqual(
+          withoutExportFieldString(reloadedSource.value),
+        );
+        expect(reloadedBeyond.value.messageLog).toEqual([]);
+        expect(reloadedBeyond.value.gems).toBe(savedBeyond.value.gems);
+        expect(reloadedBeyond.value.planetCoins).toBe(
+          savedBeyond.value.planetCoins,
+        );
+        expect(reloadedBeyond.value.wisdom).toBe(savedBeyond.value.wisdom);
       } finally {
         await sourceContext.close().catch(() => undefined);
       }

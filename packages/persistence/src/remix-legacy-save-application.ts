@@ -13,6 +13,9 @@ type LegacyDecimalValue = DecimalSource | null;
 
 type LegacyUpgradeGroup = Record<string, { level?: number }>;
 
+export const REMIX_DEFAULT_EXPORT_FIELD_STRING =
+  "Exported String will appear here...";
+
 export interface RemixLegacySaveData {
   [key: string]: unknown;
   money?: LegacyDecimalValue;
@@ -161,7 +164,7 @@ export function createInitialRemixLegacySaveApplicationState(
     settings: {
       tab: "main",
       upgradeTab: "money",
-      exportFieldString: "Exported String will appear here...",
+      exportFieldString: REMIX_DEFAULT_EXPORT_FIELD_STRING,
       numberFormatterIndex: 0,
       theme: "light",
       showMineObjLevel: false,

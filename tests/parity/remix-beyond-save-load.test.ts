@@ -273,3 +273,44 @@ it("does not persist or resolve a formatter at the exact 300-second boundary", a
   expect(result.effects).toEqual(effects);
   expect(storage.calls).toEqual(["readPrimary"]);
 });
+
+it("resets the serialized Settings export text when rehydrating Beyond v1", async () => {
+  const storage = new MemorySaveStorage();
+  const start = 1_700_000_000_000;
+  const state = freshState();
+  state.settings = {
+    ...state.settings,
+    exportFieldString: "stale exported save text",
+  };
+  const saved = await persistRemixBeyondSave({
+    state,
+    saveTimestampMs: start,
+    storage,
+    announceConfirmation: false,
+  });
+  expect(saved.status).toBe("saved");
+  if (saved.status !== "saved") throw new Error("Could not seed Beyond v1.");
+  const serialized = storage.primary;
+  storage.calls = [];
+
+  const result = await loadRemixBeyondSaveIntoState({
+    storage,
+    catalog: corpus.data.mineObjectCatalog,
+    clock: { now: () => start },
+    resolveNumberFormatter() {
+      throw new Error(
+        "No offline message should be formatted at zero seconds.",
+      );
+    },
+    dispatchEffect() {},
+  });
+
+  expect(result.status).toBe("loaded");
+  if (result.status !== "loaded") throw new Error("Beyond v1 did not load.");
+  expect(result.elapsedSeconds).toBe(0);
+  expect(result.state.settings.exportFieldString).toBe(
+    "Exported String will appear here...",
+  );
+  expect(storage.calls).toEqual(["readPrimary"]);
+  expect(storage.primary).toBe(serialized);
+});
