@@ -2,6 +2,8 @@
 
 Last updated: 2026-11-09
 
+**High-magnitude Decimal import/export (2026-11-09):** added the captured extreme-resource/Power/pickaxe save to the source-paired Settings import/export differential. Complete decoded states and encoded bytes match Remix in Chromium, Firefox, and WebKit; the cross-browser optional-group gate passed 6/6. Save export and round-trip remains In Progress for other dynamic save combinations.
+
 **Out-of-range formatter import across browsers (2026-11-09):** the source-paired Settings import at the first index beyond Remix's formatter list now compares its native render TypeError against the same browser's pinned runtime in Chromium, Firefox, and WebKit. The dedicated Firefox/WebKit CI gate preserves cross-engine coverage; the legacy loader's unvalidated behavior remains intentional for parity.
 
 **Maximum Offline Time cap (2026-11-09):** pinned Remix caps level-42 Offline Time at 48 hours. The reference corpus now captures the exact cap and one second beyond it, with identical clamped outcomes. A live level-90 Asteroid restore at 172801 seconds compares three nonzero resource rewards, message text, and full exports in Chromium, Firefox, and WebKit. Offline progression remains In Progress; actual OS/browser background scheduling and other live-rate saves remain open.

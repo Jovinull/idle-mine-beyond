@@ -214,8 +214,11 @@ paths have source-backed assertions.
   their complete exported objects and encoded bytes. This state includes
   distinct resources, all 29 upgrade levels, five Power values, Story fields,
   theme, notation, and both display preferences. The same browser differential
-  also covers the absent-optional-groups and present-empty-groups saves in
-  Firefox and WebKit via `test:e2e:legacy-import:browsers`.
+  imports the captured high-magnitude Decimal resources, Powers, and pickaxe
+  through Settings and compares complete export objects and encoded bytes in
+  Chromium, Firefox, and WebKit. It also covers the absent-optional-groups and
+  present-empty-groups saves in Firefox and WebKit via
+  `test:e2e:legacy-import:browsers`.
   `tests/e2e/save-export-purchase-differential.spec.ts` also makes the captured
   Money, Gem, Planet Coin, and Wisdom upgrades in both live apps, plus Shift
   buy10 and Control buy100 Money purchases, plus Shift buy10 Gem and Planet
@@ -232,7 +235,8 @@ paths have source-backed assertions.
   state is one controlled fixture, not every valid Remix runtime state. Valid
   codec outputs match pinned Remix in Chromium, Firefox, and WebKit for five
   codec vectors, seventeen UTF-8/escape boundaries, and five Base64 variants.
-  The varied all-group live export matches in all three browsers; four
+  The varied all-group and high-magnitude Decimal live exports match in all
+  three browsers; four
   resource-family purchases and four captured bulk-purchase exports (Money
   buy10/buy100 plus Gem and Planet Coin buy10) match in Chromium, Firefox, and
   WebKit. The complete 29-upgrade purchase state also exports identically in

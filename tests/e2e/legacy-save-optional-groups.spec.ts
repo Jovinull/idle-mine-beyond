@@ -63,6 +63,12 @@ const fixture = JSON.parse(
     "utf8",
   ),
 ) as OptionalGroupFixture;
+const highMagnitudeDecimalSave = fixture.data.saveExportSemantics.variants.find(
+  (variant) => variant.name === "high-magnitude-decimal-fields",
+);
+if (!highMagnitudeDecimalSave?.inputJson) {
+  throw new Error("Missing the captured high-magnitude Decimal save.");
+}
 
 function encodeJson(inputJson: string): string {
   return encodeRemixLegacySave(
@@ -263,6 +269,11 @@ test("matches Remix imports with optional groups and varied all-upgrade state", 
           settingsTab: "settings",
         },
       },
+      {
+        name: "high-magnitude Decimal resources, Powers, and pickaxe fields",
+        inputJson: highMagnitudeDecimalSave.inputJson!,
+        expected: null,
+      },
     ] as const;
 
     for (const scenario of cases) {
@@ -281,6 +292,12 @@ test("matches Remix imports with optional groups and varied all-upgrade state", 
         expect(result, `${scenario.name} complete source export`).toEqual(
           sourceResult,
         );
+        if (scenario.expected === null) {
+          expect(beyondExport, `${scenario.name} encoded save`).toBe(
+            sourceExport,
+          );
+          return;
+        }
         expect(result.money).toBe(scenario.expected.money ?? "0");
         expect(result.gems).toBe(scenario.expected.gems ?? "0");
         expect(result.planetCoins).toBe(scenario.expected.planetCoins ?? "0");
