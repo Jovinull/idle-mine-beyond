@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-09
 
+**Active-click Power of Mining in save export (2026-11-09):** extended the
+source-paired post-mining Settings export with Power Power (Active) at level 1.
+After the captured object-169 click, the pinned runtime advances Power of
+Mining from 2 to 2.0001, and the serialized Powers array matches exactly in
+Chromium, Firefox, and WebKit in both themes (6/6 pairs). Save export and
+round-trip remains In Progress for other dynamic states.
+
 **Power-scaled Wisdom live export (2026-11-09):** extended the source-paired
 post-mining Settings export to object 169. The captured break applies Power of
 Wisdom 3 to the base Wisdom drop, raising Wisdom and max Wisdom from 2/4 to

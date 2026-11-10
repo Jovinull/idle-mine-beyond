@@ -56,7 +56,10 @@ type LegacySave = {
     tab: string;
     showMineObjLevel: boolean;
   };
-  powers: { data: { values: string[] } };
+  powers: {
+    data: { values: string[] };
+    upgrades: Record<string, { level: number }>;
+  };
   pickaxe: { pow: string; quality: string };
 };
 
@@ -71,23 +74,36 @@ const liveDropVariants: {
     wisdom?: string;
     maxWisdom?: string;
   };
+  activePowerLevel: number;
+  expectedMiningPower?: string;
 }[] = [
   {
     scenarioName: "planet-coin-drop-roll-follows-gem-roll",
     name: "captured Planet Coin drop after a failed Gem roll",
     randomValues: undefined,
+    activePowerLevel: 0,
   },
   {
     scenarioName: "planet-coin-drop-roll-follows-gem-roll",
     name: "successful Gem drop before a failed Planet Coin roll",
     randomValues: [0, 0.9],
+    activePowerLevel: 0,
     expectedResources: { gems: "6", planetCoins: "4" },
   },
   {
     scenarioName: "wisdom-drop-scales-with-power-wisdom",
     name: "Power of Wisdom scaled drop",
     randomValues: undefined,
+    activePowerLevel: 0,
     expectedResources: { wisdom: "5", maxWisdom: "5" },
+  },
+  {
+    scenarioName: "wisdom-drop-scales-with-power-wisdom",
+    name: "Wisdom drop with active Power of Mining growth",
+    randomValues: undefined,
+    activePowerLevel: 1,
+    expectedResources: { wisdom: "5", maxWisdom: "5" },
+    expectedMiningPower: "2.0001",
   },
 ];
 const corpusUrl = new URL(
@@ -138,6 +154,7 @@ async function exportValue(page: Page) {
       maxPlanetCoins: string;
       wisdom: string;
       maxWisdom: string;
+      powers: { data: { values: string[] } };
     };
   }, encoded);
   return { encoded, value };
@@ -174,6 +191,8 @@ for (const theme of ["light", "dark"] as const) {
       sourceSave.wisdom = scenario.input.resources.wisdom;
       sourceSave.maxWisdom = scenario.input.resources.maxWisdom;
       sourceSave.powers.data.values = [...scenario.input.powers];
+      sourceSave.powers.upgrades["powerPowerActive"]!.level =
+        variant.activePowerLevel;
       sourceSave.pickaxe.pow = scenario.input.pickaxe.power;
       sourceSave.pickaxe.quality = scenario.input.pickaxe.quality;
       sourceSave.lastActive = fixedClock;
@@ -304,6 +323,14 @@ for (const theme of ["light", "dark"] as const) {
             ? variant.expectedResources.maxWisdom
             : scenario.result.resources.maxWisdom.decimal,
         );
+        if (variant.expectedMiningPower) {
+          expect(beyondExport.value.powers.data.values[0]).toBe(
+            variant.expectedMiningPower,
+          );
+          expect(sourceExport.value.powers.data.values[0]).toBe(
+            variant.expectedMiningPower,
+          );
+        }
         if (variant.expectedResources?.gems) {
           expect(beyondExport.value.gems).toBe(variant.expectedResources.gems);
         }
