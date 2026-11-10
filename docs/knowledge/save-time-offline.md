@@ -278,6 +278,13 @@ the two apps' complete decoded saves and encoded exports match for both cases.
 This verifies the live strict-threshold branch for this controlled state; OS
 background scheduling remains open.
 
+**Live default six-hour cap differential (2026-11-10):** the same cold-start
+E2E now loads fresh Mud with source-captured Money-only live rates at exactly
+21,600 seconds and at 21,601 seconds, with `offlineTime` level 0. Remix and
+Beyond export identical complete saves at each duration, and the source saves
+are byte-identical to each other, confirming that the extra second is capped.
+Chromium, Firefox, and WebKit pass; actual background scheduling remains open.
+
 **Live zero-rate cold start (2026-11-09):** a separate source-paired E2E
 loads the captured Universe object 214 state after 3,601 seconds with Money,
 Gem, and Planet Coin rates all zero. Remix and Beyond still display the

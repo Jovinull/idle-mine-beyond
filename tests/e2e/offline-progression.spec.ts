@@ -153,6 +153,17 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
     };
   };
   const fixedNowMs = 1_700_000_100_000;
+  const initialMudLiveRateScenario =
+    reference.data.offlineLoadRateCompositionSemantics.scenarios.find(
+      (candidate) => candidate.name === "initial-mud-live-money-rate",
+    );
+  if (!initialMudLiveRateScenario) {
+    throw new Error("Pinned initial-Mud live-rate capture is missing.");
+  }
+  const defaultCapExports = new Map<
+    number,
+    { source: string; beyond: string }
+  >();
   const visibleMessages = async (target: Page) =>
     target.locator(".messagelog p").evaluateAll((paragraphs) =>
       paragraphs.map((paragraph) => ({
@@ -213,10 +224,23 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
       compareMessagePixels: false,
       elapsedSeconds: 3601,
       expectsOfflineReward: true,
-      liveRateScenario:
-        reference.data.offlineLoadRateCompositionSemantics.scenarios.find(
-          (candidate) => candidate.name === "initial-mud-live-money-rate",
-        ),
+      liveRateScenario: initialMudLiveRateScenario,
+    },
+    {
+      name: "exact default six-hour offline cap",
+      theme: "light",
+      compareMessagePixels: false,
+      elapsedSeconds: 6 * 60 * 60,
+      expectsOfflineReward: true,
+      liveRateScenario: initialMudLiveRateScenario,
+    },
+    {
+      name: "one second over the default six-hour offline cap",
+      theme: "light",
+      compareMessagePixels: false,
+      elapsedSeconds: 6 * 60 * 60 + 1,
+      expectsOfflineReward: true,
+      liveRateScenario: initialMudLiveRateScenario,
     },
     {
       name: "last damageable object live Gem reward without Planet Coins",
@@ -501,6 +525,15 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
         throw new Error(`Beyond did not export a valid ${scenario.name} save.`);
       }
       expect(beyondDecoded.value, scenario.name).toEqual(sourceDecoded.value);
+      if (
+        scenario.elapsedSeconds === 6 * 60 * 60 ||
+        scenario.elapsedSeconds === 6 * 60 * 60 + 1
+      ) {
+        defaultCapExports.set(scenario.elapsedSeconds, {
+          source: sourceExport,
+          beyond: beyondExport,
+        });
+      }
       if (scenario.liveRateScenario) {
         const { stateAfterLoad } = scenario.liveRateScenario;
         if (
@@ -539,6 +572,13 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
       await Promise.all([sourcePage.close(), beyondPage.close()]);
     }
   }
+  const atDefaultCap = defaultCapExports.get(6 * 60 * 60);
+  const oneSecondOverDefaultCap = defaultCapExports.get(6 * 60 * 60 + 1);
+  if (!atDefaultCap || !oneSecondOverDefaultCap) {
+    throw new Error("Default offline-cap source pairs were not captured.");
+  }
+  expect(oneSecondOverDefaultCap.source).toBe(atDefaultCap.source);
+  expect(oneSecondOverDefaultCap.beyond).toBe(atDefaultCap.beyond);
 });
 
 test("matches Remix zero-rate offline cold start and save", async ({

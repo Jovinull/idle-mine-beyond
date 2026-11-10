@@ -1,5 +1,11 @@
 # Parity matrix
 
+**Default six-hour offline cap (2026-11-10):** live fresh-Mud cold starts
+using source-captured Money-only rates now compare exactly 21,600 seconds and
+21,601 seconds with `offlineTime` level 0. Pinned Remix produces identical
+complete save exports for both durations; Beyond matches in Chromium, Firefox,
+and WebKit. OS/browser background scheduling remains a separate open gap.
+
 **Wisdom bulk purchase stops on affordability (2026-11-10):** the live
 Power Power (Active) `buy10` starts at level 0 with 1001 Wisdom, buys levels
 0→1 and 1→2, then stops before the next unaffordable price. The full decoded

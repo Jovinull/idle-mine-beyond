@@ -2,6 +2,11 @@
 
 Last updated: 2026-11-10
 
+**Default offline cap at six hours (2026-11-10):** source-paired cold starts
+with live Mud rates now compare exactly 21,600 seconds and 21,601 seconds at
+`offlineTime` level 0. The Remix saves are equal across both durations, and
+Beyond matches them in Chromium, Firefox, and WebKit.
+
 **Wisdom bulk affordability export (2026-11-10):** added the live
 Power Power (Active) Shift purchase with 1001 Wisdom. Remix and Beyond buy two
 levels, stop when the next costs more than the remaining balance, and produce
