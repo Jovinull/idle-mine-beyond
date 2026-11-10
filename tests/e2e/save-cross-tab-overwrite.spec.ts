@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Browser, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { decodeRemixBeyondSave } from "../../packages/persistence/src/remix-beyond-save.js";
 import {
@@ -2961,11 +2961,12 @@ for (const { attemptName, label, expectedRandomCalls, expectedSaveCalls } of [
   });
 }
 
-test("a stale Hard Reset clears a newer save until the fresh tab saves again like pinned Remix", async ({
-  page,
-  browser,
-}) => {
-  test.setTimeout(90_000);
+async function verifyStaleHardResetRestoration(
+  page: Page,
+  browser: Browser,
+  restoreWithAutosave: boolean,
+) {
+  test.setTimeout(120_000);
   const fixture = JSON.parse(
     await readFile(
       new URL(
@@ -2999,9 +3000,12 @@ test("a stale Hard Reset clears a newer save until the fresh tab saves again lik
 
   try {
     const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    const initializeClock = restoreWithAutosave
+      ? initializeSharedAutosaveClock
+      : initializeSharedStorage;
     await Promise.all(
       [page, beyondStalePage, sourcePage, sourceStalePage].map((target) =>
-        target.addInitScript(initializeSharedStorage, {
+        target.addInitScript(initializeClock, {
           encoded: encodedInitialSave,
           now: fixedTime,
         }),
@@ -3103,12 +3107,40 @@ test("a stale Hard Reset clears a newer save until the fresh tab saves again lik
     );
     expect(storageAfterReset).toEqual([[], [], [], []]);
 
-    // A fresh tab still owns the newer whole-game state and its explicit save
-    // restores that state after the stale tab's broad storage clear.
-    await Promise.all([
-      page.getByRole("button", { name: "Save" }).click(),
-      sourcePage.getByRole("button", { name: "Save" }).click(),
-    ]);
+    if (restoreWithAutosave) {
+      await Promise.all([page.bringToFront(), sourcePage.bringToFront()]);
+      await Promise.all(
+        [page, sourcePage].map((target) =>
+          target.evaluate((elapsed) => {
+            const testWindow = window as Window & {
+              __crossTabAutosaveNow?: number;
+            };
+            if (testWindow.__crossTabAutosaveNow === undefined) {
+              throw new Error("The fresh-tab autosave clock is unavailable.");
+            }
+            testWindow.__crossTabAutosaveNow += elapsed;
+          }, 60_001),
+        ),
+      );
+      await Promise.all([
+        expect
+          .poll(() =>
+            page.evaluate(() => localStorage.getItem("IdleMineBeyond")),
+          )
+          .not.toBeNull(),
+        expect
+          .poll(() =>
+            sourcePage.evaluate(() => localStorage.getItem("IdleMine")),
+          )
+          .not.toBeNull(),
+      ]);
+    } else {
+      // The explicit-save branch preserves the fresh tab's in-memory purchase.
+      await Promise.all([
+        page.getByRole("button", { name: "Save" }).click(),
+        sourcePage.getByRole("button", { name: "Save" }).click(),
+      ]);
+    }
     const [restoredBeyond, restoredSource] = await Promise.all([
       readBeyondSave(page),
       readLegacySlot(sourcePage),
@@ -3137,4 +3169,14 @@ test("a stale Hard Reset clears a newer save until the fresh tab saves again lik
   } finally {
     await sourceContext.close().catch(() => undefined);
   }
-});
+}
+
+test("a stale Hard Reset clears a newer save until the fresh tab explicitly saves like pinned Remix", async ({
+  page,
+  browser,
+}) => verifyStaleHardResetRestoration(page, browser, false));
+
+test("a fresh tab periodic autosave restores its save after a stale Hard Reset like pinned Remix", async ({
+  page,
+  browser,
+}) => verifyStaleHardResetRestoration(page, browser, true));

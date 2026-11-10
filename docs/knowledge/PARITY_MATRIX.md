@@ -5,10 +5,17 @@
 **Stale Hard Reset cross-tab clear (2026-11-09):** after the fresh tab saves
 Blacksmith 1 / 970 Money, the stale tab's three confirmed Hard Reset prompts
 clear shared storage in pinned Remix and Beyond. The fresh tab retains its
-in-memory purchase and explicitly saves it again; the resulting complete
-Settings exports match. The source-paired test passes in Chromium, Firefox, and
-WebKit and is included in the cross-browser stale-save gate. Other
-storage-clear interleavings remain open.
+in-memory purchase and restores it through both explicit Save and a periodic
+autosave after 60,001 ms. Complete Settings exports match in both paths. The
+source-paired tests pass in Chromium, Firefox, and WebKit and are included in
+the cross-browser stale-save gate. Other storage-clear interleavings remain
+open.
+
+**Fresh-tab autosave after stale Hard Reset (2026-11-10):** a second
+source-paired interleaving advances the still-live fresh tab by 60,001 ms after
+the stale tab clears shared storage. Its periodic save restores the retained
+Blacksmith 1 / 970 Money state and matches the full Settings export in Remix
+and Beyond in Chromium, Firefox, and WebKit.
 
 **Composed external UTF-8 save inputs (2026-11-09):** the pinned save decoder
 comparison now includes two valid multi-scalar strings and two longer malformed

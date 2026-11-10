@@ -1,6 +1,15 @@
 # Project status
 
-Last updated: 2026-11-09
+Last updated: 2026-11-10
+
+**Fresh-tab autosave after stale Hard Reset (2026-11-10):** after a stale
+same-origin tab clears storage with Hard Reset, a fresh tab still holds its
+Blacksmith 1 / 970 Money state in memory. Advancing that tab's loop clock by
+60,001 ms makes its periodic save restore the shared save. The source-paired
+comparison passes in Chromium, Firefox, and WebKit. The test foregrounds the
+fresh tab before advancing its controlled frame clock so WebKit processes its
+animation frame. This adds the autosave interleaving alongside the existing
+explicit-Save case.
 
 **Idle Power of Mining persisted after long frame (2026-11-09):** the
 source-paired 120-second frame-gap export now starts with Power Power (Idle) at

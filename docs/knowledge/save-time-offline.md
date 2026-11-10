@@ -53,6 +53,16 @@ passes in Chromium, Firefox, and WebKit and is included in
 `pnpm test:e2e:cross-tab:browsers`. Other storage-clear interleavings remain
 open.
 
+**Fresh-tab periodic save after stale Hard Reset (2026-11-10):** after the
+stale tab clears origin storage, the fresh tab retains its in-memory Blacksmith
+1 / 970 Money purchase. Advancing only the fresh tab's controlled loop clock
+by 60,001 ms lets `Scripts/main.js:update` pass its strict save threshold and
+`functions.saveGame()` repopulate the shared storage from that retained state.
+The source-paired E2E compares the resulting complete Settings exports. This
+extends the explicit-Save recovery case and passes in Chromium, Firefox, and
+WebKit. The fresh tab is brought to the foreground before its controlled frame
+in WebKit so its animation loop processes the clock advance.
+
 **Stale Shift Wisdom purchase interleaving (2026-11-09):** after a fresh tab
 saves Blacksmith 1 / 970 Money, the stale tab holds Shift and buys Simple Gem
 Boost from the captured 1e20 Wisdom balance. Pinned Remix `buyN(10, true)` buys
