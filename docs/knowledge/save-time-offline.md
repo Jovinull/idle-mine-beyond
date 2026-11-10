@@ -242,6 +242,15 @@ characterize every browser profile's quota policy.
 The canonical checkout was independently rechecked on 2026-10-04: its complete local Git history has five commits; the loader and game definitions still occur only in `719cf126678a56c53c0ad8e68cebd059b3101201`. This confirms the repository-history search but does not rule out older deployed builds or identify which build produced the community specimen tested below.
 The separate `saveApplicationSemantics` capture loads a complete distinct save with offline processing disabled. It verifies all seven resource fields, progress and regenerated current object, Story fields and scroll position, `lastActive`, number formatter, theme/toggles, all four upgrade families, five named Powers values, and pickaxe fields. `settings.tab` is serialized but not read by `loadGame()`; the existing tab remains active. The load reads the clock for the `lastActive` fallback even when the save supplies that timestamp. `timer`, `usedGemsLevel`, and other serialized runtime/presentation fields are not assigned by this loader. A three-browser live Settings import now supplies large conflicting `timer.autoPickaxe` and `timer.save` values and verifies that source and Beyond exports retain their pre-import live timer values and remain byte-identical. Although `getSaveString()` serializes the whole game object and therefore includes `usedGemsLevel`, `Scripts/Define/game.js` initializes it to zero and the manual `loadGame()` field list omits it; the Craft selector in `index.html` changes it directly. Reloading a save therefore resets the selected Gem craft cost. The Chapter 5 route trace records the value carried across its same-session Chapter 4/5 boundary.
 
+**Cold-start selector differential (2026-11-10):**
+`tests/e2e/legacy-save-optional-groups.spec.ts` seeds both applications with a
+save encoded by the pinned Remix expression and containing
+`usedGemsLevel: 2`. On startup, Remix and Beyond both use selector level 0,
+show the 1-Gem craft cost, and produce byte-identical complete Settings
+exports. The test passes in Chromium, Firefox, and WebKit. The separate
+Settings-import differential verifies the complementary live-session rule:
+an already active selector survives a conflicting serialized value.
+
 `saveOfflineApplicationSemantics` captures one controlled wrapped save loaded through the pinned `loadGame()` with offline processing enabled. The save selects a generated object, pickaxe, Powers, upgrade levels, notation, and 3,601 seconds away; the probe records live Money/Gem/Planet Coin rates, final resources and maxima, Story/settings/pickaxe state, clock values, and the post-reward storage snapshot. The exact event order is theme application → offline reward message → storage write → `Game Saved!`. Four clock reads are observed: eager `lastActive` fallback, elapsed-time calculation, updated `lastActive`, and `saveGame()` timestamp.
 
 **Live cold-start threshold differential (2026-11-09):** the source-paired

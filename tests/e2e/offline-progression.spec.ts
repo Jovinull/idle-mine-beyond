@@ -382,7 +382,7 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
         if (scenario.liveRateScenario) {
           const { rates, events } = scenario.liveRateScenario;
           const sourceRateValues = await sourcePage.evaluate(() => {
-            const remixWindow = window as Window & {
+            const remixWindow = window as unknown as Window & {
               functions: {
                 getMPS(): { toString(): string };
                 getGPS(): { toString(): string };

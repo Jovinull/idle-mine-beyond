@@ -626,6 +626,83 @@ test("preserves the current Gem Waster selection when importing a legacy save", 
   }
 });
 
+test("does not restore a serialized Gem Waster selector on cold start", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90_000);
+  const coldStartSave = makeSeedSave();
+  coldStartSave.usedGemsLevel = 2;
+  coldStartSave.upgrades = {
+    ...coldStartSave.upgrades,
+    gemWaster: { level: 1 },
+  };
+  coldStartSave.settings.tab = "main";
+
+  const sourceContext = await browser.newContext({
+    colorScheme: "light",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    const encodedSave = await encodeWithPinnedRuntime(
+      sourcePage,
+      coldStartSave,
+    );
+    const initialization = {
+      encoded: encodedSave,
+      key: "legacy-save-gem-waster-selector-cold-start",
+      time: fixedTime,
+    };
+    await Promise.all([
+      page.addInitScript(seedPage, initialization),
+      sourcePage.addInitScript(seedPage, initialization),
+    ]);
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean((window as Window & { game?: unknown }).game),
+    );
+
+    await Promise.all([
+      expect(page.locator("[data-craft-gem-cost]")).toHaveText("1"),
+      expect(
+        sourcePage.locator(".craft-pickaxe button:not(.level-change)"),
+      ).toContainText("1"),
+    ]);
+    await selectSettings(page, sourcePage);
+    await Promise.all([
+      page.getByRole("button", { name: "Export" }).click(),
+      sourcePage
+        .locator("article.settings")
+        .getByRole("button", { name: "Export" })
+        .click(),
+    ]);
+    const [beyondExport, sourceExport] = await Promise.all([
+      page.locator("[data-settings-save-field]").inputValue(),
+      sourcePage.locator("article.settings textarea").inputValue(),
+    ]);
+    expect(beyondExport, "cold-start selector export bytes").toBe(sourceExport);
+    const [beyondState, sourceState] = await Promise.all([
+      decodeExport(page, beyondExport),
+      decodeExport(sourcePage, sourceExport),
+    ]);
+    expect(coldStartSave.usedGemsLevel).toBe(2);
+    expect(sourceState.usedGemsLevel).toBe(0);
+    expect(beyondState.usedGemsLevel).toBe(0);
+    expect(beyondState, "cold-start complete export").toEqual(sourceState);
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
 test("preserves live timers when importing serialized timer values", async ({
   page,
   browser,

@@ -1,5 +1,12 @@
 # Parity matrix
 
+**Cold-start Gem Waster selector from a legacy save (2026-11-10):** a
+Remix-encoded startup save with serialized `usedGemsLevel: 2` leaves the live
+selector at its source default 0 in both applications. The cost-1 selector and
+complete export bytes match in Chromium, Firefox, and WebKit. This complements
+the existing live-import case, where an already active selector survives a
+conflicting serialized value; save/export parity remains In Progress.
+
 **Sequential Power-value Settings import (2026-11-10):** the live Settings
 E2E imports the captured seven-value save, exports it, then imports the
 five-value save without reloading. Both runtimes preserve the trailing `80`

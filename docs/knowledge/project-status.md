@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-10
 
+**Cold-start Gem Waster selector from a legacy save (2026-11-10):** the live
+Settings suite now starts pinned Remix and Beyond from the same
+Remix-encoded save whose serialized `usedGemsLevel` is 2. Both initialize the
+selector at its source default 0, show the cost-1 craft option, and produce
+byte-identical full Settings exports. Chromium, Firefox, and WebKit pass. This
+adds cold-start browser coverage alongside the existing live-import selector
+case; save/export parity remains In Progress.
+
 **Sequential Power-value imports through Settings (2026-11-10):** added a live
 same-runtime import/export differential for the pinned seven-value save,
 followed by the five-value save. Remix and Beyond both update the first five
