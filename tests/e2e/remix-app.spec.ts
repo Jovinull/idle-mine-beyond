@@ -2827,6 +2827,12 @@ test("exports and imports the pinned legacy save through the Settings text field
     .getByRole("button", { name: "Import (from Text Field)" })
     .click();
 
+  // This source save is timestamped exactly at the controlled clock. Remix
+  // loads it into the live game but does not persist a manual import unless
+  // the offline interval is strictly greater than 300 seconds.
+  expect(
+    await page.evaluate(() => localStorage.getItem("IdleMineBeyond")),
+  ).toBeNull();
   await expect(page.locator("#app")).toHaveAttribute("data-theme", "dark");
   await expect(page.locator("#app")).toHaveAttribute(
     "data-number-formatter",
@@ -2836,27 +2842,29 @@ test("exports and imports the pinned legacy save through the Settings text field
     "aria-pressed",
     "true",
   );
+  await settings.getByRole("button", { name: "Export" }).click();
   const imported = await page.evaluate(() => {
-    const serialized = localStorage.getItem("IdleMineBeyond");
-    if (!serialized) throw new Error("Imported save was not persisted.");
-    return JSON.parse(serialized) as {
-      state: {
-        simulation: { resources: { money: string }; mineObjectLevel: number };
-        settings: {
-          tab: string;
-          numberFormatterIndex: number;
-          showMineObjLevel: boolean;
-          showMinCraftDamage: boolean;
-          theme: string;
-        };
+    const field = document.querySelector<HTMLTextAreaElement>(
+      "[data-settings-save-field]",
+    );
+    if (!field) throw new Error("Settings export field is missing.");
+    return JSON.parse(unescape(decodeURIComponent(atob(field.value)))) as {
+      money: string;
+      mineObjectLevel: number;
+      settings: {
+        tab: string;
+        numberFormatterIndex: number;
+        showMineObjLevel: boolean;
+        showMinCraftDamage: boolean;
+        theme: string;
       };
     };
   });
-  expect(imported.state.simulation.resources.money).toBe(
+  expect(imported.money).toBe(
     reference.data.saveApplicationSemantics.resources.money.decimal,
   );
-  expect(imported.state.simulation.mineObjectLevel).toBe(3);
-  expect(imported.state.settings).toMatchObject({
+  expect(imported.mineObjectLevel).toBe(3);
+  expect(imported.settings).toMatchObject({
     tab: "settings",
     numberFormatterIndex: 3,
     showMineObjLevel: true,

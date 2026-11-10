@@ -113,6 +113,10 @@ Other arbitrary byte strings remain an input-domain gap, not an unlisted branch.
   `tests/e2e/save-import-error-browser-compat.spec.ts` additionally source-pairs
   the post-failure Settings export bytes for all twenty partial-application
   errors in Chromium, Firefox, and WebKit, without writing the partial state;
+  `tests/e2e/legacy-save-historical-shape.spec.ts` and the pinned-save Settings
+  flow in `tests/e2e/remix-app.spec.ts` verify that recent imports at 60 and 0
+  seconds do not write localStorage, then compare the live exported state with
+  pinned Remix;
   decode failure and `nooffline` behavior
   in `tests/parity/legacy-save-offline-application.test.ts`;
   recovery file/slot branches in

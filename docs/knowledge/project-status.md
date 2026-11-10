@@ -2,6 +2,8 @@
 
 Last updated: 2026-11-09
 
+**Recent Settings imports leave storage unchanged (2026-11-09):** corrected two E2E assertions that expected persistence for imports whose captured `lastActive` is only 0 or 60 seconds before the controlled clock. Pinned Remix writes imported saves only when elapsed time is strictly greater than 300 seconds. Both tests now verify no storage write and compare the live exported state; the focused Chromium tests pass.
+
 **Gem and Planet Coin post-drop exports (2026-11-09):** expanded the live source-paired export differential at object 90 to cover both ordered outcomes: a failed Gem roll followed by a Planet Coin award, and a Gem award followed by a failed Planet Coin roll. Complete exported objects and encoded bytes match in Chromium, Firefox, and WebKit in both themes (12/12 pairs). Save export and round-trip remains In Progress for other runtime states.
 
 **High-magnitude Decimal import/export (2026-11-09):** added the captured extreme-resource/Power/pickaxe save to the source-paired Settings import/export differential. Complete decoded states and encoded bytes match Remix in Chromium, Firefox, and WebKit; the cross-browser optional-group gate passed 6/6. Save export and round-trip remains In Progress for other dynamic save combinations.
@@ -463,7 +465,7 @@ pinned-Remix/Beyond import comparison now checks a source quirk: importing
 updates the number formatter but leaves the currently mounted Settings select
 unselected until Settings is re-entered. The synthetic historical fixture
 matches at `selectedIndex = -1` and on the full-screen screenshot after import;
-both runtimes restore the fixture's formatter index on re-entry, and the
+the selector state after re-entry is compared directly with Remix, and the
 encoded exports remain byte-identical. The focused historical-save E2E passed
 in Chromium; coverage remains limited to this recorded fixture.
 
@@ -2217,7 +2219,7 @@ Beyond, then compare complete source/runtime screenshots at zero pixels in
 light and dark. Windows passed both comparisons (2/2); Linux runs the same live
 comparison in CI, replacing the earlier state-only check for this slice.
 
-**Historical-shaped save import E2E (2026-11-07):** the synthetic, provenance-recorded community specimen now passes through the live Settings import field. The test verifies persisted resources, mine progress, pickaxe, and default zero values for absent Planet Coin/Wisdom resources. The focused Playwright test passed 1/1; this adds one UI integration case and does not establish support for other historical save shapes.
+**Historical-shaped save import E2E (2026-11-07):** the synthetic, provenance-recorded community specimen now passes through the live Settings import field. The test verifies the complete live export, including default zero values for absent Planet Coin/Wisdom resources, and confirms that its 60-second-old import leaves both save slots unchanged. The focused Playwright test passed 1/1; this adds one UI integration case and does not establish support for other historical save shapes.
 
 **Historical-shaped export differential (2026-11-07):** the Settings E2E now imports the same synthetic fixture in pinned Remix and Beyond, exports from both runtimes, and asserts exact encoded save equality. The source-paired test passed 1/1 on Windows Chromium; the case remains limited to one community-derived shape.
 
