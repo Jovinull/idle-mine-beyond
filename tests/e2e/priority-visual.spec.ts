@@ -56,6 +56,7 @@ type VisualCase = {
   readonly mineObjectLevel?: number;
   readonly highestMineObjectLevel?: number;
   readonly damageHits?: number;
+  readonly referenceStateId?: string;
 };
 
 function getVisualCases(): VisualCase[] {
@@ -117,6 +118,23 @@ function getVisualCases(): VisualCase[] {
       gameTab: "main",
       damageHits: 1,
     });
+  }
+  for (const viewport of [
+    { width: 1366, height: 768 },
+    { width: 1920, height: 1080 },
+  ]) {
+    const suffix = `${viewport.width}x${viewport.height}`;
+    for (const theme of ["light", "dark"] as const) {
+      cases.push({
+        id: `mining-mud-damaged-${theme}-${suffix}`,
+        family: "mining",
+        viewport,
+        theme,
+        gameTab: "main",
+        damageHits: 1,
+        referenceStateId: `mining-mud-damaged-${theme}-1440x900`,
+      });
+    }
   }
   for (const viewport of [
     { width: 1366, height: 768 },
@@ -244,7 +262,7 @@ async function prepareBeyondScreen(
     );
     if (capture.damageHits) {
       const sourceState = saves.visualStates.captures.find(
-        ({ id }) => id === capture.id,
+        ({ id }) => id === (capture.referenceStateId ?? capture.id),
       );
       const expectedHp = sourceState?.state.currentObjectHp;
       if (!expectedHp) {
@@ -401,6 +419,9 @@ async function compareDamagedMudWithRemix({
 
 for (const capture of getVisualCases()) {
   test(`compares pinned Remix ${capture.id}`, async ({ page, browser }) => {
+    if (capture.damageHits && capture.viewport.width >= 1920) {
+      test.setTimeout(90_000);
+    }
     const saves = await readSaveInputs();
     await prepareBeyondScreen(page, capture, saves);
 
@@ -421,7 +442,9 @@ for (const capture of getVisualCases()) {
     } else if (capture.family === "mining") {
       const phase = saves.phases.get(capture.phaseId ?? "");
       const sourceState = capture.damageHits
-        ? saves.visualStates.captures.find(({ id }) => id === capture.id)
+        ? saves.visualStates.captures.find(
+            ({ id }) => id === (capture.referenceStateId ?? capture.id),
+          )
         : undefined;
       const sourceObject = capture.damageHits
         ? sourceState?.state.currentObjectName
@@ -466,7 +489,8 @@ for (const capture of getVisualCases()) {
       !(
         process.platform === "linux" &&
         (capture.family === "shop-gate" || capture.damageHits !== undefined)
-      );
+      ) &&
+      !(capture.damageHits !== undefined && capture.viewport.width !== 1440);
     if (hasPixelBaseline) {
       await expect(page).toHaveScreenshot(`remix-${capture.id}.png`, {
         maxDiffPixels: 0,

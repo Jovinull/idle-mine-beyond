@@ -125,6 +125,8 @@ The tracked [light Mining baseline](../../tests/fixtures/visual/remix-mining-fre
 
 The initial full-screen comparison exposed the missing `HP:` label and pickaxe icon in the Mining stats. The route now renders the source label and the already provenance-checked `/Images/pickaxe.png` at the source inline height. The fresh Mining state now matches in both source themes at this viewport; later mine-object states and unselected screens/viewports remain open; selected cases are listed below.
 
+**Non-lethal Mud hit at alternate viewports (2026-11-10):** the source-paired `tests/e2e/priority-visual.spec.ts` now captures a live first click on fresh Mud (HP 100 to 80) at 1366×768 and 1920×1080, in both themes. It compares the complete Remix and Beyond screenshots directly at zero differing pixels; the existing 1440×900 state remains covered. Other Mining progression/resource states remain open.
+
 ## Upgrade shop source styles and interaction
 
 The default source shop shows Money upgrade cards in `Scripts/Define/game.js` order. Gem cards become visible at `highestMineObjectLevel >= 61`; Planet Coin cards become visible at `>= 90`. The captured presentation fixture records all 29 definitions, their exact labels/descriptions/icons/resource IDs/caps, and source level/effect/price display strings at every formula sample. `UpgradePanel.svelte` renders the 8 Money, 7 Gem, and 7 Planet Coin cards in source order and displays current/next details on pointer hover.

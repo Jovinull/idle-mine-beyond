@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-10
 
+**Non-lethal Mud hit at alternate viewports (2026-11-10):** added live
+Remix/Beyond full-screen comparisons for HP 80 after one click at 1366×768 and
+1920×1080, in light and dark themes. All six source pairs pass in Chromium;
+these alternate resolutions use direct screenshot comparisons. Other Mining
+states remain open.
+
 **Legacy import without `lastActive` (2026-11-10):** the source-paired
 Settings import removes the captured timestamp and uses a fixed injected
 clock. Remix and Beyond export the same full save and encoded bytes with
