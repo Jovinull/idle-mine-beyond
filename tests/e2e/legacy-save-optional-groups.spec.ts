@@ -554,6 +554,71 @@ test("matches optional-group save import from a fresh runtime", async ({
   }
 });
 
+test("defaults missing lastActive to the injected clock during Settings import", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90_000);
+  const sourceContext = await browser.newContext({
+    colorScheme: "dark",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    const encodedSeedSave = await encodeWithPinnedRuntime(
+      sourcePage,
+      makeSeedSave(),
+    );
+    const initialize = {
+      encoded: encodedSeedSave,
+      key: "legacy-save-missing-last-active",
+      time: fixedTime,
+    };
+    await Promise.all([
+      page.addInitScript(seedPage, initialize),
+      sourcePage.addInitScript(seedPage, initialize),
+    ]);
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean((window as Window & { game?: unknown }).game),
+    );
+    await selectSettings(page, sourcePage);
+
+    const input = JSON.parse(
+      fixture.data.saveApplicationSemantics.inputJson,
+    ) as Record<string, unknown>;
+    delete input["lastActive"];
+    const encodedImport = await encodeWithPinnedRuntime(sourcePage, input);
+    const [beyondExport, sourceExport] = await importAndExport(
+      page,
+      sourcePage,
+      encodedImport,
+    );
+    const [result, sourceResult] = await Promise.all([
+      decodeExport(page, beyondExport),
+      decodeExport(sourcePage, sourceExport),
+    ]);
+
+    expect(result, "complete missing-lastActive export").toEqual(sourceResult);
+    expect(beyondExport, "encoded missing-lastActive export").toBe(
+      sourceExport,
+    );
+    expect(result.lastActive).toBe(fixedTime);
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
 test("retains extra Power values after importing a shorter save in Settings", async ({
   page,
   browser,

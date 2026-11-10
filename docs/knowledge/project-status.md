@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-10
 
+**Legacy import without `lastActive` (2026-11-10):** the source-paired
+Settings import removes the captured timestamp and uses a fixed injected
+clock. Remix and Beyond export the same full save and encoded bytes with
+`lastActive` set to that clock, and neither applies offline rewards.
+Chromium, Firefox, and WebKit pass. Other offline and historical-save states
+remain open.
+
 **Legacy import with individual optional groups omitted (2026-11-10):** live
 Settings imports now omit `settings`, each upgrade group, the whole `powers`
 group, its `data` and `upgrades` subgroups separately, and `pickaxe` from a

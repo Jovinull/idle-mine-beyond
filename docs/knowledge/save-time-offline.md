@@ -41,6 +41,11 @@ those levels while still applying incoming Power values. Chromium, Firefox,
 and WebKit compare the complete decoded exports and encoded bytes. Other
 historical save shapes remain open.
 
+**Settings import without `lastActive` (2026-11-10):** with the browser clock
+injected to a fixed value, both runtimes default the omitted timestamp to that
+value, skip offline rewards, and export identical complete saves and encoded
+bytes. The live source comparison passes in Chromium, Firefox, and WebKit.
+
 Scripts/Define/functions.js stores the save under localStorage key IdleMine. It serializes the game object as JSON, applies encodeURIComponent and escape, then Base64-encodes it. Import reverses Base64, decodeURIComponent, and unescape before JSON parsing. Base64 is encoding, not encryption.
 
 The selected upgrade group is a session setting with a legacy persistence quirk: clicking a group updates live `settings.upgradeTab`, panel navigation retains it, and export includes it; the pinned `loadGame()` does not apply that field on cold start, which returns to the `game.js` default `money`. The source-paired E2E `tests/e2e/upgrade-tab-state-differential.spec.ts` verifies panel retention, exported values, and the cold-load reset. Preserve this asymmetry.

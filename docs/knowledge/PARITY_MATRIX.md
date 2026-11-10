@@ -7,6 +7,12 @@ source-specific retention/reset behavior and compare complete encoded exports
 against Remix in Chromium, Firefox, and WebKit. Legacy import/recovery remains
 In Progress for other historical shapes and states.
 
+**Legacy import without `lastActive` (2026-11-10):** a Settings import with
+the timestamp removed uses the injected current time, produces no offline
+reward, and matches the pinned Remix's complete export bytes in Chromium,
+Firefox, and WebKit. Legacy import and offline progression remain In Progress
+for other states and real background scheduling.
+
 **Fractional Gem balance after a successful craft (2026-11-10):** the
 source-captured 2.6-Gem craft now runs through the real Mining button. Remix
 and Beyond spend 1 Gem, round the remaining balance to 2 before the successful
