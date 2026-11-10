@@ -173,7 +173,7 @@ jobs:
         if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:upgrade-persistence:browsers
 
-      - name: Verify baseline, selected, and maximum-Gem craft persistence in Firefox and WebKit
+      - name: Verify successful craft save cases in Firefox and WebKit
         if: ${{ !cancelled() && steps.project_checks.outcome == 'success' && steps.playwright_install.outcome == 'success' && steps.reference_corpus.outcome == 'success' }}
         run: pnpm test:e2e:craft-replacement:browsers
 

@@ -250,6 +250,157 @@ test("source-pairs successful single craft replacement through persisted export"
   }
 });
 
+test("source-pairs fractional Gem rounding through a successful craft save", async ({
+  browser,
+  page,
+}) => {
+  test.setTimeout(90_000);
+  const fixture = JSON.parse(
+    await readFile(
+      new URL(
+        "../fixtures/parity/remix-reference-corpus.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as CraftFixture;
+  const attempt = fixture.data.pickaxeCraftingSemantics.attempts.find(
+    ({ input }) => input.name === "fractional-gem-balance-rounds-after-spend",
+  );
+  if (!attempt) throw new Error("The fractional-Gem craft capture is missing.");
+  expect(attempt.input.gems).toBe("2.6");
+  expect(attempt.saveSnapshots[0]?.gems.decimal).toBe("2");
+
+  const save = JSON.parse(
+    fixture.data.saveApplicationSemantics.inputJson,
+  ) as LegacySave;
+  save.gems = attempt.input.gems;
+  save.mineObjectLevel = attempt.input.highestMineObjectLevel;
+  save.highestMineObjectLevel = attempt.input.highestMineObjectLevel;
+  save.usedGemsLevel = attempt.input.usedGemsLevel;
+  save.lastActive = fixedClock;
+  save.settings["tab"] = "main";
+  save.settings["theme"] = "light";
+  save.upgrades = {};
+  save.gemUpgrades = {};
+  save.planetCoinUpgrades = {};
+  save.powers.data.values = ["1", "1", "1", "1", "1"];
+  save.powers.upgrades = {};
+  save.pickaxe = {
+    name: attempt.input.equippedPickaxe.name,
+    pow: attempt.input.equippedPickaxe.power,
+    quality: attempt.input.equippedPickaxe.quality,
+  };
+
+  const sourceContext = await browser.newContext({
+    colorScheme: "light",
+    deviceScaleFactor: 1,
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    const encoded = await sourcePage.evaluate((value) => {
+      const json = JSON.stringify(value);
+      if (json === undefined) throw new Error("Craft save is not JSON.");
+      return btoa(escape(encodeURIComponent(json)));
+    }, save);
+    await Promise.all([
+      page.setViewportSize({ width: 1440, height: 900 }),
+      page.addInitScript(seedLegacySave, { encoded, now: fixedClock }),
+      sourcePage.addInitScript(seedLegacySave, { encoded, now: fixedClock }),
+    ]);
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await Promise.all([
+      expect(page.locator("#app")).toHaveAttribute("data-app-state", "ready", {
+        timeout: 30_000,
+      }),
+      sourcePage.waitForFunction(() =>
+        Boolean((window as Window & { game?: unknown }).game),
+      ),
+    ]);
+    await Promise.all([
+      installCraftRandomSequence(page, attempt.input.randomValues),
+      installCraftRandomSequence(sourcePage, attempt.input.randomValues),
+    ]);
+    await Promise.all([
+      page.locator("[data-craft-pickaxe]").click(),
+      sourcePage.locator(".craft-pickaxe button:not(.level-change)").click(),
+    ]);
+    await Promise.all([
+      expect(page.locator(".messagelog")).toContainText(
+        attempt.messageLog[0]!.message,
+      ),
+      expect(sourcePage.locator(".messagelog")).toContainText(
+        attempt.messageLog[0]!.message,
+      ),
+      expect(page.locator(".messagelog")).toContainText("Game Saved!"),
+      expect(sourcePage.locator(".messagelog")).toContainText("Game Saved!"),
+    ]);
+    const [beyondCalls, remixCalls] = await Promise.all([
+      page.evaluate(() =>
+        (
+          window as Window & { __idleMineCraftRandomCalls?: () => number }
+        ).__idleMineCraftRandomCalls?.(),
+      ),
+      sourcePage.evaluate(() =>
+        (
+          window as Window & { __idleMineCraftRandomCalls?: () => number }
+        ).__idleMineCraftRandomCalls?.(),
+      ),
+    ]);
+    expect(beyondCalls).toBe(attempt.randomCalls);
+    expect(remixCalls).toBe(attempt.randomCalls);
+
+    await Promise.all([
+      page.locator("[data-game-tab='settings']").click(),
+      sourcePage
+        .locator("footer button")
+        .filter({ hasText: "Settings" })
+        .click(),
+    ]);
+    await Promise.all([
+      expect(page.locator("[data-settings-save-field]")).toBeVisible(),
+      expect(sourcePage.locator("article.settings textarea")).toBeVisible(),
+      page.locator("[data-settings-export]").click(),
+      sourcePage
+        .locator("article.settings button")
+        .filter({ hasText: "Export" })
+        .click(),
+    ]);
+    const [beyondExport, remixExport] = await Promise.all([
+      page.locator("[data-settings-save-field]").inputValue(),
+      sourcePage.locator("article.settings textarea").inputValue(),
+    ]);
+    expect(beyondExport, "fractional-Gem craft export bytes").toBe(remixExport);
+    const [beyondDecoded, remixDecoded] = [
+      decodeRemixLegacySave(beyondExport),
+      decodeRemixLegacySave(remixExport),
+    ];
+    expect(beyondDecoded.status).toBe("success");
+    expect(remixDecoded.status).toBe("success");
+    if (
+      beyondDecoded.status !== "success" ||
+      remixDecoded.status !== "success"
+    ) {
+      throw new Error("Could not decode the fractional-Gem craft exports.");
+    }
+    expect(beyondDecoded.value).toEqual(remixDecoded.value);
+    const decodedSave = beyondDecoded.value as LegacySave;
+    expect(decodedSave.gems).toBe("2");
+    expect(decodedSave.pickaxe).toEqual({
+      name: attempt.saveSnapshots[0]!.pickaxe.name,
+      pow: attempt.saveSnapshots[0]!.pickaxe.power.decimal,
+      quality: attempt.saveSnapshots[0]!.pickaxe.quality.decimal,
+    });
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
 test("source-pairs a selected Gem Waster craft through persisted export", async ({
   browser,
   page,

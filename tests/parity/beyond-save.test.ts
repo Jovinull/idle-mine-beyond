@@ -229,7 +229,18 @@ it("round-trips the complete Beyond v1 state and derives its current object", ()
     decoded.save,
     corpus.data.mineObjectCatalog,
   );
-  expect(summarize(restored)).toEqual(summarize(state));
+  expect(restored.settings.exportFieldString).toBe(
+    "Exported String will appear here...",
+  );
+  expect(summarize(restored)).toEqual(
+    summarize({
+      ...state,
+      settings: {
+        ...state.settings,
+        exportFieldString: "Exported String will appear here...",
+      },
+    }),
+  );
   expect(restored.simulation.currentObject.id).toBe(210);
 });
 

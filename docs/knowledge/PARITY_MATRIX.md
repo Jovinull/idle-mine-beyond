@@ -1,5 +1,12 @@
 # Parity matrix
 
+**Fractional Gem balance after a successful craft (2026-11-10):** the
+source-captured 2.6-Gem craft now runs through the real Mining button. Remix
+and Beyond spend 1 Gem, round the remaining balance to 2 before the successful
+replacement save, consume the same ten RNG draws, and export identical full
+saves in Chromium, Firefox, and WebKit. Crafting remains In Progress for other
+interaction and visual states.
+
 **Cold-start Gem Waster selector from a legacy save (2026-11-10):** a
 Remix-encoded startup save with serialized `usedGemsLevel: 2` leaves the live
 selector at its source default 0 in both applications. The cost-1 selector and

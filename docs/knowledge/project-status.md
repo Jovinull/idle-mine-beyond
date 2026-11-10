@@ -2,6 +2,14 @@
 
 Last updated: 2026-11-10
 
+**Fractional Gem balance after a successful craft (2026-11-10):** the
+source-captured `fractional-gem-balance-rounds-after-spend` case is now a live
+Remix/Beyond Mining interaction. Starting from 2.6 Gems, both spend 1, round
+the balance to 2 before saving the stronger pickaxe, consume ten RNG draws,
+and produce byte-identical full Settings exports. Chromium, Firefox, and
+WebKit pass. The browser input is encoded with Remix's own save expression;
+other craft states remain open.
+
 **Cold-start Gem Waster selector from a legacy save (2026-11-10):** the live
 Settings suite now starts pinned Remix and Beyond from the same
 Remix-encoded save whose serialized `usedGemsLevel` is 2. Both initialize the
