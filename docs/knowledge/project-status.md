@@ -2,6 +2,12 @@
 
 Last updated: 2026-11-10
 
+**Optional-group import from a fresh runtime (2026-11-10):** the Settings E2E
+now imports the pinned absent-optional-groups save after launching both Remix
+and Beyond without stored saves. Complete decoded exports and encoded bytes
+match in Chromium, Firefox, and WebKit. Existing populated-session import
+coverage remains separate; broader historical save formats stay open.
+
 **Below-price shop screens at alternate viewport (2026-11-10):** added full
 source/Beyond screen comparisons for Money, Gems, and Planet Coins at one cent
 below each pinned price, at 1366x768 in light and dark themes. All six pairs

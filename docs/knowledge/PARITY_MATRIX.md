@@ -17,6 +17,12 @@ the stale tab clears shared storage. Its periodic save restores the retained
 Blacksmith 1 / 970 Money state and matches the full Settings export in Remix
 and Beyond in Chromium, Firefox, and WebKit.
 
+**Optional-group import from a fresh runtime (2026-11-10):** the live Settings
+flow now imports the captured save with absent optional groups after starting
+both applications without a stored save. The complete export object and encoded
+bytes match pinned Remix in Chromium, Firefox, and WebKit. Populated-session
+imports remain covered separately; historical formats remain open.
+
 **Composed external UTF-8 save inputs (2026-11-09):** the pinned save decoder
 comparison now includes two valid multi-scalar strings and two longer malformed
 strings after a valid prefix, in addition to the individual four-byte

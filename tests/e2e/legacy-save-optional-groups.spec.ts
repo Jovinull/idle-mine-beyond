@@ -101,6 +101,14 @@ function seedPage({
   Date.now = () => time;
 }
 
+function seedFreshPage({ key, time }: { key: string; time: number }): void {
+  if (sessionStorage.getItem(key) !== "true") {
+    localStorage.clear();
+    sessionStorage.setItem(key, "true");
+  }
+  Date.now = () => time;
+}
+
 async function setSaveAndReload(
   page: Page,
   sourcePage: Page,
@@ -329,6 +337,57 @@ test("matches Remix imports with optional groups and varied all-upgrade state", 
         }
       });
     }
+  } finally {
+    await sourceContext.close().catch(() => undefined);
+  }
+});
+
+test("matches optional-group save import from a fresh runtime", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90_000);
+  const sourceContext = await browser.newContext({
+    colorScheme: "dark",
+    locale: "en-US",
+    timezoneId: "UTC",
+    viewport: { width: 1440, height: 900 },
+  });
+  const sourcePage = await sourceContext.newPage();
+
+  try {
+    const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    const initialize = {
+      key: "legacy-save-fresh-import-seeded",
+      time: fixedTime,
+    };
+    await Promise.all([
+      page.addInitScript(seedFreshPage, initialize),
+      sourcePage.addInitScript(seedFreshPage, initialize),
+    ]);
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+    await expect(page.locator("#app")).toHaveAttribute(
+      "data-app-state",
+      "ready",
+    );
+    await sourcePage.waitForFunction(() =>
+      Boolean((window as Window & { game?: unknown }).game),
+    );
+
+    await selectSettings(page, sourcePage);
+    const [beyondExport, sourceExport] = await importAndExport(
+      page,
+      sourcePage,
+      encodeJson(fixture.data.saveSemantics.missingOptionalGroups.inputJson),
+    );
+    const [beyondResult, sourceResult] = await Promise.all([
+      decodeExport(page, beyondExport),
+      decodeExport(sourcePage, sourceExport),
+    ]);
+    expect(beyondResult, "complete fresh-runtime export").toEqual(sourceResult);
+    expect(beyondExport, "encoded fresh-runtime export").toBe(sourceExport);
   } finally {
     await sourceContext.close().catch(() => undefined);
   }

@@ -115,6 +115,10 @@ Other arbitrary byte strings remain an input-domain gap, not an unlisted branch.
   `tests/e2e/save-import-error.spec.ts`; that Chromium suite also submits all
   twenty captured field-application failures, compares each visible error, and
   verifies every localStorage slot is unchanged before and after reload;
+  `tests/e2e/legacy-save-optional-groups.spec.ts` also imports the captured
+  absent-optional-groups save from both a populated session and a fresh runtime,
+  then compares the complete Settings export and encoded bytes with pinned
+  Remix in Chromium, Firefox, and WebKit;
   `tests/e2e/save-import-error-browser-compat.spec.ts` additionally source-pairs
   the post-failure Settings export bytes for all twenty partial-application
   errors in Chromium, Firefox, and WebKit, without writing the partial state;
