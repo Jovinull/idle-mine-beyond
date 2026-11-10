@@ -60,6 +60,18 @@ type LegacySave = {
 
 const fixedClock = 1_704_067_200_000;
 const scenarioName = "planet-coin-drop-roll-follows-gem-roll";
+const liveDropVariants = [
+  {
+    name: "captured Planet Coin drop after a failed Gem roll",
+    randomValues: undefined,
+    expectedResources: undefined,
+  },
+  {
+    name: "successful Gem drop before a failed Planet Coin roll",
+    randomValues: [0, 0.9],
+    expectedResources: { gems: "6", planetCoins: "4" },
+  },
+] as const;
 const corpusUrl = new URL(
   "../fixtures/parity/remix-reference-corpus.json",
   import.meta.url,
@@ -112,147 +124,161 @@ async function exportValue(page: Page) {
 }
 
 for (const theme of ["light", "dark"] as const) {
-  test(`exports the source-matched save after a Planet Coin mining drop (${theme})`, async ({
-    browser,
-    page,
-  }, testInfo) => {
-    test.setTimeout(90_000);
-    const corpus = JSON.parse(
-      await readFile(corpusUrl, "utf8"),
-    ) as ReferenceCorpus;
-    const scenario = corpus.data.miningHitSemantics.cases.find(
-      ({ name }) => name === scenarioName,
-    );
-    if (!scenario)
-      throw new Error(`Pinned mining case ${scenarioName} is missing.`);
+  for (const variant of liveDropVariants) {
+    test(`exports the source-matched save after ${variant.name} (${theme})`, async ({
+      browser,
+      page,
+    }, testInfo) => {
+      test.setTimeout(90_000);
+      const corpus = JSON.parse(
+        await readFile(corpusUrl, "utf8"),
+      ) as ReferenceCorpus;
+      const scenario = corpus.data.miningHitSemantics.cases.find(
+        ({ name }) => name === scenarioName,
+      );
+      if (!scenario)
+        throw new Error(`Pinned mining case ${scenarioName} is missing.`);
 
-    const sourceSave = JSON.parse(
-      corpus.data.saveApplicationSemantics.inputJson,
-    ) as LegacySave;
-    sourceSave.mineObjectLevel = scenario.input.objectId;
-    sourceSave.highestMineObjectLevel = scenario.input.objectId;
-    sourceSave.money = scenario.input.resources.money;
-    sourceSave.highestMoney = scenario.input.resources.highestMoney;
-    sourceSave.gems = scenario.input.resources.gems;
-    sourceSave.planetCoins = scenario.input.resources.planetCoins;
-    sourceSave.maxPlanetCoins = scenario.input.resources.maxPlanetCoins;
-    sourceSave.wisdom = scenario.input.resources.wisdom;
-    sourceSave.maxWisdom = scenario.input.resources.maxWisdom;
-    sourceSave.powers.data.values = [...scenario.input.powers];
-    sourceSave.pickaxe.pow = scenario.input.pickaxe.power;
-    sourceSave.pickaxe.quality = scenario.input.pickaxe.quality;
-    sourceSave.lastActive = fixedClock;
-    sourceSave.settings.theme = theme;
-    sourceSave.settings.tab = "main";
-    sourceSave.settings.showMineObjLevel = true;
+      const sourceSave = JSON.parse(
+        corpus.data.saveApplicationSemantics.inputJson,
+      ) as LegacySave;
+      sourceSave.mineObjectLevel = scenario.input.objectId;
+      sourceSave.highestMineObjectLevel = scenario.input.objectId;
+      sourceSave.money = scenario.input.resources.money;
+      sourceSave.highestMoney = scenario.input.resources.highestMoney;
+      sourceSave.gems = scenario.input.resources.gems;
+      sourceSave.planetCoins = scenario.input.resources.planetCoins;
+      sourceSave.maxPlanetCoins = scenario.input.resources.maxPlanetCoins;
+      sourceSave.wisdom = scenario.input.resources.wisdom;
+      sourceSave.maxWisdom = scenario.input.resources.maxWisdom;
+      sourceSave.powers.data.values = [...scenario.input.powers];
+      sourceSave.pickaxe.pow = scenario.input.pickaxe.power;
+      sourceSave.pickaxe.quality = scenario.input.pickaxe.quality;
+      sourceSave.lastActive = fixedClock;
+      sourceSave.settings.theme = theme;
+      sourceSave.settings.tab = "main";
+      sourceSave.settings.showMineObjLevel = true;
 
-    const encodedSource = encodeRemixLegacySave(sourceSave);
-    const encodedBeyond = await createBeyondVisualSaveFromRemixSave({
-      clockMs: fixedClock,
-      theme,
-      tab: "main",
-      saveString: encodedSource,
-    });
-    const sourceContext = await browser.newContext({
-      baseURL: testInfo.project.use.baseURL as string,
-      colorScheme: theme,
-      locale: "en-US",
-      timezoneId: "UTC",
-      viewport: { width: 1440, height: 900 },
-    });
-    const sourcePage = await sourceContext.newPage();
-    try {
-      const sourceUrl = await routePinnedRemixOracle(sourcePage);
-      await Promise.all([
-        page.addInitScript(initializeDropSave, {
-          storageKey: "IdleMineBeyond" as const,
-          encoded: encodedBeyond,
-          now: fixedClock,
-          randomValues: scenario.input.randomValues,
-        }),
-        sourcePage.addInitScript(initializeDropSave, {
-          storageKey: "IdleMine" as const,
-          encoded: encodedSource,
-          now: fixedClock,
-          randomValues: scenario.input.randomValues,
-        }),
-      ]);
-      await Promise.all([
-        page.emulateMedia({ colorScheme: theme }),
-        sourcePage.emulateMedia({ colorScheme: theme }),
-      ]);
-      await page.setViewportSize({ width: 1440, height: 900 });
-      await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
-      await expect(page.locator("#app")).toHaveAttribute(
-        "data-app-state",
-        "ready",
-      );
-      await sourcePage.waitForFunction(() =>
-        Boolean((window as Window & { game?: unknown }).game),
-      );
-
-      await Promise.all([
-        page.locator("canvas.mine-object[data-damageable='true']").click(),
-        sourcePage.locator(".mineobject canvas.mine-object").click(),
-      ]);
-      await expect(page.locator("[data-mine-object-level]")).toHaveText(
-        `#${scenario.input.objectId + 1}`,
-      );
-      await expect(sourcePage.locator(".mineobject h4")).toHaveText(
-        `#${scenario.input.objectId + 1}`,
-      );
-      await expect(
-        page.locator("header .inline-resource").first(),
-      ).toContainText(scenario.result.resources.gems.decimal);
-      await expect(
-        sourcePage.locator("header .inline-resource").first(),
-      ).toContainText(scenario.result.resources.gems.decimal);
-      expect(
+      const encodedSource = encodeRemixLegacySave(sourceSave);
+      const encodedBeyond = await createBeyondVisualSaveFromRemixSave({
+        clockMs: fixedClock,
+        theme,
+        tab: "main",
+        saveString: encodedSource,
+      });
+      const sourceContext = await browser.newContext({
+        baseURL: testInfo.project.use.baseURL as string,
+        colorScheme: theme,
+        locale: "en-US",
+        timezoneId: "UTC",
+        viewport: { width: 1440, height: 900 },
+      });
+      const sourcePage = await sourceContext.newPage();
+      try {
+        const sourceUrl = await routePinnedRemixOracle(sourcePage);
         await Promise.all([
-          page.evaluate(() =>
-            (
-              window as typeof window & {
-                __idleMineDropExportDrawCount: () => number;
-              }
-            ).__idleMineDropExportDrawCount(),
-          ),
-          sourcePage.evaluate(() =>
-            (
-              window as typeof window & {
-                __idleMineDropExportDrawCount: () => number;
-              }
-            ).__idleMineDropExportDrawCount(),
-          ),
-        ]),
-      ).toEqual([scenario.result.randomCalls, scenario.result.randomCalls]);
+          page.addInitScript(initializeDropSave, {
+            storageKey: "IdleMineBeyond" as const,
+            encoded: encodedBeyond,
+            now: fixedClock,
+            randomValues: variant.randomValues ?? scenario.input.randomValues,
+          }),
+          sourcePage.addInitScript(initializeDropSave, {
+            storageKey: "IdleMine" as const,
+            encoded: encodedSource,
+            now: fixedClock,
+            randomValues: variant.randomValues ?? scenario.input.randomValues,
+          }),
+        ]);
+        await Promise.all([
+          page.emulateMedia({ colorScheme: theme }),
+          sourcePage.emulateMedia({ colorScheme: theme }),
+        ]);
+        await page.setViewportSize({ width: 1440, height: 900 });
+        await Promise.all([page.goto("/"), sourcePage.goto(sourceUrl)]);
+        await expect(page.locator("#app")).toHaveAttribute(
+          "data-app-state",
+          "ready",
+        );
+        await sourcePage.waitForFunction(() =>
+          Boolean((window as Window & { game?: unknown }).game),
+        );
 
-      await Promise.all([
-        page.locator("[data-game-tab='settings']").click(),
-        sourcePage
-          .locator("footer button")
-          .filter({ hasText: "Settings" })
-          .click(),
-      ]);
-      await Promise.all([
-        page.getByRole("button", { name: "Export" }).click(),
-        sourcePage.getByRole("button", { name: "Export" }).click(),
-      ]);
-      const [beyondExport, sourceExport] = await Promise.all([
-        exportValue(page),
-        exportValue(sourcePage),
-      ]);
-      expect(beyondExport.value).toEqual(sourceExport.value);
-      // The displayed next object is #91, while the serialized current index stays 90.
-      expect(beyondExport.value.mineObjectLevel).toBe(scenario.input.objectId);
-      expect(beyondExport.value.highestMineObjectLevel).toBe(
-        scenario.result.highestMineObjectLevel,
-      );
-      expect(beyondExport.value.planetCoins).toBe(
-        scenario.result.resources.planetCoins.decimal,
-      );
-      expect(beyondExport.encoded).toBe(sourceExport.encoded);
-    } finally {
-      await sourceContext.close().catch(() => undefined);
-    }
-  });
+        await Promise.all([
+          page.locator("canvas.mine-object[data-damageable='true']").click(),
+          sourcePage.locator(".mineobject canvas.mine-object").click(),
+        ]);
+        await expect(page.locator("[data-mine-object-level]")).toHaveText(
+          `#${scenario.input.objectId + 1}`,
+        );
+        await expect(sourcePage.locator(".mineobject h4")).toHaveText(
+          `#${scenario.input.objectId + 1}`,
+        );
+        await expect(
+          page.locator("header .inline-resource").first(),
+        ).toContainText(
+          variant.expectedResources?.gems ??
+            scenario.result.resources.gems.decimal,
+        );
+        await expect(
+          sourcePage.locator("header .inline-resource").first(),
+        ).toContainText(
+          variant.expectedResources?.gems ??
+            scenario.result.resources.gems.decimal,
+        );
+        expect(
+          await Promise.all([
+            page.evaluate(() =>
+              (
+                window as typeof window & {
+                  __idleMineDropExportDrawCount: () => number;
+                }
+              ).__idleMineDropExportDrawCount(),
+            ),
+            sourcePage.evaluate(() =>
+              (
+                window as typeof window & {
+                  __idleMineDropExportDrawCount: () => number;
+                }
+              ).__idleMineDropExportDrawCount(),
+            ),
+          ]),
+        ).toEqual([scenario.result.randomCalls, scenario.result.randomCalls]);
+
+        await Promise.all([
+          page.locator("[data-game-tab='settings']").click(),
+          sourcePage
+            .locator("footer button")
+            .filter({ hasText: "Settings" })
+            .click(),
+        ]);
+        await Promise.all([
+          page.getByRole("button", { name: "Export" }).click(),
+          sourcePage.getByRole("button", { name: "Export" }).click(),
+        ]);
+        const [beyondExport, sourceExport] = await Promise.all([
+          exportValue(page),
+          exportValue(sourcePage),
+        ]);
+        expect(beyondExport.value).toEqual(sourceExport.value);
+        // The displayed next object is #91, while the serialized current index stays 90.
+        expect(beyondExport.value.mineObjectLevel).toBe(
+          scenario.input.objectId,
+        );
+        expect(beyondExport.value.highestMineObjectLevel).toBe(
+          scenario.result.highestMineObjectLevel,
+        );
+        expect(beyondExport.value.planetCoins).toBe(
+          variant.expectedResources?.planetCoins ??
+            scenario.result.resources.planetCoins.decimal,
+        );
+        if (variant.expectedResources) {
+          expect(beyondExport.value.gems).toBe(variant.expectedResources.gems);
+        }
+        expect(beyondExport.encoded).toBe(sourceExport.encoded);
+      } finally {
+        await sourceContext.close().catch(() => undefined);
+      }
+    });
+  }
 }

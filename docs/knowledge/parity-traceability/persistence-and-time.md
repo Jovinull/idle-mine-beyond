@@ -229,8 +229,9 @@ paths have source-backed assertions.
   source capture and compares the complete encoded bytes and decoded object.
   `tests/e2e/save-export-mining-drop-differential.spec.ts` breaks the pinned
   object 90 in both apps with the captured RNG sequence, then compares the
-  complete Settings export after the Planet Coin drop in light and dark in
-  Chromium, Firefox, and WebKit.
+  complete Settings export after a Planet Coin drop with the Gem roll failing
+  and a Gem drop with the Planet Coin roll failing. Both outcomes match in
+  light and dark Chromium, Firefox, and WebKit.
 - **Sampled:** the route-end set is four saves, and the additional all-group
   state is one controlled fixture, not every valid Remix runtime state. Valid
   codec outputs match pinned Remix in Chromium, Firefox, and WebKit for five

@@ -2,6 +2,8 @@
 
 Last updated: 2026-11-09
 
+**Gem and Planet Coin post-drop exports (2026-11-09):** expanded the live source-paired export differential at object 90 to cover both ordered outcomes: a failed Gem roll followed by a Planet Coin award, and a Gem award followed by a failed Planet Coin roll. Complete exported objects and encoded bytes match in Chromium, Firefox, and WebKit in both themes (12/12 pairs). Save export and round-trip remains In Progress for other runtime states.
+
 **High-magnitude Decimal import/export (2026-11-09):** added the captured extreme-resource/Power/pickaxe save to the source-paired Settings import/export differential. Complete decoded states and encoded bytes match Remix in Chromium, Firefox, and WebKit; the cross-browser optional-group gate passed 6/6. Save export and round-trip remains In Progress for other dynamic save combinations.
 
 **Out-of-range formatter import across browsers (2026-11-09):** the source-paired Settings import at the first index beyond Remix's formatter list now compares its native render TypeError against the same browser's pinned runtime in Chromium, Firefox, and WebKit. The dedicated Firefox/WebKit CI gate preserves cross-engine coverage; the legacy loader's unvalidated behavior remains intentional for parity.
