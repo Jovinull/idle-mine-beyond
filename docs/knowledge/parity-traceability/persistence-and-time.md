@@ -235,7 +235,10 @@ paths have source-backed assertions.
   object 90 in both apps with the captured RNG sequence, then compares the
   complete Settings export after a Planet Coin drop with the Gem roll failing
   and a Gem drop with the Planet Coin roll failing. Both outcomes match in
-  light and dark Chromium, Firefox, and WebKit.
+  light and dark Chromium, Firefox, and WebKit. It also breaks object 169 with
+  the captured Power of Wisdom 3 sequence; the base Wisdom award of 1 becomes
+  3, raising Wisdom/max Wisdom from 2/4 to 5/5. The complete exports and exact
+  encoded bytes match in both themes and all three browsers.
 - **Sampled:** the route-end set is four saves, and the additional all-group
   state is one controlled fixture, not every valid Remix runtime state. Valid
   codec outputs match pinned Remix in Chromium, Firefox, and WebKit for five
@@ -259,10 +262,13 @@ paths have source-backed assertions.
 | Craft replacement invokes source save after the success log; dud/insufficient attempts do not persist                                                                      | `pickaxeCraftingTransactions` event order and per-save snapshots                                                                                                                                         | `tests/parity/pickaxe-crafting.test.ts` compares events and intermediate persisted state; `tests/e2e/remix-app.spec.ts` checks live Beyond persistence; `tests/e2e/pickaxe-crafting-visual.spec.ts` compares the successful source/Beyond craft's complete live Settings export bytes and decoded object                                                                                                                       |
 | `Upgrade.buy` mutates the live balance/level without immediate `saveGame`; `Scripts/main.js:update` saves once and resets the timer only when accumulated `saveTimer > 60` | Pinned `Upgrade.buy` has no save call; `update` uses the strict greater-than-60 branch and calls `saveGame` before resetting the timer                                                                   | `tests/e2e/upgrade-persistence-window.spec.ts` compares pre-threshold reload loss in Chromium, Firefox, and WebKit; the live-frame case asserts no write/confirmation at 60,000 ms, then a matching complete legacy export and Blacksmith level/balance at 60,001 ms in all three engines                                                                                                                                      |
 
-The source save/export branches above are covered. A live Planet Coin drop
-export extends runtime evidence to one post-mining state in Chromium, Firefox,
-and WebKit in both themes. Arbitrary valid runtime states and other post-mining
-states remain outside the finite fixture domain. The four-resource autosave case in `tests/e2e/upgrade-persistence-window.spec.ts` also reloads both apps and verifies the saved balances and upgrades in Chromium, Firefox, and WebKit.
+The source save/export branches above are covered. Live post-mining export
+evidence now includes Planet Coin, Gem, and Power-scaled Wisdom awards in
+Chromium, Firefox, and WebKit in both themes. Arbitrary valid runtime states
+and other post-mining states remain outside the finite fixture domain. The
+four-resource autosave case in `tests/e2e/upgrade-persistence-window.spec.ts`
+also reloads both apps and verifies the saved balances and upgrades in
+Chromium, Firefox, and WebKit.
 
 **Upgrade purchase autosave integration (2026-11-09):** the
 `Upgrade.buy`/`main.js:update` E2E now covers captured exact-price Money, Gem,

@@ -242,6 +242,10 @@ Remix source functions.
   unchanged Gems, selected object/high-water behavior, and exact RNG draw count.
   The pinned hit damage is also checked to exceed each object's full source HP,
   so the oracle break outcomes apply after the Beyond save regenerates full HP.
+  `tests/e2e/save-export-mining-drop-differential.spec.ts` additionally compares
+  complete exports and exact encoded bytes after the object-169 Wisdom award,
+  confirming Power of Wisdom scales the persisted balance and maximum in both
+  themes and all three browsers.
   `tests/e2e/remix-app.spec.ts` compares displayed drop text for all 78 special
   objects at the captured Power state, including Wisdom's Power-scaled amount.
 - **Scope:** arbitrary runtime/host RNG distributions beyond the source-seeded

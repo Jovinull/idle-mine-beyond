@@ -2,6 +2,13 @@
 
 Last updated: 2026-11-09
 
+**Power-scaled Wisdom live export (2026-11-09):** extended the source-paired
+post-mining Settings export to object 169. The captured break applies Power of
+Wisdom 3 to the base Wisdom drop, raising Wisdom and max Wisdom from 2/4 to
+5/5. Complete exports and encoded bytes match pinned Remix in Chromium,
+Firefox, and WebKit in both themes (6/6 pairs). Other live mining-save states
+remain open.
+
 **Recent Settings imports leave storage unchanged (2026-11-09):** corrected two E2E assertions that expected persistence for imports whose captured `lastActive` is only 0 or 60 seconds before the controlled clock. Pinned Remix writes imported saves only when elapsed time is strictly greater than 300 seconds. Both tests now verify no storage write and compare the live exported state; the focused Chromium tests pass.
 
 **Gem and Planet Coin post-drop exports (2026-11-09):** expanded the live source-paired export differential at object 90 to cover both ordered outcomes: a failed Gem roll followed by a Planet Coin award, and a Gem award followed by a failed Planet Coin roll. Complete exported objects and encoded bytes match in Chromium, Firefox, and WebKit in both themes (12/12 pairs). Save export and round-trip remains In Progress for other runtime states.

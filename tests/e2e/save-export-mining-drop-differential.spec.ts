@@ -29,6 +29,8 @@ type DropScenario = {
       money: DecimalSnapshot;
       gems: DecimalSnapshot;
       planetCoins: DecimalSnapshot;
+      wisdom: DecimalSnapshot;
+      maxWisdom: DecimalSnapshot;
     };
   };
 };
@@ -59,19 +61,35 @@ type LegacySave = {
 };
 
 const fixedClock = 1_704_067_200_000;
-const scenarioName = "planet-coin-drop-roll-follows-gem-roll";
-const liveDropVariants = [
+const liveDropVariants: {
+  scenarioName: string;
+  name: string;
+  randomValues: readonly number[] | undefined;
+  expectedResources?: {
+    gems?: string;
+    planetCoins?: string;
+    wisdom?: string;
+    maxWisdom?: string;
+  };
+}[] = [
   {
+    scenarioName: "planet-coin-drop-roll-follows-gem-roll",
     name: "captured Planet Coin drop after a failed Gem roll",
     randomValues: undefined,
-    expectedResources: undefined,
   },
   {
+    scenarioName: "planet-coin-drop-roll-follows-gem-roll",
     name: "successful Gem drop before a failed Planet Coin roll",
     randomValues: [0, 0.9],
     expectedResources: { gems: "6", planetCoins: "4" },
   },
-] as const;
+  {
+    scenarioName: "wisdom-drop-scales-with-power-wisdom",
+    name: "Power of Wisdom scaled drop",
+    randomValues: undefined,
+    expectedResources: { wisdom: "5", maxWisdom: "5" },
+  },
+];
 const corpusUrl = new URL(
   "../fixtures/parity/remix-reference-corpus.json",
   import.meta.url,
@@ -118,6 +136,8 @@ async function exportValue(page: Page) {
       gems: string;
       planetCoins: string;
       maxPlanetCoins: string;
+      wisdom: string;
+      maxWisdom: string;
     };
   }, encoded);
   return { encoded, value };
@@ -134,10 +154,12 @@ for (const theme of ["light", "dark"] as const) {
         await readFile(corpusUrl, "utf8"),
       ) as ReferenceCorpus;
       const scenario = corpus.data.miningHitSemantics.cases.find(
-        ({ name }) => name === scenarioName,
+        ({ name }) => name === variant.scenarioName,
       );
       if (!scenario)
-        throw new Error(`Pinned mining case ${scenarioName} is missing.`);
+        throw new Error(
+          `Pinned mining case ${variant.scenarioName} is missing.`,
+        );
 
       const sourceSave = JSON.parse(
         corpus.data.saveApplicationSemantics.inputJson,
@@ -272,7 +294,17 @@ for (const theme of ["light", "dark"] as const) {
           variant.expectedResources?.planetCoins ??
             scenario.result.resources.planetCoins.decimal,
         );
-        if (variant.expectedResources) {
+        expect(beyondExport.value.wisdom).toBe(
+          variant.expectedResources && "wisdom" in variant.expectedResources
+            ? variant.expectedResources.wisdom
+            : scenario.result.resources.wisdom.decimal,
+        );
+        expect(beyondExport.value.maxWisdom).toBe(
+          variant.expectedResources && "maxWisdom" in variant.expectedResources
+            ? variant.expectedResources.maxWisdom
+            : scenario.result.resources.maxWisdom.decimal,
+        );
+        if (variant.expectedResources?.gems) {
           expect(beyondExport.value.gems).toBe(variant.expectedResources.gems);
         }
         expect(beyondExport.encoded).toBe(sourceExport.encoded);

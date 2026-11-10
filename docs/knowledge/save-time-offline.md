@@ -375,7 +375,7 @@ The historical-shape Settings E2E also performs a live pinned-Remix comparison: 
 
 ### Live mining-drop export differential (2026-11-08)
 
-`tests/e2e/save-export-mining-drop-differential.spec.ts` starts from the pinned `planet-coin-drop-roll-follows-gem-roll` case at object 90 and runs two source-paired random sequences in Remix and Beyond: the captured Gem miss followed by a Planet Coin award, and a successful Gem roll followed by a failed Planet Coin roll. Both complete Settings export objects and exact encoded bytes match in light and dark Chromium, Firefox, and WebKit (12/12 pairs). The source UI advances to `#91`, while its serialized `mineObjectLevel` remains 90 and `highestMineObjectLevel` becomes 91; retain this observed distinction. Other arbitrary runtime exports and mining states remain open.
+`tests/e2e/save-export-mining-drop-differential.spec.ts` starts from the pinned `planet-coin-drop-roll-follows-gem-roll` case at object 90 and runs two source-paired random sequences in Remix and Beyond: the captured Gem miss followed by a Planet Coin award, and a successful Gem roll followed by a failed Planet Coin roll. It also breaks object 169 with Power of Wisdom 3, comparing the resulting Wisdom 5 and max Wisdom 5 after the base drop of 1 is scaled by that Power. All three complete Settings export objects and exact encoded bytes match in light and dark Chromium, Firefox, and WebKit (18/18 pairs). The source UI advances to `#91` after object 90, while its serialized `mineObjectLevel` remains 90 and `highestMineObjectLevel` becomes 91; retain this observed distinction. Other arbitrary runtime exports and mining states remain open.
 
 ### Malformed save-import browser compatibility (2026-11-08)
 
