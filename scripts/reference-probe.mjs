@@ -2875,6 +2875,20 @@ async function capture(reference, dependencies, dependencySnapshots) {
               upgrades: { offlineTime: 2, offlineGems: 1, offlinePC: 1 },
             },
             {
+              name: "maximum-offline-time-level-42-reaches-48-hour-cap",
+              elapsedSeconds: 172800,
+              noOffline: false,
+              rates: { money: "1", gems: "10", planetCoins: "10" },
+              upgrades: { offlineTime: 42, offlineGems: 1, offlinePC: 1 },
+            },
+            {
+              name: "one-second-over-maximum-48-hour-cap-is-clamped",
+              elapsedSeconds: 172801,
+              noOffline: false,
+              rates: { money: "1", gems: "10", planetCoins: "10" },
+              upgrades: { offlineTime: 42, offlineGems: 1, offlinePC: 1 },
+            },
+            {
               name: "explicit-nooffline-flag-suppresses-rewards-and-save",
               elapsedSeconds: 3600,
               noOffline: true,
@@ -4865,6 +4879,16 @@ async function capture(reference, dependencies, dependencySnapshots) {
               elapsedSeconds: 3601,
               offlineUpgrades: {
                 offlineTime: 0,
+                offlineGems: 15,
+                offlinePC: 10,
+              },
+            },
+            {
+              name: "maximum-offline-time-live-three-resource-rates",
+              formulaScenario: "upgraded-planet-coin-asteroid",
+              elapsedSeconds: 172801,
+              offlineUpgrades: {
+                offlineTime: 42,
                 offlineGems: 15,
                 offlinePC: 10,
               },

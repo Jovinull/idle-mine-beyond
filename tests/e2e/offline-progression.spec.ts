@@ -209,6 +209,18 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
             candidate.name === "upgraded-asteroid-live-planet-coin-rate",
         ),
     },
+    {
+      name: "maximum 48-hour offline cap with three live resource rates",
+      theme: "light",
+      compareMessagePixels: false,
+      elapsedSeconds: 48 * 60 * 60 + 1,
+      expectsOfflineReward: true,
+      liveRateScenario:
+        reference.data.offlineLoadRateCompositionSemantics.scenarios.find(
+          (candidate) =>
+            candidate.name === "maximum-offline-time-live-three-resource-rates",
+        ),
+    },
   ]) {
     const sourceSave = JSON.parse(
       reference.data.saveApplicationSemantics.inputJson,

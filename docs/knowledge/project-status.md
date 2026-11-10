@@ -2,6 +2,8 @@
 
 Last updated: 2026-11-09
 
+**Maximum Offline Time cap (2026-11-09):** pinned Remix caps level-42 Offline Time at 48 hours. The reference corpus now captures the exact cap and one second beyond it, with identical clamped outcomes. A live level-90 Asteroid restore at 172801 seconds compares three nonzero resource rewards, message text, and full exports in Chromium, Firefox, and WebKit. Offline progression remains In Progress; actual OS/browser background scheduling and other live-rate saves remain open.
+
 **Restore and save from a valid Beyond backup (2026-11-09):** a browser E2E
 starts with a damaged primary, valid captured backup, and a conflicting legacy
 slot. It verifies startup selects the backup without writes; then manual Save

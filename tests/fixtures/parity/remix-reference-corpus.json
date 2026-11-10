@@ -130803,6 +130803,214 @@
           ]
         },
         {
+          "name": "maximum-offline-time-level-42-reaches-48-hour-cap",
+          "input": {
+            "name": "maximum-offline-time-level-42-reaches-48-hour-cap",
+            "elapsedSeconds": 172800,
+            "noOffline": false,
+            "rates": {
+              "money": "1",
+              "gems": "10",
+              "planetCoins": "10"
+            },
+            "upgrades": {
+              "offlineTime": 42,
+              "offlineGems": 1,
+              "offlinePC": 1
+            },
+            "initialState": {
+              "money": "100",
+              "highestMoney": "50",
+              "gems": "7",
+              "planetCoins": "13",
+              "maxPlanetCoins": "10"
+            },
+            "nowMs": 1704067200000,
+            "clockAdvancesMs": [0, 0, 0]
+          },
+          "clockReadCount": 4,
+          "dateNowReads": [
+            1704067200000, 1704067200000, 1704067200000, 1704067200000
+          ],
+          "stateAfterLoad": {
+            "money": {
+              "decimal": "86500",
+              "mantissa": 8.65,
+              "exponent": 4
+            },
+            "highestMoney": {
+              "decimal": "86500",
+              "mantissa": 8.65,
+              "exponent": 4
+            },
+            "gems": {
+              "decimal": "86407",
+              "mantissa": 8.6407,
+              "exponent": 4
+            },
+            "planetCoins": {
+              "decimal": "86413",
+              "mantissa": 8.6413,
+              "exponent": 4
+            },
+            "maxPlanetCoins": {
+              "decimal": "86413",
+              "mantissa": 8.6413,
+              "exponent": 4
+            },
+            "lastActive": 1704067200000
+          },
+          "events": [
+            {
+              "type": "logMessage",
+              "message": "Welcome back! While you were away, your Auto-Mining-Device earned you 86,400 $ and 86,400 gem(s). You also got 86,400 Planet Coins.",
+              "color": "#948a00"
+            },
+            {
+              "type": "logMessage",
+              "message": "Game Saved!",
+              "color": "#00a5ff"
+            }
+          ],
+          "storageWrites": [
+            {
+              "key": "IdleMine",
+              "save": {
+                "lastActive": 1704067200000,
+                "money": {
+                  "decimal": "86500",
+                  "mantissa": 8.65,
+                  "exponent": 4
+                },
+                "highestMoney": {
+                  "decimal": "86500",
+                  "mantissa": 8.65,
+                  "exponent": 4
+                },
+                "gems": {
+                  "decimal": "86407",
+                  "mantissa": 8.6407,
+                  "exponent": 4
+                },
+                "planetCoins": {
+                  "decimal": "86413",
+                  "mantissa": 8.6413,
+                  "exponent": 4
+                },
+                "maxPlanetCoins": {
+                  "decimal": "86413",
+                  "mantissa": 8.6413,
+                  "exponent": 4
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "one-second-over-maximum-48-hour-cap-is-clamped",
+          "input": {
+            "name": "one-second-over-maximum-48-hour-cap-is-clamped",
+            "elapsedSeconds": 172801,
+            "noOffline": false,
+            "rates": {
+              "money": "1",
+              "gems": "10",
+              "planetCoins": "10"
+            },
+            "upgrades": {
+              "offlineTime": 42,
+              "offlineGems": 1,
+              "offlinePC": 1
+            },
+            "initialState": {
+              "money": "100",
+              "highestMoney": "50",
+              "gems": "7",
+              "planetCoins": "13",
+              "maxPlanetCoins": "10"
+            },
+            "nowMs": 1704067200000,
+            "clockAdvancesMs": [0, 0, 0]
+          },
+          "clockReadCount": 4,
+          "dateNowReads": [
+            1704067200000, 1704067200000, 1704067200000, 1704067200000
+          ],
+          "stateAfterLoad": {
+            "money": {
+              "decimal": "86500",
+              "mantissa": 8.65,
+              "exponent": 4
+            },
+            "highestMoney": {
+              "decimal": "86500",
+              "mantissa": 8.65,
+              "exponent": 4
+            },
+            "gems": {
+              "decimal": "86407",
+              "mantissa": 8.6407,
+              "exponent": 4
+            },
+            "planetCoins": {
+              "decimal": "86413",
+              "mantissa": 8.6413,
+              "exponent": 4
+            },
+            "maxPlanetCoins": {
+              "decimal": "86413",
+              "mantissa": 8.6413,
+              "exponent": 4
+            },
+            "lastActive": 1704067200000
+          },
+          "events": [
+            {
+              "type": "logMessage",
+              "message": "Welcome back! While you were away, your Auto-Mining-Device earned you 86,400 $ and 86,400 gem(s). You also got 86,400 Planet Coins.",
+              "color": "#948a00"
+            },
+            {
+              "type": "logMessage",
+              "message": "Game Saved!",
+              "color": "#00a5ff"
+            }
+          ],
+          "storageWrites": [
+            {
+              "key": "IdleMine",
+              "save": {
+                "lastActive": 1704067200000,
+                "money": {
+                  "decimal": "86500",
+                  "mantissa": 8.65,
+                  "exponent": 4
+                },
+                "highestMoney": {
+                  "decimal": "86500",
+                  "mantissa": 8.65,
+                  "exponent": 4
+                },
+                "gems": {
+                  "decimal": "86407",
+                  "mantissa": 8.6407,
+                  "exponent": 4
+                },
+                "planetCoins": {
+                  "decimal": "86413",
+                  "mantissa": 8.6413,
+                  "exponent": 4
+                },
+                "maxPlanetCoins": {
+                  "decimal": "86413",
+                  "mantissa": 8.6413,
+                  "exponent": 4
+                }
+              }
+            }
+          ]
+        },
+        {
           "name": "explicit-nooffline-flag-suppresses-rewards-and-save",
           "input": {
             "name": "explicit-nooffline-flag-suppresses-rewards-and-save",
@@ -141073,6 +141281,157 @@
                   "decimal": "7",
                   "mantissa": 7,
                   "exponent": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "maximum-offline-time-live-three-resource-rates",
+          "input": {
+            "formulaScenario": "upgraded-planet-coin-asteroid",
+            "objectId": 90,
+            "pickaxe": {
+              "power": "1e43",
+              "quality": "1.25"
+            },
+            "miningPower": "2.5",
+            "exquisityPower": "2.5",
+            "miningUpgrades": {
+              "money": {
+                "activePower": 3,
+                "idlePower": 4,
+                "idleSpeed": 5,
+                "gemChance": 6
+              },
+              "gems": {
+                "idlePower": 2,
+                "gemChance": 3,
+                "gemMultiply": 4
+              },
+              "planetCoins": {
+                "activePower": 2,
+                "gemChance": 1,
+                "gemMultiply": 2,
+                "lastObjGems": 3
+              },
+              "wisdom": {
+                "powerPowerActive": 1,
+                "powerPowerIdle": 2,
+                "damageBoost": 3,
+                "damageBoostUpgrades": 2,
+                "gemBoostSimple": 2,
+                "powerPowerPower": 3,
+                "powerResetKeep": 4
+              }
+            },
+            "offlineUpgrades": {
+              "offlineTime": 42,
+              "offlineGems": 15,
+              "offlinePC": 10
+            },
+            "initialResources": {
+              "money": "100",
+              "highestMoney": "125",
+              "gems": "10",
+              "planetCoins": "5",
+              "maxPlanetCoins": "6"
+            },
+            "elapsedSeconds": 172801,
+            "nowMs": 1704067200000,
+            "clockAdvancesMs": [0, 0, 100, 200]
+          },
+          "clockReadCount": 4,
+          "dateNowReads": [
+            1704067200000, 1704067200000, 1704067200100, 1704067200200
+          ],
+          "highestDamageableObjectLevel": 9007199254740991,
+          "rates": {
+            "moneyPerSecond": {
+              "decimal": "3.828844687500001e+61",
+              "mantissa": 3.828844687500001,
+              "exponent": 61
+            },
+            "gemsPerSecond": {
+              "decimal": "2.7299662621875007",
+              "mantissa": 2.7299662621875007,
+              "exponent": 0
+            },
+            "planetCoinsPerSecond": {
+              "decimal": "0.0012762815625000003",
+              "mantissa": 1.2762815625000004,
+              "exponent": -3
+            }
+          },
+          "stateAfterLoad": {
+            "money": {
+              "decimal": "3.308121810000001e+66",
+              "mantissa": 3.308121810000001,
+              "exponent": 66
+            },
+            "highestMoney": {
+              "decimal": "3.308121810000001e+66",
+              "mantissa": 3.308121810000001,
+              "exponent": 66
+            },
+            "gems": {
+              "decimal": "353813",
+              "mantissa": 3.53813,
+              "exponent": 5
+            },
+            "planetCoins": {
+              "decimal": "115",
+              "mantissa": 1.15,
+              "exponent": 2
+            },
+            "maxPlanetCoins": {
+              "decimal": "115",
+              "mantissa": 1.15,
+              "exponent": 2
+            },
+            "lastActive": 1704067200200
+          },
+          "events": [
+            {
+              "type": "logMessage",
+              "message": "Welcome back! While you were away, your Auto-Mining-Device earned you 3.31 UVg $ and 353,803 gem(s). You also got 110 Planet Coins.",
+              "color": "#948a00"
+            },
+            {
+              "type": "logMessage",
+              "message": "Game Saved!",
+              "color": "#00a5ff"
+            }
+          ],
+          "storageWrites": [
+            {
+              "key": "IdleMine",
+              "save": {
+                "lastActive": 1704067200200,
+                "money": {
+                  "decimal": "3.308121810000001e+66",
+                  "mantissa": 3.308121810000001,
+                  "exponent": 66
+                },
+                "highestMoney": {
+                  "decimal": "3.308121810000001e+66",
+                  "mantissa": 3.308121810000001,
+                  "exponent": 66
+                },
+                "gems": {
+                  "decimal": "353813",
+                  "mantissa": 3.53813,
+                  "exponent": 5
+                },
+                "planetCoins": {
+                  "decimal": "115",
+                  "mantissa": 1.15,
+                  "exponent": 2
+                },
+                "maxPlanetCoins": {
+                  "decimal": "115",
+                  "mantissa": 1.15,
+                  "exponent": 2
                 }
               }
             }
