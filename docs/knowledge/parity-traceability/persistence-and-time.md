@@ -766,7 +766,10 @@ in the same cross-browser cold-start suite.
 reuses the pinned fresh-Mud live-rate capture with `offlineTime` level 0 at
 exactly 21,600 and 21,601 seconds. It compares the full Remix/Beyond Settings
 exports for each duration and asserts the two source exports are byte-identical
-in Chromium, Firefox, and WebKit.
+in Chromium, Firefox, and WebKit. The same test uses the captured Asteroid 90
+three-resource-rate state at `offlineTime` level 42 to compare 172,800 and
+172,801 seconds; full source exports are byte-identical and Beyond matches in
+all three engines.
 
 | Pinned Remix function/path and branch                                                                                                                                                           | Source evidence                                                                                                                                     | Beyond assertion                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

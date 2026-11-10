@@ -285,6 +285,13 @@ Beyond export identical complete saves at each duration, and the source saves
 are byte-identical to each other, confirming that the extra second is capped.
 Chromium, Firefox, and WebKit pass; actual background scheduling remains open.
 
+**Live maximum 48-hour cap boundary (2026-11-10):** the source-captured
+Asteroid 90 state has `offlineTime` level 42 and live Money, Gem, and Planet
+Coin rates. Cold starts at exactly 172,800 seconds and 172,801 seconds now
+produce identical complete source exports; Beyond matches both exports in
+Chromium, Firefox, and WebKit. This verifies the maximum cap boundary with
+live resource-rate composition; actual background scheduling remains open.
+
 **Live zero-rate cold start (2026-11-09):** a separate source-paired E2E
 loads the captured Universe object 214 state after 3,601 seconds with Money,
 Gem, and Planet Coin rates all zero. Remix and Beyond still display the

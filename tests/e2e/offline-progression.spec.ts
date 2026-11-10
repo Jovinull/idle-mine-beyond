@@ -160,7 +160,7 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
   if (!initialMudLiveRateScenario) {
     throw new Error("Pinned initial-Mud live-rate capture is missing.");
   }
-  const defaultCapExports = new Map<
+  const offlineCapExports = new Map<
     number,
     { source: string; beyond: string }
   >();
@@ -264,6 +264,18 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
         reference.data.offlineLoadRateCompositionSemantics.scenarios.find(
           (candidate) =>
             candidate.name === "upgraded-asteroid-live-planet-coin-rate",
+        ),
+    },
+    {
+      name: "exact maximum 48-hour offline cap with three live resource rates",
+      theme: "light",
+      compareMessagePixels: false,
+      elapsedSeconds: 48 * 60 * 60,
+      expectsOfflineReward: true,
+      liveRateScenario:
+        reference.data.offlineLoadRateCompositionSemantics.scenarios.find(
+          (candidate) =>
+            candidate.name === "maximum-offline-time-live-three-resource-rates",
         ),
     },
     {
@@ -526,10 +538,11 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
       }
       expect(beyondDecoded.value, scenario.name).toEqual(sourceDecoded.value);
       if (
-        scenario.elapsedSeconds === 6 * 60 * 60 ||
-        scenario.elapsedSeconds === 6 * 60 * 60 + 1
+        [6 * 60 * 60, 6 * 60 * 60 + 1, 48 * 60 * 60, 48 * 60 * 60 + 1].includes(
+          scenario.elapsedSeconds,
+        )
       ) {
-        defaultCapExports.set(scenario.elapsedSeconds, {
+        offlineCapExports.set(scenario.elapsedSeconds, {
           source: sourceExport,
           beyond: beyondExport,
         });
@@ -572,13 +585,22 @@ test("restores capped and backward-clock saves in the pinned Remix and Beyond ap
       await Promise.all([sourcePage.close(), beyondPage.close()]);
     }
   }
-  const atDefaultCap = defaultCapExports.get(6 * 60 * 60);
-  const oneSecondOverDefaultCap = defaultCapExports.get(6 * 60 * 60 + 1);
-  if (!atDefaultCap || !oneSecondOverDefaultCap) {
-    throw new Error("Default offline-cap source pairs were not captured.");
+  const atDefaultCap = offlineCapExports.get(6 * 60 * 60);
+  const oneSecondOverDefaultCap = offlineCapExports.get(6 * 60 * 60 + 1);
+  const atMaximumCap = offlineCapExports.get(48 * 60 * 60);
+  const oneSecondOverMaximumCap = offlineCapExports.get(48 * 60 * 60 + 1);
+  if (
+    !atDefaultCap ||
+    !oneSecondOverDefaultCap ||
+    !atMaximumCap ||
+    !oneSecondOverMaximumCap
+  ) {
+    throw new Error("Offline-cap source pairs were not captured.");
   }
   expect(oneSecondOverDefaultCap.source).toBe(atDefaultCap.source);
   expect(oneSecondOverDefaultCap.beyond).toBe(atDefaultCap.beyond);
+  expect(oneSecondOverMaximumCap.source).toBe(atMaximumCap.source);
+  expect(oneSecondOverMaximumCap.beyond).toBe(atMaximumCap.beyond);
 });
 
 test("matches Remix zero-rate offline cold start and save", async ({

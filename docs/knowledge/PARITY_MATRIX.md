@@ -4,7 +4,10 @@
 using source-captured Money-only rates now compare exactly 21,600 seconds and
 21,601 seconds with `offlineTime` level 0. Pinned Remix produces identical
 complete save exports for both durations; Beyond matches in Chromium, Firefox,
-and WebKit. OS/browser background scheduling remains a separate open gap.
+and WebKit. The same suite compares the exact 172,800-second maximum cap and
+172,801 seconds with captured Asteroid 90 three-resource rates at
+`offlineTime` level 42; source exports are identical and Beyond matches in all
+three engines. OS/browser background scheduling remains a separate open gap.
 
 **Wisdom bulk purchase stops on affordability (2026-11-10):** the live
 Power Power (Active) `buy10` starts at level 0 with 1001 Wisdom, buys levels
