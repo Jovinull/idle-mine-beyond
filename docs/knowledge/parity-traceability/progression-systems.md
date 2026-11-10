@@ -191,9 +191,11 @@ Both focused browser runs passed.
 **Single-click finite-cap no-op differential (2026-11-10):**
 `tests/e2e/upgrade-cap-purchase-differential.spec.ts` imports a source-shaped
 save with every finite Money, Gem, and Planet Coin upgrade at its cap and
-abundant balances. It dispatches a synthetic click event to each rendered card
-in both live apps and compares unchanged levels and resource headers; all
-localStorage slots remain unchanged after the sequence. The pinned
+abundant balances. The test constructs each case from the pinned save fixture
+and encodes it with the exact expression in Remix `functions.getSaveString()`,
+without calling Beyond's save codec. It dispatches a synthetic click event to
+each rendered card in both live apps and compares unchanged levels and resource
+headers; all localStorage slots remain unchanged after the sequence. The pinned
 `Upgrade.buy()` returns `false` when
 `level < getMaxLevel()` is false, even though the card's click handler still
 calls `buyUpgrade()`. Chromium, Firefox, and WebKit pass. This covers the

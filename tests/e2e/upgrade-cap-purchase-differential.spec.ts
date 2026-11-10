@@ -1,6 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
-import { encodeRemixLegacySave } from "../../packages/persistence/src/remix-save-codec.js";
 import { routePinnedRemixOracle } from "./remix-oracle-route.js";
 
 type ShopGroup = "money" | "gems" | "planetCoins";
@@ -57,7 +56,7 @@ function makeSave(
   source: LegacySave,
   fixture: Fixture["data"]["upgradeSemantics"]["groups"],
   scenario: { group: ShopGroup; key: string; level: number },
-): string {
+): LegacySave {
   const save = structuredClone(source);
   save.money = "0";
   save.gems = "0";
@@ -80,13 +79,13 @@ function makeSave(
   );
   save[levelMaps[scenario.group]][scenario.key] = { level: scenario.level };
   save.pickaxe = { name: "Probe Pickaxe", pow: "0", quality: "0" };
-  return encodeRemixLegacySave(save);
+  return save;
 }
 
 function makeAllCappedSave(
   source: LegacySave,
   fixture: Fixture["data"]["upgradeSemantics"]["groups"],
-): string {
+): LegacySave {
   const save = structuredClone(source);
   save.money = "1e1000";
   save.gems = "1e1000";
@@ -115,7 +114,14 @@ function makeAllCappedSave(
     }
   }
   save.pickaxe = { name: "Probe Pickaxe", pow: "0", quality: "0" };
-  return encodeRemixLegacySave(save);
+  return save;
+}
+
+async function encodeWithPinnedRemix(page: Page, save: LegacySave) {
+  return page.evaluate((value) => {
+    // This is the pinned functions.getSaveString() expression.
+    return btoa(escape(encodeURIComponent(JSON.stringify(value))));
+  }, save);
 }
 
 async function seedAndReload(
@@ -205,7 +211,7 @@ test("matches modifier purchases at and immediately below finite shop caps", asy
         .first();
 
       await test.step(`${group}.${key} Shift purchase reaches cap ${finiteCap}`, async () => {
-        const encoded = makeSave(
+        const save = makeSave(
           sourceSave,
           fixture.data.upgradeSemantics.groups,
           {
@@ -214,6 +220,7 @@ test("matches modifier purchases at and immediately below finite shop caps", asy
             level: finiteCap - 1,
           },
         );
+        const encoded = await encodeWithPinnedRemix(sourcePage, save);
         await Promise.all([
           seedAndReload(page, encoded, "beyond"),
           seedAndReload(sourcePage, encoded, "remix"),
@@ -269,7 +276,7 @@ test("matches modifier purchases at and immediately below finite shop caps", asy
       });
 
       await test.step(`${group}.${key} Control purchase is a no-op at cap ${finiteCap}`, async () => {
-        const encoded = makeSave(
+        const save = makeSave(
           sourceSave,
           fixture.data.upgradeSemantics.groups,
           {
@@ -278,6 +285,7 @@ test("matches modifier purchases at and immediately below finite shop caps", asy
             level: finiteCap,
           },
         );
+        const encoded = await encodeWithPinnedRemix(sourcePage, save);
         await Promise.all([
           seedAndReload(page, encoded, "beyond"),
           seedAndReload(sourcePage, encoded, "remix"),
@@ -366,6 +374,7 @@ test("single clicks are no-ops at every finite upgrade cap", async ({
 
   try {
     const sourceUrl = await routePinnedRemixOracle(sourceContext);
+    const encodedCapSave = await encodeWithPinnedRemix(sourcePage, capSave);
     const initialize = ({
       encoded,
       time,
@@ -378,9 +387,12 @@ test("single clicks are no-ops at every finite upgrade cap", async ({
       Date.now = () => time;
     };
     await Promise.all([
-      page.addInitScript(initialize, { encoded: capSave, time: fixedTime }),
+      page.addInitScript(initialize, {
+        encoded: encodedCapSave,
+        time: fixedTime,
+      }),
       sourcePage.addInitScript(initialize, {
-        encoded: capSave,
+        encoded: encodedCapSave,
         time: fixedTime,
       }),
       page.emulateMedia({ colorScheme: "light" }),

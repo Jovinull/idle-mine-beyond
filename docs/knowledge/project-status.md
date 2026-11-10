@@ -4,9 +4,10 @@ Last updated: 2026-11-10
 
 **Single-click finite upgrade caps (2026-11-10):** added a source-paired test
 that dispatches synthetic click events to every finite Money, Gem, and Planet
-Coin card at cap. Levels and resource headers stay unchanged; all localStorage
-slots remain unchanged after the sequence. Chromium, Firefox, and WebKit pass;
-the shop rows remain In Progress for other purchase states.
+Coin card at cap. Inputs use the pinned Remix save-encoding expression rather
+than the Beyond codec. Levels and resource headers stay unchanged; all
+localStorage slots remain unchanged after the sequence. Chromium, Firefox, and
+WebKit pass; the shop rows remain In Progress for other purchase states.
 
 **Optional-group import from a fresh runtime (2026-11-10):** the Settings E2E
 now imports the pinned absent-optional-groups save after launching both Remix

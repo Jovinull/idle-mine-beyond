@@ -3,7 +3,8 @@
 **Single-click finite upgrade caps (2026-11-10):** source/Beyond synthetic
 click events on every finite-capped Money, Gem, and Planet Coin card leave
 levels and resource headers unchanged; storage snapshots also remain unchanged
-after the sequence. Chromium, Firefox, and WebKit passed. Other purchase states
+after the sequence. Inputs use the pinned Remix save-encoding expression, not
+Beyond's codec. Chromium, Firefox, and WebKit passed. Other purchase states
 keep the shop rows In Progress.
 
 **Planet Coin shop high-water unlock (2026-11-09):** the 89/90 `highestMineObjectLevel` gate is now a live source-paired interaction test. The tab is absent at 89; at 90 it appears in both apps, opens the Planet Coin shop, and shows the same seven cards. Chromium, Firefox, and WebKit passed; other Planet Coin UI states remain open.
